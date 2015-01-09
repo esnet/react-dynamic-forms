@@ -1,0 +1,5 @@
+
+/* For option lists, make the active text white */
+li.list-group-item.active {
+    color: white;
+}
