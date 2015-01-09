@@ -28,8 +28,11 @@ var App = React.createClass({
                     <li><Link to="textarea">TextArea</Link></li>
                     <li><Link to="chooser">Chooser</Link></li>
                     <li><Link to="tagging">Tagging</Link></li>
-                    <li><Link to="optionbuttons">Option Buttons</Link></li>
-                    <li><Link to="listoptions">List Options</Link></li>
+                    <li><Link to="optionbuttons">OptionButtons</Link></li>
+                    <li><Link to="listoptions">OptionList</Link></li>
+                    <li><Link to="filtering">TextFilter</Link></li>
+                    <hr />
+                    <li><Link to="group">Groups</Link></li>
                   </ul>
               </div>
             </div>
