@@ -3,6 +3,7 @@
 "use strict";
 
 var _ = require("underscore");
+var ListEditView = require("./listeditview");
 
 /**
  * A helper mixin to keep track of lists of values, missing values and error counts
