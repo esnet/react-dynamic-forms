@@ -18,10 +18,10 @@ var TextAreaGroup = React.createClass({
     render: function() {
         var attr = this.props.attr;
         return this.transferPropsTo(
-            <GenericGroup>
+            <Group>
                 <TextArea initialValue={attr.initialValue}
                           width={this.props.width}/>
-            </GenericGroup>
+            </Group>
         );
     }
 });
