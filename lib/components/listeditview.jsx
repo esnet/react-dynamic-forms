@@ -139,4 +139,4 @@ var ListEditView = React.createClass({
     }
 });
 
-module.exports = ListEditorMixin;
+module.exports = ListEditView;
