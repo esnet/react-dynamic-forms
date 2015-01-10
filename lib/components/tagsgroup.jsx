@@ -19,8 +19,8 @@ var TagsGroup = React.createClass({
         var attr = this.props.attr;
         return this.transferPropsTo(
             <Group>
-                <TagsEditView initialTags={attr.value}
-                              initialTagList={this.props.availableTags} />
+                <TagsEdit initialTags={attr.value}
+                          initialTagList={this.props.availableTags} />
             </Group>
         );
     }
