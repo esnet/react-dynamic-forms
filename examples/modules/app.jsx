@@ -33,6 +33,8 @@ var App = React.createClass({
                     <li><Link to="filtering">TextFilter</Link></li>
                     <hr />
                     <li><Link to="group">Groups</Link></li>
+                    <hr />
+                    <li><Link to="forms">Contact form</Link></li>
                   </ul>
               </div>
             </div>
