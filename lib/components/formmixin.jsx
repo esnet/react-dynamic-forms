@@ -9,10 +9,11 @@ var _ = require("underscore");
  *
  *   The user of this form should initialize a schema and values (if editing):
  *
- *   formSchema - The attributes to be tracked by this form, specifying
+ *   schema     - The attributes to be tracked by this form, specifying
  *                meta data associated with each of those attributes
- *   formValues - Optionally specify a mapping from attribute name to
- *                value. 
+ *   values     - Optionally specify an initial mapping from attribute name to
+ *                value. You can update or later specify the values using
+ *                the setValues() method.
  *
  * When the component is about to mount, the schema and value will be
  * converted to an internal representation containing:
@@ -74,32 +75,19 @@ var FormMixin = {
     },
 
     componentWillMount: function() {
-        var self = this;
-
         var formSchema = this.state.formSchema;
-        var formValues = this.state.formValues;
+        var formValues = this.state.values;
 
-        if (!_.has(this.state, "formSchema")) { 
-            console.warn("Use of FormMixin with no supplied schema.");
-        } 
-
-        var values = {};
-        _.each(formSchema.attrs(), function(attr, attrName) {
-            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
-            if (formValues) {
-                var v = _.has(formValues, attrName) ? formValues[attrName] : defaultValue;
-                values[attrName] = {"value": v, "initialValue": v};
-            } else {
-                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
-            }
-        });
+        if (!_.has(this.state, "formSchema")) {
+            console.warn("Use of FormMixin with no supplied schema. Set formSchema in initial state.");
+        }
 
         var state = {
             formAttrs: formSchema.attrs(),
-            formRules: formSchema.rules(),
-            formValues: values
-        }
+            formRules: formSchema.rules()
+        };
 
+        this.setValues(formValues);
         this.setState(state);
     },
 
@@ -118,10 +106,13 @@ var FormMixin = {
      *
      */
     getAttr: function(attrName) {
-        var data = {"key": attrName};
+        var data = {};
         var formAttrs = this.state.formAttrs;
         var formRules = this.state.formRules;
         var formValues = this.state.formValues;
+
+        data.key = attrName + "_" + formValues[attrName].value;
+        data.attr = attrName;
 
         if (_.has(formAttrs, attrName)) {
             data.name = formAttrs[attrName].label;
@@ -158,12 +149,27 @@ var FormMixin = {
         return data;
     },
 
-    values: function() {
+    getValues: function() {
         var vals = {};
         _.each(this.state.formValues, function(val, attrName) {
             vals[attrName] = val.value;
         });
         return vals;
+    },
+
+    setValues: function(formValues) {
+        var values = {};
+        var formSchema = this.state.formSchema;
+        _.each(formSchema.attrs(), function(attr, attrName) {
+            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+            if (formValues) {
+                var v = _.has(formValues, attrName) ? formValues[attrName] : defaultValue;
+                values[attrName] = {"value": v, "initialValue": v};
+            } else {
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            }
+        });
+        this.setState({"formValues": values});
     },
 
     showRequiredOn: function() {

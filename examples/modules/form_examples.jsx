@@ -18,7 +18,6 @@ var ContactEditor = React.createClass({
     displayName: "ContactEditor",
 
     getInitialState: function() {
-
         var contactSchema = (
             <Schema name="bob">
                 <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
@@ -28,9 +27,22 @@ var ContactEditor = React.createClass({
         );
 
         return {
-            formSchema: contactSchema,
-            formValues: this.props.contact
-        }
+            formSchema: contactSchema
+        };
+    },
+
+    componentDidMount: function() {
+        var self = this;
+        var contact = {
+            "first_name": "Bill",
+            "last_name": "Jones",
+            "email": "bill@gmail.com"
+        };
+
+        //Simulate ASYNC state update
+        setTimeout(function() {
+            self.setValues(contact);
+        }, 1500);
     },
 
     /**
@@ -39,13 +51,15 @@ var ContactEditor = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
 
+        console.log("Submit", this.state);
+
         if (this.hasMissing()) {
             this.showRequiredOn();
             return;
         }
 
-        //Save form
-        this.props.onSubmit && this.props.onSubmit(this.values());
+        console.log("Submit", this.getValues());
+        this.props.onSubmit && this.props.onSubmit(this.getValues());
 
         return false;
     },
@@ -53,6 +67,7 @@ var ContactEditor = React.createClass({
     render: function() {
         var disableSubmit = (this.errorCount() !== 0);
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
+
         return (
             <form style={formStyle} noValidate className="form-horizontal" onSubmit={this.handleSubmit}>
                 <TextEditGroup attr={this.getAttr("first_name")} width={300} />
@@ -91,7 +106,7 @@ var FormExample = React.createClass({
             var lastName = this.state.data["last_name"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
-                  <strong>Success!</strong> {firstName} {lastName} was submitted.
+                    <strong>Success!</strong> {firstName} {lastName} was submitted.
                 </Alert>
             );
         } else {
