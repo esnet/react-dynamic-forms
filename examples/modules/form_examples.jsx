@@ -27,7 +27,7 @@ var ContactEditor = React.createClass({
         );
 
         return {
-            formSchema: contactSchema
+            schema: contactSchema
         };
     },
 
@@ -58,7 +58,6 @@ var ContactEditor = React.createClass({
             return;
         }
 
-        console.log("Submit", this.getValues());
         this.props.onSubmit && this.props.onSubmit(this.getValues());
 
         return false;

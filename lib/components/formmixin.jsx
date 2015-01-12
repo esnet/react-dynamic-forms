@@ -75,20 +75,20 @@ var FormMixin = {
     },
 
     componentWillMount: function() {
-        var formSchema = this.state.formSchema;
+        var formSchema = this.state.schema;
         var formValues = this.state.values;
 
-        if (!_.has(this.state, "formSchema")) {
+        if (!formSchema) {
             console.warn("Use of FormMixin with no supplied schema. Set formSchema in initial state.");
         }
 
-        var state = {
+        var formState = {
             formAttrs: formSchema.attrs(),
             formRules: formSchema.rules()
         };
 
         this.setValues(formValues);
-        this.setState(state);
+        this.setState(formState);
     },
 
     /**
@@ -159,7 +159,7 @@ var FormMixin = {
 
     setValues: function(formValues) {
         var values = {};
-        var formSchema = this.state.formSchema;
+        var formSchema = this.state.schema;
         _.each(formSchema.attrs(), function(attr, attrName) {
             var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
             if (formValues) {
