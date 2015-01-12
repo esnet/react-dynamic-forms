@@ -33,4 +33,7 @@ module.exports = {
     //Lists
     ListEditView: require('./lib/components/listeditormixin.jsx'),
     ListEditorMixin: require('./lib/components/listeditormixin.jsx'),
+    //Schema
+    Schema: require('./lib/components/schema.jsx'),
+    Attr: require('./lib/components/attr.jsx'),
 }

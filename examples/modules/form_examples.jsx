@@ -2,66 +2,18 @@
 
 "use strict";
 
-var React = require("react");
-var _     = require("underscore");
+var React   = require("react");
+var _       = require("underscore");
+var {Alert} = require("react-bootstrap");
 
-var {FormMixin, TextEditGroup} = require("../../entry");
-
-class SchemaClass {
-    constructor(properties, children) {
-        this.properties = properties;
-        this.children = children;
-    }
-
-    toObject() {
-        return this.properties;
-    }
-
-    //Return a list of formAttrs
-    attrs() {
-        var formAttrs = {};
-        _.each(this.children, function(attr) {
-            formAttrs[attr.properties.name] = attr.properties;
-        });
-        return formAttrs;
-    }
-
-    rules() {
-        var formRules = {};
-        _.each(this.children, function(attr) {
-            var required = attr.properties.required || false;
-            var validation = attr.properties.validation;
-            formRules[attr.properties.name] = {"required": required, "validation": validation};
-        });
-        return formRules;        
-    }
-}
-
-class AttrClass {
-    constructor(properties) {
-        this.properties = properties;
-    }
-
-    toObject() {
-        return this.properties;
-    }
-}
-
-function Schema(properties, ...children) {
-    console.log("Schema properies:", properties, "Children:", children);
-    return new SchemaClass(properties, children);
-}
-
-function Attr(properties) {
-    return new AttrClass(properties);
-}
+var {FormMixin, TextEditGroup, Schema, Attr} = require("../../entry");
 
 /**
  * Edit a contact
  */
 var ContactEditor = React.createClass({
 
-    mixins: [FormMixin], // Add missing value and error reporting
+    mixins: [FormMixin],
 
     displayName: "ContactEditor",
 
@@ -75,15 +27,9 @@ var ContactEditor = React.createClass({
             </Schema>
         );
 
-        var contactValues = {
-            "first_name": "Bob",
-            "last_name": "Smith",
-            "email": "bob@gmail.com"
-        };
-
         return {
             formSchema: contactSchema,
-            formValues: contactValues
+            formValues: this.props.contact
         }
     },
 
@@ -98,24 +44,22 @@ var ContactEditor = React.createClass({
             return;
         }
 
-        //Save form here!
-        console.log("Submit!", this.values());
+        //Save form
+        this.props.onSubmit && this.props.onSubmit(this.values());
 
         return false;
     },
 
     render: function() {
-        var errorCount = this.errorCount();
-        var missingCount = this.missingCount();
-        var canSubmit = (errorCount === 0);
-
+        var disableSubmit = (this.errorCount() !== 0);
+        var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
         return (
-            <form style={{background: "#FAFAFA", padding: 10, borderRadius:5}} noValidate
-                  className="form-horizontal" onSubmit={this.handleSubmit}>
+            <form style={formStyle} noValidate className="form-horizontal" onSubmit={this.handleSubmit}>
                 <TextEditGroup attr={this.getAttr("first_name")} width={300} />
                 <TextEditGroup attr={this.getAttr("last_name")} width={300} />
                 <TextEditGroup attr={this.getAttr("email")} width={300} />
-                <input className="btn btn-default" type="submit" value="Submit" disabled={!canSubmit}/>
+
+                <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
             </form>
         );
     }
@@ -125,20 +69,39 @@ var FormExample = React.createClass({
 
     getInitialState: function() {
         return {
-            choices: {1: "Yes", 2: "No", 3: "Maybe"},
-            selection: 1,
+            bob: {
+                "first_name": "Bob",
+                "last_name": "Smith",
+                "email": "bob@gmail.com"
+            },
         };
     },
 
-    handleChange: function(attr, value) {
-        this.setState({"selection": value});
+    handleSubmit: function(value) {
+        this.setState({"data": value});
     },
 
-    handleMissingCountChange: function(attr, count) {
-        this.setState({"missingCount": count});
+    handleAlertDismiss: function() {
+        this.setState({"data": undefined});
+    },
+
+    renderAlert: function() {
+        if (this.state.data) {
+            var firstName = this.state.data["first_name"];
+            var lastName = this.state.data["last_name"];
+            return (
+                <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
+                  <strong>Success!</strong> {firstName} {lastName} was submitted.
+                </Alert>
+            );
+        } else {
+            return null;
+        }
     },
 
     render: function() {
+        var bob = this.state.bob;
+
         return (
             <div>
                 <div className="row">
@@ -149,7 +112,10 @@ var FormExample = React.createClass({
 
                 <div className="row">
                     <div className="col-md-12">
-                        <ContactEditor />
+                        <ContactEditor contact={bob} onSubmit={this.handleSubmit}/>
+                    </div>
+                    <div className="col-md-12">
+                        {this.renderAlert()}
                     </div>
                 </div>
             </div>

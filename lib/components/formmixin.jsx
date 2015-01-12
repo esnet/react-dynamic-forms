@@ -7,18 +7,19 @@ var _ = require("underscore");
 /**
  * Designed to be mixed into your top level forms.
  *
- *   The user of this form should initialize three state variables:
+ *   The user of this form should initialize a schema and values (if editing):
  *
- *   formAttrs  - The attributes to be tracked by this form, specifying
+ *   formSchema - The attributes to be tracked by this form, specifying
  *                meta data associated with each of those attributes
- *   formRules  - For each attribute where rules should be applied,
- *                specifies the Revalidator rules
- *   formValues - For each attribute, specifies an initialValue and
- *                (current) value. As the form is interacted with by
- *                the user, the current value will be maintained.
- *                When the form is submitted both the initialValues
- *                and finalValues are available for construction of
- *                the data to actually send.
+ *   formValues - Optionally specify a mapping from attribute name to
+ *                value. 
+ *
+ * When the component is about to mount, the schema and value will be
+ * converted to an internal representation containing:
+ *
+ *   formAttrs  - General meta data about each attribute
+ *   formRules  - Required state and validation rules
+ *   formValues - Initial and current value
  *
  * The getAttr() call:
  *
