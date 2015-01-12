@@ -72,6 +72,36 @@ var FormMixin = {
         };
     },
 
+    componentWillMount: function() {
+        var self = this;
+
+        var formSchema = this.state.formSchema;
+        var formValues = this.state.formValues;
+
+        if (!_.has(this.state, "formSchema")) { 
+            console.warn("Use of FormMixin with no supplied schema.");
+        } 
+
+        var values = {};
+        _.each(formSchema.attrs(), function(attr, attrName) {
+            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+            if (formValues) {
+                var v = _.has(formValues, attrName) ? formValues[attrName] : defaultValue;
+                values[attrName] = {"value": v, "initialValue": v};
+            } else {
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            }
+        });
+
+        var state = {
+            formAttrs: formSchema.attrs(),
+            formRules: formSchema.rules(),
+            formValues: values
+        }
+
+        this.setState(state);
+    },
+
     /**
      * Collect together a data structure for the given attrName which can
      * be passed to any of the Group wrapped form widgets. This data contains
@@ -93,7 +123,7 @@ var FormMixin = {
         var formValues = this.state.formValues;
 
         if (_.has(formAttrs, attrName)) {
-            data.name = formAttrs[attrName].name;
+            data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
             data.disabled = formAttrs[attrName].disabled || false;
@@ -125,6 +155,14 @@ var FormMixin = {
         data.changeCallback = this.handleChange;
 
         return data;
+    },
+
+    values: function() {
+        var vals = {};
+        _.each(this.state.formValues, function(val, attrName) {
+            vals[attrName] = val.value;
+        });
+        return vals;
     },
 
     showRequiredOn: function() {

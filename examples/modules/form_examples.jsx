@@ -3,8 +3,58 @@
 "use strict";
 
 var React = require("react");
+var _     = require("underscore");
 
 var {FormMixin, TextEditGroup} = require("../../entry");
+
+class SchemaClass {
+    constructor(properties, children) {
+        this.properties = properties;
+        this.children = children;
+    }
+
+    toObject() {
+        return this.properties;
+    }
+
+    //Return a list of formAttrs
+    attrs() {
+        var formAttrs = {};
+        _.each(this.children, function(attr) {
+            formAttrs[attr.properties.name] = attr.properties;
+        });
+        return formAttrs;
+    }
+
+    rules() {
+        var formRules = {};
+        _.each(this.children, function(attr) {
+            var required = attr.properties.required || false;
+            var validation = attr.properties.validation;
+            formRules[attr.properties.name] = {"required": required, "validation": validation};
+        });
+        return formRules;        
+    }
+}
+
+class AttrClass {
+    constructor(properties) {
+        this.properties = properties;
+    }
+
+    toObject() {
+        return this.properties;
+    }
+}
+
+function Schema(properties, ...children) {
+    console.log("Schema properies:", properties, "Children:", children);
+    return new SchemaClass(properties, children);
+}
+
+function Attr(properties) {
+    return new AttrClass(properties);
+}
 
 /**
  * Edit a contact
@@ -16,17 +66,25 @@ var ContactEditor = React.createClass({
     displayName: "ContactEditor",
 
     getInitialState: function() {
-        return {
-            "formValues": {"first_name": {initialValue: "Bob", value: "Bob"},
-                           "last_name": {initialValue: "Smith", value: "Smith"},
-                           "email": {initialValue: "bob@gmail.com", "value": "bob@gmail.com"}},
-            "formAttrs": {"first_name": {"name": "First name", "placeholder": "Enter first name"},
-                          "last_name": {"name": "Last name", "placeholder": "Enter last name"},
-                          "email": {"name": "Email", "placeholder": "Enter email address"}},
-            "formRules": {"first_name": {"required": true,  "validation": {type: "string"}},
-                          "last_name": {"required": true,  "validation": {type: "string"}},
-                          "email": {"required": false, "validation": { "format": "email"}}},
+
+        var contactSchema = (
+            <Schema name="bob">
+                <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
+                <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>           
+                <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
+            </Schema>
+        );
+
+        var contactValues = {
+            "first_name": "Bob",
+            "last_name": "Smith",
+            "email": "bob@gmail.com"
         };
+
+        return {
+            formSchema: contactSchema,
+            formValues: contactValues
+        }
     },
 
     /**
@@ -41,7 +99,7 @@ var ContactEditor = React.createClass({
         }
 
         //Save form here!
-        console.log("Submit!");
+        console.log("Submit!", this.values());
 
         return false;
     },
