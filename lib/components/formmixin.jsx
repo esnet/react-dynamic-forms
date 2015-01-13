@@ -111,7 +111,7 @@ var FormMixin = {
         var formRules = this.state.formRules;
         var formValues = this.state.formValues;
 
-        data.key = attrName + "_" + formValues[attrName].value;
+        data.key = attrName + "_" + formValues[attrName].initialValue;
         data.attr = attrName;
 
         if (_.has(formAttrs, attrName)) {
