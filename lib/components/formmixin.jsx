@@ -79,7 +79,7 @@ var FormMixin = {
         var formValues = this.state.values;
 
         if (!formSchema) {
-            console.warn("Use of FormMixin with no supplied schema. Set formSchema in initial state.");
+            console.warn("Use of FormMixin with no supplied schema. Set schema in initial state.", this.state);
         }
 
         var formState = {
