@@ -31,7 +31,7 @@ class SchemaClass {
             var validation = attr.properties.validation;
             formRules[attr.properties.name] = {"required": required, "validation": validation};
         });
-        return formRules;        
+        return formRules;
     }
 }
 

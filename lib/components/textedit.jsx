@@ -16,7 +16,7 @@ var TextEdit = React.createClass({
     displayName: "TextEdit",
 
     getDefaultProps: function() {
-        return {width: 300};
+        return {width: "100%"};
     },
 
     getInitialState: function() {
