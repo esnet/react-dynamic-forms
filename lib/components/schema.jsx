@@ -4,6 +4,7 @@
 
 var React = require("react/addons");
 var _ = require("underscore");
+var deepcopy = require("deepcopy");
 
 class SchemaClass {
     constructor(properties, children) {
@@ -19,7 +20,7 @@ class SchemaClass {
     attrs() {
         var formAttrs = {};
         _.each(this.children, function(attr) {
-            formAttrs[attr.properties.name] = attr.properties;
+            formAttrs[attr.properties.name] = deepcopy(attr.properties);
         });
         return formAttrs;
     }
@@ -28,7 +29,7 @@ class SchemaClass {
         var formRules = {};
         _.each(this.children, function(attr) {
             var required = attr.properties.required || false;
-            var validation = attr.properties.validation;
+            var validation = deepcopy(attr.properties.validation);
             formRules[attr.properties.name] = {"required": required, "validation": validation};
         });
         return formRules;
