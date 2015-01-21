@@ -99,10 +99,10 @@ var FormMixin = {
             return;
         }
 
-        data.key = attrName + "_" + formValues[attrName].initialValue;
         data.attr = attrName;
 
         if (_.has(formAttrs, attrName)) {
+            data.key = attrName + "_" + formValues[attrName].initialValue;
             data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
