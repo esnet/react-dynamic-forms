@@ -102,7 +102,7 @@ var FormMixin = {
         data.attr = attrName;
 
         if (_.has(formAttrs, attrName)) {
-            data.key = attrName + "_" + formValues[attrName].initialValue;
+            data.key = formValues ? attrName + "_" + formValues[attrName].initialValue : attrName;
             data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
@@ -153,13 +153,22 @@ var FormMixin = {
      */
     setSchema: function(schema) {
         if (schema) {
-            var state = {
-                formAttrs: schema.attrs(),
-                formRules: schema.rules(),
-                errorCounts: {},
-                missingCounts: {},
-            };
 
+            //Default values
+            var values = {};
+            _.each(schema.attrs(), function(attr, attrName) {
+                var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            });
+
+            //New state
+            var state = {
+                "formAttrs": schema.attrs(),
+                "formRules": schema.rules(),
+                "formValues": values,
+                "errorCounts": {},
+                "missingCounts": {},
+            };
             this.setState(state);
         }
     },
@@ -342,15 +351,15 @@ var FormMixin = {
 
     handleChange: function(key, value) {
         var v = value;
-        
+        var formValues = this.state.formValues;
+
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
         if (this.willHandleChange) {
             v = this.willHandleChange(key, value) || v;
         }
 
-        // Set new form values on our state
-        var formValues = this.state.formValues;
+
 
         if (!_.has(formValues, key)) {
             console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
