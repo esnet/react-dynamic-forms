@@ -153,7 +153,6 @@ var FormMixin = {
      */
     setSchema: function(schema, cb) {
         if (schema) {
-
             //Default values
             var values = {};
             _.each(schema.attrs(), function(attr, attrName) {
@@ -171,6 +170,10 @@ var FormMixin = {
             };
             this.setState(state, cb);
         }
+    },
+
+    hasSchema: function() {
+        return _.has(this.state.formAttrs);
     },
 
     getValues: function() {
