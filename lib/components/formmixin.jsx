@@ -151,7 +151,7 @@ var FormMixin = {
      *      </Schema>
      *  );
      */
-    setSchema: function(schema) {
+    setSchema: function(schema, cb) {
         if (schema) {
 
             //Default values
@@ -169,7 +169,7 @@ var FormMixin = {
                 "errorCounts": {},
                 "missingCounts": {},
             };
-            this.setState(state);
+            this.setState(state, cb);
         }
     },
 
