@@ -74,27 +74,11 @@ var FormMixin = {
         };
     },
 
-    componentWillMount: function() {
-        var formSchema = this.state.schema;
-        var formValues = this.state.values;
-
-        if (!formSchema) {
-            console.warn("Use of FormMixin with no supplied schema. Set schema in initial state.", this.state);
-        }
-
-        var formState = {
-            formAttrs: formSchema.attrs(),
-            formRules: formSchema.rules()
-        };
-
-        this.setValues(formValues);
-        this.setState(formState);
-    },
-
     /**
      * Collect together a data structure for the given attrName which can
      * be passed to any of the Group wrapped form widgets. This data contains
      * info from:
+     *
      *   - formAttrs
      *   - formRules
      *   - formValues
@@ -103,13 +87,17 @@ var FormMixin = {
      *   - valueChanged
      *   - missingCountChanged
      *   - errorCountChanged
-     *
      */
     getAttr: function(attrName) {
         var data = {};
         var formAttrs = this.state.formAttrs;
         var formRules = this.state.formRules;
         var formValues = this.state.formValues;
+
+        if (!formAttrs) {
+            console.warn("Attrs have not been defined with a schema, so getAttr failed for attr: " + attrName);
+            return;
+        }
 
         data.key = attrName + "_" + formValues[attrName].initialValue;
         data.attr = attrName;
@@ -119,6 +107,9 @@ var FormMixin = {
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
             data.disabled = formAttrs[attrName].disabled || false;
+        } else {
+            console.warn("Attr was not found in the schema: " + attrName);
+            return;
         }
 
         if (_.has(formRules, attrName)) {
@@ -149,6 +140,30 @@ var FormMixin = {
         return data;
     },
 
+    /**
+     * Sets a new schema for this form. Example schema:
+     *
+     *  var schema = (
+     *      <Schema>
+     *          <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
+     *          <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
+     *          <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
+     *      </Schema>
+     *  );
+     */
+    setSchema: function(schema) {
+        if (schema) {
+            var state = {
+                formAttrs: schema.attrs(),
+                formRules: schema.rules(),
+                errorCounts: {},
+                missingCounts: {},
+            };
+
+            this.setState(state);
+        }
+    },
+
     getValues: function() {
         var vals = {};
         _.each(this.state.formValues, function(val, attrName) {
@@ -157,10 +172,23 @@ var FormMixin = {
         return vals;
     },
 
+    /**
+     * Set new values on the form.
+     *
+     * NOTE: A schema for this form needs to have been defined before you can set values on
+     *       those attributes. A schema may be set in initial state (before component is
+     *       mounted) or using setSchema().
+     */
     setValues: function(formValues) {
         var values = {};
-        var formSchema = this.state.schema;
-        _.each(formSchema.attrs(), function(attr, attrName) {
+        var formAttrs = this.state.formAttrs;
+
+        if (!formAttrs) {
+            console.error("Attrs not defined with a schema before call to setValues");
+            return;
+        }
+
+        _.each(formAttrs, function(attr, attrName) {
             var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
             if (formValues) {
                 var v = _.has(formValues, attrName) ? formValues[attrName] : defaultValue;
@@ -169,6 +197,7 @@ var FormMixin = {
                 values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
             }
         });
+
         this.setState({"formValues": values});
     },
 

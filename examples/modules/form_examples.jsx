@@ -8,6 +8,20 @@ var {Alert} = require("react-bootstrap");
 
 var {FormMixin, TextEditGroup, Schema, Attr} = require("../../entry");
 
+var schema = (
+    <Schema>
+        <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
+        <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
+        <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
+    </Schema>
+);
+
+var values = {
+    "first_name": "Bill",
+    "last_name": "Jones",
+    "email": "bill@gmail.com"
+};
+
 /**
  * Edit a contact
  */
@@ -18,30 +32,19 @@ var ContactEditor = React.createClass({
     displayName: "ContactEditor",
 
     getInitialState: function() {
-        var contactSchema = (
-            <Schema name="bob">
-                <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
-                <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>           
-                <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
-            </Schema>
-        );
-
         return {
-            schema: contactSchema
+            "loaded": false,
         };
     },
 
     componentDidMount: function() {
         var self = this;
-        var contact = {
-            "first_name": "Bill",
-            "last_name": "Jones",
-            "email": "bill@gmail.com"
-        };
 
         //Simulate ASYNC state update
         setTimeout(function() {
-            self.setValues(contact);
+            self.setSchema(schema);
+            self.setValues(values);
+            self.setState({"loaded": true})
         }, 1500);
     },
 
@@ -50,8 +53,6 @@ var ContactEditor = React.createClass({
      */
     handleSubmit: function(e) {
         e.preventDefault();
-
-        console.log("Submit", this.state);
 
         if (this.hasMissing()) {
             this.showRequiredOn();
@@ -67,15 +68,23 @@ var ContactEditor = React.createClass({
         var disableSubmit = (this.errorCount() !== 0);
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
 
-        return (
-            <form style={formStyle} noValidate className="form-horizontal" onSubmit={this.handleSubmit}>
-                <TextEditGroup attr={this.getAttr("first_name")} width={300} />
-                <TextEditGroup attr={this.getAttr("last_name")} width={300} />
-                <TextEditGroup attr={this.getAttr("email")} width={300} />
+        if (this.state.loaded) {
+            return (
+                <form style={formStyle} noValidate className="form-horizontal" onSubmit={this.handleSubmit}>
+                    <TextEditGroup attr={this.getAttr("first_name")} width={300} />
+                    <TextEditGroup attr={this.getAttr("last_name")} width={300} />
+                    <TextEditGroup attr={this.getAttr("email")} width={300} />
 
-                <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
-            </form>
-        );
+                    <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
+                </form>
+            );
+        } else {
+            return (
+                <div>
+                    Loading...
+                </div>
+            )
+        }
     }
 });
 
@@ -83,11 +92,7 @@ var FormExample = React.createClass({
 
     getInitialState: function() {
         return {
-            bob: {
-                "first_name": "Bob",
-                "last_name": "Smith",
-                "email": "bob@gmail.com"
-            },
+            data:  undefined
         };
     },
 
@@ -100,7 +105,7 @@ var FormExample = React.createClass({
     },
 
     renderAlert: function() {
-        if (this.state.data) {
+        if (this.state && this.state.data) {
             var firstName = this.state.data["first_name"];
             var lastName = this.state.data["last_name"];
             return (
@@ -114,8 +119,6 @@ var FormExample = React.createClass({
     },
 
     render: function() {
-        var bob = this.state.bob;
-
         return (
             <div>
                 <div className="row">
@@ -126,7 +129,7 @@ var FormExample = React.createClass({
 
                 <div className="row">
                     <div className="col-md-12">
-                        <ContactEditor contact={bob} onSubmit={this.handleSubmit}/>
+                        <ContactEditor onSubmit={this.handleSubmit}/>
                     </div>
                     <div className="col-md-12">
                         {this.renderAlert()}
