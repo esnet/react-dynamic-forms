@@ -173,7 +173,7 @@ var FormMixin = {
     },
 
     hasSchema: function() {
-        return _.has(this.state.formAttrs);
+        return _.has(this.state, "formAttrs");
     },
 
     getValues: function() {
