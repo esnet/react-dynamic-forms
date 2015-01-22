@@ -40,10 +40,14 @@ var ContactForm = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
 
+        //Example of checking if the form has missing values and turning required On
         if (this.hasMissing()) {
             this.showRequiredOn();
             return;
         }
+
+        //Example of fetching current and initial values
+        console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
 

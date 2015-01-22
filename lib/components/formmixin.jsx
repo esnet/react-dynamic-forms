@@ -105,23 +105,6 @@ var FormMixin = {
         };
     },
 
-    setValues: function(initialValues) {
-        var values = {};
-        var attrs = this.state.formAttrs;
-        
-        _.each(attrs, function(attr, attrName) {
-            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
-            if (initialValues) {
-                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
-                values[attrName] = {"value": v, "initialValue": v};
-            } else {
-                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
-            }
-        });
-
-        this.setState({"formValues": values});
-    },
-
     /**
      * Collect together a data structure for the given attrName which can
      * be passed to any of the Group wrapped form widgets. This data contains
@@ -180,6 +163,41 @@ var FormMixin = {
         data.changeCallback = this.handleChange;
 
         return data;
+    },
+
+    initialValue: function(attrName) {
+        var formValues = this.state.formValues;
+        if (!_.has(formValues, attrName)) {
+            console.warn("Requested initialValue for attr that could not be found", attrName);
+            return null;
+        }
+        return formValues[attrName].initialValue;
+    },
+
+    value: function(attrName) {
+        var formValues = this.state.formValues;
+        if (!_.has(formValues, attrName)) {
+            console.warn("Requested initialValue for attr that could not be found", attrName);
+            return null;
+        }
+        return formValues[attrName].value;
+    },
+
+    setValues: function(initialValues) {
+        var values = {};
+        var attrs = this.state.formAttrs;
+        
+        _.each(attrs, function(attr, attrName) {
+            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+            if (initialValues) {
+                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
+                values[attrName] = {"value": v, "initialValue": v};
+            } else {
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            }
+        });
+
+        this.setState({"formValues": values});
     },
 
     getValues: function() {
