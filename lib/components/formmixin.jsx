@@ -84,16 +84,12 @@ var FormMixin = {
         //Values might be passed in as a prop
         var initialValues = this.props.values;
 
-        console.log("Props", this.props);
-
         //Setup formValues
         var values = {};
         _.each(attrs, function(attr, attrName) {
-            console.log(attrName, initialValues);
             var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
             if (initialValues) {
                 var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
-                console.log("   - v", v);
                 values[attrName] = {"value": v, "initialValue": v};
             } else {
                 values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
@@ -111,15 +107,12 @@ var FormMixin = {
 
     setValues: function(initialValues) {
         var values = {};
-        var initialValues = nextProps.values;
         var attrs = this.state.formAttrs;
         
         _.each(attrs, function(attr, attrName) {
-            console.log(attrName, initialValues);
             var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
             if (initialValues) {
                 var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
-                console.log("   - v", v);
                 values[attrName] = {"value": v, "initialValue": v};
             } else {
                 values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
@@ -133,7 +126,6 @@ var FormMixin = {
      * Collect together a data structure for the given attrName which can
      * be passed to any of the Group wrapped form widgets. This data contains
      * info from:
-     *
      *   - formAttrs
      *   - formRules
      *   - formValues

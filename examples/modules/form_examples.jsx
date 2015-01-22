@@ -50,6 +50,20 @@ var ContactForm = React.createClass({
         return false;
     },
 
+
+    componentDidMount: function() {
+        var self = this;
+
+        //Simulate ASYNC further update of data
+        //setTimeout(function() {
+        //    self.setValues({
+        //        "first_name": "Bob",
+        //        "last_name": "Smith",
+        //        "email": "bob@gmail.com"
+        //    });
+        //}, 1500);
+    },
+
     render: function() {
         var disableSubmit = (this.errorCount() !== 0);
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
