@@ -408,23 +408,37 @@ var FormMixin = {
     },
 
     render: function() {
-        var form = this.renderForm();
+        var top = this.renderForm();
         var children = [];
         var formStyle = {};
+        var formClassName = "form-horizontal";
 
-        if (_.has(form.props, "style")) {
-            formStyle = form.props.style;
+        if (_.has(top.props, "style")) {
+            formStyle = top.props.style;
+        }
+        
+        if (_.has(top.props, "className")) {
+            formClassName = top.props.className + " form-horizontal";
         }
 
-        if (form instanceof Form) {
-            children = this.getAttrsForChildren(form.props.children);
+        var formKey = top.props.key || "form";
+        if (top instanceof Form) {
+            children = this.getAttrsForChildren(top.props.children);
+            return (
+                <form className={formClassName}
+                      style={formStyle}
+                      key={formKey}
+                      onSubmit={this.handleSubmit}
+                      noValidate >
+                    {children}
+                </form>
+            );
+        } else {
+            var props = {"key": formKey,
+                         "children": this.getAttrsForChildren(top.props.children)};
+            var newTop = React.addons.cloneWithProps(top, props);
+            return newTop;
         }
-
-        return (
-            <form style={formStyle} onSubmit={this.handleSubmit} noValidate className="form-horizontal">
-                {children}
-            </form>
-        );
     }
 };
 
