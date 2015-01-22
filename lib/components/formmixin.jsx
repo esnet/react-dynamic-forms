@@ -3,24 +3,28 @@
 "use strict";
 
 var _ = require("underscore");
+var React = require("react");
+var Schema = require("./schema");
 
 /**
  * Designed to be mixed into your top level forms.
  *
- *   The user of this form should initialize a schema and values (if editing):
+ *   The user of this form should pass as a prop the schema and values (if editing):
  *
  *   schema     - The attributes to be tracked by this form, specifying
  *                meta data associated with each of those attributes
- *   values     - Optionally specify an initial mapping from attribute name to
- *                value. You can update or later specify the values using
- *                the setValues() method.
  *
- * When the component is about to mount, the schema and value will be
- * converted to an internal representation containing:
+ * To set initial values for the form, use the setValues() method.
+ * Internally the state formValues will contain the Initial and current value
+ * as the form is edited by the user.
+ *
+ * Note: You can not currently pass values in as a prop.
+ *
+ * When building the initial state, the schema will be
+ * converted to an internal state representation containing:
  *
  *   formAttrs  - General meta data about each attribute
  *   formRules  - Required state and validation rules
- *   formValues - Initial and current value
  *
  * The getAttr() call:
  *
@@ -67,11 +71,62 @@ var _ = require("underscore");
  */
 var FormMixin = {
 
+    propTypes: {
+        schema: React.PropTypes.object.isRequired
+    },
+
     getInitialState: function() {
+        //Schema must be passed in as a prop
+        var schema = this.props.schema;
+        var attrs = schema.attrs();
+        var rules = schema.rules();
+
+        //Values might be passed in as a prop
+        var initialValues = this.props.values;
+
+        console.log("Props", this.props);
+
+        //Setup formValues
+        var values = {};
+        _.each(attrs, function(attr, attrName) {
+            console.log(attrName, initialValues);
+            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+            if (initialValues) {
+                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
+                console.log("   - v", v);
+                values[attrName] = {"value": v, "initialValue": v};
+            } else {
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            }
+        });
+
         return {
             errorCounts: {},
             missingCounts: {},
+            formAttrs: attrs,
+            formRules: rules,
+            formValues: values
         };
+    },
+
+    setValues: function(initialValues) {
+        var values = {};
+        var initialValues = nextProps.values;
+        var attrs = this.state.formAttrs;
+        
+        _.each(attrs, function(attr, attrName) {
+            console.log(attrName, initialValues);
+            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+            if (initialValues) {
+                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
+                console.log("   - v", v);
+                values[attrName] = {"value": v, "initialValue": v};
+            } else {
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            }
+        });
+
+        this.setState({"formValues": values});
     },
 
     /**
@@ -94,21 +149,16 @@ var FormMixin = {
         var formRules = this.state.formRules;
         var formValues = this.state.formValues;
 
-        if (!formAttrs) {
-            console.warn("Attrs have not been defined with a schema, so getAttr failed for attr: " + attrName);
-            return;
-        }
-
         data.attr = attrName;
 
         if (_.has(formAttrs, attrName)) {
-            data.key = formValues ? attrName + "_" + formValues[attrName].initialValue : attrName;
+            data.key = attrName + "_" + formValues[attrName].initialValue;
             data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
             data.disabled = formAttrs[attrName].disabled || false;
         } else {
-            console.warn("Attr was not found in the schema: " + attrName);
+            console.warn("Attr '" + attrName + "' is not a part of the form schema");
             return;
         }
 
@@ -140,77 +190,12 @@ var FormMixin = {
         return data;
     },
 
-    /**
-     * Sets a new schema for this form. Example schema:
-     *
-     *  var schema = (
-     *      <Schema>
-     *          <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
-     *          <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
-     *          <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
-     *      </Schema>
-     *  );
-     */
-    setSchema: function(schema, cb) {
-        if (schema) {
-            //Default values
-            var values = {};
-            _.each(schema.attrs(), function(attr, attrName) {
-                var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
-                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
-            });
-
-            //New state
-            var state = {
-                "formAttrs": schema.attrs(),
-                "formRules": schema.rules(),
-                "formValues": values,
-                "errorCounts": {},
-                "missingCounts": {},
-            };
-            this.setState(state, cb);
-        }
-    },
-
-    hasSchema: function() {
-        return _.has(this.state, "formAttrs");
-    },
-
     getValues: function() {
         var vals = {};
         _.each(this.state.formValues, function(val, attrName) {
             vals[attrName] = val.value;
         });
         return vals;
-    },
-
-    /**
-     * Set new values on the form.
-     *
-     * NOTE: A schema for this form needs to have been defined before you can set values on
-     *       those attributes. A schema may be set in initial state (before component is
-     *       mounted) or using setSchema().
-     */
-    setValues: function(formValues) {
-        var values = {};
-        var formAttrs = this.state.formAttrs;
-
-        if (!formAttrs) {
-            console.error("Attrs not defined with a schema before call to setValues");
-            return;
-        }
-
-        _.each(formAttrs, function(attr, attrName) {
-            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
-            if (formValues) {
-                var v = _.has(formValues, attrName) ? formValues[attrName] : defaultValue;
-                values[attrName] = {"value": v, "initialValue": v};
-            } else {
-                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
-            }
-        });
-
-        this.setState({"formValues": values});
     },
 
     showRequiredOn: function() {

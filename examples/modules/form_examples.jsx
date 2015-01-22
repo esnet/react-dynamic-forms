@@ -8,6 +8,9 @@ var {Alert} = require("react-bootstrap");
 
 var {FormMixin, TextEditGroup, Schema, Attr} = require("../../entry");
 
+var description = "This shows a simple form where the schema and values of the form are loaded " +
+                  "at some future time, such as if they were read from a REST API.";
+
 var schema = (
     <Schema>
         <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
@@ -25,28 +28,11 @@ var values = {
 /**
  * Edit a contact
  */
-var ContactEditor = React.createClass({
+var ContactForm = React.createClass({
 
     mixins: [FormMixin],
 
-    displayName: "ContactEditor",
-
-    getInitialState: function() {
-        return {
-            "loaded": false,
-        };
-    },
-
-    componentDidMount: function() {
-        var self = this;
-
-        //Simulate ASYNC state update
-        setTimeout(function() {
-            self.setSchema(schema);
-            self.setValues(values);
-            self.setState({"loaded": true})
-        }, 1500);
-    },
+    displayName: "ContactForm",
 
     /**
      * Save the form
@@ -67,24 +53,15 @@ var ContactEditor = React.createClass({
     render: function() {
         var disableSubmit = (this.errorCount() !== 0);
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
+        return (
+            <form style={formStyle} noValidate className="form-horizontal" onSubmit={this.handleSubmit}>
+                <TextEditGroup attr={this.getAttr("first_name")} width={300} />
+                <TextEditGroup attr={this.getAttr("last_name")} width={300} />
+                <TextEditGroup attr={this.getAttr("email")} width={300} />
 
-        if (this.state.loaded) {
-            return (
-                <form style={formStyle} noValidate className="form-horizontal" onSubmit={this.handleSubmit}>
-                    <TextEditGroup attr={this.getAttr("first_name")} width={300} />
-                    <TextEditGroup attr={this.getAttr("last_name")} width={300} />
-                    <TextEditGroup attr={this.getAttr("email")} width={300} />
-
-                    <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
-                </form>
-            );
-        } else {
-            return (
-                <div>
-                    Loading...
-                </div>
-            )
-        }
+                <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
+            </form>
+        );
     }
 });
 
@@ -92,8 +69,20 @@ var FormExample = React.createClass({
 
     getInitialState: function() {
         return {
-            data:  undefined
+            "data":  undefined,
+            "loaded": false,
         };
+    },
+
+    componentDidMount: function() {
+        var self = this;
+
+        //Simulate ASYNC state update
+        setTimeout(function() {
+            self.setState({
+                "loaded": true
+            });
+        }, 1500);
     },
 
     handleSubmit: function(value) {
@@ -118,20 +107,36 @@ var FormExample = React.createClass({
         }
     },
 
+    renderContactForm: function() {
+        if (this.state.loaded) {
+            return (
+                <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit}/>
+            );
+        } else {
+            return (
+                <div style={{marginTop: 50}}><b>Loading...</b></div>
+            );
+        }
+    },
+
     render: function() {
         return (
             <div>
                 <div className="row">
                     <div className="col-md-12">
                         <h3>Contact form</h3>
+                        <div style={{marginBottom: 20}}>{description}</div>
                     </div>
                 </div>
 
                 <div className="row">
-                    <div className="col-md-12">
-                        <ContactEditor onSubmit={this.handleSubmit}/>
+                    <div className="col-md-9">
+                        {this.renderContactForm()}
                     </div>
-                    <div className="col-md-12">
+                </div>
+
+                <div className="row">
+                    <div className="col-md-9">
                         {this.renderAlert()}
                     </div>
                 </div>
