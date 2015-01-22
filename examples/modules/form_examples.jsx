@@ -6,7 +6,7 @@ var React   = require("react");
 var _       = require("underscore");
 var {Alert} = require("react-bootstrap");
 
-var {FormMixin, TextEditGroup, Schema, Attr} = require("../../entry");
+var {Form, FormMixin, TextEditGroup, Schema, Attr} = require("../../entry");
 
 var description = "This shows a simple form where the schema and values of the form are loaded " +
                   "at some future time, such as if they were read from a REST API.";
@@ -54,31 +54,17 @@ var ContactForm = React.createClass({
         return false;
     },
 
-
-    componentDidMount: function() {
-        var self = this;
-
-        //Simulate ASYNC further update of data
-        //setTimeout(function() {
-        //    self.setValues({
-        //        "first_name": "Bob",
-        //        "last_name": "Smith",
-        //        "email": "bob@gmail.com"
-        //    });
-        //}, 1500);
-    },
-
-    render: function() {
+    renderForm: function() {
         var disableSubmit = (this.errorCount() !== 0);
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
         return (
-            <form style={formStyle} noValidate className="form-horizontal" onSubmit={this.handleSubmit}>
-                <TextEditGroup attr={this.getAttr("first_name")} width={300} />
-                <TextEditGroup attr={this.getAttr("last_name")} width={300} />
-                <TextEditGroup attr={this.getAttr("email")} width={300} />
-
+            <Form style={formStyle}>
+                <TextEditGroup attr="first_name" width={300} />
+                <TextEditGroup attr="last_name" width={300} />
+                <TextEditGroup attr="email" width={300} />
+                <hr />
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
-            </form>
+            </Form>
         );
     }
 });

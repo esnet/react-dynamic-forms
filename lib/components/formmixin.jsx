@@ -3,8 +3,9 @@
 "use strict";
 
 var _ = require("underscore");
-var React = require("react");
+var React = require("react/addons");
 var Schema = require("./schema");
+var Form = require("./form");
 
 /**
  * Designed to be mixed into your top level forms.
@@ -72,7 +73,7 @@ var Schema = require("./schema");
 var FormMixin = {
 
     propTypes: {
-        schema: React.PropTypes.object.isRequired
+        schema: React.PropTypes.object.isRequired,
     },
 
     getInitialState: function() {
@@ -313,8 +314,7 @@ var FormMixin = {
         this.setState({"errorCounts": currentErrorCounts});
 
         if (this.props.onErrorCountChange) {
-
-            if (_.isUndefined(this.props.index)) {
+            if (!_.isUndefined(this.props.index)) {
                 this.props.onErrorCountChange(this.props.attr, count);
             } else {
                 this.props.onErrorCountChange(this.props.index, count);
@@ -385,6 +385,47 @@ var FormMixin = {
             }
         }
     },
+
+    getAttrsForChildren: function(childList) {
+        var self = this;
+        var children = [];
+        React.Children.forEach(childList, function(child, i) {
+            var props;
+            var key = child.props.key || "key-" + i;
+            if (_.has(child.props, "attr")) {
+                var attrName = child.props.attr;
+                props = {"attr": self.getAttr(attrName),
+                         "key": key,
+                         "children": self.getAttrsForChildren(child.props.children)};
+            } else {
+                props = {"key": key,
+                         "children": self.getAttrsForChildren(child.props.children)};
+            }
+            var newChild = React.addons.cloneWithProps(child, props);
+            children.push(newChild);
+        });
+        return children;
+    },
+
+    render: function() {
+        var form = this.renderForm();
+        var children = [];
+        var formStyle = {};
+
+        if (_.has(form.props, "style")) {
+            formStyle = form.props.style;
+        }
+
+        if (form instanceof Form) {
+            children = this.getAttrsForChildren(form.props.children);
+        }
+
+        return (
+            <form style={formStyle} onSubmit={this.handleSubmit} noValidate className="form-horizontal">
+                {children}
+            </form>
+        );
+    }
 };
 
 module.exports = FormMixin;
