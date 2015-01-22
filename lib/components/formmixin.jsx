@@ -388,21 +388,33 @@ var FormMixin = {
 
     getAttrsForChildren: function(childList) {
         var self = this;
+        var childCount = React.Children.count(childList);
         var children = [];
         React.Children.forEach(childList, function(child, i) {
+            var newChild
             var props;
             var key = child.props.key || "key-" + i;
-            if (_.has(child.props, "attr")) {
-                var attrName = child.props.attr;
-                props = {"attr": self.getAttr(attrName),
-                         "key": key,
-                         "children": self.getAttrsForChildren(child.props.children)};
+            if (typeof child.props === "string") {
+                children = child;
             } else {
-                props = {"key": key,
-                         "children": self.getAttrsForChildren(child.props.children)};
+                if (_.has(child.props, "attr")) {
+                    var attrName = child.props.attr;
+                    props = {"attr": self.getAttr(attrName),
+                             "key": key,
+                             "children": self.getAttrsForChildren(child.props.children)};
+                } else {
+                    props = {"key": key,
+                             "children": self.getAttrsForChildren(child.props.children)};
+                }
+                
+                newChild = React.addons.cloneWithProps(child, props);
+
+                if (childCount > 1) {
+                    children.push(newChild);
+                } else {
+                    children = newChild;
+                }
             }
-            var newChild = React.addons.cloneWithProps(child, props);
-            children.push(newChild);
         });
         return children;
     },
