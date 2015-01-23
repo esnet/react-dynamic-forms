@@ -230,6 +230,10 @@ var FormMixin = {
         return errorCount;
     },
 
+    hasErrors: function() {
+        return (this.errorCount() > 0);
+    },
+
     missingCount: function() {
         var missingCounts = this.state.missingCounts;
         var missingCount = 0;

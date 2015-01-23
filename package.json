@@ -32,6 +32,8 @@
     "react-router": "0.9.5",
     "react": "^0.11.2",
     "underscore": "^1.7.0",
-    "highlight.js": "^8.4.0"
+    "highlight.js": "^8.4.0",
+    "react-markdown-el": "^1.0.0",
+    "raw-loader": "^0.5.1"
   }
 }

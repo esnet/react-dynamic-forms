@@ -4,12 +4,17 @@
 
 var React   = require("react");
 var _       = require("underscore");
+var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 
 var {Form, FormMixin, TextEditGroup, Schema, Attr} = require("../../entry");
 
+var text = require("raw!../markdown/form_examples.md");
+
 var description = "This shows a simple form where the schema and values of the form are loaded " +
                   "at some future time, such as if they were read from a REST API.";
+
+//var text = "Testing *this* markdown";
 
 var schema = (
     <Schema>
@@ -55,13 +60,13 @@ var ContactForm = React.createClass({
     },
 
     renderForm: function() {
-        var disableSubmit = (this.errorCount() !== 0);
+        var disableSubmit = this.hasErrors();
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
         return (
             <Form style={formStyle}>
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />
-                <TextEditGroup attr="email" width={300} />
+                <TextEditGroup attr="email" width={500} />
                 <hr />
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
             </Form>
@@ -144,7 +149,22 @@ var FormExample = React.createClass({
                         {this.renderAlert()}
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col-md-12">
+                        <div style={{borderTopStyle: "solid",
+                                    borderTopColor: "rgb(244, 244, 244)",
+                                    paddingTop: 5,
+                                    marginTop: 20}}>
+                            <Markdown text={text}/>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
+
+
         );
     }
 });
