@@ -7,6 +7,8 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var _ = require("underscore");
 
+require("./listeditview.css");
+
 /**
  * Editing of a list of widgets. This The widgets themselves are passed in as 'items'.
  *

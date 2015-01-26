@@ -397,27 +397,31 @@ var FormMixin = {
         React.Children.forEach(childList, function(child, i) {
             var newChild
             var props;
-            var key = child.props.key || "key-" + i;
-            if (typeof child.props === "string") {
-                children = child;
-            } else {
-                if (_.has(child.props, "attr")) {
-                    var attrName = child.props.attr;
-                    props = {"attr": self.getAttr(attrName),
-                             "key": key,
-                             "children": self.getAttrsForChildren(child.props.children)};
+            if (child) {
+                var key = child.props.key || "key-" + i;
+                if (typeof child.props === "string") {
+                    children = child;
                 } else {
-                    props = {"key": key,
-                             "children": self.getAttrsForChildren(child.props.children)};
-                }
-                
-                newChild = React.addons.cloneWithProps(child, props);
+                    if (_.has(child.props, "attr")) {
+                        var attrName = child.props.attr;
+                        props = {"attr": self.getAttr(attrName),
+                                 "key": key,
+                                 "children": self.getAttrsForChildren(child.props.children)};
+                    } else {
+                        props = {"key": key,
+                                 "children": self.getAttrsForChildren(child.props.children)};
+                    }
+                    
+                    newChild = React.addons.cloneWithProps(child, props);
 
-                if (childCount > 1) {
-                    children.push(newChild);
-                } else {
-                    children = newChild;
+                    if (childCount > 1) {
+                        children.push(newChild);
+                    } else {
+                        children = newChild;
+                    }
                 }
+            } else {
+                children = null;
             }
         });
         return children;
