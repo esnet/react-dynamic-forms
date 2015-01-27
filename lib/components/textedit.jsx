@@ -88,6 +88,7 @@ var TextEdit = React.createClass({
 
     onBlur: function(e) {
         var value = this.refs.input.getDOMNode().value;
+        var cast = value;
         var missing = this.props.required && this._isEmpty(value);
         var error = this._getError(value);
 
@@ -99,7 +100,17 @@ var TextEdit = React.createClass({
 
         //Callbacks
         if (this.props.onChange) {
-            this.props.onChange(this.props.attr, e.target.value);
+            if (_.has(this.props.rules, "type")) {
+                switch (this.props.rules.type) {
+                    case "integer":
+                        cast = value === "" ? null : parseInt(value, 10);
+                        break;
+                    case "number":
+                        cast = value === "" ? null : parseFloat(value, 10);
+                        break;
+                };
+            }
+            this.props.onChange(this.props.attr, cast);
         }
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
