@@ -22,6 +22,7 @@ var Group = React.createClass({
         var props = {
             "attr": attr.attr,
             "key": attr.key,
+            "ref": attr.attr,
             "disabled": attr.disabled,
             "placeholder": attr.placeholder,
             "rules": attr.validation,
