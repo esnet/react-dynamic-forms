@@ -21,6 +21,16 @@ var TextEditExamples = React.createClass({
 		this.setState({"missingCount": count});
 	},
 
+	handleIntegerValidate: function(attr, value) {
+		console.log(value);
+		this.setState({"typeofInt": typeof value})
+	},
+
+	handleEmailValidate: function(attr, value) {
+		console.log(value);
+		this.setState({"typeofEmail": typeof value})
+	},
+
   	render: function() {
 
 	    return (
@@ -66,7 +76,17 @@ var TextEditExamples = React.createClass({
 
 	              	Validated field (email address):
 	              	<p />
-	              	<TextEdit initialValue="bob.at.gmail.com" rules={{ "format": "email"}}/>
+	              	<TextEdit initialValue="bob.at.gmail.com" rules={{ "format": "email"}} onChange={this.handleEmailValidate}/>
+	              	<br />
+	              	Type of value: {this.state.typeofEmail}
+
+	              	<p />
+	              	Validated field (integer):
+	              	<p />
+	              	<TextEdit initialValue="42" rules={{ "type": "integer"}}/>
+
+	              	<TextEdit initialValue="bob" rules={{ "type": "integer"}} onChange={this.handleIntegerValidate}/>
+	              	Type of value: {this.state.typeofInt}
 
 	              	<hr />
 	              	<h4>Callbacks</h4>

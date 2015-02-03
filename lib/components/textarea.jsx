@@ -14,7 +14,7 @@ var TextArea = React.createClass({
     displayName: "TextArea",
 
     getDefaultProps: function() {
-        return {width: 600,
+        return {width: "100%",
                 rows: 4};
     },
 

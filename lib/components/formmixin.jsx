@@ -3,22 +3,29 @@
 "use strict";
 
 var _ = require("underscore");
+var React = require("react/addons");
+var Schema = require("./schema");
+var Form = require("./form");
 
 /**
  * Designed to be mixed into your top level forms.
  *
- *   The user of this form should initialize three state variables:
+ *   The user of this form should pass as a prop the schema and values (if editing):
  *
- *   formAttrs  - The attributes to be tracked by this form, specifying
+ *   schema     - The attributes to be tracked by this form, specifying
  *                meta data associated with each of those attributes
- *   formRules  - For each attribute where rules should be applied,
- *                specifies the Revalidator rules
- *   formValues - For each attribute, specifies an initialValue and
- *                (current) value. As the form is interacted with by
- *                the user, the current value will be maintained.
- *                When the form is submitted both the initialValues
- *                and finalValues are available for construction of
- *                the data to actually send.
+ *
+ * To set initial values for the form, use the setValues() method.
+ * Internally the state formValues will contain the Initial and current value
+ * as the form is edited by the user.
+ *
+ * Note: You can not currently pass values in as a prop.
+ *
+ * When building the initial state, the schema will be
+ * converted to an internal state representation containing:
+ *
+ *   formAttrs  - General meta data about each attribute
+ *   formRules  - Required state and validation rules
  *
  * The getAttr() call:
  *
@@ -65,10 +72,37 @@ var _ = require("underscore");
  */
 var FormMixin = {
 
+    propTypes: {
+        schema: React.PropTypes.object.isRequired,
+    },
+
     getInitialState: function() {
+        //Schema must be passed in as a prop
+        var schema = this.props.schema;
+        var attrs = schema.attrs();
+        var rules = schema.rules();
+
+        //Values might be passed in as a prop
+        var initialValues = this.props.values;
+
+        //Setup formValues
+        var values = {};
+        _.each(attrs, function(attr, attrName) {
+            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+            if (initialValues) {
+                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
+                values[attrName] = {"value": v, "initialValue": v};
+            } else {
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            }
+        });
+
         return {
             errorCounts: {},
             missingCounts: {},
+            formAttrs: attrs,
+            formRules: rules,
+            formValues: values
         };
     },
 
@@ -84,19 +118,24 @@ var FormMixin = {
      *   - valueChanged
      *   - missingCountChanged
      *   - errorCountChanged
-     *
      */
     getAttr: function(attrName) {
-        var data = {"key": attrName};
+        var data = {};
         var formAttrs = this.state.formAttrs;
         var formRules = this.state.formRules;
         var formValues = this.state.formValues;
 
+        data.attr = attrName;
+
         if (_.has(formAttrs, attrName)) {
-            data.name = formAttrs[attrName].name;
+            data.key = attrName + "_" + formValues[attrName].initialValue;
+            data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
             data.disabled = formAttrs[attrName].disabled || false;
+        } else {
+            console.warn("Attr '" + attrName + "' is not a part of the form schema");
+            return;
         }
 
         if (_.has(formRules, attrName)) {
@@ -127,6 +166,49 @@ var FormMixin = {
         return data;
     },
 
+    initialValue: function(attrName) {
+        var formValues = this.state.formValues;
+        if (!_.has(formValues, attrName)) {
+            console.warn("Requested initialValue for attr that could not be found", attrName);
+            return null;
+        }
+        return formValues[attrName].initialValue;
+    },
+
+    value: function(attrName) {
+        var formValues = this.state.formValues;
+        if (!_.has(formValues, attrName)) {
+            console.warn("Requested initialValue for attr that could not be found", attrName);
+            return null;
+        }
+        return formValues[attrName].value;
+    },
+
+    setValues: function(initialValues) {
+        var values = {};
+        var attrs = this.state.formAttrs;
+        
+        _.each(attrs, function(attr, attrName) {
+            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
+            if (initialValues) {
+                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
+                values[attrName] = {"value": v, "initialValue": v};
+            } else {
+                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+            }
+        });
+
+        this.setState({"formValues": values});
+    },
+
+    getValues: function() {
+        var vals = {};
+        _.each(this.state.formValues, function(val, attrName) {
+            vals[attrName] = val.value;
+        });
+        return vals;
+    },
+
     showRequiredOn: function() {
         this.setState({"showRequired": true});
     },
@@ -146,6 +228,10 @@ var FormMixin = {
             errorCount += c;
         });
         return errorCount;
+    },
+
+    hasErrors: function() {
+        return (this.errorCount() > 0);
     },
 
     missingCount: function() {
@@ -232,8 +318,7 @@ var FormMixin = {
         this.setState({"errorCounts": currentErrorCounts});
 
         if (this.props.onErrorCountChange) {
-
-            if (_.isUndefined(this.props.index)) {
+            if (!_.isUndefined(this.props.index)) {
                 this.props.onErrorCountChange(this.props.attr, count);
             } else {
                 this.props.onErrorCountChange(this.props.index, count);
@@ -268,15 +353,15 @@ var FormMixin = {
 
     handleChange: function(key, value) {
         var v = value;
-        
+        var formValues = this.state.formValues;
+
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
         if (this.willHandleChange) {
             v = this.willHandleChange(key, value) || v;
         }
 
-        // Set new form values on our state
-        var formValues = this.state.formValues;
+
 
         if (!_.has(formValues, key)) {
             console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
@@ -304,6 +389,77 @@ var FormMixin = {
             }
         }
     },
+
+    getAttrsForChildren: function(childList) {
+        var self = this;
+        var childCount = React.Children.count(childList);
+        var children = [];
+        React.Children.forEach(childList, function(child, i) {
+            var newChild
+            var props;
+            if (child) {
+                var key = child.props.key || "key-" + i;
+                if (typeof child.props === "string") {
+                    children = child;
+                } else {
+                    if (_.has(child.props, "attr")) {
+                        var attrName = child.props.attr;
+                        props = {"attr": self.getAttr(attrName),
+                                 "key": key,
+                                 "children": self.getAttrsForChildren(child.props.children)};
+                    } else {
+                        props = {"key": key,
+                                 "children": self.getAttrsForChildren(child.props.children)};
+                    }
+                    
+                    newChild = React.addons.cloneWithProps(child, props);
+
+                    if (childCount > 1) {
+                        children.push(newChild);
+                    } else {
+                        children = newChild;
+                    }
+                }
+            } else {
+                children = null;
+            }
+        });
+        return children;
+    },
+
+    render: function() {
+        var top = this.renderForm();
+        var children = [];
+        var formStyle = {};
+        var formClassName = "form-horizontal";
+
+        if (_.has(top.props, "style")) {
+            formStyle = top.props.style;
+        }
+        
+        if (_.has(top.props, "className")) {
+            formClassName = top.props.className + " form-horizontal";
+        }
+
+        var formKey = top.props.key || "form";
+        if (top instanceof Form) {
+            children = this.getAttrsForChildren(top.props.children);
+            return (
+                <form className={formClassName}
+                      style={formStyle}
+                      key={formKey}
+                      onSubmit={this.handleSubmit}
+                      noValidate >
+                    {children}
+                </form>
+            );
+        } else {
+            var props = {"key": formKey,
+                         "children": this.getAttrsForChildren(top.props.children)};
+            var newTop = React.addons.cloneWithProps(top, props);
+            return newTop;
+        }
+    }
 };
 
 module.exports = FormMixin;

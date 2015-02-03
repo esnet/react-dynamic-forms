@@ -22,12 +22,13 @@ var Intro = React.createClass({
 
                     <p />
 
-                    This library contains three main pieces:
+                    This library contains four main pieces:
 
                     <ul>
                         <li>Low level forms widgets such as textedit or pulldown type controls</li>
-                        <li>A forms mixin to help you assemble controls together and track errors and missing values</li>
-                        <li>A mixin to help build lists, each item of which can be another form</li>
+                        <li>A forms mixin (FormMixin) to help you assemble controls together and track errors and missing values</li>
+                        <li>Helper wrappings (Group and friends) for the low level widget to use within the form mixin</li>
+                        <li>A mixin (ListEditorMixin) to help build lists, each item of which can be another form</li>
                     </ul>
 
                     </div>

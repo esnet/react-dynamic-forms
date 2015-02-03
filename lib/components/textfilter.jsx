@@ -13,7 +13,7 @@ var TextFilter = React.createClass({
     displayName: "TextFilter",
 
     getDefaultProps: function() {
-        return {width: 300};
+        return {width: "100%"};
     },
 
     getInitialState: function() {
@@ -28,8 +28,7 @@ var TextFilter = React.createClass({
     },
  
     render: function() {
-        var w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
-        var filterStyle = {"height": 27, "margin-top": 1, "width": w};
+        var filterStyle = {"height": 27, "margin-top": 1, "width": this.props.width};
         return (
             <div className="input-group" style={filterStyle}>
                 <input className="form-control"

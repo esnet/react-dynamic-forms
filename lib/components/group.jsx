@@ -20,8 +20,9 @@ var Group = React.createClass({
 
         //Control
         var props = {
-            "attr": attr.key,
+            "attr": attr.attr,
             "key": attr.key,
+            "ref": attr.attr,
             "disabled": attr.disabled,
             "placeholder": attr.placeholder,
             "rules": attr.validation,

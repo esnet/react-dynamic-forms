@@ -26,11 +26,15 @@ module.exports = {
     TextEditGroup: require('./lib/components/texteditgroup.jsx'),
     //Actions
     DeleteAction: require('./lib/components/delete.jsx'),
-    //Top level form mixin
+    //Top level forms
+    Form: require('./lib/components/form.jsx'),
     FormMixin: require('./lib/components/formmixin.jsx'),
     //Top level form error display
     FormErrors: require('./lib/components/formerrors.jsx'),
     //Lists
     ListEditView: require('./lib/components/listeditormixin.jsx'),
     ListEditorMixin: require('./lib/components/listeditormixin.jsx'),
+    //Schema
+    Schema: require('./lib/components/schema.jsx'),
+    Attr: require('./lib/components/attr.jsx'),
 }
