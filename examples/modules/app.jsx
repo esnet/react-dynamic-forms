@@ -35,6 +35,7 @@ var App = React.createClass({
                     <li><Link to="group">Groups</Link></li>
                     <hr />
                     <li><Link to="forms">Contact form</Link></li>
+                    <li><Link to="errors">Form errors</Link></li>
                   </ul>
               </div>
             </div>

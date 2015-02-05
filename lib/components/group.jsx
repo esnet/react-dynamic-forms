@@ -5,6 +5,8 @@
 var React = require("react/addons");
 var _ = require("underscore");
 
+require("./group.css");
+
 /**
  * Example:
  *  <Group attr={this.getAttr("contact_type")} >
@@ -42,18 +44,36 @@ var Group = React.createClass({
             </div>
         );
 
-        //Label
-        var labelText = attr.name;
+        //
+        // Required
+        //
+
+        var required;
         if (attr.required) {
-            labelText += "*";
+            required = (
+                <span className="formmixin-required">*</span>
+            );
+        } else {
+            required = (
+                <span />
+            )
         }
+
+        //
+        // Label
+        //
+
+        var labelText = attr.name;
         var ClassSet = React.addons.classSet;
         var labelClasses = ClassSet({
             "col-sm-2": true,
             "required": attr.required
         });
         var label = (
-            <label className={labelClasses} muted={attr.disabled} htmlFor={attr.key}>{labelText}</label>
+            <div className={labelClasses} >
+                <label muted={attr.disabled} htmlFor={attr.key}>{labelText}</label>
+                {required}
+            </div>
         );
 
         //Group
