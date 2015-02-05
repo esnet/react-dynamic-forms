@@ -75,13 +75,13 @@ var FormErrors = React.createClass({
                         if (this.props.missingCount > 1) {
                             return (
                                 <div>
-                                    <span className="formerrors-text">{this.props.missingCount} fields required</span>
+                                    <span className="formerrors-text">{this.props.missingCount} fields still required</span>
                                 </div>
                             );
                         } else {
                             return (
                                 <div>
-                                    <span className="formerrors-text">{this.props.missingCount} field required</span>
+                                    <span className="formerrors-text">{this.props.missingCount} field still required</span>
                                 </div>
                             );
                         }

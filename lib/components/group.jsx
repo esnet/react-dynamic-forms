@@ -51,11 +51,11 @@ var Group = React.createClass({
         var required;
         if (attr.required) {
             required = (
-                <span className="formmixin-required" style={{paddingLeft: 3}}>*</span>
+                <span className="group-required" style={{paddingLeft: 3}}>*</span>
             );
         } else {
             required = (
-                <span />
+                <span>&nbsp;</span>
             )
         }
 
@@ -66,6 +66,7 @@ var Group = React.createClass({
         var labelText = attr.name;
         var ClassSet = React.addons.classSet;
         var labelClasses = ClassSet({
+            "group-label": true,
             "col-sm-2": true,
             "required": attr.required
         });
