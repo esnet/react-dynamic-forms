@@ -13,6 +13,7 @@ var TaggingExamples = require("./tagging_examples.jsx");
 var FilterExamples = require("./filter_examples.jsx");
 var GroupExamples = require("./group_examples.jsx");
 var FormExamples = require("./form_examples.jsx");
+var ErrorExamples = require("./error_examples.jsx");
 
 var {DefaultRoute, Route, Routes} = require("react-router");
 
@@ -29,6 +30,7 @@ React.renderComponent((
             <Route name="filtering" handler={FilterExamples} />
             <Route name="group" handler={GroupExamples} />
             <Route name="forms" handler={FormExamples} />
+            <Route name="errors" handler={ErrorExamples} />
     	</Route>
   	</Routes>
 ), document.getElementById("content"));
