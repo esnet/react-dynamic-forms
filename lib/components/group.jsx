@@ -51,7 +51,7 @@ var Group = React.createClass({
         var required;
         if (attr.required) {
             required = (
-                <span className="formmixin-required">*</span>
+                <span className="formmixin-required" style={{paddingLeft: 3}}>*</span>
             );
         } else {
             required = (
@@ -70,7 +70,7 @@ var Group = React.createClass({
             "required": attr.required
         });
         var label = (
-            <div className={labelClasses} >
+            <div className={labelClasses} style={{whiteSpace: "nowrap"}}>
                 <label muted={attr.disabled} htmlFor={attr.key}>{labelText}</label>
                 {required}
             </div>
