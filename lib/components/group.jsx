@@ -39,7 +39,7 @@ var Group = React.createClass({
         var child = React.Children.only(this.props.children);
         var childControl = React.addons.cloneWithProps(child, props);
         var control = (
-            <div className="col-sm-10">
+            <div className="col-sm-9">
                 {childControl}
             </div>
         );
@@ -67,7 +67,7 @@ var Group = React.createClass({
         var ClassSet = React.addons.classSet;
         var labelClasses = ClassSet({
             "group-label": true,
-            "col-sm-2": true,
+            "col-sm-3": true,
             "required": attr.required
         });
         var label = (
