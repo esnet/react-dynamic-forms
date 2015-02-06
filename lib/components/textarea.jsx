@@ -84,7 +84,7 @@ var TextArea = React.createClass({
         var error = this._getError(value);
 
         //State changes
-        this.setState({"value": event.target.value,
+        this.setState({"value": e.target.value,
                        "error": error.validationError,
                        "errorMsg": error.validationErrorMessage,
                        "missing": missing});
@@ -102,7 +102,6 @@ var TextArea = React.createClass({
     },
  
     onFocus: function(e) {
-        e.stopPropagation();
         this.setState({"error": false, "errorMsg": ""});
     },
 

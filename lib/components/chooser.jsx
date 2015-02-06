@@ -69,7 +69,7 @@ var Chooser = React.createClass({
         var missing = this.props.required && this._isEmpty(value);
 
         //State changes
-        this.setState({"value": event.target.value,
+        this.setState({"value": e.target.value,
                        "missing": missing});
 
         //Callbacks

@@ -92,8 +92,10 @@ var TextEdit = React.createClass({
         var missing = this.props.required && this._isEmpty(value);
         var error = this._getError(value);
 
+        console.log("Blur", value);
+
         //State changes
-        this.setState({"value": event.target.value,
+        this.setState({"value": e.target.value,
                        "error": error.validationError,
                        "errorMsg": error.validationErrorMessage,
                        "missing": missing});
@@ -121,14 +123,14 @@ var TextEdit = React.createClass({
     },
  
     onFocus: function(e) {
-        e.stopPropagation();
+        //e.stopPropagation();
         this.setState({"error": false, "errorMsg": ""});
     },
 
     render: function() {
         var msg = "";
         var w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
-        var textEditStyle = {"height": 27, "margin-top": 1, "width": w};
+        var textEditStyle = {};//{"height": 27, "margin-top": 1, "width": w};
         var className = "";
 
         if (this.state.error || ( this.props.showRequired && this._isMissing())) {
@@ -148,7 +150,7 @@ var TextEdit = React.createClass({
             <div className={className} >
                 <input  required
                     style={textEditStyle}
-                    className="form-control"
+                    className="form-control input-sm"
                     type="text"
                     ref="input"
                     disabled={this.props.disabled}
