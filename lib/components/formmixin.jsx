@@ -185,6 +185,42 @@ var FormMixin = {
         return formValues[attrName].value;
     },
 
+    setValue: function(key, value) {
+        var v = value;
+        var formValues = this.state.formValues;
+
+        // Hook to allow the component to alter the value before it is set
+        // or perform other actions in response to a particular attr changing.
+        //if (this.willHandleChange) {
+        //    v = this.willHandleChange(key, value) || v;
+        //}
+
+        if (!_.has(formValues, key)) {
+            console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
+        }
+
+        formValues[key].value = v;
+        this.setState({"formValues": formValues});
+
+        // Callback.
+        //
+        // If onChange is registered here then the value sent to that
+        // callback is just the current value of each formValue field.
+        //
+
+        if (this.props.onChange) {
+            var current = {};
+            _.each(formValues, function(value, key) {
+                current[key] = value.value;
+            });
+            if (_.isUndefined(this.props.index)) {
+                this.props.onChange(this.props.attr, current);
+            } else {
+                this.props.onChange(this.props.index, current);
+            }
+        }
+    },
+
     setValues: function(initialValues) {
         var values = {};
         var attrs = this.state.formAttrs;
