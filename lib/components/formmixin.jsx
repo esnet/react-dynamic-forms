@@ -321,7 +321,10 @@ var FormMixin = {
      */
     setEnabledAttributes: function(tag) {
         var self = this;
+
         var formAttrs = this.state.formAttrs;
+        var missing = this.state.missingCounts;
+        var errors = this.state.errorCounts;
 
         _.each(formAttrs, function(data, attrName) {
             var disable;
@@ -335,11 +338,22 @@ var FormMixin = {
             //Clear the missing and error counts for attrs that we
             //are disabling.
             if (!isCurrentlyDisabled && disable) {
-                self.clear(attrName);
+
+                if (missing[attrName]) {
+                    delete missing[attrName];
+                }
+                if (errors[attrName]) {
+                    delete errors[attrName];
+                }
+                
+                this.setState({"missingCounts": missing,
+                               "errorCounts": errors});
             }
         });
         
-        this.setState({"formAttrs": formAttrs});
+        this.setState({"formAttrs": formAttrs,
+                       "missingCounts": missing,
+                       "errorCounts": errors});
     },
 
     handleErrorCountChange: function(key, errorCount) {
