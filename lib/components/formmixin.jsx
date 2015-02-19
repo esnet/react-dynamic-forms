@@ -375,8 +375,9 @@ var FormMixin = {
     },
 
     handleChange: function(key, value) {
+        var self = this;
         var v = value;
-        var formValues = Copy(this.state.formValues);
+        var formValues;
 
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
@@ -384,19 +385,19 @@ var FormMixin = {
             v = this.willHandleChange(key, value) || v;
         }
 
+        // The willHandleChange hook may have changed formValues, so get a
+        // copy of the current state of the formValues now
+        formValues = Copy(this.state.formValues);
         if (!_.has(formValues, key)) {
             console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
         }
 
+        // Now handle the actual update of the attr value and set the updated
+        // formValues back on the state
         formValues[key].value = v;
         this.setState({"formValues": formValues});
 
-        // Callback.
-        //
-        // If onChange is registered here then the value sent to that
-        // callback is just the current value of each formValue field.
-        //
-
+        // Handle registered callback.
         if (this.props.onChange) {
             var current = {};
             _.each(formValues, function(value, key) {
