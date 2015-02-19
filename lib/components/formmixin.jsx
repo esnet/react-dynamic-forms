@@ -345,9 +345,6 @@ var FormMixin = {
                 if (errors[attrName]) {
                     delete errors[attrName];
                 }
-                
-                this.setState({"missingCounts": missing,
-                               "errorCounts": errors});
             }
         });
         
