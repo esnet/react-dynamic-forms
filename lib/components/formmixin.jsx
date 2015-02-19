@@ -199,7 +199,10 @@ var FormMixin = {
             console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
         }
 
+    
+        formValues[key].initialValue = v;
         formValues[key].value = v;
+
         this.setState({"formValues": formValues});
 
         // Callback.
