@@ -6,7 +6,7 @@ var _ = require("underscore");
 var React = require("react/addons");
 var Schema = require("./schema");
 var Form = require("./form");
-
+var Copy = require("deepcopy");
 
 /**
  * Designed to be mixed into your top level forms.
@@ -187,7 +187,7 @@ var FormMixin = {
 
     setValue: function(key, value) {
         var v = value;
-        var formValues = this.state.formValues;
+        var formValues = Copy(this.state.formValues);
 
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
