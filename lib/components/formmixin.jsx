@@ -84,7 +84,7 @@ var FormMixin = {
         var rules = schema.rules();
 
         //Values might be passed in as a prop
-        var initialValues = this.props.values;
+        var initialValues = Copy(this.props.values);
 
         //Setup formValues
         var values = {};
@@ -173,7 +173,7 @@ var FormMixin = {
             console.warn("Requested initialValue for attr that could not be found", attrName);
             return null;
         }
-        return formValues[attrName].initialValue;
+        return Copy(formValues[attrName].initialValue);
     },
 
     value: function(attrName) {
@@ -182,7 +182,7 @@ var FormMixin = {
             console.warn("Requested initialValue for attr that could not be found", attrName);
             return null;
         }
-        return formValues[attrName].value;
+        return Copy(formValues[attrName].value);
     },
 
     setValue: function(key, value) {
