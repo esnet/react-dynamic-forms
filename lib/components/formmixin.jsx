@@ -122,9 +122,9 @@ var FormMixin = {
      */
     getAttr: function(attrName) {
         var data = {};
-        var formAttrs = this.state.formAttrs;
-        var formRules = this.state.formRules;
-        var formValues = this.state.formValues;
+        var formAttrs = Copy(this.state.formAttrs);
+        var formRules = Copy(this.state.formRules);
+        var formValues = Copy(this.state.formValues);
 
         data.attr = attrName;
 
@@ -286,31 +286,6 @@ var FormMixin = {
     },
 
     /**
-     * Clears a form field with specified key internally. Sets the value
-     * to null (or value if supplied). Clears the errors and missing counts
-     * for that field as well.
-     */
-    clear: function(key, value) {
-        var val = value || null;
-        var missing = this.state.missingCounts;
-        var errors = this.state.errorCounts;
-        var formValues = this.state.formValues;
-
-        if (_.has(formValues, key)) {
-            formValues[key].value = val;
-        }
-        if (missing[key]) {
-            delete missing[key];
-        }
-        if (errors[key]) {
-            delete errors[key];
-        }
-        
-        this.setState({"missingCounts": missing,
-                       "errorCounts": errors});
-    },
-
-    /**
      * Set which form fields are enabled/disabled using a tag.
      * Note that fields marked with 'all' will be always enabled.
      *
@@ -323,9 +298,9 @@ var FormMixin = {
     setEnabledAttributes: function(tag) {
         var self = this;
 
-        var formAttrs = this.state.formAttrs;
-        var missing = this.state.missingCounts;
-        var errors = this.state.errorCounts;
+        var formAttrs = Copy(this.state.formAttrs);
+        var missing = Copy(this.state.missingCounts);
+        var errors = Copy(this.state.errorCounts);
 
         _.each(formAttrs, function(data, attrName) {
             var disable;
@@ -355,8 +330,7 @@ var FormMixin = {
     },
 
     handleErrorCountChange: function(key, errorCount) {
-
-        var currentErrorCounts = this.state.errorCounts;
+        var currentErrorCounts = Copy(this.state.errorCounts);
         currentErrorCounts[key] = errorCount;
 
         var count = 0;
@@ -376,7 +350,7 @@ var FormMixin = {
     },
 
     handleMissingCountChange: function(key, missingCount) {
-        var currentMissingCounts = this.state.missingCounts;
+        var currentMissingCounts = Copy(this.state.missingCounts);
         currentMissingCounts[key] = missingCount;
 
         var count = 0;
@@ -402,7 +376,7 @@ var FormMixin = {
 
     handleChange: function(key, value) {
         var v = value;
-        var formValues = this.state.formValues;
+        var formValues = Copy(this.state.formValues);
 
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
@@ -410,14 +384,11 @@ var FormMixin = {
             v = this.willHandleChange(key, value) || v;
         }
 
-
-
         if (!_.has(formValues, key)) {
             console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
         }
 
         formValues[key].value = v;
-
         this.setState({"formValues": formValues});
 
         // Callback.
