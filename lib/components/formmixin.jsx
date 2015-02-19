@@ -285,6 +285,7 @@ var FormMixin = {
         return (this.missingCount() > 0);
     },
 
+
     /**
      * Set which form fields are enabled/disabled using a tag.
      * Note that fields marked with 'all' will be always enabled.
@@ -299,6 +300,7 @@ var FormMixin = {
         var self = this;
 
         var formAttrs = Copy(this.state.formAttrs);
+        var formRules = Copy(this.state.formRules);
         var missing = Copy(this.state.missingCounts);
         var errors = Copy(this.state.errorCounts);
 
@@ -311,8 +313,7 @@ var FormMixin = {
             disable = !(_.contains(tags, tag) || _.contains(tags, "all"));
             formAttrs[attrName].disabled = disable;
 
-            //Clear the missing and error counts for attrs that we
-            //are disabling.
+            //Clear the missing and error counts for attrs that we are disabling.
             if (!isCurrentlyDisabled && disable) {
 
                 if (missing[attrName]) {
@@ -321,7 +322,26 @@ var FormMixin = {
                 if (errors[attrName]) {
                     delete errors[attrName];
                 }
+
+                self.setValue(attrName, null);
+
+                //Evoke callbacks after we're done altering the error and required counts
+                self.handleMissingCountChange(attrName, 1);
             }
+
+            //Add missing counts for attrs that we are enabling and clear their values.
+            if (isCurrentlyDisabled && !disable) {
+
+                //Set missing count for this attr if it's required and we just cleared it
+                if (formRules[attrName].required) {
+                    missing[attrName] = 1;
+                    self.handleMissingCountChange(attrName, 1);
+                }
+
+                //Clear the values
+                self.setValue(attrName, null);
+            }
+
         });
         
         this.setState({"formAttrs": formAttrs,
