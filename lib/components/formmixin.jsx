@@ -191,18 +191,16 @@ var FormMixin = {
 
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
-        //if (this.willHandleChange) {
-        //    v = this.willHandleChange(key, value) || v;
-        //}
+        if (this.willHandleChange) {
+            v = this.willHandleChange(key, value) || v;
+        }
 
         if (!_.has(formValues, key)) {
             console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
         }
 
-    
         formValues[key].initialValue = v;
         formValues[key].value = v;
-
         this.setState({"formValues": formValues});
 
         // Callback.
