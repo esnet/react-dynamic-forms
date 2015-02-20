@@ -19,6 +19,13 @@ var Group = React.createClass({
 
     render: function() {
         var attr = this.props.attr;
+        var hidden = attr.hidden || false;
+
+        if (hidden) {
+            return (
+                <div />
+            );
+        }
 
         //Control
         var props = {

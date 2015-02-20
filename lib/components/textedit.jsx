@@ -77,6 +77,7 @@ var TextEdit = React.createClass({
                        "errorMsg": error.validationErrorMessage,
                        "missing": missing});
         
+        //Initial error and missing states are fed up to the owner
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
         }
@@ -91,8 +92,6 @@ var TextEdit = React.createClass({
         var cast = value;
         var missing = this.props.required && this._isEmpty(value);
         var error = this._getError(value);
-
-        console.log("Blur", value);
 
         //State changes
         this.setState({"value": e.target.value,

@@ -83,6 +83,8 @@ var FormMixin = {
         var attrs = schema.attrs();
         var rules = schema.rules();
 
+        var hidden = [];
+
         //Values might be passed in as a prop
         var initialValues = Copy(this.props.values);
 
@@ -98,12 +100,28 @@ var FormMixin = {
             }
         });
 
+        var hidden = [];
+        if (this.getInitialVisibility) {
+            var tag = this.getInitialVisibility();
+            if (tag) {
+                _.each(attrs, function(attr, attrName) {
+                    var makeHidden;
+                    var tags = attr.tags || [];
+                    makeHidden = !(_.contains(tags, tag) || _.contains(tags, "all"));
+                    if (makeHidden) {
+                        hidden.push(attrName);
+                    }
+                });
+            }
+        }
+
         return {
             errorCounts: {},
             missingCounts: {},
             formAttrs: attrs,
             formRules: rules,
-            formValues: values
+            formValues: values,
+            formHiddenList: hidden
         };
     },
 
@@ -120,20 +138,38 @@ var FormMixin = {
      *   - missingCountChanged
      *   - errorCountChanged
      */
+
     getAttr: function(attrName) {
         var data = {};
         var formAttrs = Copy(this.state.formAttrs);
         var formRules = Copy(this.state.formRules);
         var formValues = Copy(this.state.formValues);
-
+        var formHiddenList = Copy(this.state.formHiddenList)
         data.attr = attrName;
 
         if (_.has(formAttrs, attrName)) {
-            data.key = attrName + "_" + formValues[attrName].initialValue;
+            var initialValue = formValues[attrName].initialValue ?
+                formValues[attrName].initialValue : formValues[attrName].value;
+            data.key = initialValue ? attrName + "_" + initialValue : attrName;
             data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
-            data.disabled = formAttrs[attrName].disabled || false;
+
+            //Consider the field to be disabled if it's either marked as disabled
+            //or if it's on the exempt list
+
+            data.hidden = false;
+            data.disabled = false;
+
+            if (formAttrs[attrName].disabled) {
+                data.disabled = true;
+            }
+
+            if (_.contains(formHiddenList, attrName)) {
+                data.disabled = true;
+                data.hidden = true;
+            }
+
         } else {
             console.warn("Attr '" + attrName + "' is not a part of the form schema");
             return;
@@ -145,7 +181,7 @@ var FormMixin = {
         }
 
         if (_.has(formValues, attrName)) {
-            data.initialValue = formValues[attrName].initialValue;
+            data.initialValue = initialValue;
             data.value = formValues[attrName].value;
         }
 
@@ -285,10 +321,9 @@ var FormMixin = {
         return (this.missingCount() > 0);
     },
 
-
     /**
-     * Set which form fields are enabled/disabled using a tag.
-     * Note that fields marked with 'all' will be always enabled.
+     * Set which form fields are visible or hidden using a tag.
+     * Note that fields marked with 'all' will be always visible.
      *
      * This is a handy function when a selector like a type controls
      * which other attributes apply for that type.
@@ -296,25 +331,29 @@ var FormMixin = {
      * Errors and missing counts associated with attributes
      * being disabled will be cleared.
      */
-    setEnabledAttributes: function(tag) {
+    setVisibility: function(tag) {
         var self = this;
 
-        var formAttrs = Copy(this.state.formAttrs);
-        var formRules = Copy(this.state.formRules);
+        var formAttrs = this.state.formAttrs;
+        var formRules = this.state.formRules;
+
+        var formHiddenList = Copy(this.state.formHiddenList); //Mutate this
+
         var missing = Copy(this.state.missingCounts);
         var errors = Copy(this.state.errorCounts);
 
         _.each(formAttrs, function(data, attrName) {
-            var disable;
+            var exempt;
             var tags = data.tags || [];
-            var isCurrentlyDisabled = _.has(data, "disabled") ? data.disabled : false;
+            var isCurrentlyExempt = _.contains(formHiddenList, attrName);
 
-            //Determine and set new disabled state on formAttr entry
-            disable = !(_.contains(tags, tag) || _.contains(tags, "all"));
-            formAttrs[attrName].disabled = disable;
+            //Determine and set new exemptd state on formAttr entry
+            exempt = !(_.contains(tags, tag) || _.contains(tags, "all"));
 
-            //Clear the missing and error counts for attrs that we are disabling.
-            if (!isCurrentlyDisabled && disable) {
+            //Clear the missing and error counts for attrs that we are exempting.
+            if (!isCurrentlyExempt && exempt) {
+                
+                formHiddenList.push(attrName);
 
                 if (missing[attrName]) {
                     delete missing[attrName];
@@ -323,34 +362,31 @@ var FormMixin = {
                     delete errors[attrName];
                 }
 
-                self.setValue(attrName, null);
-
                 //Evoke callbacks after we're done altering the error and required counts
                 self.handleMissingCountChange(attrName, 1);
             }
 
             //Add missing counts for attrs that we are enabling and clear their values.
-            if (isCurrentlyDisabled && !disable) {
+            if (isCurrentlyExempt && !exempt) {
+
+                formHiddenList = _.without(formHiddenList, attrName);
 
                 //Set missing count for this attr if it's required and we just cleared it
                 if (formRules[attrName].required) {
                     missing[attrName] = 1;
                     self.handleMissingCountChange(attrName, 1);
                 }
-
-                //Clear the values
-                self.setValue(attrName, null);
             }
 
         });
         
-        this.setState({"formAttrs": formAttrs,
+        this.setState({"formHiddenList": formHiddenList,
                        "missingCounts": missing,
                        "errorCounts": errors});
     },
 
     handleErrorCountChange: function(key, errorCount) {
-        var currentErrorCounts = Copy(this.state.errorCounts);
+        var currentErrorCounts = this.state.errorCounts; //Copy?
         currentErrorCounts[key] = errorCount;
 
         var count = 0;
@@ -370,7 +406,7 @@ var FormMixin = {
     },
 
     handleMissingCountChange: function(key, missingCount) {
-        var currentMissingCounts = Copy(this.state.missingCounts);
+        var currentMissingCounts = this.state.missingCounts; //Copy?
         currentMissingCounts[key] = missingCount;
 
         var count = 0;
@@ -384,7 +420,7 @@ var FormMixin = {
         }
 
         this.setState({"missingCounts": currentMissingCounts});
-        
+
         if (this.props.onMissingCountChange) {
             if (_.isUndefined(this.props.index)) {
                 this.props.onMissingCountChange(this.props.attr, count);
@@ -408,6 +444,7 @@ var FormMixin = {
         // The willHandleChange hook may have changed formValues, so get a
         // copy of the current state of the formValues now
         formValues = Copy(this.state.formValues);
+
         if (!_.has(formValues, key)) {
             console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
         }
