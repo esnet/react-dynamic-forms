@@ -63,13 +63,9 @@ var Copy = require("deepcopy");
  * Dynamic forms:
  *
  *   Sometimes a form will show and hide controls based on the value of another
- *   control. With react, hiding and showing things based on state is a simple
- *   matter of controlling the render() function. However, if you hide a control
- *   you do not want its state (error of missing value) to affect the form.
- *   In this case you can clear() an attribute. For a more robust way to control
- *   many fields coming and going from the form you can tag them (in formAttrs)
- *   and then use setEnabledAttributes(tag) to update the mixin internal state to
- *   just take those into consideration.
+ *   control. The way to control many fields coming and going from the form is to
+ *   tag them (in the schema) and then use setVisible(tag) to update the mixin
+ *   internal state to just take those into consideration.
  */
 var FormMixin = {
 
