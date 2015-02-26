@@ -101,7 +101,6 @@ var FormMixin = {
             var tag = this.getInitialVisibility();
             if (tag) {
                 _.each(attrs, function(attr, attrName) {
-                    console.log("   * attr", attrName, attr.tags);
                     var makeHidden;
                     var tags = attr.tags || [];
                     if (_.isArray(tag)) {
