@@ -101,9 +101,14 @@ var FormMixin = {
             var tag = this.getInitialVisibility();
             if (tag) {
                 _.each(attrs, function(attr, attrName) {
+                    console.log("   * attr", attrName, attr.tags);
                     var makeHidden;
                     var tags = attr.tags || [];
-                    makeHidden = !(_.contains(tags, tag) || _.contains(tags, "all"));
+                    if (_.isArray(tag)) {
+                        makeHidden = !(_.intersection(tags, tag).length > 0 || _.contains(tags, "all"));
+                    } else {
+                        makeHidden = !(_.contains(tags, tag) || _.contains(tags, "all"));
+                    }
                     if (makeHidden) {
                         hidden.push(attrName);
                     }
@@ -318,7 +323,8 @@ var FormMixin = {
     },
 
     /**
-     * Set which form fields are visible or hidden using a tag.
+     * Set which form fields are visible or hidden using a tag or array of tags.
+     *
      * Note that fields marked with 'all' will be always visible.
      *
      * This is a handy function when a selector like a type controls
@@ -344,11 +350,16 @@ var FormMixin = {
             var isCurrentlyExempt = _.contains(formHiddenList, attrName);
 
             //Determine and set new exemptd state on formAttr entry
-            exempt = !(_.contains(tags, tag) || _.contains(tags, "all"));
+            if (_.isArray(tag)) {
+                exempt = !(_.intersection(tags, tag).length > 0 || _.contains(tags, "all"));
+            } else {
+                exempt = !(_.contains(tags, tag) || _.contains(tags, "all"));
+            }
+            
 
             //Clear the missing and error counts for attrs that we are exempting.
             if (!isCurrentlyExempt && exempt) {
-                
+
                 formHiddenList.push(attrName);
 
                 if (missing[attrName]) {
@@ -380,6 +391,7 @@ var FormMixin = {
                        "missingCounts": missing,
                        "errorCounts": errors});
     },
+
 
     handleErrorCountChange: function(key, errorCount) {
         var currentErrorCounts = this.state.errorCounts; //Copy?
