@@ -15,6 +15,7 @@ var GroupExamples = require("./group_examples.jsx");
 var FormExamples = require("./form_examples.jsx");
 var ErrorExamples = require("./error_examples.jsx");
 var DynamicExamples = require("./dynamic_examples.jsx");
+var ListExamples = require("./list_examples.jsx");
 
 var {DefaultRoute, Route, Routes} = require("react-router");
 
@@ -33,6 +34,7 @@ React.renderComponent((
             <Route name="forms" handler={FormExamples} />
             <Route name="errors" handler={ErrorExamples} />
             <Route name="dynamic" handler={DynamicExamples} />
+            <Route name="lists" handler={ListExamples} />
     	</Route>
   	</Routes>
 ), document.getElementById("content"));

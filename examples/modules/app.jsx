@@ -38,6 +38,8 @@ var App = React.createClass({
                     <li><Link to="forms">Contact form</Link></li>
                     <li><Link to="errors">Form errors</Link></li>
                     <li><Link to="dynamic">Dynamic forms</Link></li>
+                    <hr />
+                    <li><Link to="lists">Lists</Link></li>
                   </ul>
               </div>
             </div>

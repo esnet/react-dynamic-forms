@@ -59,41 +59,37 @@ var ListEditView = React.createClass({
 
             var itemMinusHide = item.props.hideMinus ? item.props.hideMinus : false;
 
-            var listEditItemClass="esdb-list-edit-item";
+            var listEditItemClass="esnet-forms-listeditview-edit-item";
             var minus;
             if (addMinus && !itemMinusHide) {
                 minus = (
-                    <i id={index} key={minusActionKey} className="glyphicon glyphicon-minus esdb-small-action-icon"
+                    <i id={index} key={minusActionKey} className="glyphicon glyphicon-minus esnet-forms-small-action-icon"
                        onClick={self.removeItem} />
                 );
             } else {
                 listEditItemClass += " no-controls";
                 minus = (
-                    <div className="esdb-list-edit-item-minus-spacer"/>
+                    <div className="esnet-forms-listeditview-edit-item-minus-spacer"/>
                 );
             }
 
             //JSX for each row, includes: UI Item and [-] remove item button
             return (
-                <li height="80px" key={itemKey} className="esdb-list-item">
+                <li height="80px" key={itemKey} className="esnet-forms-list-item">
                     <span key={itemSpanKey} className={listEditItemClass} style={{"float": "left"}}>{item}</span>
-                    <span key={actionSpanKey} className="esdb-minus-action-box" style={{"float": "left", "vertical-align": "top"}}>{minus}</span>
+                    <span key={actionSpanKey} className="esnet-forms-minus-action-box" style={{"float": "left", "vertical-align": "top"}}>{minus}</span>
                 </li>
             );
         });
 
         //Build the [+] elements
         if (addPlus) {
-            //You can supply a custom element here for special handling
-            //XXX
-            //var childControl = React.addons.cloneWithProps(child, props);
-            //
             if (this.props.plusElement) {
                 plus = this.props.plusElement;
             } else {
                 plus = (
-                    <div className="esdb-plus-action-box" key={plusActionKey} onClick={self.addItem}>
-                        <i className="glyphicon glyphicon-plus esdb-small-action-icon"></i>
+                    <div className="esnet-forms-plus-action-box" key={plusActionKey} onClick={self.addItem}>
+                        <i className="glyphicon glyphicon-plus esnet-forms-small-action-icon"></i>
                     </div>
                 );
             }
@@ -110,8 +106,8 @@ var ListEditView = React.createClass({
         
         return (
             <div>
-                <ul className="esdb-list-container">
-                    <ReactCSSTransitionGroup transitionName="esdb-list-item">
+                <ul className="esnet-forms-listeditview-container">
+                    <ReactCSSTransitionGroup transitionName="esnet-forms-list-item">
                         {itemList}
                     </ReactCSSTransitionGroup>
                 </ul>
@@ -119,25 +115,6 @@ var ListEditView = React.createClass({
             </div>
         );
 
-        /* Disabled canAddItems for the moment
-        } else {
-            if (this.props.canAddItems) {
-                return (
-                    <div className="esdb-plus-action-box"  onClick={self.addItem}>
-                        <ReactCSSTransitionGroup transitionName="esdb-list-item">
-                            {itemList}
-                        </ReactCSSTransitionGroup>
-                        <span><i className="glyphicon glyphicon-plus esdb-small-action-icon"></i></span>
-                        <span className="esdb-list-add-text">Add</span>
-                    </div>
-                );
-            } else {
-                return (
-                    <span className="esdb-list-add-text">Nothing to add</span>
-                );
-            }
-        }
-        */
     }
 });
 
