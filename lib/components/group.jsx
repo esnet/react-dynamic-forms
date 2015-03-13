@@ -20,6 +20,18 @@ var Group = React.createClass({
     render: function() {
         var attr = this.props.attr;
 
+        if (!attr) {
+            console.error("Attr not found");
+        }
+
+        var hidden = attr.hidden || false;
+
+        if (hidden) {
+            return (
+                <div />
+            );
+        }
+
         //Control
         var props = {
             "attr": attr.attr,

@@ -103,6 +103,8 @@ var FormErrors = React.createClass({
                         <span className="formerrors-text">{this.props.numErrors} Errors</span>
                     </div>
                 );
+            } else {
+                return null;
             }
         }
     }

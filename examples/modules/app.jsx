@@ -24,6 +24,7 @@ var App = React.createClass({
               <div className="docs-sidebar">
                   <ul className="docs-sidenav nav">
                     <li><Link to="intro">Introduction</Link></li>
+                    <hr />
                     <li><Link to="textedit">TextEdit</Link></li>
                     <li><Link to="textarea">TextArea</Link></li>
                     <li><Link to="chooser">Chooser</Link></li>
@@ -36,6 +37,9 @@ var App = React.createClass({
                     <hr />
                     <li><Link to="forms">Contact form</Link></li>
                     <li><Link to="errors">Form errors</Link></li>
+                    <li><Link to="dynamic">Dynamic forms</Link></li>
+                    <hr />
+                    <li><Link to="lists">Lists</Link></li>
                   </ul>
               </div>
             </div>
