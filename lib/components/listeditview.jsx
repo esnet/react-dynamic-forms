@@ -77,7 +77,7 @@ var ListEditView = React.createClass({
             return (
                 <li height="80px" key={itemKey} className="esnet-forms-list-item">
                     <span key={itemSpanKey} className={listEditItemClass} style={{"float": "left"}}>{item}</span>
-                    <span key={actionSpanKey} className="esnet-forms-minus-action-box" style={{"float": "left", "vertical-align": "top"}}>{minus}</span>
+                    <span key={actionSpanKey} className="esnet-forms-minus-action-box" style={{"float": "left", "verticalAlign": "top"}}>{minus}</span>
                 </li>
             );
         });

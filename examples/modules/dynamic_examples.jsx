@@ -2,8 +2,8 @@
 
 "use strict";
 
-var React   = require("react");
-var _       = require("underscore");
+var React = require("react/addons");
+var _ = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 

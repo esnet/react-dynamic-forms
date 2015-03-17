@@ -4,9 +4,50 @@
 
 var _ = require("underscore");
 var React = require("react/addons");
+var assign = require('react/lib/Object.assign');
+
 var Schema = require("./schema");
+var Attr = require("./attr");
+
 var Form = require("./form");
 var Copy = require("deepcopy");
+
+
+//Pass in the <Schema> element and will return all the <Attrs> under it.
+function getAttrsFromSchema(schema) {
+    if (!React.isValidElement(schema)) {
+        return {};
+    }
+
+    var attrs = {};
+    if (schema.type === Schema.type) {
+        React.Children.forEach(schema.props.children, function (child) {
+            if (child.type === Attr.type) {
+                attrs[child.props.name] = Copy(child.props);
+            }
+        });
+    }
+    return attrs;
+}
+
+
+function getRulesFromSchema(schema) {
+    if (!React.isValidElement(schema)) {
+        return {};
+    }
+
+    var rules = {};
+    if (schema.type === Schema.type) {
+        React.Children.forEach(schema.props.children, function (child) {
+            if (child.type === Attr.type) {
+                var required = child.props.required || false;
+                var validation = Copy(child.props.validation);
+                rules[child.props.name] = {"required": required, "validation": validation};
+            }
+        });
+    }
+    return rules;
+}
 
 /**
  * Designed to be mixed into your top level forms.
@@ -76,8 +117,8 @@ var FormMixin = {
     getInitialState: function() {
         //Schema must be passed in as a prop
         var schema = this.props.schema;
-        var attrs = schema.attrs();
-        var rules = schema.rules();
+        var attrs = getAttrsFromSchema(schema);
+        var rules = getRulesFromSchema(schema);
 
         var hidden = [];
 
@@ -527,8 +568,12 @@ var FormMixin = {
         }
 
         var formKey = top.props.key || "form";
-        if (top instanceof Form) {
+
+        console.log("Form mixin", top);
+
+        if (top.type === Form.type) {
             children = this.getAttrsForChildren(top.props.children);
+            console.log("   children", children);
             return (
                 <form className={formClassName}
                       style={formStyle}

@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react');
+var React = require("react/addons");
 
 var {TextEdit} = require("../../entry");
 
@@ -32,7 +32,6 @@ var TextEditExamples = React.createClass({
 	},
 
   	render: function() {
-
 	    return (
 	    	<div>
 	          	<div className="row">
@@ -49,15 +48,15 @@ var TextEditExamples = React.createClass({
 
 	              	Simple single line text input, with default value:
 	              	<p />
-	              	<TextEdit initialValue="Bob"/>
+	              	<TextEdit initialValue="Bob" width={300}/>
 
 	              	Disabled:
 	              	<p />
-	              	<TextEdit initialValue="Bob" disabled={true}/>
+	              	<TextEdit initialValue="Bob" disabled={true} width={300}/>
 
 	              	Placeholder:
 	              	<p />
-	              	<TextEdit placeholder="Enter first name"/>
+	              	<TextEdit placeholder="Enter first name" width={300}/>
 
 	              	<hr />
 	              	<h4>Errors and missing values</h4>

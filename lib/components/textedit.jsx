@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react");
+var React = require("react/addons");
 var {validate} = require("revalidator");
 var _ = require("underscore");
 
@@ -129,7 +129,7 @@ var TextEdit = React.createClass({
     render: function() {
         var msg = "";
         var w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
-        var textEditStyle = {};//{"height": 27, "margin-top": 1, "width": w};
+        var textEditStyle = {"width": w};
         var className = "";
 
         if (this.state.error || ( this.props.showRequired && this._isMissing())) {
@@ -145,9 +145,11 @@ var TextEdit = React.createClass({
             helpClassName += " has-error";
         }
 
+        console.log("TEXT:", this.props.width)
+
         return (
             <div className={className} >
-                <input  required
+                <input required
                     style={textEditStyle}
                     className="form-control input-sm"
                     type="text"

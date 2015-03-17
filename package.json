@@ -9,28 +9,31 @@
     "url": "git://github.com:esnet/esnet-react-forms.git"
   },
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server -d",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "underscore": "^1.7.0",
     "revalidator": "^0.3.1",
-    "react-chosen": "0.3.6",
+    "react-chosen": "0.3.7",
     "react-bootstrap": "^0.11.1",
     "jquery": "^2.1.1",
     "deepcopy": "^0.3.3"
+  },
+  "peerDependencies": {
+    "react": "0.12.x"
   },
   "devDependencies": {
     "bundle-loader": "^0.5.0",
     "url-loader": "^0.5.5",
     "file-loader": "^0.7.2",
-    "jsx-loader": "^0.11.0",
+    "jsx-loader": "^0.12.2",
     "json-loader": "^0.5.1",
     "style-loader": "^0.8.0",
     "css-loader": "^0.9.0",
     "webpack-dev-server": "^1.6.5",
-    "react-router": "0.9.5",
-    "react": "^0.11.2",
+    "react-router": "^0.12.x",
+    "react": "^0.12.x",
     "underscore": "^1.7.0",
     "highlight.js": "^8.4.0",
     "react-markdown-el": "^1.0.0",

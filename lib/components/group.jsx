@@ -48,6 +48,8 @@ var Group = React.createClass({
             "validator": this.props.validator
         };
 
+        console.log("Render group", props);
+
         var child = React.Children.only(this.props.children);
         var childControl = React.addons.cloneWithProps(child, props);
         var control = (

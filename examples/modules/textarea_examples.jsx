@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require('react');
+var React = require("react/addons");
 
 var {TextArea} = require("../../entry");
 
@@ -43,7 +43,7 @@ var TextAreaExamples = React.createClass({
 
                     Simple single line text input, with default value:
                     <p />
-                    <TextArea initialValue={text} rows={6}/>
+                    <TextArea initialValue={text} rows={6} width={300} />
 
                     Disabled:
                     <p />

@@ -16,14 +16,12 @@ var TextEditGroup = React.createClass({
     displayName: "TextEditGroup",
 
     render: function() {
-        var attr = this.props.attr;
-        return this.transferPropsTo(
-            <Group>
-                <TextEdit initialValue={attr.initialValue}
-                          width={this.props.width}
-                          disabled={this.props.disabled}/>
+        var {attr, ...others} = this.props;
+        return (
+            <Group attr={attr}>
+                <TextEdit initialValue={attr.initialValue} {...others} />
             </Group>
-        );
+        ); 
     }
 });
 
