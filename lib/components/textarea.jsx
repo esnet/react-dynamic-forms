@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var {validate} = require("revalidator");
 var _ = require("underscore");
 
@@ -19,10 +19,11 @@ var TextArea = React.createClass({
     },
 
     getInitialState: function() {
-        return {value: this.props.initialValue,
+        return {initialValue: this.props.initialValue,
+                value: this.props.initialValue,
                 error: null,
                 errorMsg: "",
-                requiredError: false};
+                missing: false};
     },
 
     _isEmpty: function(value) {
@@ -58,6 +59,15 @@ var TextArea = React.createClass({
             }
         }
         return result;
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+        if (this.state.initialValue !== nextProps.initialValue) {
+            this.setState({
+                initialValue: nextProps.initialValue,
+                value: nextProps.initialValue
+            });
+        }
     },
 
     componentDidMount: function() {
@@ -106,10 +116,10 @@ var TextArea = React.createClass({
     },
 
     render: function() {
+        var msg = "";
         var w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
         var textAreaStyle = {"width": w};
         var className = "";
-        var msg = "";
 
         if (this.state.error || ( this.props.showRequired && this._isMissing())) {
             className = "has-error";
@@ -126,17 +136,17 @@ var TextArea = React.createClass({
 
         return (
             <div className={className} >
-                <textarea
-                    style={textAreaStyle}
-                    className="form-control"
-                    type="text"
-                    ref="input"
-                    disabled={this.props.disabled}
-                    placeholder={this.props.placeholder}
-                    defaultValue={this.state.value}
-                    rows={this.props.rows}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}>
+                <textarea style={textAreaStyle}
+                          className="form-control"
+                          type="text"
+                          ref="input"
+                          key={this.state.initialValue}
+                          disabled={this.props.disabled}
+                          placeholder={this.props.placeholder}
+                          defaultValue={this.state.value}
+                          rows={this.props.rows}
+                          onBlur={this.onBlur}
+                          onFocus={this.onFocus}>
                 </textarea>
                 <div className={helpClassName}>{msg}</div>
             </div>

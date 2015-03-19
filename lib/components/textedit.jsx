@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var {validate} = require("revalidator");
 var _ = require("underscore");
 
@@ -20,7 +20,8 @@ var TextEdit = React.createClass({
     },
 
     getInitialState: function() {
-        return {value: this.props.initialValue,
+        return {initialValue: this.props.initialValue,
+                value: this.props.initialValue,
                 error: null,
                 errorMsg: "",
                 missing: false};
@@ -66,6 +67,15 @@ var TextEdit = React.createClass({
             }
         }
         return result;
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+        if (this.state.initialValue !== nextProps.initialValue) {
+            this.setState({
+                initialValue: nextProps.initialValue,
+                value: nextProps.initialValue
+            });
+        }
     },
 
     componentDidMount: function() {
@@ -145,20 +155,19 @@ var TextEdit = React.createClass({
             helpClassName += " has-error";
         }
 
-        console.log("TEXT:", this.props.width)
-
         return (
             <div className={className} >
                 <input required
-                    style={textEditStyle}
-                    className="form-control input-sm"
-                    type="text"
-                    ref="input"
-                    disabled={this.props.disabled}
-                    placeholder={this.props.placeholder}
-                    defaultValue={this.state.value}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}>
+                       key={this.state.initialValue}
+                       style={textEditStyle}
+                       className="form-control input-sm"
+                       type="text"
+                       ref="input"
+                       disabled={this.props.disabled}
+                       placeholder={this.props.placeholder}
+                       defaultValue={this.state.value}
+                       onBlur={this.onBlur}
+                      onFocus={this.onFocus}>
                 </input>
                 <div className={helpClassName}>{msg}</div>
             </div>

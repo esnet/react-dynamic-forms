@@ -28,7 +28,7 @@ var ChooserExamples = React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <h3>Chooser Examples</h3>
-                        The Chooser widget wraps the <a href="https://github.com/chenglou/react-chosen">react-chosen</a> widget, which in tern wraps the <a href="http://harvesthq.github.io/chosen/">Chosen</a> widget.<br />
+                        The Chooser widget wraps the combobox and simple pulldown of react-widgets.<br />
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@ var ChooserExamples = React.createClass({
 
                     <p />
                     Chooser with initial choice:
-                    <Chooser initialChoice={2} initialChoiceList={this.state.animals}/>
+                    <Chooser initialChoice={4} initialChoiceList={this.state.animals}/>
 
                     <p />
                     Chooser disabled:

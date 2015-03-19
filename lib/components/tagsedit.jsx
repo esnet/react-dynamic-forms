@@ -2,17 +2,20 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
-var Chosen = require("react-chosen");
+//var Chosen = require("react-chosen");
 
-require("./assets/chosen.css");
-require("./chooser.css");
+//require("./assets/chosen.css");
+//require("./chooser.css");
+
 
 /**
  * Form control to select tags from a pull down list. You can also add a new tag with
  * the Add tag button.
  */
+
+/*
 var TagsEdit = React.createClass({
     
     displayName: "TagsEdit",
@@ -125,6 +128,6 @@ var TagsEdit = React.createClass({
         );
     }
 });
+*/
 
-
-module.exports = TagsEdit;
+module.exports = {};//TagsEdit;

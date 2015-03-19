@@ -3,9 +3,7 @@
 "use strict";
 
 var _ = require("underscore");
-var React = require("react/addons");
-var assign = require('react/lib/Object.assign');
-
+var React = require("react");
 var Schema = require("./schema");
 var Attr = require("./attr");
 
@@ -191,7 +189,9 @@ var FormMixin = {
         if (_.has(formAttrs, attrName)) {
             var initialValue = formValues[attrName].initialValue ?
                 formValues[attrName].initialValue : formValues[attrName].value;
-            data.key = initialValue ? attrName + "_" + initialValue : attrName;
+            
+            data.key = attrName; //initialValue ? attrName + "_" + initialValue : attrName + "_init";
+
             data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
@@ -241,6 +241,10 @@ var FormMixin = {
         data.missingCountCallback = this.handleMissingCountChange;
         data.changeCallback = this.handleChange;
 
+        if (attrName === "name") {
+            console.log("Name attr", data);
+        }
+
         return data;
     },
 
@@ -264,7 +268,12 @@ var FormMixin = {
 
     setValue: function(key, value) {
         var v = value;
-        var formValues = Copy(this.state.formValues);
+
+        this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
+
+        if (!_.has(this._pendingFormValues, key)) {
+            console.warn("Tried to set value on form, but key doesn't exist:", key);
+        }
 
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
@@ -272,13 +281,14 @@ var FormMixin = {
             v = this.willHandleChange(key, value) || v;
         }
 
-        if (!_.has(formValues, key)) {
-            console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
-        }
 
-        formValues[key].initialValue = v;
-        formValues[key].value = v;
-        this.setState({"formValues": formValues});
+
+        this._pendingFormValues[key].initialValue = v;
+        this._pendingFormValues[key].value = v;
+
+        console.log("@@@ Setting new form values", key, value, this._pendingFormValues);
+
+        this.setState({"formValues": this._pendingFormValues});
 
         // Callback.
         //
@@ -292,6 +302,7 @@ var FormMixin = {
                 current[key] = value.value;
             });
             if (_.isUndefined(this.props.index)) {
+                console.log("@@ on change-->", self.props.attr);
                 this.props.onChange(this.props.attr, current);
             } else {
                 this.props.onChange(this.props.index, current);
@@ -299,21 +310,56 @@ var FormMixin = {
         }
     },
 
-    setValues: function(initialValues) {
-        var values = {};
-        var attrs = this.state.formAttrs;
+    setValues: function(newValues) {
+        var self = this;
+
+        console.log("@@@ BEGIN Transactional setValues", newValues);
+
+        //
+        // We get the current pending form values or a copy of the actual formValues
+        // if we don't have a pendingFormValues transaction in progress
+        //
         
-        _.each(attrs, function(attr, attrName) {
-            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
-            if (initialValues) {
-                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
-                values[attrName] = {"value": v, "initialValue": v};
-            } else {
-                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
+        this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
+
+        _.each(newValues, function(value, key) {
+            var v = value;
+
+            // Hook to allow the component to alter the value before it is set
+            // or perform other actions in response to a particular attr changing.
+            if (self.willHandleChange) {
+                v = self.willHandleChange(key, value) || v;
+            }
+
+            if (!_.has(self._pendingFormValues, key)) {
+                console.warn("Tried to set value on form, but key doesn't exist", key, values, value);
+            }
+
+            self._pendingFormValues[key].initialValue = v;
+            self._pendingFormValues[key].value = v;
+
+            // Callback.
+            //
+            // If onChange is registered here then the value sent to that
+            // callback is just the current value of each formValue field.
+            //
+
+            if (self.props.onChange) {
+                var current = {};
+                _.each(self._pendingFormValues, function(value, key) {
+                    current[key] = value.value;
+                });
+                if (_.isUndefined(self.props.index)) {
+                    console.log("@@ on change-->", self.props.attr);
+                    self.props.onChange(self.props.attr, current);
+                } else {
+                    self.props.onChange(self.props.index, current);
+                }
             }
         });
 
-        this.setState({"formValues": values});
+        console.log("@@@ END Transactional setValues", this._pendingFormValues);
+        this.setState({"formValues": this._pendingFormValues});
     },
 
     getValues: function() {
@@ -427,6 +473,7 @@ var FormMixin = {
 
         });
         
+        console.log("@@@ Setting new visibility based on tag", tag);
         this.setState({"formHiddenList": formHiddenList,
                        "missingCounts": missing,
                        "errorCounts": errors});
@@ -481,26 +528,35 @@ var FormMixin = {
     handleChange: function(key, value) {
         var self = this;
         var v = value;
-        var formValues;
 
+        //
+        // We get the current pending form values or a copy of the actual formValues
+        // if we don't have a pendingFormValues transaction in progress
+        //
+        
+        this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
+        console.log("handleChange", this._pendingFormValues);
+
+        //Check to see if the key is actually in the formValues
+        if (!_.has(this._pendingFormValues, key)) {
+            console.warn("handleChange: Tried to set value on form, but key doesn't exist:", key);
+            return;
+        }
+
+        //
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
+        //
+        
         if (this.willHandleChange) {
             v = this.willHandleChange(key, value) || v;
         }
 
-        // The willHandleChange hook may have changed formValues, so get a
-        // copy of the current state of the formValues now
-        formValues = Copy(this.state.formValues);
+        // Now handle the actual update of the attr value into the pendingFormValues
+        this._pendingFormValues[key].value = v;
 
-        if (!_.has(formValues, key)) {
-            console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
-        }
-
-        // Now handle the actual update of the attr value and set the updated
-        // formValues back on the state
-        formValues[key].value = v;
-        this.setState({"formValues": formValues});
+        // Update the state with the current pendingFormValues
+        this.setState({"formValues": this._pendingFormValues});
 
         // Handle registered callback.
         if (this.props.onChange) {
@@ -559,6 +615,9 @@ var FormMixin = {
         var formStyle = {};
         var formClassName = "form-horizontal";
 
+        // Now that we're rendering we can clear the pendingFormValues
+        this._pendingFormValues = null;
+
         if (_.has(top.props, "style")) {
             formStyle = top.props.style;
         }
@@ -569,11 +628,8 @@ var FormMixin = {
 
         var formKey = top.props.key || "form";
 
-        console.log("Form mixin", top);
-
         if (top.type === Form.type) {
             children = this.getAttrsForChildren(top.props.children);
-            console.log("   children", children);
             return (
                 <form className={formClassName}
                       style={formStyle}

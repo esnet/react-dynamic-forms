@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 
 var Form = React.createClass({
     displayName: "Form",

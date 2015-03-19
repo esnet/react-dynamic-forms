@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
 
 var Group = require("./group.jsx");
@@ -21,7 +21,7 @@ var TextEditGroup = React.createClass({
             <Group attr={attr}>
                 <TextEdit initialValue={attr.initialValue} {...others} />
             </Group>
-        ); 
+        );
     }
 });
 

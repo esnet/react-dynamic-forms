@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
 var OptionButtons = require("./optionbuttons.jsx");
 

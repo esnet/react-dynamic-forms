@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
@@ -79,31 +79,40 @@ var EndpointForm = React.createClass({
         return endpointTypes[this.props.values["type"]];
     },
 
+
     willHandleChange: function(attrName, value) {
+        console.log("willHandleChange", attrName, value);
         switch (attrName) {
             case "type":
+                console.log("Type changed:", value)
                 this.setVisibility(endpointTypes[value]);
                 break;
+
             case "bookmarked":
                 if (value) {
+
                     //Id was changed so transfer existing endpoint values onto the form
                     var endpoint = bookmarked[value];
-                    this.setValue("name", endpoint.name);
-                    this.setValue("description", endpoint.description);
-                    this.setValue("type", endpoint.type);
-                    this.setValue("device_name", endpoint.device_name);
-                    this.setValue("interface", endpoint.interface);
-                    this.setValue("foreign_description", endpoint.foreign_description);
-                    this.setValue("organization", endpoint.organization);
-                    this.setValue("panel_name", endpoint.panel_name);
-                    this.setValue("port_id", endpoint.port_id);
-                    this.setValue("port_side", endpoint.port_side);
-                    this.setValue("port_location", endpoint.port_location);
+                    
+                    this.setValues({
+                        "name": endpoint.name,
+                        "description": endpoint.description,
+                        "type": endpoint.type,
+                        "device_name": endpoint.device_name,
+                        "interface": endpoint.interface,
+                        "foreign_description": endpoint.foreign_description,
+                        "organization": endpoint.organization,
+                        "panel_name": endpoint.panel_name,
+                        "port_id": endpoint.port_id,
+                        "port_side": endpoint.port_side,
+                        "port_location": endpoint.port_location
+                    });
                 }
                 break;
         }
     },
 
+   
     /**
      * Save the form
      */
@@ -115,9 +124,6 @@ var EndpointForm = React.createClass({
             this.showRequiredOn();
             return;
         }
-
-        //Example of fetching current and initial values
-        console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
 
@@ -133,13 +139,20 @@ var EndpointForm = React.createClass({
             bookmarks[id] = bookmark.name;
         });
 
+        console.log("@@@@@@@@ renderForm:", this.state.formValues);
+
         return (
             <Form style={formStyle}>
-                <ChooserGroup attr="bookmarked" width={300} initialChoiceList={bookmarks}/>
+
+                <ChooserGroup attr="bookmarked" width={300} initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
+
                 <hr />
+
                 <TextEditGroup attr="name" width={300} />
                 <TextAreaGroup attr="description" />
+
                 <hr />
+
                 <ChooserGroup attr="type" width={200} initialChoice={this.value("type")}
                               initialChoiceList={endpointTypes} disableSearch={true} />
                 <TextEditGroup attr="device_name" />
@@ -150,8 +163,11 @@ var EndpointForm = React.createClass({
                 <TextEditGroup attr="port_id" />
                 <TextEditGroup attr="port_side" />
                 <TextEditGroup attr="port_location" />
+
                 <hr />
+
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
+
             </Form>
         );
     }
@@ -214,7 +230,8 @@ var FormExample = React.createClass({
     },
 
     handleMissingCountChange: function(attr, count) {
-        this.setState({"missingCount": count});
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@ MISSING STATE CHANGED --->", count);
+        //this.setState({"missingCount": count});
     },
 
     handleErrorCountChange: function(attr, count) {
@@ -255,6 +272,7 @@ var FormExample = React.createClass({
     },
 
     render: function() {
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@ RENDER");
         return (
             <div>
                 <div className="row">
@@ -293,9 +311,6 @@ var FormExample = React.createClass({
                 </div>
 
             </div>
-
-
-
         );
     }
 });

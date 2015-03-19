@@ -2,12 +2,15 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
-var Chosen = require("react-chosen");
+var ReactWidgets = require("react-widgets");
 
-require("./assets/chosen.css");
+require("./assets/css/react-widgets.css");
 require("./chooser.css");
+
+var {Combobox,
+     DropdownList} = ReactWidgets;
 
 /**
  * React Form control to select an item from a list.
@@ -33,7 +36,8 @@ var Chooser = React.createClass({
     displayName: "Chooser",
 
     getInitialState: function() {
-        return {"value": this.props.initialChoice,
+        return {"initialChoice": this.props.initialChoice,
+                "value": this.props.initialChoice,
                 "missing": false};
     },
 
@@ -44,7 +48,20 @@ var Chooser = React.createClass({
     },
 
     _isMissing: function() {
-        return this.props.required && !this.props.disabled && this._isEmpty(this.state.value);
+        return this.props.required &&
+                !this.props.disabled &&
+                this._isEmpty(this.state.value);
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+        console.log("Chooser: componentWillReceiveProps", this.props.attr, this.state.initialChoice, "to", nextProps.initialChoice);
+        if (this.state.initialChoice !== nextProps.initialChoice) {
+            console.log("   -> Chooser: componentWillReceiveProps state change", this.state.initialChoice, nextProps.initialChoice)
+            this.setState({
+                "initialChoice": nextProps.initialChoice,
+                "value": nextProps.initialChoice
+            });
+        }
     },
 
     /**
@@ -63,20 +80,21 @@ var Chooser = React.createClass({
         }
     },
 
-    handleChange: function(e) {
-        e.stopPropagation();
-        var value = $(e.target).val();
+    handleChange: function(v) {
+        var self = this;
+        var value = v.id;
+
+        //is value missing?
         var missing = this.props.required && this._isEmpty(value);
 
         //State changes
-        this.setState({"value": e.target.value,
+        self.setState({"value": value,
                        "missing": missing});
-
+        
         //Callbacks
         if (this.props.onChange) {
-            this.props.onChange(this.props.attr, e.target.value);
+            this.props.onChange(this.props.attr, value);
         }
-
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
         }
@@ -86,23 +104,10 @@ var Chooser = React.createClass({
         var self = this;
         var className = "";
         
+        console.log("Rendering chooser", this.props.attr, this.state.initialChoice, this.state.value)
+
         if (!this.props.initialChoiceList) {
             console.warn("No initial choice list supplied for attr", this.props.attr);
-        }
-
-        var choiceOptions = [];
-        if (!this.props.disabled) {
-            choiceOptions = _.map(self.props.initialChoiceList, function(choice, i) {
-                if (_.contains(self.props.disableList, i)) {
-                    return (
-                        <option key={i} value={i} disabled>{choice}</option>
-                    );
-                } else {
-                    return (
-                        <option key={i} value={i}>{choice}</option>
-                    );
-                }
-            });
         }
 
         var width = this.props.width ? this.props.width + "px" : "400px";
@@ -111,37 +116,50 @@ var Chooser = React.createClass({
             className = "has-error";
         }
 
-        var helpClassName = "help-block";
-        if (this.state.error) {
-            helpClassName += " has-error";
-        }
-
-        //Key based on the choice list
-        var choiceList = _.map(this.props.initialChoiceList, function(choice) {
-            return choice;
+        //Current choice and list of choices
+        var choice = this.props.initialChoiceList[this.state.value];
+        var choiceList = _.map(this.props.initialChoiceList, function(choiceLabel, key) {
+            return {"id": key, "value": choiceLabel};
         });
-        var allowSingleDeselect = this.props.allowSingleDeselect || false;
-        var list = choiceList.join("-");
 
-        return (
-            <div className={className} >
-                <Chosen
-                    key={list}
-                    defaultValue={this.state.value}
-                    width={width}
-                    disabled={this.props.disabled}
-                    data-placeholder="Select..."
-                    disableSearch={this.props.disableSearch}
-                    allowSingleDeselect={allowSingleDeselect}
-                    searchContains={true}
-                    onChange={this.handleChange} >
-                        <option
-                            value="">
-                        </option>
-                        {choiceOptions}
-                </Chosen>
-            </div>
-        );
+        var itemList = _.map(this.props.initialChoiceList, function(choiceLabel) {
+            return choiceLabel;
+        }).join("-");
+ 
+        var key = this.state.key;
+
+        if (this.props.disableSearch) {
+            console.log("           RENDER DROPDOWN LIST WITH KEY", this.state.initialChoice)
+            return (
+                <div className={className} >
+                    <DropdownList disabled={this.props.disabled}
+                                  style={{width: width}}
+                                  key={this.state.initialChoice}
+                                  valueField="id" textField="value"
+                                  data={choiceList}
+                                  defaultValue={choice}
+                                  duration={50}
+                                  filter={false}
+                                  onChange={this.handleChange} />
+                </div>
+            );
+        } else {
+            console.log("           RENDER COMBO BOX WITH KEY", this.state.initialChoice)
+            return (
+                <div className={className} >
+                    <Combobox disabled={this.props.disabled}
+                              style={{width: width}}
+                              key={this.state.initialChoice}
+                              valueField="id" textField="value"
+                              data={choiceList}
+                              defaultValue={choice}
+                              duration={50}
+                              filter={false}
+                              suggest={true}
+                              onChange={this.handleChange} />
+                </div>
+            );
+        }
     }
 });
 
