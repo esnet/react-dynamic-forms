@@ -1,20 +1,18 @@
 
 /*
- Override look and feel of react-select editor (tags and pulldowns etc)
+ Override look and feel of react-widget combobox
  */
 
-.Select-placeholder {
-  color: #aaaaaa;
-  padding: 5px 52px 8px 10px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.rw-btn {
+  line-height: 2.000em;
 }
 
-.Select-control {
-  height: 32px;
+.rw-input {
+  font-size: 12px;
+}
+
+.has-error .rw-combobox {
+    border-color: #a94442 !important;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important;
 }

@@ -54,13 +54,22 @@ var Chooser = React.createClass({
     },
 
     componentWillReceiveProps: function(nextProps) {
-        console.log("Chooser: componentWillReceiveProps", this.props.attr, this.state.initialChoice, "to", nextProps.initialChoice);
+        var self = this;
         if (this.state.initialChoice !== nextProps.initialChoice) {
-            console.log("   -> Chooser: componentWillReceiveProps state change", this.state.initialChoice, nextProps.initialChoice)
-            this.setState({
-                "initialChoice": nextProps.initialChoice,
-                "value": nextProps.initialChoice
-            });
+
+            //
+            // We defer this change so that the chooser's menu can close before anything here
+            // changes it (the new props may have been caused by the pulldown selection in the
+            // first place)
+            //
+
+            _.defer(function(initialChoice){
+                self.setState({
+                    "initialChoice": initialChoice,
+                    "value": initialChoice
+                });
+            }, nextProps.initialChoice);
+
         }
     },
 
@@ -92,11 +101,11 @@ var Chooser = React.createClass({
                        "missing": missing});
         
         //Callbacks
-        if (this.props.onChange) {
-            this.props.onChange(this.props.attr, value);
+        if (self.props.onChange) {
+            self.props.onChange(this.props.attr, value);
         }
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
+        if (self.props.onMissingCountChange) {
+            self.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
         }
     },
 
@@ -104,8 +113,6 @@ var Chooser = React.createClass({
         var self = this;
         var className = "";
         
-        console.log("Rendering chooser", this.props.attr, this.state.initialChoice, this.state.value)
-
         if (!this.props.initialChoiceList) {
             console.warn("No initial choice list supplied for attr", this.props.attr);
         }
@@ -125,11 +132,8 @@ var Chooser = React.createClass({
         var itemList = _.map(this.props.initialChoiceList, function(choiceLabel) {
             return choiceLabel;
         }).join("-");
- 
-        var key = this.state.key;
 
         if (this.props.disableSearch) {
-            console.log("           RENDER DROPDOWN LIST WITH KEY", this.state.initialChoice)
             return (
                 <div className={className} >
                     <DropdownList disabled={this.props.disabled}
@@ -138,13 +142,11 @@ var Chooser = React.createClass({
                                   valueField="id" textField="value"
                                   data={choiceList}
                                   defaultValue={choice}
-                                  duration={50}
                                   filter={false}
                                   onChange={this.handleChange} />
                 </div>
             );
         } else {
-            console.log("           RENDER COMBO BOX WITH KEY", this.state.initialChoice)
             return (
                 <div className={className} >
                     <Combobox disabled={this.props.disabled}
@@ -153,9 +155,9 @@ var Chooser = React.createClass({
                               valueField="id" textField="value"
                               data={choiceList}
                               defaultValue={choice}
-                              duration={50}
                               filter={false}
                               suggest={true}
+                              onToggle={this.handleToggle}
                               onChange={this.handleChange} />
                 </div>
             );

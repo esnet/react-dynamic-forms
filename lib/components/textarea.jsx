@@ -32,8 +32,8 @@ var TextArea = React.createClass({
                 value === "");
     },
 
-    _isMissing: function() {
-        return this.props.required && !this.props.disabled && this._isEmpty(this.state.value);
+    _isMissing: function(v) {
+        return this.props.required && !this.props.disabled && this._isEmpty(v);
     },
 
     _getError: function(value) {
@@ -67,11 +67,23 @@ var TextArea = React.createClass({
                 initialValue: nextProps.initialValue,
                 value: nextProps.initialValue
             });
+
+            var missing = this._isMissing(nextProps.initialValue);
+            var error = this._getError(nextProps.initialValue);
+
+            //Re-broadcast error and missing states up to the owner
+            if (this.props.onErrorCountChange) {
+                this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
+            }
+
+            if (this.props.onMissingCountChange) {
+                this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+            }
         }
     },
 
     componentDidMount: function() {
-        var missing = this._isMissing();
+        var missing = this._isMissing(this.props.initialValue);
         var error = this._getError(this.props.initialValue);
 
         this.setState({"value": this.props.initialValue,
@@ -121,7 +133,7 @@ var TextArea = React.createClass({
         var textAreaStyle = {"width": w};
         var className = "";
 
-        if (this.state.error || ( this.props.showRequired && this._isMissing())) {
+        if (this.state.error || ( this.props.showRequired && this._isMissing(this.state.value))) {
             className = "has-error";
         }
 

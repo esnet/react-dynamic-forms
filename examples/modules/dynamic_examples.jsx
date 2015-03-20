@@ -79,21 +79,13 @@ var EndpointForm = React.createClass({
         return endpointTypes[this.props.values["type"]];
     },
 
-
     willHandleChange: function(attrName, value) {
-        console.log("willHandleChange", attrName, value);
         switch (attrName) {
-            case "type":
-                console.log("Type changed:", value)
-                this.setVisibility(endpointTypes[value]);
-                break;
-
             case "bookmarked":
                 if (value) {
-
-                    //Id was changed so transfer existing endpoint values onto the form
+                    //bookmarked pulldown was changed so transfer existing
+                    //endpoint values onto the form using setValues()
                     var endpoint = bookmarked[value];
-                    
                     this.setValues({
                         "name": endpoint.name,
                         "description": endpoint.description,
@@ -109,9 +101,13 @@ var EndpointForm = React.createClass({
                     });
                 }
                 break;
+            case "type":
+                //The endpoint type changed, which changes fields visible,
+                //so set this with setVisibility() using the type as a filter.
+                this.setVisibility(endpointTypes[value]);
+                break;
         }
     },
-
    
     /**
      * Save the form
@@ -119,7 +115,6 @@ var EndpointForm = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
 
-        //Example of checking if the form has missing values and turning required On
         if (this.hasMissing()) {
             this.showRequiredOn();
             return;
@@ -138,8 +133,6 @@ var EndpointForm = React.createClass({
         _.each(bookmarked, function(bookmark, id) {
             bookmarks[id] = bookmark.name;
         });
-
-        console.log("@@@@@@@@ renderForm:", this.state.formValues);
 
         return (
             <Form style={formStyle}>
@@ -230,8 +223,7 @@ var FormExample = React.createClass({
     },
 
     handleMissingCountChange: function(attr, count) {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@ MISSING STATE CHANGED --->", count);
-        //this.setState({"missingCount": count});
+        this.setState({"missingCount": count});
     },
 
     handleErrorCountChange: function(attr, count) {
@@ -272,7 +264,6 @@ var FormExample = React.createClass({
     },
 
     render: function() {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@ RENDER");
         return (
             <div>
                 <div className="row">

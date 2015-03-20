@@ -62,7 +62,6 @@ var ContactForm = React.createClass({
     renderForm: function() {
         var disableSubmit = this.hasErrors();
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
-        console.log("Render form");
         return (
             <Form style={formStyle}>
                 <TextEditGroup attr="first_name" width={300} />

@@ -16,11 +16,11 @@ var TagsGroup = React.createClass({
     displayName: "TagsGroup",
 
     render: function() {
-        var attr = this.props.attr;
+        var {attr, availableTags, ...others} = this.props;
         return this.transferPropsTo(
-            <Group>
+            <Group attr={attr}>
                 <TagsEdit initialTags={attr.value}
-                          initialTagList={this.props.availableTags} />
+                          initialTagList={availableTags} />
             </Group>
         );
     }

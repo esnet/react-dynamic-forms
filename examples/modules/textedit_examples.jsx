@@ -22,12 +22,10 @@ var TextEditExamples = React.createClass({
 	},
 
 	handleIntegerValidate: function(attr, value) {
-		console.log(value);
 		this.setState({"typeofInt": typeof value})
 	},
 
 	handleEmailValidate: function(attr, value) {
-		console.log(value);
 		this.setState({"typeofEmail": typeof value})
 	},
 

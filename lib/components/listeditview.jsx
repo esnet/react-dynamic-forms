@@ -51,11 +51,10 @@ var ListEditView = React.createClass({
         // an item and a [-] icon used for removing that item.
         var plusActionKey = "plus-action";
         var itemList = _.map(self.props.items, function(item, index) {
-            var minusActionKey = "minus-action-" + item.props.key;
-            
-            var itemKey = "item-" + item.props.key;
-            var itemSpanKey = "item-span-" + item.props.key;
-            var actionSpanKey = "action-span-" + item.props.key;
+            var minusActionKey = "minus-action-" + item.key;
+            var itemKey = "item-" + item.key;
+            var itemSpanKey = "item-span-" + item.key;
+            var actionSpanKey = "action-span-" + item.key;
 
             var itemMinusHide = item.props.hideMinus ? item.props.hideMinus : false;
 
