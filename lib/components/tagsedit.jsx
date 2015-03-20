@@ -59,7 +59,6 @@ var TagsEdit = React.createClass({
     },
 
     handleChange: function(value) {
-        console.log("handleChange", value);
         this.props.onChange(this.props.attr, value);
         this.setState({"tags": value});
     },
@@ -91,7 +90,6 @@ var TagsEdit = React.createClass({
 
         var key = this.state.tags.join("-") + "--" + this.state.tagList.join("-");
 
-        console.log(this.state.tags, this.state.tagList);
         return (
             <div>
                 <Multiselect multiple

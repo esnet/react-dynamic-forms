@@ -9,3 +9,7 @@
 input.rw-input.rw-input {
   margin-bottom: 1px;
 }
+
+.has-error .rw-multiselect {
+  border-color: red;
+}
