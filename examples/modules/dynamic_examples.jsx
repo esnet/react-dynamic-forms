@@ -137,14 +137,20 @@ var EndpointForm = React.createClass({
         return (
             <Form style={formStyle}>
 
+                <h5>Bookmarked endpoints</h5>
+
                 <ChooserGroup attr="bookmarked" width={300} initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
 
                 <hr />
+
+                <h5>General information</h5>
 
                 <TextEditGroup attr="name" width={300} />
                 <TextAreaGroup attr="description" />
 
                 <hr />
+
+                <h5>Endpoint type</h5>
 
                 <ChooserGroup attr="type" width={200} initialChoice={this.value("type")}
                               initialChoiceList={endpointTypes} disableSearch={true} />

@@ -4,12 +4,11 @@
 
 var _ = require("underscore");
 var React = require("react/addons");
-var Schema = require("./schema");
-var Attr = require("./attr");
-
-var Form = require("./form");
 var Copy = require("deepcopy");
 
+var Schema = require("./schema");
+var Attr = require("./attr");
+var Form = require("./form");
 
 //Pass in the <Schema> element and will return all the <Attrs> under it.
 function getAttrsFromSchema(schema) {
@@ -541,7 +540,7 @@ var FormMixin = {
         // Handle registered callback.
         if (this.props.onChange) {
             var current = {};
-            _.each(formValues, function(value, key) {
+            _.each(this._pendingFormValues, function(value, key) {
                 current[key] = value.value;
             });
             if (_.isUndefined(this.props.index)) {
@@ -557,31 +556,34 @@ var FormMixin = {
         var childCount = React.Children.count(childList);
         var children = [];
         React.Children.forEach(childList, function(child, i) {
-            var newChild
-            var props;
             if (child) {
+                var newChild
                 var key = child.key || "key-" + i;
-                if (typeof child.props === "string") {
-                    children = child;
-                } else {
+                var props = {"key": key};
+                if (typeof child.props.children !== "string") {
+
+                    //Child has a prop attr={attrName} on it
                     if (_.has(child.props, "attr")) {
                         var attrName = child.props.attr;
-                        props = {"attr": self.getAttr(attrName),
-                                 "key": key,
-                                 "children": self.getAttrsForChildren(child.props.children)};
-                    } else {
-                        props = {"key": key,
-                                 "children": self.getAttrsForChildren(child.props.children)};
-                    }
-                    
-                    newChild = React.addons.cloneWithProps(child, props);
 
-                    if (childCount > 1) {
-                        children.push(newChild);
-                    } else {
-                        children = newChild;
+                        //Take all the schema data for this child's
+                        //attr and apply it as a prop on this child
+                        props["attr"] = self.getAttr(attrName);
+                    }
+
+                    //Recurse down to children
+                    if (child.children) {
+                        props["children"] = self.getAttrsForChildren(child.props.children);
                     }
                 }
+                newChild = React.addons.cloneWithProps(child, props);
+
+                if (childCount > 1) {
+                    children.push(newChild);
+                } else {
+                    children = newChild;
+                }
+
             } else {
                 children = null;
             }
