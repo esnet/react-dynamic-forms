@@ -123,6 +123,15 @@ var Chooser = React.createClass({
             className = "has-error";
         }
 
+        function filterFunction(item, value) {
+            //var lastname = person.lastName.toLowerCase()
+            //var search   = value.toLowerCase();
+
+            console.log(item, value);
+
+            return item.value.indexOf(value) >= 0;
+        }
+
         //Current choice and list of choices
         var choice = this.props.initialChoiceList[this.state.value];
         var choiceList = _.map(this.props.initialChoiceList, function(choiceLabel, key) {
@@ -152,10 +161,10 @@ var Chooser = React.createClass({
                     <Combobox disabled={this.props.disabled}
                               style={{width: width}}
                               key={this.state.initialChoice}
-                              valueField="id" textField="value"
+                              textField="value"
                               data={choiceList}
                               defaultValue={choice}
-                              filter="contains"
+                              filter={filterFunction}
                               suggest={false}
                               onToggle={this.handleToggle}
                               onChange={this.handleChange} />
