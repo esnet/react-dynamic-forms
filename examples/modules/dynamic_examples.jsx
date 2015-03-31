@@ -139,7 +139,7 @@ var EndpointForm = React.createClass({
 
                 <h5>Bookmarked endpoints</h5>
 
-                <ChooserGroup attr="bookmarked" width={300} initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
+                <ChooserGroup attr="bookmarked" width={300} disableSearch={true} initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
 
                 <hr />
 
