@@ -8,7 +8,7 @@ var ChooserExamples = React.createClass({
 
     getInitialState: function() {
         return {
-            animals: {1: "cat", 2: "dog", 3: "fish", 4: "hedgehog", 5: "banana slug"},
+            animals: {1: "cat", 2: "dog", 3: "duck", 4: "donkey", 5: "fish", 6: "hedgehog", 7: "banana slug"},
             selection: "",
             missingCount: 0,
         };

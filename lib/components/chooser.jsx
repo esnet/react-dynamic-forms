@@ -155,8 +155,8 @@ var Chooser = React.createClass({
                               valueField="id" textField="value"
                               data={choiceList}
                               defaultValue={choice}
-                              filter={false}
-                              suggest={true}
+                              filter="contains"
+                              suggest={false}
                               onToggle={this.handleToggle}
                               onChange={this.handleChange} />
                 </div>
