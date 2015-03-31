@@ -124,11 +124,6 @@ var Chooser = React.createClass({
         }
 
         function filterFunction(item, value) {
-            //var lastname = person.lastName.toLowerCase()
-            //var search   = value.toLowerCase();
-
-            console.log(item, value);
-
             return item.value.indexOf(value) >= 0;
         }
 
