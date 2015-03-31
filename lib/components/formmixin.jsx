@@ -560,7 +560,7 @@ var FormMixin = {
             var newChild
             var props;
             if (child) {
-                var key = child.props.key || "key-" + i;
+                var key = child.key || "key-" + i;
                 if (typeof child.props === "string") {
                     children = child;
                 } else {
