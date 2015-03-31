@@ -154,7 +154,7 @@ var TextEdit = React.createClass({
         var textEditStyle = {"width": w};
         var className = "";
 
-        if (this.state.error || ( this.props.showRequired && this._isMissing(this.props.value))) {
+        if (this.state.error || ( this.props.showRequired && this._isMissing(this.state.value))) {
             className = "has-error";
         }
 

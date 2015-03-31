@@ -138,8 +138,6 @@ var Chooser = React.createClass({
             return choiceLabel;
         }).join("-"));
 
-        console.log("key", key);
-
         if (this.props.disableSearch) {
             return (
                 <div className={className} >
