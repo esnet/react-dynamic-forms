@@ -28,7 +28,7 @@ var TextFilter = React.createClass({
     },
  
     render: function() {
-        var filterStyle = {"height": 27, "margin-top": 1, "width": this.props.width};
+        var filterStyle = {"height": 27, "marginTop": 1, "width": this.props.width};
         return (
             <div className="input-group" style={filterStyle}>
                 <input className="form-control"

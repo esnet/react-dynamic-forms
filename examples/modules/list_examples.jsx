@@ -115,7 +115,7 @@ var ContactForm = React.createClass({
         }
 
         //Example of fetching current and initial values
-        console.log("values:", this.state.formValues);
+        console.log("values:", this.state.value("emails"));
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
     },
