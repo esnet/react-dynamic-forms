@@ -124,7 +124,7 @@ var Chooser = React.createClass({
         }
 
         function filterFunction(item, value) {
-            return item.value.indexOf(value) >= 0;
+            return item.value.toLowerCase().indexOf(value.toLowerCase()) >= 0;
         }
 
         //Current choice and list of choices
