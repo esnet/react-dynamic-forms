@@ -3,7 +3,7 @@
 "use strict";
 
 var _ = require("underscore");
-var React = require("react");
+var React = require("react/addons");
 var Schema = require("./schema");
 var Attr = require("./attr");
 

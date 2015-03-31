@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react");
+var React = require("react/addons");
 var invariant = require('react/lib/invariant');
 var _ = require("underscore");
 
