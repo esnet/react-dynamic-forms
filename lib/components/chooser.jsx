@@ -5,6 +5,7 @@
 var React = require("react/addons");
 var _ = require("underscore");
 var ReactWidgets = require("react-widgets");
+var hash = require("string-hash");
 
 require("./assets/css/react-widgets.css");
 require("./chooser.css");
@@ -133,16 +134,18 @@ var Chooser = React.createClass({
             return {"id": key, "value": choiceLabel};
         });
 
-        var itemList = _.map(this.props.initialChoiceList, function(choiceLabel) {
+        var key = hash(_.map(this.props.initialChoiceList, function(choiceLabel) {
             return choiceLabel;
-        }).join("-");
+        }).join("-"));
+
+        console.log("key", key);
 
         if (this.props.disableSearch) {
             return (
                 <div className={className} >
                     <DropdownList disabled={this.props.disabled}
                                   style={{width: width}}
-                                  key={this.state.initialChoice}
+                                  key={key}
                                   valueField="id" textField="value"
                                   data={choiceList}
                                   defaultValue={choice}
@@ -155,7 +158,7 @@ var Chooser = React.createClass({
                 <div className={className} >
                     <Combobox disabled={this.props.disabled}
                               style={{width: width}}
-                              key={this.state.initialChoice}
+                              key={key}
                               textField="value"
                               data={choiceList}
                               defaultValue={choice}
