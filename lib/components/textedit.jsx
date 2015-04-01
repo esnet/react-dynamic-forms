@@ -167,10 +167,12 @@ var TextEdit = React.createClass({
             helpClassName += " has-error";
         }
 
+        var key = this.state.initialValue || "";
+
         return (
             <div className={className} >
                 <input required
-                       key={this.state.initialValue}
+                       key={key}
                        style={textEditStyle}
                        className="form-control input-sm"
                        type="text"

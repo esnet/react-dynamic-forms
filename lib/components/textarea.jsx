@@ -146,13 +146,15 @@ var TextArea = React.createClass({
             helpClassName += " has-error";
         }
 
+        var key = this.state.initialValue || "";
+
         return (
             <div className={className} >
                 <textarea style={textAreaStyle}
                           className="form-control"
                           type="text"
                           ref="input"
-                          key={this.state.initialValue}
+                          key={key}
                           disabled={this.props.disabled}
                           placeholder={this.props.placeholder}
                           defaultValue={this.state.value}
