@@ -4,6 +4,7 @@
 
 var React = require("react/addons");
 var _ = require("underscore");
+var hash = require("string-hash");
 var {Multiselect} = require("react-widgets");
 
 require("./assets/css/react-widgets.css");
@@ -33,34 +34,11 @@ var TagsEdit = React.createClass({
         });
     },
 
-    handleShowNewTagUI: function() {
-        this.setState({"showNewTagUI": true});
-    },
-
-    handleSubmitNewTagUI: function() {
-        var currentTagList = this.state.tags;
-        var tagList = this.state.tagList;
-        var tag = this.refs.newTag.getDOMNode().value.trim();
-        
-        if (tag) {
-            if (!_.contains(tagList, tag)) {
-                tagList.push(tag);
-            }
-            currentTagList.push(tag);
-        }
-
-        this.setState({"showNewTagUI": false,
-                       "tags": currentTagList,
-                       "tagList": tagList});
-
-        this.props.onChange(this.props.attr, currentTagList);
-
-        return false;
-    },
-
     handleChange: function(value) {
-        this.props.onChange(this.props.attr, value);
         this.setState({"tags": value});
+
+        //Callback
+        this.props.onChange(this.props.attr, value);
     },
 
     handleCreate: function(tag) {
@@ -77,6 +55,9 @@ var TagsEdit = React.createClass({
         this.setState({"showNewTagUI": false,
                        "tags": currentTagList,
                        "tagList": tagList});
+
+        //Callback
+        this.props.onChange(this.props.attr, currentTagList);
     },
 
     render: function() {
@@ -88,7 +69,7 @@ var TagsEdit = React.createClass({
             return null;
         }
 
-        var key = this.state.tags.join("-") + "--" + this.state.tagList.join("-");
+        var key = this.state.tags.join("-") + ":" + hash(this.state.tagList.join("-"));
 
         return (
             <div>
@@ -102,7 +83,8 @@ var TagsEdit = React.createClass({
                              onChange={this.handleChange}
                              onCreate={this.handleCreate}
                              width="300px"
-                             placeholder="Select tags..." />
+                             placeholder="Select tags..."
+                             messages={{emptyFilter: "No unused tags available", createNew: "Create a new tag"}}/>
                 <div className="help-block"></div>
             </div>
         );
