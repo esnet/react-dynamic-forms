@@ -6,6 +6,8 @@ var React = require("react/addons");
 var {validate} = require("revalidator");
 var _ = require("underscore");
 
+require("./textarea.css");
+
 /**
  * Form control to edit a Text Area field
  */

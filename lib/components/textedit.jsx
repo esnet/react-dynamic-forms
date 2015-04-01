@@ -6,6 +6,8 @@ var React = require("react/addons");
 var {validate} = require("revalidator");
 var _ = require("underscore");
 
+require("./textedit.css");
+
 /**
  * Form control to edit a text field.
  * Set the initial value with 'initialValue' and set a callback for
