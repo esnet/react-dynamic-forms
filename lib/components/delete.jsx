@@ -3,23 +3,41 @@
 "use strict";
 
 var React = require("react/addons");
-
 var _ = require("underscore");
 
-var {Modal, Button, OverlayMixin} = require("react-bootstrap");
+var {Modal,
+     Button,
+     OverlayMixin} = require("react-bootstrap");
 
 /**
  * A dialog for confirming that you want to delete something, triggered from a trashcan icon.
+ *
+ * You can pass in a 'warning' which will be displayed to the user. Something like:
+ *      "This will delete the whole organization and all the contacts in it"
+ *
+ * The dialog will follow this up with the text:
+ *      "This action can not be undone."
+ * though this can be altered with the 'subText' prop.
+ *
  * TODO: Decide if this should be in this forms library, or somewhere else.
  */
 var DeleteAction = React.createClass({
+
     mixins: [OverlayMixin],
 
     displayName: "DeleteAction",
 
     getInitialState: function () {
         return {
-          isModalOpen: false
+            isModalOpen: false
+        };
+    },
+
+    getDefaultProps: function() {
+        return {
+            title: "Confirm delete",
+            warning: "Are you sure you want to delete this?",
+            text: "This action can not be undone."
         };
     },
 
@@ -56,11 +74,12 @@ var DeleteAction = React.createClass({
         if (!this.state.isModalOpen) {
             return <span />;
         }
+
         return (
-            <Modal title="Confirmation" animation={false} onRequestHide={this.close}>
+            <Modal title={this.props.confirmDelete} animation={false} onRequestHide={this.close}>
                 <div className="modal-body">
-                    <h4>Are you sure you want to delete this?</h4>
-                    <p>This action can not be undone.</p>
+                    <h4>{this.props.warning}</h4>
+                    <p>{this.props.text}</p>
                 </div>
                 <div className="modal-footer">
                     <Button onClick={this.close}>Close</Button>
