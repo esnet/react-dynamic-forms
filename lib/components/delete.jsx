@@ -76,7 +76,7 @@ var DeleteAction = React.createClass({
         }
 
         return (
-            <Modal title={this.props.confirmDelete} animation={false} onRequestHide={this.close}>
+            <Modal title={this.props.title} animation={false} onRequestHide={this.close}>
                 <div className="modal-body">
                     <h4>{this.props.warning}</h4>
                     <p>{this.props.text}</p>
