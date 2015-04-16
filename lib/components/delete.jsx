@@ -17,7 +17,7 @@ var {Modal,
  *
  * The dialog will follow this up with the text:
  *      "This action can not be undone."
- * though this can be altered with the 'subText' prop.
+ * though this can be altered with the 'text' prop.
  *
  * TODO: Decide if this should be in this forms library, or somewhere else.
  */
