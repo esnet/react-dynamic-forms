@@ -2,10 +2,10 @@
 
 "use strict";
 
-var React    = require("react/addons")
-var _        = require("underscore");
+var React = require("react/addons");
+var _ = require("underscore");
 var Markdown = require("react-markdown-el");
-var {Alert}  = require("react-bootstrap");
+var {Alert} = require("react-bootstrap");
 
 var {Form,
      FormMixin,
@@ -115,11 +115,9 @@ var ContactForm = React.createClass({
         }
 
         //Example of fetching current and initial values
-        console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
+        console.log("values:", this.state.value("emails"));
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
-
-        return false;
     },
 
     renderForm: function() {

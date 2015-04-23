@@ -2,9 +2,11 @@
 
 "use strict";
 
-var React = require("react");
+var React = require("react/addons");
 var {validate} = require("revalidator");
 var _ = require("underscore");
+
+require("./textedit.css");
 
 /**
  * Form control to edit a text field.
@@ -20,7 +22,8 @@ var TextEdit = React.createClass({
     },
 
     getInitialState: function() {
-        return {value: this.props.initialValue,
+        return {initialValue: this.props.initialValue,
+                value: this.props.initialValue,
                 error: null,
                 errorMsg: "",
                 missing: false};
@@ -32,8 +35,8 @@ var TextEdit = React.createClass({
                 value === "");
     },
 
-    _isMissing: function() {
-        return this.props.required && !this.props.disabled && this._isEmpty(this.state.value);
+    _isMissing: function(v) {
+        return this.props.required && !this.props.disabled && this._isEmpty(v);
     },
 
     _getError: function(value) {
@@ -68,8 +71,29 @@ var TextEdit = React.createClass({
         return result;
     },
 
+    componentWillReceiveProps: function(nextProps) {
+        if (this.state.initialValue !== nextProps.initialValue) {
+            this.setState({
+                initialValue: nextProps.initialValue,
+                value: nextProps.initialValue
+            });
+
+            var missing = this._isMissing(nextProps.initialValue);
+            var error = this._getError(nextProps.initialValue);
+
+            //Re-broadcast error and missing states up to the owner
+            if (this.props.onErrorCountChange) {
+                this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
+            }
+
+            if (this.props.onMissingCountChange) {
+                this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+            }
+        }
+    },
+
     componentDidMount: function() {
-        var missing = this._isMissing();
+        var missing = this._isMissing(this.props.initialValue);
         var error = this._getError(this.props.initialValue);
 
         this.setState({"value": this.props.initialValue,
@@ -129,10 +153,10 @@ var TextEdit = React.createClass({
     render: function() {
         var msg = "";
         var w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
-        var textEditStyle = {};//{"height": 27, "margin-top": 1, "width": w};
+        var textEditStyle = {"width": w};
         var className = "";
 
-        if (this.state.error || ( this.props.showRequired && this._isMissing())) {
+        if (this.state.error || ( this.props.showRequired && this._isMissing(this.state.value))) {
             className = "has-error";
         }
 
@@ -145,18 +169,21 @@ var TextEdit = React.createClass({
             helpClassName += " has-error";
         }
 
+        var key = this.state.initialValue || "";
+
         return (
             <div className={className} >
-                <input  required
-                    style={textEditStyle}
-                    className="form-control input-sm"
-                    type="text"
-                    ref="input"
-                    disabled={this.props.disabled}
-                    placeholder={this.props.placeholder}
-                    defaultValue={this.state.value}
-                    onBlur={this.onBlur}
-                    onFocus={this.onFocus}>
+                <input required
+                       key={key}
+                       style={textEditStyle}
+                       className="form-control input-sm"
+                       type="text"
+                       ref="input"
+                       disabled={this.props.disabled}
+                       placeholder={this.props.placeholder}
+                       defaultValue={this.state.value}
+                       onBlur={this.onBlur}
+                       onFocus={this.onFocus}>
                 </input>
                 <div className={helpClassName}>{msg}</div>
             </div>

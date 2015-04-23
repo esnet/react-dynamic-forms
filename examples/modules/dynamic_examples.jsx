@@ -2,8 +2,8 @@
 
 "use strict";
 
-var React   = require("react");
-var _       = require("underscore");
+var React = require("react/addons");
+var _ = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 
@@ -81,43 +81,44 @@ var EndpointForm = React.createClass({
 
     willHandleChange: function(attrName, value) {
         switch (attrName) {
-            case "type":
-                this.setVisibility(endpointTypes[value]);
-                break;
             case "bookmarked":
                 if (value) {
-                    //Id was changed so transfer existing endpoint values onto the form
+                    //bookmarked pulldown was changed so transfer existing
+                    //endpoint values onto the form using setValues()
                     var endpoint = bookmarked[value];
-                    this.setValue("name", endpoint.name);
-                    this.setValue("description", endpoint.description);
-                    this.setValue("type", endpoint.type);
-                    this.setValue("device_name", endpoint.device_name);
-                    this.setValue("interface", endpoint.interface);
-                    this.setValue("foreign_description", endpoint.foreign_description);
-                    this.setValue("organization", endpoint.organization);
-                    this.setValue("panel_name", endpoint.panel_name);
-                    this.setValue("port_id", endpoint.port_id);
-                    this.setValue("port_side", endpoint.port_side);
-                    this.setValue("port_location", endpoint.port_location);
+                    this.setValues({
+                        "name": endpoint.name,
+                        "description": endpoint.description,
+                        "type": endpoint.type,
+                        "device_name": endpoint.device_name,
+                        "interface": endpoint.interface,
+                        "foreign_description": endpoint.foreign_description,
+                        "organization": endpoint.organization,
+                        "panel_name": endpoint.panel_name,
+                        "port_id": endpoint.port_id,
+                        "port_side": endpoint.port_side,
+                        "port_location": endpoint.port_location
+                    });
                 }
+                break;
+            case "type":
+                //The endpoint type changed, which changes fields visible,
+                //so set this with setVisibility() using the type as a filter.
+                this.setVisibility(endpointTypes[value]);
                 break;
         }
     },
-
+   
     /**
      * Save the form
      */
     handleSubmit: function(e) {
         e.preventDefault();
 
-        //Example of checking if the form has missing values and turning required On
         if (this.hasMissing()) {
             this.showRequiredOn();
             return;
         }
-
-        //Example of fetching current and initial values
-        console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
 
@@ -135,11 +136,22 @@ var EndpointForm = React.createClass({
 
         return (
             <Form style={formStyle}>
-                <ChooserGroup attr="bookmarked" width={300} initialChoiceList={bookmarks}/>
+
+                <h5>Bookmarked endpoints</h5>
+
+                <ChooserGroup attr="bookmarked" width={300} disableSearch={true} initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
+
                 <hr />
+
+                <h5>General information</h5>
+
                 <TextEditGroup attr="name" width={300} />
                 <TextAreaGroup attr="description" />
+
                 <hr />
+
+                <h5>Endpoint type</h5>
+
                 <ChooserGroup attr="type" width={200} initialChoice={this.value("type")}
                               initialChoiceList={endpointTypes} disableSearch={true} />
                 <TextEditGroup attr="device_name" />
@@ -150,8 +162,11 @@ var EndpointForm = React.createClass({
                 <TextEditGroup attr="port_id" />
                 <TextEditGroup attr="port_side" />
                 <TextEditGroup attr="port_location" />
+
                 <hr />
+
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
+
             </Form>
         );
     }
@@ -293,9 +308,6 @@ var FormExample = React.createClass({
                 </div>
 
             </div>
-
-
-
         );
     }
 });

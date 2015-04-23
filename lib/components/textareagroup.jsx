@@ -16,11 +16,10 @@ var TextAreaGroup = React.createClass({
     displayName: "TextAreaGroup",
 
     render: function() {
-        var attr = this.props.attr;
-        return this.transferPropsTo(
-            <Group>
-                <TextArea initialValue={attr.initialValue}
-                          width={this.props.width}/>
+        var {attr, ...others} = this.props;
+        return (
+            <Group attr={attr} >
+                <TextArea initialValue={attr.initialValue} {...others} />
             </Group>
         );
     }

@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react');
+var React = require("react/addons");
 
 var {Chooser} = require("../../entry");
 
@@ -8,7 +8,7 @@ var ChooserExamples = React.createClass({
 
     getInitialState: function() {
         return {
-            animals: {1: "cat", 2: "dog", 3: "fish", 4: "hedgehog", 5: "banana slug"},
+            animals: {1: "cat", 2: "dog", 3: "duck", 4: "donkey", 5: "fish", 6: "hedgehog", 7: "banana slug"},
             selection: "",
             missingCount: 0,
         };
@@ -28,7 +28,7 @@ var ChooserExamples = React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <h3>Chooser Examples</h3>
-                        The Chooser widget wraps the <a href="https://github.com/chenglou/react-chosen">react-chosen</a> widget, which in tern wraps the <a href="http://harvesthq.github.io/chosen/">Chosen</a> widget.<br />
+                        The Chooser widget wraps the combobox and simple pulldown of react-widgets.<br />
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@ var ChooserExamples = React.createClass({
 
                     <p />
                     Chooser with initial choice:
-                    <Chooser initialChoice={2} initialChoiceList={this.state.animals}/>
+                    <Chooser initialChoice={4} initialChoiceList={this.state.animals}/>
 
                     <p />
                     Chooser disabled:

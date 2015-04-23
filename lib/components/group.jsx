@@ -50,6 +50,7 @@ var Group = React.createClass({
 
         var child = React.Children.only(this.props.children);
         var childControl = React.addons.cloneWithProps(child, props);
+
         var control = (
             <div className="col-sm-9">
                 {childControl}

@@ -1,8 +1,9 @@
 /** @jsx React.DOM */
 
-var React = require('react');
-
-var {Link} = require('react-router');
+var React = require("react/addons");
+var Router = require("react-router");
+var {RouteHandler,
+     Link} = Router;
 
 require('./app.css');
 
@@ -45,7 +46,7 @@ var App = React.createClass({
             </div>
 
             <div className="col-md-10">
-              <this.props.activeRouteHandler />
+              <RouteHandler />
             </div>
 
           </div>

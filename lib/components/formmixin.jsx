@@ -4,9 +4,47 @@
 
 var _ = require("underscore");
 var React = require("react/addons");
-var Schema = require("./schema");
-var Form = require("./form");
 var Copy = require("deepcopy");
+
+var Schema = require("./schema");
+var Attr = require("./attr");
+var Form = require("./form");
+
+//Pass in the <Schema> element and will return all the <Attrs> under it.
+function getAttrsFromSchema(schema) {
+    if (!React.isValidElement(schema)) {
+        return {};
+    }
+
+    var attrs = {};
+    if (schema.type === Schema.type) {
+        React.Children.forEach(schema.props.children, function (child) {
+            if (child.type === Attr.type) {
+                attrs[child.props.name] = Copy(child.props);
+            }
+        });
+    }
+    return attrs;
+}
+
+
+function getRulesFromSchema(schema) {
+    if (!React.isValidElement(schema)) {
+        return {};
+    }
+
+    var rules = {};
+    if (schema.type === Schema.type) {
+        React.Children.forEach(schema.props.children, function (child) {
+            if (child.type === Attr.type) {
+                var required = child.props.required || false;
+                var validation = Copy(child.props.validation);
+                rules[child.props.name] = {"required": required, "validation": validation};
+            }
+        });
+    }
+    return rules;
+}
 
 /**
  * Designed to be mixed into your top level forms.
@@ -76,8 +114,8 @@ var FormMixin = {
     getInitialState: function() {
         //Schema must be passed in as a prop
         var schema = this.props.schema;
-        var attrs = schema.attrs();
-        var rules = schema.rules();
+        var attrs = getAttrsFromSchema(schema);
+        var rules = getRulesFromSchema(schema);
 
         var hidden = [];
 
@@ -150,13 +188,15 @@ var FormMixin = {
         if (_.has(formAttrs, attrName)) {
             var initialValue = formValues[attrName].initialValue ?
                 formValues[attrName].initialValue : formValues[attrName].value;
-            data.key = initialValue ? attrName + "_" + initialValue : attrName;
+            
+            data.key = attrName; //initialValue ? attrName + "_" + initialValue : attrName + "_init";
+
             data.name = formAttrs[attrName].label;
             data.placeholder = formAttrs[attrName].placeholder;
             data.help = formAttrs[attrName].help;
 
             //Consider the field to be disabled if it's either marked as disabled
-            //or if it's on the exempt list
+            //or if it's on the hidden list
 
             data.hidden = false;
             data.disabled = false;
@@ -223,7 +263,6 @@ var FormMixin = {
 
     setValue: function(key, value) {
         var v = value;
-        var formValues = Copy(this.state.formValues);
 
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
@@ -231,13 +270,14 @@ var FormMixin = {
             v = this.willHandleChange(key, value) || v;
         }
 
-        if (!_.has(formValues, key)) {
-            console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
+        this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
+        if (!_.has(this._pendingFormValues, key)) {
+            console.warn("Tried to set value on form, but key doesn't exist:", key);
         }
+        this._pendingFormValues[key].initialValue = v;
+        this._pendingFormValues[key].value = v;
 
-        formValues[key].initialValue = v;
-        formValues[key].value = v;
-        this.setState({"formValues": formValues});
+        this.setState({"formValues": this._pendingFormValues});
 
         // Callback.
         //
@@ -258,21 +298,51 @@ var FormMixin = {
         }
     },
 
-    setValues: function(initialValues) {
-        var values = {};
-        var attrs = this.state.formAttrs;
-        
-        _.each(attrs, function(attr, attrName) {
-            var defaultValue = _.has(attr, "defaultValue") ? attr["defaultValue"] : undefined;
-            if (initialValues) {
-                var v = _.has(initialValues, attrName) ? initialValues[attrName] : defaultValue;
-                values[attrName] = {"value": v, "initialValue": v};
-            } else {
-                values[attrName] = {"value": defaultValue, "initialValue": defaultValue};
-            }
-        });
+    setValues: function(newValues) {
+        var self = this;
 
-        this.setState({"formValues": values});
+        //
+        // We get the current pending form values or a copy of the actual formValues
+        // if we don't have a pendingFormValues transaction in progress
+        //
+
+        _.each(newValues, function(value, key) {
+            var v = value;
+
+            // Hook to allow the component to alter the value before it is set
+            // or perform other actions in response to a particular attr changing.
+            if (self.willHandleChange) {
+                v = self.willHandleChange(key, value) || v;
+            }
+
+            self._pendingFormValues = self._pendingFormValues || Copy(self.state.formValues);
+
+            if (!_.has(self._pendingFormValues, key)) {
+                console.warn("Tried to set value on form, but key doesn't exist:", key, self._pendingFormValues);
+            }
+
+            self._pendingFormValues[key].initialValue = v;
+            self._pendingFormValues[key].value = v;
+
+            // Callback.
+            //
+            // If onChange is registered here then the value sent to that
+            // callback is just the current value of each formValue field.
+            //
+
+            if (self.props.onChange) {
+                var current = {};
+                _.each(self._pendingFormValues, function(value, key) {
+                    current[key] = value.value;
+                });
+                if (_.isUndefined(self.props.index)) {
+                    self.props.onChange(self.props.attr, current);
+                } else {
+                    self.props.onChange(self.props.index, current);
+                }
+            }
+            self.setState({"formValues": self._pendingFormValues});
+        });
     },
 
     getValues: function() {
@@ -340,55 +410,54 @@ var FormMixin = {
 
         var formHiddenList = Copy(this.state.formHiddenList); //Mutate this
 
-        var missing = Copy(this.state.missingCounts);
-        var errors = Copy(this.state.errorCounts);
+        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
+        this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts);
 
         _.each(formAttrs, function(data, attrName) {
-            var exempt;
+            var shouldBeHidden;
             var tags = data.tags || [];
-            var isCurrentlyExempt = _.contains(formHiddenList, attrName);
+            var isCurrentlyHidden = _.contains(formHiddenList, attrName);
 
-            //Determine and set new exemptd state on formAttr entry
+            //Determine and set new hidden state on formAttr entry
             if (_.isArray(tag)) {
-                exempt = !(_.intersection(tags, tag).length > 0 || _.contains(tags, "all"));
+                shouldBeHidden = !(_.intersection(tags, tag).length > 0 || _.contains(tags, "all"));
             } else {
-                exempt = !(_.contains(tags, tag) || _.contains(tags, "all"));
+                shouldBeHidden = !(_.contains(tags, tag) || _.contains(tags, "all"));
             }
             
+            //Clear the missing and error counts for attrs that we are hiding.
+            if (!isCurrentlyHidden && shouldBeHidden) {
 
-            //Clear the missing and error counts for attrs that we are exempting.
-            if (!isCurrentlyExempt && exempt) {
-
+                //Add to hidden list
                 formHiddenList.push(attrName);
 
-                if (missing[attrName]) {
-                    delete missing[attrName];
-                }
-                if (errors[attrName]) {
-                    delete errors[attrName];
-                }
+                //Remove missing and error counts for hidden attrs
+                delete self._pendingMissing[attrName];
+                delete self._pendingErrors[attrName];
 
                 //Evoke callbacks after we're done altering the error and required counts
-                self.handleMissingCountChange(attrName, 1);
+                self.handleMissingCountChange(attrName, 0);
             }
 
-            //Add missing counts for attrs that we are enabling and clear their values.
-            if (isCurrentlyExempt && !exempt) {
-
+            //Add missing counts for attrs that we are enabling
+            if (isCurrentlyHidden && !shouldBeHidden) {
                 formHiddenList = _.without(formHiddenList, attrName);
 
                 //Set missing count for this attr if it's required and we just cleared it
                 if (formRules[attrName].required) {
-                    missing[attrName] = 1;
+                    self._pendingMissing[attrName] = 1;
                     self.handleMissingCountChange(attrName, 1);
+                } else {
+                    self._pendingMissing[attrName] = 0;
+                    self.handleMissingCountChange(attrName, 0);
                 }
             }
 
         });
         
         this.setState({"formHiddenList": formHiddenList,
-                       "missingCounts": missing,
-                       "errorCounts": errors});
+                       "missingCounts": this._pendingMissing,
+                       "errorCounts": this._pendingErrors});
     },
 
 
@@ -413,11 +482,11 @@ var FormMixin = {
     },
 
     handleMissingCountChange: function(key, missingCount) {
-        var currentMissingCounts = this.state.missingCounts; //Copy?
-        currentMissingCounts[key] = missingCount;
+        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
+        this._pendingMissing[key] = missingCount;
 
         var count = 0;
-        _.each(currentMissingCounts, function(c) {
+        _.each(this._pendingMissing, function(c) {
             count += c;
         });
 
@@ -426,7 +495,7 @@ var FormMixin = {
             this.showRequiredOff();
         }
 
-        this.setState({"missingCounts": currentMissingCounts});
+        this.setState({"missingCounts": this._pendingMissing});
 
         if (this.props.onMissingCountChange) {
             if (_.isUndefined(this.props.index)) {
@@ -440,31 +509,38 @@ var FormMixin = {
     handleChange: function(key, value) {
         var self = this;
         var v = value;
-        var formValues;
 
+        //
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
+        //
+        
         if (this.willHandleChange) {
             v = this.willHandleChange(key, value) || v;
         }
 
-        // The willHandleChange hook may have changed formValues, so get a
-        // copy of the current state of the formValues now
-        formValues = Copy(this.state.formValues);
+        //
+        // We get the current pending form values or a copy of the actual formValues
+        // if we don't have a pendingFormValues transaction in progress
+        //
+        this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
 
-        if (!_.has(formValues, key)) {
-            console.warn("Tried to set value on form, but key doesn't exist", key, formValues, value);
+        //Check to see if the key is actually in the formValues
+        if (!_.has(this._pendingFormValues, key)) {
+            console.warn("handleChange: Tried to set value on form, but key doesn't exist:", key);
+            return;
         }
 
-        // Now handle the actual update of the attr value and set the updated
-        // formValues back on the state
-        formValues[key].value = v;
-        this.setState({"formValues": formValues});
+        // Now handle the actual update of the attr value into the pendingFormValues
+        this._pendingFormValues[key].value = v;
+
+        // Update the state with the current pendingFormValues
+        this.setState({"formValues": this._pendingFormValues});
 
         // Handle registered callback.
         if (this.props.onChange) {
             var current = {};
-            _.each(formValues, function(value, key) {
+            _.each(this._pendingFormValues, function(value, key) {
                 current[key] = value.value;
             });
             if (_.isUndefined(this.props.index)) {
@@ -480,31 +556,34 @@ var FormMixin = {
         var childCount = React.Children.count(childList);
         var children = [];
         React.Children.forEach(childList, function(child, i) {
-            var newChild
-            var props;
             if (child) {
-                var key = child.props.key || "key-" + i;
-                if (typeof child.props === "string") {
-                    children = child;
-                } else {
+                var newChild
+                var key = child.key || "key-" + i;
+                var props = {"key": key};
+                if (typeof child.props.children !== "string") {
+
+                    //Child has a prop attr={attrName} on it
                     if (_.has(child.props, "attr")) {
                         var attrName = child.props.attr;
-                        props = {"attr": self.getAttr(attrName),
-                                 "key": key,
-                                 "children": self.getAttrsForChildren(child.props.children)};
-                    } else {
-                        props = {"key": key,
-                                 "children": self.getAttrsForChildren(child.props.children)};
-                    }
-                    
-                    newChild = React.addons.cloneWithProps(child, props);
 
-                    if (childCount > 1) {
-                        children.push(newChild);
-                    } else {
-                        children = newChild;
+                        //Take all the schema data for this child's
+                        //attr and apply it as a prop on this child
+                        props["attr"] = self.getAttr(attrName);
+                    }
+
+                    //Recurse down to children
+                    if (child.children) {
+                        props["children"] = self.getAttrsForChildren(child.props.children);
                     }
                 }
+                newChild = React.addons.cloneWithProps(child, props);
+
+                if (childCount > 1) {
+                    children.push(newChild);
+                } else {
+                    children = newChild;
+                }
+
             } else {
                 children = null;
             }
@@ -518,6 +597,11 @@ var FormMixin = {
         var formStyle = {};
         var formClassName = "form-horizontal";
 
+        // Now that we're rendering we can clear the pendingFormValues
+        this._pendingFormValues = null;
+        this._pendingMissing = null;
+        this._pendingErrors = null;
+
         if (_.has(top.props, "style")) {
             formStyle = top.props.style;
         }
@@ -526,8 +610,9 @@ var FormMixin = {
             formClassName = top.props.className + " form-horizontal";
         }
 
-        var formKey = top.props.key || "form";
-        if (top instanceof Form) {
+        var formKey = top.key || "form";
+
+        if (top.type === Form.type) {
             children = this.getAttrsForChildren(top.props.children);
             return (
                 <form className={formClassName}

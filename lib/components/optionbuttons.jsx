@@ -2,7 +2,7 @@
 
 "use strict";
 
-var React = require("react");
+var React = require("react/addons");
 var _ = require("underscore");
 
 var OptionButtons = React.createClass({
@@ -56,7 +56,7 @@ var OptionButtons = React.createClass({
         var list = choiceList.join("-");
 
         return (
-            <div className={classes} key={list} width={width} style={{"margin-bottom": 5}}>
+            <div className={classes} key={list} width={width} style={{"marginBottom": 5}}>
                 {buttonElements}
             </div>
         );

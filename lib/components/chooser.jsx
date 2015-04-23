@@ -2,12 +2,16 @@
 
 "use strict";
 
-var React = require("react");
+var React = require("react/addons");
 var _ = require("underscore");
-var Chosen = require("react-chosen");
+var ReactWidgets = require("react-widgets");
+var hash = require("string-hash");
 
-require("./assets/chosen.css");
+require("./assets/css/react-widgets.css");
 require("./chooser.css");
+
+var {Combobox,
+     DropdownList} = ReactWidgets;
 
 /**
  * React Form control to select an item from a list.
@@ -33,7 +37,8 @@ var Chooser = React.createClass({
     displayName: "Chooser",
 
     getInitialState: function() {
-        return {"value": this.props.initialChoice,
+        return {"initialChoice": this.props.initialChoice,
+                "value": this.props.initialChoice,
                 "missing": false};
     },
 
@@ -44,7 +49,29 @@ var Chooser = React.createClass({
     },
 
     _isMissing: function() {
-        return this.props.required && !this.props.disabled && this._isEmpty(this.state.value);
+        return this.props.required &&
+                !this.props.disabled &&
+                this._isEmpty(this.state.value);
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+        var self = this;
+        if (this.state.initialChoice !== nextProps.initialChoice) {
+
+            //
+            // We defer this change so that the chooser's menu can close before anything here
+            // changes it (the new props may have been caused by the pulldown selection in the
+            // first place)
+            //
+
+            _.defer(function(initialChoice){
+                self.setState({
+                    "initialChoice": initialChoice,
+                    "value": initialChoice
+                });
+            }, nextProps.initialChoice);
+
+        }
     },
 
     /**
@@ -63,22 +90,23 @@ var Chooser = React.createClass({
         }
     },
 
-    handleChange: function(e) {
-        e.stopPropagation();
-        var value = $(e.target).val();
+    handleChange: function(v) {
+        var self = this;
+        var value = v.id;
+
+        //is value missing?
         var missing = this.props.required && this._isEmpty(value);
 
         //State changes
-        this.setState({"value": e.target.value,
+        self.setState({"value": value,
                        "missing": missing});
-
+        
         //Callbacks
-        if (this.props.onChange) {
-            this.props.onChange(this.props.attr, e.target.value);
+        if (self.props.onChange) {
+            self.props.onChange(this.props.attr, value);
         }
-
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
+        if (self.props.onMissingCountChange) {
+            self.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
         }
     },
 
@@ -90,58 +118,55 @@ var Chooser = React.createClass({
             console.warn("No initial choice list supplied for attr", this.props.attr);
         }
 
-        var choiceOptions = [];
-        if (!this.props.disabled) {
-            choiceOptions = _.map(self.props.initialChoiceList, function(choice, i) {
-                if (_.contains(self.props.disableList, i)) {
-                    return (
-                        <option key={i} value={i} disabled>{choice}</option>
-                    );
-                } else {
-                    return (
-                        <option key={i} value={i}>{choice}</option>
-                    );
-                }
-            });
-        }
-
         var width = this.props.width ? this.props.width + "px" : "400px";
 
         if (this.props.showRequired && this._isMissing()) {
             className = "has-error";
         }
 
-        var helpClassName = "help-block";
-        if (this.state.error) {
-            helpClassName += " has-error";
+        function filterFunction(item, value) {
+            return item.value.toLowerCase().indexOf(value.toLowerCase()) >= 0;
         }
 
-        //Key based on the choice list
-        var choiceList = _.map(this.props.initialChoiceList, function(choice) {
-            return choice;
+        //Current choice and list of choices
+        var choice = this.props.initialChoiceList[this.state.value];
+        var choiceList = _.map(this.props.initialChoiceList, function(choiceLabel, key) {
+            return {"id": key, "value": choiceLabel};
         });
-        var allowSingleDeselect = this.props.allowSingleDeselect || false;
-        var list = choiceList.join("-");
 
-        return (
-            <div className={className} >
-                <Chosen
-                    key={list}
-                    defaultValue={this.state.value}
-                    width={width}
-                    disabled={this.props.disabled}
-                    data-placeholder="Select..."
-                    disableSearch={this.props.disableSearch}
-                    allowSingleDeselect={allowSingleDeselect}
-                    searchContains={true}
-                    onChange={this.handleChange} >
-                        <option
-                            value="">
-                        </option>
-                        {choiceOptions}
-                </Chosen>
-            </div>
-        );
+        var key = hash(_.map(this.props.initialChoiceList, function(choiceLabel) {
+            return choiceLabel;
+        }).join("-"));
+
+        if (this.props.disableSearch) {
+            return (
+                <div className={className} >
+                    <DropdownList disabled={this.props.disabled}
+                                  style={{width: width}}
+                                  key={key}
+                                  valueField="id" textField="value"
+                                  data={choiceList}
+                                  defaultValue={choice}
+                                  filter={false}
+                                  onChange={this.handleChange} />
+                </div>
+            );
+        } else {
+            return (
+                <div className={className} >
+                    <Combobox disabled={this.props.disabled}
+                              style={{width: width}}
+                              key={key}
+                              textField="value"
+                              data={choiceList}
+                              defaultValue={choice}
+                              filter={filterFunction}
+                              suggest={false}
+                              onToggle={this.handleToggle}
+                              onChange={this.handleChange} />
+                </div>
+            );
+        }
     }
 });
 

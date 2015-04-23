@@ -1,0 +1,15 @@
+.rw-multiselect-taglist > li {
+  background-color: #F2F2F2;
+  border-color: #EAEAEA;
+  margin-right: 4px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+input.rw-input.rw-input {
+  margin-bottom: 1px;
+}
+
+.has-error .rw-multiselect {
+  border-color: red;
+}

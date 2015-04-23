@@ -2,22 +2,19 @@
 
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
+var invariant = require('react/lib/invariant');
 var _ = require("underscore");
 
-class AttrClass {
-    constructor(properties) {
-        this.properties = properties;
-    }
-
-    toObject() {
-        return this.properties;
-    }
-}
-
-
-function Attr(properties) {
-    return new AttrClass(properties);
-}
+var Attr = React.createClass({
+    displayName: "Attr",
+	render() {
+	  invariant(
+	    false,
+	    '%s elements are for schema configuration only and should not be rendered',
+	    	this.constructor.name
+	  );
+	}
+});
 
 module.exports = Attr;

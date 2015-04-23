@@ -57,38 +57,43 @@ To turn on visibility we use the `setVisibility()` method on the FormMixin. This
 
 #### willHandleChange() ####
 
-Next we need a place to respond to the change in attribute. The FormsMixin code provides for this with a hook function called `willHandleChange` that is called when a value is changed (either by the user or programmatically). It is possible to use this function to change other form state (as we'll do here), or if you return a value, actually modify the value before it is stored in the form. Here is our implementation of willHandleChange:
+Next we need a place to respond to the change in attribute. The FormsMixin code provides for this with a hook function called `willHandleChange()` that is called when a value is changed (either by the user or programmatically). It is possible to use this function to change other form state (as we'll do here), or if you return a value, actually modify the value before it is stored in the form. Here is our implementation of `willHandleChange()`:
 
     willHandleChange: function(attrName, value) {
         switch (attrName) {
-            case "type":
-                this.setVisibility(endpointTypes[value]);
-                break;
             case "bookmarked":
                 if (value) {
-                    //Id was changed so transfer existing endpoint values onto the form
+                    //bookmarked pulldown was changed so transfer existing
+                    //endpoint values onto the form using setValues()
                     var endpoint = bookmarked[value];
-                    this.setValue("name", endpoint.name);
-                    this.setValue("description", endpoint.description);
-                    this.setValue("type", endpoint.type);
-                    this.setValue("device_name", endpoint.device_name);
-                    this.setValue("interface", endpoint.interface);
-                    this.setValue("foreign_description", endpoint.foreign_description);
-                    this.setValue("organization", endpoint.organization);
-                    this.setValue("panel_name", endpoint.panel_name);
-                    this.setValue("port_id", endpoint.port_id);
-                    this.setValue("port_side", endpoint.port_side);
-                    this.setValue("port_location", endpoint.port_location);
+                    this.setValues({
+                        "name": endpoint.name,
+                        "description": endpoint.description,
+                        "type": endpoint.type,
+                        "device_name": endpoint.device_name,
+                        "interface": endpoint.interface,
+                        "foreign_description": endpoint.foreign_description,
+                        "organization": endpoint.organization,
+                        "panel_name": endpoint.panel_name,
+                        "port_id": endpoint.port_id,
+                        "port_side": endpoint.port_side,
+                        "port_location": endpoint.port_location
+                    });
                 }
+                break;
+            case "type":
+                //The endpoint type changed, which changes fields visible,
+                //so set this with setVisibility() using the type as a filter.
+                this.setVisibility(endpointTypes[value]);
                 break;
         }
     },
 
-For our example we allow the user to switch between different pre-set bookmarked endpoints. In response willHandleChange will be called with the attrName being "bookmarked", which we handle in the second part of the switch statement. In response we set the bookmarked endpoint's values on the form itself.
+For our example we allow the user to switch between different pre-set bookmarked endpoints. In response `willHandleChange` will be called with the attrName being "bookmarked", which we handle in the first part of the switch statement. In response we set the bookmarked endpoint's values on the form itself using `setValues()`.
 
-The subtle thing here to note is that one of the attrs we are setting is `type`. This is also a handled attr in willHandleChange and will be taken care of in the first part of the switch statement. This is what controls the visibility based on the type as it calls `setVisibility()` with the set type (converted from id to string).
+The subtle thing here to note is that one of the attrs we are setting is `type`. This is also a handled attr in `willHandleChange()` and will be taken care of in the first part of the switch statement. This is what controls the visibility based on the type as it calls `setVisibility()` with the set type (converted from id to string).
 
-In the UI it is also possible to just change the type directly, in which case the first part of the switch statement handles this directly and fields are shown and hidden based on the setVisibility() call.
+In the UI it is also possible to just change the type directly, in which case the second (type case) part of the switch statement handles this directly and fields are shown and hidden based on the `setVisibility()` call.
 
 #### getInitialVisibility() ####
 

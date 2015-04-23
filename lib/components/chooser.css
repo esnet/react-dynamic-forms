@@ -1,52 +1,18 @@
 
 /*
- Override look and feel of Chosen editor (tags etc)
+ Override look and feel of react-widget combobox
  */
 
-.chosen-choices {
-    border-color: #CCCCCC !important;
-    border-radius: 4px;
-    background-image: none  !important;
+.rw-btn {
+  line-height: 2.000em;
 }
 
-.chosen-choices li.search-field {
-    margin-top:5px !important;
+.rw-input {
+  font-size: 12px;
 }
 
-.search-choice {
-    background-image: none  !important;
-    background-color: #D9E9F3  !important;
-    border-style: none  !important;
-}
-
-.chosen-container-single {
-    padding-bottom: 8px !important;
-}
-
-.chosen-container-multi .chosen-choices,
-.chosen-container-single .chosen-single {
-    border-color: #CFCFCF !important;
-}
-
-.chosen-container-multi li.search-field input {
-    padding: 0px !important;
-    padding-left: 5px !important;
-}
-
-.has-error .chosen-single {
+.has-error .rw-combobox {
     border-color: #a94442 !important;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important;
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important;
-}
-
-.has-error .chosen-container-multi .chosen-choices {
-    border-color: #a94442 !important;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075) !important; 
-}
-
-.chosen-container-single .chosen-drop {
-    margin-top: -8px;
-    border-radius: 0 0 4px 4px;
-    background-clip: padding-box;
 }

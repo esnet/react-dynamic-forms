@@ -2,8 +2,8 @@
 
 "use strict";
 
-var React   = require("react");
-var _       = require("underscore");
+var React = require("react/addons");
+var _ = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 
@@ -70,7 +70,6 @@ var FormExample = React.createClass({
     },
 
     handleErrorCountChange: function(attr, count) {
-        console.log(attr, count);
         this.setState({"errorCount": count});
     },
 
@@ -107,7 +106,6 @@ var FormExample = React.createClass({
             return;
         }
 
-        console.log("Submit", this.formValues());
         this.setState({"data": values});
     },
 
