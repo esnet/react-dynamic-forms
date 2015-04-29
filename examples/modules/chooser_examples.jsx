@@ -22,7 +22,6 @@ var ChooserExamples = React.createClass({
     },
 
     handleChange: function(attr, value) {
-        console.log("Handle change", attr, value);
         this.setState({"selection": value});
     },
 
@@ -31,7 +30,6 @@ var ChooserExamples = React.createClass({
     },
 
     render: function() {
-        console.log(this.state.animalList);
         return (
             <div>
                 <div className="row">

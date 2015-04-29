@@ -95,7 +95,9 @@ var Chooser = React.createClass({
         var self = this;
         var value = v.id;
 
-        if (!_.isObject(v)) {
+        //If the user types something in that's not in the list, we
+        //just ignore that here
+        if (!_.isObject(v) && v !== "") {
             return;
         }
 
@@ -124,23 +126,17 @@ var Chooser = React.createClass({
         }
 
         var width = this.props.width ? this.props.width + "px" : "400px";
-
         if (this.props.showRequired && this._isMissing()) {
             className = "has-error";
         }
 
-        function filterFunction(item, value) {
-            return item.value.toLowerCase().indexOf(value.toLowerCase()) >= 0;
-        }
-
-        //Current choice and list of choices
+        //Current choice
         var choiceItem = _.find(this.props.initialChoiceList, function(item) {
             return item.id == self.state.value;
         });
-
         var choice = choiceItem ? choiceItem.label : undefined;
         
-
+        //List of choices
         var choiceList = _.map(this.props.initialChoiceList, function(v, i) {
             return {id: Number(v.id), value: v.label};
         });
@@ -152,11 +148,14 @@ var Chooser = React.createClass({
             });
         }
 
+        //The key needs to change if the initialChoiceList changes, so we set
+        //the key to be the hash of the choice list
         var key = hash(_.map(this.props.initialChoiceList, function(choiceLabel) {
             return choiceLabel;
         }).join("-"));
 
         if (this.props.disableSearch) {
+            //Disabled search builds a simple pulldown list
             return (
                 <div className={className} >
                     <DropdownList disabled={this.props.disabled}
@@ -165,22 +164,23 @@ var Chooser = React.createClass({
                                   valueField="id" textField="value"
                                   data={choiceList}
                                   defaultValue={choice}
-                                  filter={false}
                                   onChange={this.handleChange} />
                 </div>
             );
         } else {
+            //Otherwise build a combobox style list
             return (
                 <div className={className} >
-                    <Combobox disabled={this.props.disabled}
+                    <Combobox ref="chooser"
+                              disabled={this.props.disabled}
                               style={{width: width}}
                               key={key}
+                              valueField="id"
                               textField="value"
-                              data={choiceList}
                               defaultValue={choice}
-                              filter={filterFunction}
-                              suggest={false}
-                              onToggle={this.handleToggle}
+                              data={choiceList}
+                              filter={false}
+                              suggest={true}
                               onChange={this.handleChange} />
                 </div>
             );
