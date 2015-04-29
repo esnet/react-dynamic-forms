@@ -15,13 +15,14 @@ var {Combobox,
 
 /**
  * React Form control to select an item from a list.
- * Wraps the Chosen library pull down with search functionality.
+ *
+ * Wraps the react-widget library combobox and dropdownlist components.
  *
  * Props:
  *     initialChoice     - Pass in the initial value as an id
- *     initialChoiceList - Pass in the available list of options as an object
- *                         e.g. {1: cat, 2: dog, 3: fish, ...}
- *                         NOTE: keys begins at 1, because 0 is the placeholder.
+ *
+ *     initialChoiceList - Pass in the available list of options as a list of objects
+ *                         e.g. [{id: 1: label: "cat"}, {id: 2: label: "dog"}, ... ]
  *
  *     attr              - The identifier of the property being editted
  *
@@ -94,6 +95,10 @@ var Chooser = React.createClass({
         var self = this;
         var value = v.id;
 
+        if (!_.isObject(v)) {
+            return;
+        }
+
         //is value missing?
         var missing = this.props.required && this._isEmpty(value);
 
@@ -129,10 +134,23 @@ var Chooser = React.createClass({
         }
 
         //Current choice and list of choices
-        var choice = this.props.initialChoiceList[this.state.value];
-        var choiceList = _.map(this.props.initialChoiceList, function(choiceLabel, key) {
-            return {"id": key, "value": choiceLabel};
+        var choiceItem = _.find(this.props.initialChoiceList, function(item) {
+            return item.id == self.state.value;
         });
+
+        var choice = choiceItem ? choiceItem.label : undefined;
+        
+
+        var choiceList = _.map(this.props.initialChoiceList, function(v, i) {
+            return {id: Number(v.id), value: v.label};
+        });
+        
+        //Optionally sort the choice list
+        if (this.props.sorted) {
+            choiceList = _.sortBy(choiceList, function(item){
+                return item.value;
+            });
+        }
 
         var key = hash(_.map(this.props.initialChoiceList, function(choiceLabel) {
             return choiceLabel;
