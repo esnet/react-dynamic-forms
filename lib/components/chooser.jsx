@@ -136,7 +136,7 @@ var Chooser = React.createClass({
         
         //List of choices
         var choiceList = _.map(this.props.initialChoiceList, function(v, i) {
-            return {id: Number(v.id), value: v.label};
+            return {id: v.id, value: v.label};
         });
         
         //Optionally sort the choice list
