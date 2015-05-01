@@ -1,4 +1,4 @@
-/** @jsx React.DOM */
+"use strict";
 
 var React = require("react/addons");
 
@@ -65,6 +65,7 @@ var GroupExamples = React.createClass({
                         <p />
                         Here is an example of the generic Group being used with a Chooser:
                         <p />
+                        
                         <Group attr={this.state.attr} >
                             <Chooser initialChoiceList={this.state.animals} initialChoice={4}/>
                         </Group>

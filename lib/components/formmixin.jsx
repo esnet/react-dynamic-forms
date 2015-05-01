@@ -1,14 +1,12 @@
-/** @jsx React.DOM */
-
 "use strict";
 
 var _ = require("underscore");
 var React = require("react/addons");
 var Copy = require("deepcopy");
 
-var Schema = require("./schema");
-var Attr = require("./attr");
-var Form = require("./form");
+var Schema = require("./schema.jsx");
+var Attr = require("./attr.jsx");
+var Form = require("./form.jsx");
 
 //Pass in the <Schema> element and will return all the <Attrs> under it.
 function getAttrsFromSchema(schema) {
@@ -287,7 +285,7 @@ var FormMixin = {
 
         if (this.props.onChange) {
             var current = {};
-            _.each(formValues, function(value, key) {
+            _.each(this._pendingFormValues, function(value, key) {
                 current[key] = value.value;
             });
             if (_.isUndefined(this.props.index)) {
@@ -572,7 +570,7 @@ var FormMixin = {
                     }
 
                     //Recurse down to children
-                    if (child.children) {
+                    if (React.Children.count(child.props.children) > 0) {
                         props["children"] = self.getAttrsForChildren(child.props.children);
                     }
                 }
