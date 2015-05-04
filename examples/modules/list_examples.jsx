@@ -14,9 +14,14 @@ var {Form,
 var text        = require("raw!../markdown/list_examples.md");
 var description = "This shows an example form with a list of emails that can be added or removed.";
 
-var emailTypes = {1: "Work", 2: "Home"}
+var emailTypes = [
+    {"id": 1, "label": "Work"},
+    {"id": 2, "label": "Home"}
+];
+
 var emailSchema = (
     <Schema>
+        <Attr name="key" />
         <Attr name="email" defaultValue="" label="Email" required={true} validation={{"format": "email"}}/>
         <Attr name="email_type" defaultValue={1} label="Type" required={true}/>
     </Schema>
@@ -113,7 +118,7 @@ var ContactForm = React.createClass({
         }
 
         //Example of fetching current and initial values
-        console.log("values:", this.state.value("emails"));
+        console.log("values:", this.getValues());
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
     },
@@ -124,7 +129,8 @@ var ContactForm = React.createClass({
         var emails = this.value("emails");
 
         return (
-            <Form style={formStyle}>
+            <Form style={formStyle} ref="form">
+
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />
                 <Group attr="emails" >
@@ -132,7 +138,9 @@ var ContactForm = React.createClass({
                 </Group>
 
                 <hr />
+
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
+
             </Form>
         );
     }
@@ -170,9 +178,10 @@ var FormExample = React.createClass({
         if (this.state && this.state.data) {
             var firstName = this.state.data["first_name"];
             var lastName = this.state.data["last_name"];
+            var emailList = this.state.data["emails"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
-                    <strong>Success!</strong> {firstName} {lastName} was submitted.
+                    <strong>Success!</strong> {firstName} {lastName} was submitted with {emailList.length} email(s). 
                 </Alert>
             );
         } else {
@@ -224,11 +233,7 @@ var FormExample = React.createClass({
                         </div>
                     </div>
                 </div>
-
             </div>
-
-
-
         );
     }
 });

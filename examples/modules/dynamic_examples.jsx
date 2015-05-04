@@ -36,7 +36,11 @@ var values = {
     "type": 2,
 };
 
-var endpointTypes = {1: "Patch Panel", 2: "Equipment Port", 3: "Foreign"};
+var endpointTypes = [
+    {"id": 1, "label": "Patch Panel"},
+    {"id": 2, "label": "Equipment Port"},
+    {"id": 3, "label": "Foreign"}
+];
 
 var bookmarked = {
     1: {
@@ -74,7 +78,8 @@ var EndpointForm = React.createClass({
     displayName: "EndpointForm",
 
     getInitialVisibility: function() {
-        return endpointTypes[this.props.values["type"]];
+        var currentObj = _.findWhere(endpointTypes, {"id": this.props.values["type"]});
+        return currentObj.label;
     },
 
     willHandleChange: function(attrName, value) {
@@ -102,7 +107,8 @@ var EndpointForm = React.createClass({
             case "type":
                 //The endpoint type changed, which changes fields visible,
                 //so set this with setVisibility() using the type as a filter.
-                this.setVisibility(endpointTypes[value]);
+                var obj = _.findWhere(endpointTypes, {"id": value});
+                this.setVisibility(obj.label);
                 break;
         }
     },
@@ -127,9 +133,8 @@ var EndpointForm = React.createClass({
         var disableSubmit = this.hasErrors();
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
 
-        var bookmarks = {};
-        _.each(bookmarked, function(bookmark, id) {
-            bookmarks[id] = bookmark.name;
+        var bookmarks = _.map(bookmarked, function(bookmark, id) {
+            return {"id": id, "label": bookmark.name}
         });
 
         return (
@@ -137,7 +142,8 @@ var EndpointForm = React.createClass({
 
                 <h5>Bookmarked endpoints</h5>
 
-                <ChooserGroup attr="bookmarked" width={300} disableSearch={true} initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
+                <ChooserGroup attr="bookmarked" width={300} disableSearch={true}
+                              initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
 
                 <hr />
 
@@ -150,8 +156,9 @@ var EndpointForm = React.createClass({
 
                 <h5>Endpoint type</h5>
 
-                <ChooserGroup attr="type" width={200} initialChoice={this.value("type")}
-                              initialChoiceList={endpointTypes} disableSearch={true} />
+                <ChooserGroup attr="type" width={200} disableSearch={true}
+                              initialChoice={this.value("type")}
+                              initialChoiceList={endpointTypes} />
                 <TextEditGroup attr="device_name" />
                 <TextEditGroup attr="interface" hidden={true}/>
                 <TextEditGroup attr="foreign_description" />

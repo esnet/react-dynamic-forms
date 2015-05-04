@@ -1,14 +1,20 @@
 "use strict";
 
 var React = require("react/addons");
+var _ = require("underscore");
 
 var {Group, Chooser} = require("../../entry");
+
+var animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
+                 5: "fish", 6: "hedgehog", 7: "banana slug"};
 
 var GroupExamples = React.createClass({
 
     getInitialState: function() {
         return {
-            animals: {1: "cat", 2: "dog", 3: "fish", 4: "hedgehog", 5: "banana slug"},
+            animalList: _.map(animalMap, function(value, key) {
+                return {id: key, label: value}
+            }),
             attr: {
                 name: "Animals",
                 placeholder: "Pick an animal",
@@ -41,7 +47,7 @@ var GroupExamples = React.createClass({
 
                         <ul>
                             <li> Wrap a form component such that it is shown with a label
-                            and arrangled within a the bootstap grid.</li>
+                            and arrangled within a the bootstrap grid.</li>
                             <li> Except standard props that are added to each of the wrapped form 
                             components (attrName, placeholder, validation etc) as a 'attr' object.</li>
                         </ul>
@@ -65,9 +71,9 @@ var GroupExamples = React.createClass({
                         <p />
                         Here is an example of the generic Group being used with a Chooser:
                         <p />
-                        
+
                         <Group attr={this.state.attr} >
-                            <Chooser initialChoiceList={this.state.animals} initialChoice={4}/>
+                            <Chooser initialChoiceList={this.state.animalList} initialChoice={4}/>
                         </Group>
 
                     </div>

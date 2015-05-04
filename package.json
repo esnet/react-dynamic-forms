@@ -39,7 +39,7 @@
     "react": "^0.12.x",
     "underscore": "^1.7.0",
     "highlight.js": "^8.4.0",
-    "react-markdown-el": "^1.0.0",
+    "react-markdown-el": "^1.0.2",
     "raw-loader": "^0.5.1",
     "babel-core": "^5.1.13",
     "babel-loader": "^5.0.0"
