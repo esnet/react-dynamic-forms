@@ -53,6 +53,14 @@ var Chooser = React.createClass({
                 this._isEmpty(this.state.value);
     },
 
+    _generateKey: function(choice, choiceList) {
+        var key = hash(_.map(choiceList, function(label) {
+            return label;
+        }).join("-"));
+        key += "-" + choice;
+        return key;
+    },
+
     componentWillReceiveProps: function(nextProps) {
         var self = this;
         if (this.state.initialChoice !== nextProps.initialChoice) {
@@ -60,16 +68,19 @@ var Chooser = React.createClass({
             //
             // We defer this change so that the chooser's menu can close before anything here
             // changes it (the new props may have been caused by the pulldown selection in the
-            // first place)
+            // first place). Also, we need to regenerate the key used here, because a new
+            // initial value specified from above should rebuild the chooser, otherwise it will
+            // be potentially stale.
             //
 
-            _.defer(function(initialChoice){
+            _.defer(function(initialChoice) {
+                var key = self._generateKey(initialChoice, self.props.initialChoiceList);
                 self.setState({
                     "initialChoice": initialChoice,
-                    "value": initialChoice
+                    "value": initialChoice,
+                    "key": key
                 });
             }, nextProps.initialChoice);
-
         }
     },
 
@@ -83,10 +94,20 @@ var Chooser = React.createClass({
                          _.isUndefined(this.props.initialChoice) ||
                          this.props.initialChoice === "");
         var missingCount = missing ? 1 : 0;
-        this.setState({"missing": missing});
+        
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.attr, missingCount);
         }
+
+        //The key needs to change if the initialChoiceList changes, so we set
+        //the key to be the hash of the choice list
+
+
+        this.setState({
+            "missing": missing,
+            "key": this._generateKey(this.props.initialChoice, this.props.initialChoiceList)
+        });
+
     },
 
     handleChange: function(v) {
@@ -146,19 +167,13 @@ var Chooser = React.createClass({
             });
         }
 
-        //The key needs to change if the initialChoiceList changes, so we set
-        //the key to be the hash of the choice list
-        var key = hash(_.map(this.props.initialChoiceList, function(choiceLabel) {
-            return choiceLabel;
-        }).join("-"));
-
         if (this.props.disableSearch) {
             //Disabled search builds a simple pulldown list
             return (
                 <div className={className} >
                     <DropdownList disabled={this.props.disabled}
                                   style={{width: width}}
-                                  key={key}
+                                  key={this.state.key}
                                   valueField="id" textField="value"
                                   data={choiceList}
                                   defaultValue={choice}
@@ -172,7 +187,7 @@ var Chooser = React.createClass({
                     <Combobox ref="chooser"
                               disabled={this.props.disabled}
                               style={{width: width}}
-                              key={key}
+                              key={this.state.key}
                               valueField="id"
                               textField="value"
                               defaultValue={choice}
