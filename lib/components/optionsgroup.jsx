@@ -2,7 +2,7 @@
 
 var React = require("react/addons");
 var _ = require("underscore");
-var OptionButtons = require("./optionbuttons.jsx");
+var OptionButtons = require("./optionbuttons");
 
 /**
  * Wraps the optionbutton widget

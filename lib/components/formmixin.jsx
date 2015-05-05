@@ -4,9 +4,9 @@ var _ = require("underscore");
 var React = require("react/addons");
 var Copy = require("deepcopy");
 
-var Schema = require("./schema.jsx");
-var Attr = require("./attr.jsx");
-var Form = require("./form.jsx");
+var Schema = require("./schema");
+var Attr = require("./attr");
+var Form = require("./form");
 
 //Pass in the <Schema> element and will return all the <Attrs> under it.
 function getAttrsFromSchema(schema) {

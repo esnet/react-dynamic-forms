@@ -47,7 +47,7 @@ var GroupExamples = React.createClass({
 
                         <ul>
                             <li> Wrap a form component such that it is shown with a label
-                            and arrangled within a the bootstrap grid.</li>
+                            and arranged within a the bootstrap grid.</li>
                             <li> Except standard props that are added to each of the wrapped form 
                             components (attrName, placeholder, validation etc) as a 'attr' object.</li>
                         </ul>

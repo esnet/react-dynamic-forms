@@ -41,49 +41,38 @@ var ChooserExamples = React.createClass({
 
                 <div className="row">
                     <div className="col-md-12">
-                    <h4>Chooser</h4>
+                        <h4>Chooser</h4>
 
-                    <p />
-                    Simple chooser:
-                    <Chooser initialChoiceList={this.state.animalList}/>
+                        <p />
+                        Simple chooser:
+                        <Chooser initialChoiceList={this.state.animalList} width={300}/>
 
-                    <p />
-                    Simple chooser sorted:
-                    <Chooser initialChoiceList={this.state.animalList} sorted={true}/>
-
-
-                    <p />
-                    Chooser with initial choice:
-                    <Chooser initialChoice={4} initialChoiceList={this.state.animalList}/>
-
-                    <p />
-                    Chooser with initial choice and sorted:
-                    <Chooser initialChoice={4} initialChoiceList={this.state.animalList} sorted={true}/>
+                        <p />
+                        Simple chooser sorted:
+                        <Chooser initialChoiceList={this.state.animalList} sorted={true} width={300}/>
 
 
-                    <p />
-                    Chooser disabled:
-                    <Chooser initialChoice={2} initialChoiceList={this.state.animalList} disabled={true}/>
+                        <p />
+                        Chooser with initial choice:
+                        <Chooser initialChoice={4} initialChoiceList={this.state.animalList} width={300}/>
 
-                    <p />
-                    Chooser with search disabled:
-                    <Chooser initialChoice={3} initialChoiceList={this.state.animalList} disableSearch={true}/>
+                        <p />
+                        Chooser with initial choice and sorted:
+                        <Chooser initialChoice={4} initialChoiceList={this.state.animalList} sorted={true} width={300}/>
 
-                    <p />
-                    Chooser with a required value:
-                    <Chooser initialChoiceList={this.state.animalList} required={true} showRequired={true} allowSingleDeselect={true} onMissingCountChange={this.handleMissingCountChange}/>
-                    Missing count: {this.state.missingCount}
+                        <p />
+                        Chooser disabled:
+                        <Chooser initialChoice={2} initialChoiceList={this.state.animalList} disabled={true} width={300}/>
 
-                    <p />
-                    Chooser with single deselect:
-                    <Chooser initialChoice={4} initialChoiceList={this.state.animalList} disableSearch={true} allowSingleDeselect={true}/>
+                        <p />
+                        Chooser with search disabled:
+                        <Chooser initialChoice={3} initialChoiceList={this.state.animalList} disableSearch={true} width={300}/>
 
-                    <p />
-                    Chooser onChange callback:
-                    <Chooser initialChoiceList={this.state.animalList} onChange={this.handleChange} sorted={true}/>
-                    Chosen: {this.state.selection} ({animalMap[this.state.selection]})
+                        <p />
+                        Chooser with a required value:
+                        <Chooser initialChoiceList={this.state.animalList}  width={300} required={true} showRequired={true} allowSingleDeselect={true} onMissingCountChange={this.handleMissingCountChange}/>
+                        Missing count: {this.state.missingCount}
                     </div>
-
                 </div>
             </div>
         );

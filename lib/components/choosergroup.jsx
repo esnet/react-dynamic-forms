@@ -3,8 +3,8 @@
 var React = require("react");
 var _ = require("underscore");
 
-var Group = require("./group.jsx");
-var Chooser = require("./chooser.jsx");
+var Group = require("./group");
+var Chooser = require("./chooser");
 
 var ChooserGroup = React.createClass({
 

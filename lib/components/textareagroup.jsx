@@ -3,8 +3,8 @@
 var React = require("react/addons");
 var _ = require("underscore");
 
-var Group = require("./group.jsx");
-var TextArea= require("./textarea.jsx");
+var Group = require("./group");
+var TextArea= require("./textarea");
 
 /**
  * Wraps the textarea widget

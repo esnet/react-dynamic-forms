@@ -3,8 +3,8 @@
 var React = require("react/addons");
 var _ = require("underscore");
 
-var Group = require("./group.jsx");
-var TagsEdit= require("./tagsedit.jsx");
+var Group = require("./group");
+var TagsEdit= require("./tagsedit");
 
 /**
  * Wraps the tags editor widget

@@ -111,29 +111,57 @@ var Chooser = React.createClass({
     },
 
     handleChange: function(v) {
-        var self = this;
-        var value = v.id;
+        var missing = false;
+
+        //If v is an object then something was selected
+        //If v is a string, then something was typed in that may or may not be in the
+        //choice list.
+        var selected;
+        if (!_.isObject(v)) {
+            selected = _.findWhere(this.props.initialChoiceList, {label: v});
+        } else {
+            selected = v;
+        }
 
         //If the user types something in that's not in the list, we
         //just ignore that here
-        if (!_.isObject(v) && v !== "") {
+        if (!selected) {
+            missing = this.props.required;
+            this.setState({"value": undefined,
+                           "missing": missing});
             return;
         }
 
-        //is value missing?
+        var value = selected.id;
+
+        //State changes
+        this.setState({"value": value});
+
+        //Callbacks
+        if (this.props.onChange) {
+            this.props.onChange(this.props.attr, value);
+        }
+        if (this.props.onMissingCountChange) {
+            this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
+        }
+    },
+
+    onBlur: function(x) {
+        var value = this.state.value;
         var missing = this.props.required && this._isEmpty(value);
 
         //State changes
-        self.setState({"value": value,
+        this.setState({"value": value,
                        "missing": missing});
-        
+
         //Callbacks
-        if (self.props.onChange) {
-            self.props.onChange(this.props.attr, value);
+        if (this.props.onChange) {
+            this.props.onChange(this.props.attr, missing ? "" : value );
         }
-        if (self.props.onMissingCountChange) {
-            self.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
+        if (this.props.onMissingCountChange) {
+            this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
         }
+        return false;
     },
 
     render: function() {
@@ -144,7 +172,7 @@ var Chooser = React.createClass({
             console.warn("No initial choice list supplied for attr", this.props.attr);
         }
 
-        var width = this.props.width ? this.props.width + "px" : "400px";
+        var width = this.props.width ? this.props.width + "px" : "100%";
         if (this.props.showRequired && this._isMissing()) {
             className = "has-error";
         }
@@ -188,6 +216,7 @@ var Chooser = React.createClass({
                               disabled={this.props.disabled}
                               style={{width: width}}
                               key={this.state.key}
+                              onBlur={this.onBlur}
                               valueField="id"
                               textField="value"
                               defaultValue={choice}
