@@ -1,0 +1,61 @@
+
+<!doctype html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Forms library example</title>
+
+    <!-- Load Bootstrap CSS from CDN -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.3.1/cerulean/bootstrap.min.css">
+
+    <style>
+        html { overflow-y:scroll; }
+        body { padding-top:50px; }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <div id="example"></div>
+    </div>
+
+    <!-- Load jQuery from CDN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+    <!-- Load Bootstrap from CDN -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <!-- React.js and the JSX transformer -->
+    <script src="https://fb.me/react-with-addons-0.12.2.js"></script>
+    <script src="https://fb.me/JSXTransformer-0.12.2.js"></script>
+
+    <!-- Our examples application -->
+    <script src="react-forms.js"></script>
+
+    <script type="text/jsx">
+        $(document).ready(function(){
+            var forms = window.ESnet.ReactForms;
+            var animals = [{id: 1, label: "cat"}, {id: 2, label: "cat"}, {id: 3, label: "hamster"}, {id: 4, label: "hedgehog"}];
+            var attr = {
+                name: "Animals",
+                placeholder: "Pick an animal",
+                help: "Some animals are small and cute.",
+                disabled: false,
+                initialValue: "cat",
+            };
+            React.render(
+                <forms.Group attr={attr} >
+                    <forms.Chooser initialChoiceList={animals} initialChoice={1}/>
+                </forms.Group>,
+                document.getElementById('example')
+            );
+        });
+    </script>
+
+</body>
+
+</html>

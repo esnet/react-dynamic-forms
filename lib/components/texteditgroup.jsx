@@ -1,12 +1,10 @@
-/** @jsx React.DOM */
-
 "use strict";
 
 var React = require("react/addons");
 var _ = require("underscore");
 
-var Group = require("./group.jsx");
-var TextEdit = require("./textedit.jsx");
+var Group = require("./group");
+var TextEdit = require("./textedit");
 
 /**
  * Wraps the textedit widget

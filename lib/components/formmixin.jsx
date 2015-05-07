@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 "use strict";
 
 var _ = require("underscore");
@@ -287,7 +285,7 @@ var FormMixin = {
 
         if (this.props.onChange) {
             var current = {};
-            _.each(formValues, function(value, key) {
+            _.each(this._pendingFormValues, function(value, key) {
                 current[key] = value.value;
             });
             if (_.isUndefined(this.props.index)) {
@@ -572,7 +570,7 @@ var FormMixin = {
                     }
 
                     //Recurse down to children
-                    if (child.children) {
+                    if (React.Children.count(child.props.children) > 0) {
                         props["children"] = self.getAttrsForChildren(child.props.children);
                     }
                 }

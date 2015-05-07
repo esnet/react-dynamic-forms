@@ -1,17 +1,31 @@
-//
-// webpack.config.js to build an examples bundle
-// for use with the examples site. To use this in
-// another project you do not have to build anything.
-//
+var webpack = require('webpack');
+
+var plugins = [
+  new webpack.DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+  })
+];
+
+if (process.env.COMPRESS) {
+  plugins.push(
+    new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        warnings: false
+      }
+    })
+  );
+}
 
 module.exports = {
-  entry: './examples/modules/main.jsx',
+
   output: {
-    filename: 'examples-bundle.js'
+    library: ["ESnet", "ReactForms"],
+    libraryTarget: 'assign'
   },
+
   module: {
     loaders: [
-      { test: /\.(js|jsx)$/, loader: 'jsx-loader?harmony' },
+      { test: /\.(js|jsx)$/, loader: 'babel?optional=es7.objectRestSpread' },
       { test: /\.css$/, loader: 'style-loader!css-loader' },
       { test: /\.(png|jpg|gif)$/, loader: 'url-loader?limit=8192'},
       { test: /\.json$/, loader: 'json-loader' },
@@ -19,7 +33,22 @@ module.exports = {
       { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader?name=[name].[ext]" }
     ]
   },
+
+  node: {
+    Buffer: false
+  },
+
   resolve: {
     extensions: ['', '.js', '.jsx', '.json']
-  }
+  },
+
+  externals: {
+      //don't bundle the 'react' npm package with our bundle.js
+      //but get it from a global 'React' variable
+      'react': 'React',
+      'react/addons': 'React',
+  },
+
+  plugins: plugins
+
 };

@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 "use strict";
 
 var React = require("react/addons");
@@ -7,7 +5,7 @@ var _       = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 
-var {Form, FormMixin, TextEditGroup, Schema, Attr} = require("../../entry");
+var {Form, FormMixin, TextEditGroup, Schema, Attr, ChooserGroup} = require("../../entry");
 
 var text = require("raw!../markdown/form_examples.md");
 
@@ -18,6 +16,7 @@ var description = "This shows a simple form where the schema and values of the f
 
 var schema = (
     <Schema>
+        <Attr name="type" label="Type" placeholder="Enter contact type" required={true}/>
         <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
         <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
         <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
@@ -62,11 +61,19 @@ var ContactForm = React.createClass({
     renderForm: function() {
         var disableSubmit = this.hasErrors();
         var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
+        var types = [{id: 0, label: "Friend"},
+                     {id: 1, label: "Acquaintance"}]
         return (
             <Form style={formStyle}>
+                <div>
+                    <ChooserGroup attr="type" width={150}
+                                  initialChoice={0}
+                                  initialChoiceList={types}
+                                  disableSearch={true}/>
+                </div>
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />
-                <TextEditGroup attr="email" width={500} />
+                <TextEditGroup attr="email" />
                 <hr />
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
             </Form>
