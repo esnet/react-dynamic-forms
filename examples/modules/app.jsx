@@ -11,8 +11,11 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
+
           <div className="row">
-              <div className="col-md-12">
+              <div className="col-md-2">
+              </div>
+              <div className="col-md-10">
                   <h2>ESnet React Forms Library</h2>
               </div>
           </div>

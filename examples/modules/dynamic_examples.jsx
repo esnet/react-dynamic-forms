@@ -107,7 +107,7 @@ var EndpointForm = React.createClass({
             case "type":
                 //The endpoint type changed, which changes fields visible,
                 //so set this with setVisibility() using the type as a filter.
-                var obj = _.findWhere(endpointTypes, {"id": value});
+                var obj = _.findWhere(endpointTypes, {"id": parseInt(value)});
                 this.setVisibility(obj.label);
                 break;
         }

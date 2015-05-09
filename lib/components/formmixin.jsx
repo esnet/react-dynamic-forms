@@ -259,6 +259,16 @@ var FormMixin = {
         return Copy(formValues[attrName].value);
     },
 
+    updateState: function() {
+        this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
+        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
+        this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts);
+                  
+        this.setState({"formValues": this._pendingFormValues,
+                       "missingCounts": this._pendingMissing,
+                       "errorCounts": this._pendingErrors});
+    },
+
     setValue: function(key, value) {
         var v = value;
 
@@ -272,10 +282,10 @@ var FormMixin = {
         if (!_.has(this._pendingFormValues, key)) {
             console.warn("Tried to set value on form, but key doesn't exist:", key);
         }
+
         this._pendingFormValues[key].initialValue = v;
         this._pendingFormValues[key].value = v;
-
-        this.setState({"formValues": this._pendingFormValues});
+        this.updateState();
 
         // Callback.
         //
@@ -322,6 +332,8 @@ var FormMixin = {
             self._pendingFormValues[key].initialValue = v;
             self._pendingFormValues[key].value = v;
 
+            self.updateState();
+
             // Callback.
             //
             // If onChange is registered here then the value sent to that
@@ -339,7 +351,6 @@ var FormMixin = {
                     self.props.onChange(self.props.index, current);
                 }
             }
-            self.setState({"formValues": self._pendingFormValues});
         });
     },
 
@@ -408,13 +419,18 @@ var FormMixin = {
 
         var formHiddenList = Copy(this.state.formHiddenList); //Mutate this
 
-        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
-        this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts);
-
         _.each(formAttrs, function(data, attrName) {
             var shouldBeHidden;
             var tags = data.tags || [];
             var isCurrentlyHidden = _.contains(formHiddenList, attrName);
+            
+            //
+            // It's possible the error and missing count setting within this loop will cause
+            // a re-render (depending on the react version!) so we start new pending counts here
+            //
+
+            self._pendingMissing = self._pendingMissing || Copy(self.state.missingCounts);
+            self._pendingErrors = self._pendingErrors || Copy(self.state.errorCounts);
 
             //Determine and set new hidden state on formAttr entry
             if (_.isArray(tag)) {
@@ -453,22 +469,21 @@ var FormMixin = {
 
         });
         
-        this.setState({"formHiddenList": formHiddenList,
-                       "missingCounts": this._pendingMissing,
-                       "errorCounts": this._pendingErrors});
+        this.setState({"formHiddenList": formHiddenList});
+        this.updateState();
     },
 
 
     handleErrorCountChange: function(key, errorCount) {
-        var currentErrorCounts = this.state.errorCounts; //Copy?
-        currentErrorCounts[key] = errorCount;
+        this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts) || {};
+        this._pendingErrors[key] = errorCount;
 
         var count = 0;
-        _.each(currentErrorCounts, function(c) {
+        _.each(this._pendingErrors, function(c) {
             count += c;
         });
 
-        this.setState({"errorCounts": currentErrorCounts});
+        this.updateState();
 
         if (this.props.onErrorCountChange) {
             if (!_.isUndefined(this.props.index)) {
@@ -480,7 +495,7 @@ var FormMixin = {
     },
 
     handleMissingCountChange: function(key, missingCount) {
-        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
+        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts) || {};
         this._pendingMissing[key] = missingCount;
 
         var count = 0;
@@ -493,7 +508,7 @@ var FormMixin = {
             this.showRequiredOff();
         }
 
-        this.setState({"missingCounts": this._pendingMissing});
+        this.updateState();
 
         if (this.props.onMissingCountChange) {
             if (_.isUndefined(this.props.index)) {
@@ -513,6 +528,7 @@ var FormMixin = {
         // or perform other actions in response to a particular attr changing.
         //
         
+
         if (this.willHandleChange) {
             v = this.willHandleChange(key, value) || v;
         }
@@ -521,6 +537,7 @@ var FormMixin = {
         // We get the current pending form values or a copy of the actual formValues
         // if we don't have a pendingFormValues transaction in progress
         //
+        
         this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
 
         //Check to see if the key is actually in the formValues
@@ -533,14 +550,17 @@ var FormMixin = {
         this._pendingFormValues[key].value = v;
 
         // Update the state with the current pendingFormValues
-        this.setState({"formValues": this._pendingFormValues});
+        this.updateState();
 
         // Handle registered callback.
         if (this.props.onChange) {
+            var formValues = this._pendingFormValues || Copy(this.state.formValues);
+
             var current = {};
-            _.each(this._pendingFormValues, function(value, key) {
+            _.each(formValues, function(value, key) {
                 current[key] = value.value;
             });
+
             if (_.isUndefined(this.props.index)) {
                 this.props.onChange(this.props.attr, current);
             } else {

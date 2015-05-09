@@ -152,6 +152,7 @@ var ListEditorMixin = {
     handleItemChanged: function(i, value) {
         var items = this.state.items;
         items[i] = value;
+
         this.setState({"items": items});
 
         //Callback
@@ -223,6 +224,7 @@ var ListEditorMixin = {
                           onAddItem={this.handleAddItem}
                           onRemoveItem={self.handleItemRemoved}/>
         );
+
     },
 
     /**
