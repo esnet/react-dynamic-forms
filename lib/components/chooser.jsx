@@ -111,6 +111,11 @@ var Chooser = React.createClass({
         var value = $(e.target).val();
         var missing = this.props.required && this._isEmpty(value);
 
+        //If the chosen id is a number, cast it to a number
+        if (!this._isEmpty(value) && !_.isNaN(Number(value))) {
+            value = Number(value);
+        }
+
         //State changes
         this.setState({"value": value,
                        "missing": missing});
