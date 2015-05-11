@@ -54,7 +54,7 @@ var Chooser = React.createClass({
         var key = hash(_.map(choiceList, function(label) {
             return label;
         }).join("-"));
-        //key += "-" + choice;
+        key += "-" + choice;
         return key;
     },
 
@@ -108,17 +108,12 @@ var Chooser = React.createClass({
     },
 
     handleChange: function(e) {
-        var missing = false;
         var value = $(e.target).val();
-
-        if (!_.isNaN(Number(value))) {
-            value = Number(value);
-        }
-
         var missing = this.props.required && this._isEmpty(value);
 
         //State changes
-        this.setState({"value": value});
+        this.setState({"value": value,
+                       "missing": missing});
 
         //Callbacks
         if (this.props.onChange) {
@@ -127,6 +122,8 @@ var Chooser = React.createClass({
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
         }
+
+        e.stopPropagation();
     },
 
     render: function() {
