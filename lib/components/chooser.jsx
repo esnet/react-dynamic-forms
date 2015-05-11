@@ -72,11 +72,23 @@ var Chooser = React.createClass({
 
             _.defer(function(initialChoice) {
                 var key = self._generateKey(initialChoice, self.props.initialChoiceList);
+                
                 self.setState({
                     "initialChoice": initialChoice,
                     "value": initialChoice,
                     "key": key
                 });
+
+                //The value might have been missing and is now set explicitly with a prop
+                var missing = self.props.required && !self.props.disabled &&
+                                (_.isNull(self.props.initialChoice) ||
+                                 _.isUndefined(self.props.initialChoice) ||
+                                 self.props.initialChoice === "");
+                var missingCount = missing ? 1 : 0;
+                if (self.props.onMissingCountChange) {
+                    self.props.onMissingCountChange(self.props.attr, missingCount);
+                }
+
             }, nextProps.initialChoice);
         }
     },
