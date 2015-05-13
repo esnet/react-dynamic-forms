@@ -54,7 +54,7 @@ var bookmarked = {
         name: "TELIANET:telianet-eqx-ash:Peer",
         description: "A foreign endpoint",
         type: 3,
-        foreign_description: "telianet-eqx-ash:Peer",
+        foreign_description: "",
         organization: "TeliaNet"
     },
     3: {
@@ -183,6 +183,8 @@ var FormExample = React.createClass({
         return {
             "data":  undefined,
             "loaded": false,
+            "missingCount": 0,
+            "errorCount": 0
         };
     },
 
@@ -234,6 +236,7 @@ var FormExample = React.createClass({
     },
 
     handleMissingCountChange: function(attr, count) {
+        console.log("MISSING COUNT CHANGED", attr, count)
         this.setState({"missingCount": count});
     },
 
@@ -275,6 +278,7 @@ var FormExample = React.createClass({
     },
 
     render: function() {
+        console.log("Render form: ", this.state.showRequired, this.state.missingCount)
         return (
             <div>
                 <div className="row">
@@ -289,6 +293,7 @@ var FormExample = React.createClass({
                         {this.renderEndpointForm()}
                     </div>
                     <div className="col-md-3">
+                        Errors:
                         <FormErrors showRequired={this.state.showRequired}
                                     missingCount={this.state.missingCount}
                                     numErrors={this.state.errorCount} />

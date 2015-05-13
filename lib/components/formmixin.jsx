@@ -260,61 +260,101 @@ var FormMixin = {
     },
 
 
-    updateState() {
+    updateState(why) {
+        var reason = why || "no reason"
+        console.log(" ---> updateState", this.props.attr, reason)
+        if (!this._deferSet) {
+            _.defer(() => {
+                console.group(" ---> DEBOUNCE")
 
-        this.debounce = this.debounce || _.debounce(function(self) {
-            console.log(" ---> DEBOUNCE")
-            self._pendingFormValues = self._pendingFormValues || Copy(self.state.formValues);
-            self._pendingMissing = self._pendingMissing || Copy(self.state.missingCounts);
-            self._pendingErrors = self._pendingErrors || Copy(self.state.errorCounts);
-            self._pendingHiddenList = self._pendingHiddenList || Copy(self.state.formHiddenList);
+                //this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
+                //this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
+                //this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts);
+                //this._pendingHiddenList = this._pendingHiddenList || Copy(this.state.formHiddenList);
 
-            self.setState({"formValues": self._pendingFormValues,
-                           "missingCounts": self._pendingMissing,
-                           "errorCounts": self._pendingErrors,
-                           "formHiddenList": self._pendingHiddenList});
+                this._deferSet = false;
+                console.log("Defer unset")
 
-            var missingCount = 0;
-            _.each(self._pendingMissing, function(c) {
-                missingCount += c;
+                console.group(" ---> setState", this._pendingFormValues, JSON.stringify(this._pendingMissing))
+
+                var state = {};
+                if (this._pendingFormValues) {
+                    state.formValues = this._pendingFormValues;
+                }
+                if (this._pendingMissing) {
+                    state.missingCounts = this._pendingMissing;
+                }
+                if (this._pendingErrors) {
+                    state.errorCounts = this._pendingErrors;
+                }
+                if (this._pendingHiddenList) {
+                    state.formHiddenList = this._pendingHiddenList;
+                }
+                this.setState(state);
+
+                console.groupEnd();
+
+                if (this._pendingMissing) {
+                    console.group(" ---> missing callback", this._pendingMissing)
+                    var missingCount = 0;
+                    _.each(this._pendingMissing, function(c) {
+                        missingCount += c;
+                    });
+                    if (this.props.onMissingCountChange) {
+                        if (_.isUndefined(this.props.index)) {
+                            this.props.onMissingCountChange(this.props.attr, missingCount);
+                        } else {
+                            this.props.onMissingCountChange(this.props.index, missingCount);
+                        }
+                    }
+                    this._pendingMissing = null;
+                    console.groupEnd();
+                }
+
+                if (this._pendingErrors) {
+                    console.group(" ---> error callback", this._pendingErrors)
+                    var errorCount = 0;
+                    _.each(this._pendingErrors, function(c) {
+                        errorCount += c;
+                    });
+                    if (this.props.onErrorCountChange) {
+                        if (!_.isUndefined(this.props.index)) {
+                            this.props.onErrorCountChange(this.props.attr, errorCount);
+                        } else {
+                            this.props.onErrorCountChange(this.props.index, errorCount);
+                        }
+                    }
+                    console.groupEnd();
+                }
+
+                // Handle registered callback.
+                if (this._pendingFormValues) {
+                    console.group(" ---> onChange callback", this._pendingFormValues)
+                    if (this.props.onChange) {
+                        var current = {};
+                        _.each(this._pendingFormValues, function(value, key) {
+                            current[key] = value.value;
+                        });
+            
+                        if (_.isUndefined(this.props.index)) {
+                            this.props.onChange(this.props.attr, current);
+                        } else {
+                            this.props.onChange(this.props.index, current);
+                        }
+                    }
+                    console.groupEnd();
+                    this._pendingFormValues = null;
+                }
+
+                if (this._pendingHiddenList) {
+                    this._pendingHiddenList = null;
+                }
+
+                console.groupEnd();
             });
-            if (self.props.onMissingCountChange) {
-                if (_.isUndefined(self.props.index)) {
-                    self.props.onMissingCountChange(self.props.attr, missingCount);
-                } else {
-                    self.props.onMissingCountChange(self.props.index, missingCount);
-                }
-            }
-
-            var errorCount = 0;
-            _.each(self._pendingErrors, function(c) {
-                errorCount += c;
-            });
-            if (self.props.onErrorCountChange) {
-                if (!_.isUndefined(self.props.index)) {
-                    self.props.onErrorCountChange(self.props.attr, errorCount);
-                } else {
-                    self.props.onErrorCountChange(self.props.index, errorCount);
-                }
-            }
-
-            // Handle registered callback.
-            console.log("### onChange callbacks", self._pendingFormValues);
-            if (self.props.onChange && self._pendingFormValues) {
-                var current = {};
-                _.each(self._pendingFormValues, function(value, key) {
-                    current[key] = value.value;
-                });
-    
-                if (_.isUndefined(self.props.index)) {
-                    self.props.onChange(self.props.attr, current);
-                } else {
-                    self.props.onChange(self.props.index, current);
-                }
-            }
-        }, 100);
-
-        this.debounce(this);
+            console.log("Defer set")
+            this._deferSet = true;
+        }
     },
 
     setValue: function(key, value) {
@@ -333,7 +373,7 @@ var FormMixin = {
 
         this._pendingFormValues[key].initialValue = v;
         this._pendingFormValues[key].value = v;
-        this.updateState();
+        this.updateState("setValue");
 
         // Callback.
         //
@@ -380,7 +420,7 @@ var FormMixin = {
             self._pendingFormValues[key].initialValue = v;
             self._pendingFormValues[key].value = v;
 
-            self.updateState();
+            self.updateState(`formValue ${key}`);
 
             // Callback.
             //
@@ -410,8 +450,8 @@ var FormMixin = {
         return vals;
     },
 
-    showRequiredOn: function() {    
-        console.log("setState (showRequiredOn)") ;       
+    showRequiredOn: function() {
+        console.log("setState (showRequiredOn)");
         this.setState({"showRequired": true});
     },
 
@@ -520,20 +560,21 @@ var FormMixin = {
 
         });
 
-        this.updateState();
+        this.updateState(`formValue ${tag}`);
     },
 
 
     handleErrorCountChange: function(key, errorCount) {
         this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts) || {};
         this._pendingErrors[key] = errorCount;
-        this.updateState();
+        this.updateState(`error change ${key} ${errorCount}`);
     },
 
     handleMissingCountChange: function(key, missingCount) {
+        console.log("handleMissingCountChange", key, missingCount);
         this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts) || {};
         this._pendingMissing[key] = missingCount;
-        this.updateState();
+        this.updateState(`missing change ${key} ${missingCount}`);
     },
 
     handleChange: function(key, value) {
@@ -566,7 +607,7 @@ var FormMixin = {
         this._pendingFormValues[key].value = v;
 
         // Update the state with the current pendingFormValues
-        this.updateState();
+        this.updateState(`value change ${key}`);
 
     },
 
@@ -619,10 +660,10 @@ var FormMixin = {
         console.log("Render FormMixin", this.props.attr)
 
         // Now that we're rendering we can clear the pendingFormValues
-        this._pendingFormValues = null;
-        this._pendingMissing = null;
-        this._pendingErrors = null;
-        this._pendingHiddenList = null;
+        //this._pendingFormValues = null;
+        //this._pendingMissing = null;
+        //this._pendingErrors = null;
+        //this._pendingHiddenList = null;
 
         if (_.has(top.props, "style")) {
             formStyle = top.props.style;
