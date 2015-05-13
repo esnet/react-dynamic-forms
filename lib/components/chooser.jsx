@@ -70,26 +70,26 @@ var Chooser = React.createClass({
             // be potentially stale.
             //
 
-            _.defer(function(initialChoice) {
-                var key = self._generateKey(initialChoice, self.props.initialChoiceList);
+            //_.defer(function(initialChoice) {
+                var key = this._generateKey(nextProps.initialChoice, this.props.initialChoiceList);
                 
-                self.setState({
-                    "initialChoice": initialChoice,
-                    "value": initialChoice,
+                this.setState({
+                    "initialChoice": nextProps.initialChoice,
+                    "value": nextProps.initialChoice,
                     "key": key
                 });
 
                 //The value might have been missing and is now set explicitly with a prop
-                var missing = self.props.required && !self.props.disabled &&
-                                (_.isNull(self.props.initialChoice) ||
-                                 _.isUndefined(self.props.initialChoice) ||
-                                 self.props.initialChoice === "");
+                var missing = this.props.required && !this.props.disabled &&
+                                (_.isNull(nextProps.initialChoice) ||
+                                 _.isUndefined(nextProps.initialChoice) ||
+                                 nextProps.initialChoice === "");
                 var missingCount = missing ? 1 : 0;
-                if (self.props.onMissingCountChange) {
-                    self.props.onMissingCountChange(self.props.attr, missingCount);
+                if (this.props.onMissingCountChange) {
+                    this.props.onMissingCountChange(this.props.attr, missingCount);
                 }
 
-            }, nextProps.initialChoice);
+            //}, nextProps.initialChoice);
         }
     },
 
@@ -168,11 +168,11 @@ var Chooser = React.createClass({
             choiceOptions = _.map(self.props.initialChoiceList, function(v, i) {
                 if (_.contains(self.props.disableList, i)) {
                     return (
-                        <option key={v.id} value={v.id} disabled>{v.label}</option>
+                        React.createElement("option", {key: v.id, value: v.id, disabled: true}, v.label)
                     );
                 } else {
                     return (
-                        <option key={v.id} value={v.id}>{v.label}</option>
+                        React.createElement("option", {key: v.id, value: v.id}, v.label)
                     );
                 }
             });
@@ -188,22 +188,22 @@ var Chooser = React.createClass({
         var allowSingleDeselect = this.props.allowSingleDeselect || false;
 
         return (
-            <div className={className} >
-                <Chosen
-                    key={this.state.key}
-                    width={width}
-                    defaultValue={choice}
-                    disabled={this.props.disabled}
-                    data-placeholder="Select..."
-                    disableSearch={this.props.disableSearch}
-                    allowSingleDeselect={allowSingleDeselect}
-                    searchContains={true}
-                    onChange={this.handleChange} >
+            React.createElement("div", {className: className}, 
+                React.createElement(Chosen, {
+                    key: this.state.key, 
+                    width: width, 
+                    defaultValue: choice, 
+                    disabled: this.props.disabled, 
+                    "data-placeholder": "Select...", 
+                    disableSearch: this.props.disableSearch, 
+                    allowSingleDeselect: allowSingleDeselect, 
+                    searchContains: true, 
+                    onChange: this.handleChange}, 
                     
-                        <option value=""></option>
-                        {choiceOptions}
-                 </Chosen>
-            </div>
+                        React.createElement("option", {value: ""}), 
+                        choiceOptions
+                 )
+            )
         );
     }
 });

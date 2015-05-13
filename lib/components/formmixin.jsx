@@ -259,14 +259,62 @@ var FormMixin = {
         return Copy(formValues[attrName].value);
     },
 
-    updateState: function() {
-        this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
-        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
-        this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts);
-                  
-        this.setState({"formValues": this._pendingFormValues,
-                       "missingCounts": this._pendingMissing,
-                       "errorCounts": this._pendingErrors});
+
+    updateState() {
+
+        this.debounce = this.debounce || _.debounce(function(self) {
+            console.log(" ---> DEBOUNCE")
+            self._pendingFormValues = self._pendingFormValues || Copy(self.state.formValues);
+            self._pendingMissing = self._pendingMissing || Copy(self.state.missingCounts);
+            self._pendingErrors = self._pendingErrors || Copy(self.state.errorCounts);
+            self._pendingHiddenList = self._pendingHiddenList || Copy(self.state.formHiddenList);
+
+            self.setState({"formValues": self._pendingFormValues,
+                           "missingCounts": self._pendingMissing,
+                           "errorCounts": self._pendingErrors,
+                           "formHiddenList": self._pendingHiddenList});
+
+            var missingCount = 0;
+            _.each(self._pendingMissing, function(c) {
+                missingCount += c;
+            });
+            if (self.props.onMissingCountChange) {
+                if (_.isUndefined(self.props.index)) {
+                    self.props.onMissingCountChange(self.props.attr, missingCount);
+                } else {
+                    self.props.onMissingCountChange(self.props.index, missingCount);
+                }
+            }
+
+            var errorCount = 0;
+            _.each(self._pendingErrors, function(c) {
+                errorCount += c;
+            });
+            if (self.props.onErrorCountChange) {
+                if (!_.isUndefined(self.props.index)) {
+                    self.props.onErrorCountChange(self.props.attr, errorCount);
+                } else {
+                    self.props.onErrorCountChange(self.props.index, errorCount);
+                }
+            }
+
+            // Handle registered callback.
+            console.log("### onChange callbacks", self._pendingFormValues);
+            if (self.props.onChange && self._pendingFormValues) {
+                var current = {};
+                _.each(self._pendingFormValues, function(value, key) {
+                    current[key] = value.value;
+                });
+    
+                if (_.isUndefined(self.props.index)) {
+                    self.props.onChange(self.props.attr, current);
+                } else {
+                    self.props.onChange(self.props.index, current);
+                }
+            }
+        }, 100);
+
+        this.debounce(this);
     },
 
     setValue: function(key, value) {
@@ -362,11 +410,13 @@ var FormMixin = {
         return vals;
     },
 
-    showRequiredOn: function() {
+    showRequiredOn: function() {    
+        console.log("setState (showRequiredOn)") ;       
         this.setState({"showRequired": true});
     },
 
     showRequiredOff: function() {
+        console.log("setState (showRequiredOff)") ;
         this.setState({"showRequired": false});
     },
 
@@ -418,11 +468,12 @@ var FormMixin = {
         var formRules = this.state.formRules;
 
         var formHiddenList = Copy(this.state.formHiddenList); //Mutate this
+        self._pendingHiddenList = self._pendingHiddenList || Copy(self.state.formHiddenList);
 
         _.each(formAttrs, function(data, attrName) {
             var shouldBeHidden;
             var tags = data.tags || [];
-            var isCurrentlyHidden = _.contains(formHiddenList, attrName);
+            var isCurrentlyHidden = _.contains(self._pendingHiddenList, attrName);
             
             //
             // It's possible the error and missing count setting within this loop will cause
@@ -443,7 +494,7 @@ var FormMixin = {
             if (!isCurrentlyHidden && shouldBeHidden) {
 
                 //Add to hidden list
-                formHiddenList.push(attrName);
+                self._pendingHiddenList.push(attrName);
 
                 //Remove missing and error counts for hidden attrs
                 delete self._pendingMissing[attrName];
@@ -455,7 +506,7 @@ var FormMixin = {
 
             //Add missing counts for attrs that we are enabling
             if (isCurrentlyHidden && !shouldBeHidden) {
-                formHiddenList = _.without(formHiddenList, attrName);
+                self._pendingHiddenList = _.without(self._pendingHiddenList, attrName);
 
                 //Set missing count for this attr if it's required and we just cleared it
                 if (formRules[attrName].required) {
@@ -468,8 +519,7 @@ var FormMixin = {
             }
 
         });
-        
-        this.setState({"formHiddenList": formHiddenList});
+
         this.updateState();
     },
 
@@ -477,46 +527,13 @@ var FormMixin = {
     handleErrorCountChange: function(key, errorCount) {
         this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts) || {};
         this._pendingErrors[key] = errorCount;
-
-        var count = 0;
-        _.each(this._pendingErrors, function(c) {
-            count += c;
-        });
-
         this.updateState();
-
-        if (this.props.onErrorCountChange) {
-            if (!_.isUndefined(this.props.index)) {
-                this.props.onErrorCountChange(this.props.attr, count);
-            } else {
-                this.props.onErrorCountChange(this.props.index, count);
-            }
-        }
     },
 
     handleMissingCountChange: function(key, missingCount) {
         this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts) || {};
         this._pendingMissing[key] = missingCount;
-
-        var count = 0;
-        _.each(this._pendingMissing, function(c) {
-            count += c;
-        });
-
-        //Turn off show required if the user fixed missing fields
-        if (this.showRequired() && count === 0) {
-            this.showRequiredOff();
-        }
-
         this.updateState();
-
-        if (this.props.onMissingCountChange) {
-            if (_.isUndefined(this.props.index)) {
-                this.props.onMissingCountChange(this.props.attr, count);
-            } else {
-                this.props.onMissingCountChange(this.props.index, count);
-            }
-        }
     },
 
     handleChange: function(key, value) {
@@ -528,7 +545,6 @@ var FormMixin = {
         // or perform other actions in response to a particular attr changing.
         //
         
-
         if (this.willHandleChange) {
             v = this.willHandleChange(key, value) || v;
         }
@@ -552,21 +568,6 @@ var FormMixin = {
         // Update the state with the current pendingFormValues
         this.updateState();
 
-        // Handle registered callback.
-        if (this.props.onChange) {
-            var formValues = this._pendingFormValues || Copy(this.state.formValues);
-
-            var current = {};
-            _.each(formValues, function(value, key) {
-                current[key] = value.value;
-            });
-
-            if (_.isUndefined(this.props.index)) {
-                this.props.onChange(this.props.attr, current);
-            } else {
-                this.props.onChange(this.props.index, current);
-            }
-        }
     },
 
     getAttrsForChildren: function(childList) {
@@ -615,10 +616,13 @@ var FormMixin = {
         var formStyle = {};
         var formClassName = "form-horizontal";
 
+        console.log("Render FormMixin", this.props.attr)
+
         // Now that we're rendering we can clear the pendingFormValues
         this._pendingFormValues = null;
         this._pendingMissing = null;
         this._pendingErrors = null;
+        this._pendingHiddenList = null;
 
         if (_.has(top.props, "style")) {
             formStyle = top.props.style;
@@ -633,13 +637,13 @@ var FormMixin = {
         if (top.type === Form.type) {
             children = this.getAttrsForChildren(top.props.children);
             return (
-                <form className={formClassName}
-                      style={formStyle}
-                      key={formKey}
-                      onSubmit={this.handleSubmit}
-                      noValidate >
-                    {children}
-                </form>
+                React.createElement("form", {className: formClassName, 
+                      style: formStyle, 
+                      key: formKey, 
+                      onSubmit: this.handleSubmit, 
+                      noValidate: true}, 
+                    children
+                )
             );
         } else {
             var props = {"key": formKey,

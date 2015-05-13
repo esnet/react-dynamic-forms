@@ -150,6 +150,7 @@ var ListEditorMixin = {
      * Handle an item at i changing to a new value.
      */
     handleItemChanged: function(i, value) {
+        //console.log("## handle item changed", i, value)
         var items = this.state.items;
         items[i] = value;
 
@@ -165,6 +166,7 @@ var ListEditorMixin = {
      * Handler for if a child changes its missing count
      */
     handleMissingCountChange: function(i, missingCount) {
+        //console.log("## handle missing changed", i, value)
         var totalMissingCount;
         var missingList = this.state.missing;
         missingList[i] = missingCount;
@@ -199,6 +201,7 @@ var ListEditorMixin = {
         
         _.each(this.state.items, function(item, index) {
             var component = self.renderItem(item, index);
+            console.log("# Render item with key", item.key)
             if (component) {
                 var props = {"key": item.key,
                              "index": index,
