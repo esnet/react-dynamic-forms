@@ -168,42 +168,34 @@ var Chooser = React.createClass({
             choiceOptions = _.map(self.props.initialChoiceList, function(v, i) {
                 if (_.contains(self.props.disableList, i)) {
                     return (
-                        React.createElement("option", {key: v.id, value: v.id, disabled: true}, v.label)
+                       <option key={v.id} value={v.id} disabled>{v.label}</option>
                     );
                 } else {
                     return (
-                        React.createElement("option", {key: v.id, value: v.id}, v.label)
+                        <option key={v.id} value={v.id}>{v.label}</option>
                     );
                 }
             });
         }
 
-        //Optionally sort the choice list
-        //if (this.props.sorted) {
-        //    choiceList = _.sortBy(choiceList, function(item){
-        //        return item.value;
-        //    });
-        //}
-
         var allowSingleDeselect = this.props.allowSingleDeselect || false;
 
         return (
-            React.createElement("div", {className: className}, 
-                React.createElement(Chosen, {
-                    key: this.state.key, 
-                    width: width, 
-                    defaultValue: choice, 
-                    disabled: this.props.disabled, 
-                    "data-placeholder": "Select...", 
-                    disableSearch: this.props.disableSearch, 
-                    allowSingleDeselect: allowSingleDeselect, 
-                    searchContains: true, 
-                    onChange: this.handleChange}, 
-                    
-                        React.createElement("option", {value: ""}), 
-                        choiceOptions
-                 )
-            )
+            <div className={className} >
+                <Chosen
+                    key={this.state.key}
+                    width={width}
+                    defaultValue={choice}
+                    disabled={this.props.disabled}
+                    data-placeholder="Select..."
+                    disableSearch={this.props.disableSearch}
+                    allowSingleDeselect={allowSingleDeselect}
+                    searchContains={true}
+                    onChange={this.handleChange} >
+                        <option value=""></option>
+                        {choiceOptions}
+                 </Chosen>
+            </div>
         );
     }
 });

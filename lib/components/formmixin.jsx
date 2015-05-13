@@ -259,23 +259,39 @@ var FormMixin = {
         return Copy(formValues[attrName].value);
     },
 
-
+    /**
+     * Update state pushes pending values of state to our this.state. The important
+     * thing here is that the action is deferred, meaning it will be called only
+     * after the callstack is unwound. The deferred action also blocks other deferred
+     * actions until it is run.
+     *
+     * When the deferred action takes place, the following happens:
+     *
+     *     1 A user action occurs
+     *     2 updateState is called one or many times
+     *     3 stack unwinds...
+     *     --
+     *     4 A state structure is constructed out of the pending structures
+     *     5 setState is actually called, which will likely cause React to render()
+     *         5a rendering may mount new form elements, which may themselves result in calls to updateState()
+     *           (mounted components will report their missing/error states via supplied callbacks)
+     *         5b those changes will also be added to the pending structures, but will
+     *            not be flushed until the outer updateState deferred action is complete
+     *     6 callbacks registered with us are called with updated values, missing counts and error counts
+     *       (note these callbacks might include pending changes from 2b)
+     *     7 stack unwinds...
+     *     --
+     *     8 stack unwinds again and the deferred action will be called again if another was created
+     *       as a side effect of step (5) above
+     *
+     * updateState() takes a why parameter, which is helpful for debugging.
+     */
     updateState(why) {
-        var reason = why || "no reason"
-        console.log(" ---> updateState", this.props.attr, reason)
+        //var reason = why || "no reason"
+        //console.log(" ---> updateState", this.props.attr, reason)
         if (!this._deferSet) {
             _.defer(() => {
-                console.group(" ---> DEBOUNCE")
-
-                //this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
-                //this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts);
-                //this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts);
-                //this._pendingHiddenList = this._pendingHiddenList || Copy(this.state.formHiddenList);
-
                 this._deferSet = false;
-                console.log("Defer unset")
-
-                console.group(" ---> setState", this._pendingFormValues, JSON.stringify(this._pendingMissing))
 
                 var state = {};
                 if (this._pendingFormValues) {
@@ -292,10 +308,7 @@ var FormMixin = {
                 }
                 this.setState(state);
 
-                console.groupEnd();
-
                 if (this._pendingMissing) {
-                    console.group(" ---> missing callback", this._pendingMissing)
                     var missingCount = 0;
                     _.each(this._pendingMissing, function(c) {
                         missingCount += c;
@@ -308,11 +321,9 @@ var FormMixin = {
                         }
                     }
                     this._pendingMissing = null;
-                    console.groupEnd();
                 }
 
                 if (this._pendingErrors) {
-                    console.group(" ---> error callback", this._pendingErrors)
                     var errorCount = 0;
                     _.each(this._pendingErrors, function(c) {
                         errorCount += c;
@@ -324,12 +335,10 @@ var FormMixin = {
                             this.props.onErrorCountChange(this.props.index, errorCount);
                         }
                     }
-                    console.groupEnd();
                 }
 
                 // Handle registered callback.
                 if (this._pendingFormValues) {
-                    console.group(" ---> onChange callback", this._pendingFormValues)
                     if (this.props.onChange) {
                         var current = {};
                         _.each(this._pendingFormValues, function(value, key) {
@@ -342,7 +351,6 @@ var FormMixin = {
                             this.props.onChange(this.props.index, current);
                         }
                     }
-                    console.groupEnd();
                     this._pendingFormValues = null;
                 }
 
@@ -350,13 +358,16 @@ var FormMixin = {
                     this._pendingHiddenList = null;
                 }
 
-                console.groupEnd();
             });
-            console.log("Defer set")
             this._deferSet = true;
         }
     },
 
+    /**
+     * Set a new value on the form. The resulting change is added to
+     * _pendingFormValues. When the form state is flushed that value will be set
+     * on this.state.formValues and registered callback called.
+     */
     setValue: function(key, value) {
         var v = value;
 
@@ -374,74 +385,41 @@ var FormMixin = {
         this._pendingFormValues[key].initialValue = v;
         this._pendingFormValues[key].value = v;
         this.updateState("setValue");
-
-        // Callback.
-        //
-        // If onChange is registered here then the value sent to that
-        // callback is just the current value of each formValue field.
-        //
-
-        if (this.props.onChange) {
-            var current = {};
-            _.each(this._pendingFormValues, function(value, key) {
-                current[key] = value.value;
-            });
-            if (_.isUndefined(this.props.index)) {
-                this.props.onChange(this.props.attr, current);
-            } else {
-                this.props.onChange(this.props.index, current);
-            }
-        }
     },
 
+    /**
+     * Batch set multiple values on the form. The resulting changes to the form
+     * values are accumulated in _pendingFormValues. When the form state is flushed
+     * those will be set in bulk onto this.state.formValues  and registered
+     * callback called.
+     */
     setValues: function(newValues) {
-        var self = this;
-
-        //
-        // We get the current pending form values or a copy of the actual formValues
-        // if we don't have a pendingFormValues transaction in progress
-        //
-
-        _.each(newValues, function(value, key) {
+        _.each(newValues, (value, key) => {
             var v = value;
 
             // Hook to allow the component to alter the value before it is set
             // or perform other actions in response to a particular attr changing.
-            if (self.willHandleChange) {
-                v = self.willHandleChange(key, value) || v;
+            if (this.willHandleChange) {
+                v = this.willHandleChange(key, value) || v;
             }
 
-            self._pendingFormValues = self._pendingFormValues || Copy(self.state.formValues);
+            this._pendingFormValues = this._pendingFormValues || Copy(this.state.formValues);
 
-            if (!_.has(self._pendingFormValues, key)) {
-                console.warn("Tried to set value on form, but key doesn't exist:", key, self._pendingFormValues);
+            if (!_.has(this._pendingFormValues, key)) {
+                console.warn("Tried to set value on form, but key doesn't exist:", key, this._pendingFormValues);
             }
 
-            self._pendingFormValues[key].initialValue = v;
-            self._pendingFormValues[key].value = v;
+            this._pendingFormValues[key].initialValue = v;
+            this._pendingFormValues[key].value = v;
 
-            self.updateState(`formValue ${key}`);
-
-            // Callback.
-            //
-            // If onChange is registered here then the value sent to that
-            // callback is just the current value of each formValue field.
-            //
-
-            if (self.props.onChange) {
-                var current = {};
-                _.each(self._pendingFormValues, function(value, key) {
-                    current[key] = value.value;
-                });
-                if (_.isUndefined(self.props.index)) {
-                    self.props.onChange(self.props.attr, current);
-                } else {
-                    self.props.onChange(self.props.index, current);
-                }
-            }
+            this.updateState(`formValue ${key}`);
         });
     },
 
+    /**
+     * Returns the current value of the form's fields. The result is an
+     * object relating the field name to the current value for that field
+     */
     getValues: function() {
         var vals = {};
         _.each(this.state.formValues, function(val, attrName) {
@@ -450,20 +428,35 @@ var FormMixin = {
         return vals;
     },
 
+    /**
+     * Turn show required mode on for the form. In this mode, required
+     * fields which are not filled out will display as an error (i.e. they
+     * will be highlighted in red). This mode would be activated if the
+     * user submitted a form with fields not filled out.
+     */
     showRequiredOn: function() {
-        console.log("setState (showRequiredOn)");
         this.setState({"showRequired": true});
     },
 
+    /**
+     * Turns off the show required mode for the form. See showRequiredOn().
+     */
     showRequiredOff: function() {
-        console.log("setState (showRequiredOff)") ;
         this.setState({"showRequired": false});
     },
 
+    /**
+     * Returns true of the form is in show required mode.
+     */
     showRequired: function() {
         return this.state.showRequired;
     },
 
+    /**
+     * Returns the total number of errors in the form. This assumes this
+     * will be called after the form state is flushed. It does not look at
+     * pending state.
+     */
     errorCount: function() {
         var errorCounts = this.state.errorCounts;
         var errorCount = 0;
@@ -473,10 +466,19 @@ var FormMixin = {
         return errorCount;
     },
 
+    /**
+     * Returns if the form has any errors, which is helpful
+     * to quickly determine if a form can be submitted or not.
+     */
     hasErrors: function() {
         return (this.errorCount() > 0);
     },
 
+    /**
+     * Returns the total count of form fields which are missing and
+     * which are required by the form schema. This assumes this will be called
+     * after the form state is flushed. It does not look at pending state.
+     */
     missingCount: function() {
         var missingCounts = this.state.missingCounts;
         var missingCount = 0;
@@ -486,6 +488,10 @@ var FormMixin = {
         return missingCount;
     },
 
+    /**
+     * Returns if the form has any missing values, which is helpful
+     * to quickly determine if a form can be submitted or not.
+     */
     hasMissing: function() {
         return (this.missingCount() > 0);
     },
@@ -500,6 +506,13 @@ var FormMixin = {
      *
      * Errors and missing counts associated with attributes
      * being disabled will be cleared.
+     *
+     * _pendingHiddenList will hold the updated list of which fields are hidden
+     * and which will not. Similarly _pendingMissing and _pendingErrors will hold
+     * updates to the error and missing counts as a result of this setVisibility.
+     *
+     * When the state is flushed these pending structures will be set on the form
+     * state and notification callbacks called.
      */
     setVisibility: function(tag) {
         var self = this;
@@ -520,8 +533,10 @@ var FormMixin = {
             // a re-render (depending on the react version!) so we start new pending counts here
             //
 
-            self._pendingMissing = self._pendingMissing || Copy(self.state.missingCounts);
-            self._pendingErrors = self._pendingErrors || Copy(self.state.errorCounts);
+            self._pendingMissing = self._pendingMissing ||
+                Copy(self.state.missingCounts);
+            self._pendingErrors = self._pendingErrors ||
+                Copy(self.state.errorCounts);
 
             //Determine and set new hidden state on formAttr entry
             if (_.isArray(tag)) {
@@ -563,27 +578,60 @@ var FormMixin = {
         this.updateState(`formValue ${tag}`);
     },
 
-
+    /**
+     * This is the handler for changes to the error state of this form's fields.
+     *
+     * If a field is complex, such as another form or a list view, then errorCount
+     * will be the telly all the errors within that form or list. If it is a simple
+     * field such as a textedit then the errorCount will be either 0 or 1.
+     *
+     * The mapping of field names (passed in as the key) and the count is updated
+     * in _pendingErrors until built up state is flushed.
+     */
     handleErrorCountChange: function(key, errorCount) {
-        this._pendingErrors = this._pendingErrors || Copy(this.state.errorCounts) || {};
+        this._pendingErrors = this._pendingErrors ||
+            Copy(this.state.errorCounts) || {};
         this._pendingErrors[key] = errorCount;
         this.updateState(`error change ${key} ${errorCount}`);
     },
 
+    /**
+     * This is the handler for changes to the missing state of this form's fields.
+     *
+     * If a field is complex, such as another form or a list view, then missingCount
+     * will be the telly all the missing values (for required fields) within that
+     * form or list.
+     * If it is a simple field such as a textedit then the missingCount will be
+     * either 0 or 1.
+     *
+     * The mapping of field names (passed in as the key) and the missing count is
+     * updated in _pendingMissing until built up state is flushed.
+     */
     handleMissingCountChange: function(key, missingCount) {
-        console.log("handleMissingCountChange", key, missingCount);
-        this._pendingMissing = this._pendingMissing || Copy(this.state.missingCounts) || {};
+        this._pendingMissing = this._pendingMissing ||
+            Copy(this.state.missingCounts) || {};
         this._pendingMissing[key] = missingCount;
         this.updateState(`missing change ${key} ${missingCount}`);
     },
 
+    /**
+     * This is the handler for value change notifications from this form's
+     * widgets. As part of this handler we call willHandleChange if it is
+     * implemented. This hook enables either the value to be modified or
+     * for other actions to happen as a result of the change (such as hiding
+     * some form elements).
+     *
+     * Changes to the formValues are stored in _pendingFormValues until built
+     * up state is flushed.
+     */
     handleChange: function(key, value) {
-        var self = this;
         var v = value;
 
         //
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
+        // Note: Calling this opens potentially a lot of changes to the form
+        // itself
         //
         
         if (this.willHandleChange) {
@@ -657,14 +705,6 @@ var FormMixin = {
         var formStyle = {};
         var formClassName = "form-horizontal";
 
-        console.log("Render FormMixin", this.props.attr)
-
-        // Now that we're rendering we can clear the pendingFormValues
-        //this._pendingFormValues = null;
-        //this._pendingMissing = null;
-        //this._pendingErrors = null;
-        //this._pendingHiddenList = null;
-
         if (_.has(top.props, "style")) {
             formStyle = top.props.style;
         }
@@ -678,13 +718,13 @@ var FormMixin = {
         if (top.type === Form.type) {
             children = this.getAttrsForChildren(top.props.children);
             return (
-                React.createElement("form", {className: formClassName, 
-                      style: formStyle, 
-                      key: formKey, 
-                      onSubmit: this.handleSubmit, 
-                      noValidate: true}, 
-                    children
-                )
+                <form className={formClassName}
+                      style={formStyle}
+                      key={formKey}
+                      onSubmit={this.handleSubmit}
+                      noValidate >
+                    {children}
+                </form>
             );
         } else {
             var props = {"key": formKey,

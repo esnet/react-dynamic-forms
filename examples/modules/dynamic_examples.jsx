@@ -236,7 +236,6 @@ var FormExample = React.createClass({
     },
 
     handleMissingCountChange: function(attr, count) {
-        console.log("MISSING COUNT CHANGED", attr, count)
         this.setState({"missingCount": count});
     },
 
@@ -278,7 +277,6 @@ var FormExample = React.createClass({
     },
 
     render: function() {
-        console.log("Render form: ", this.state.showRequired, this.state.missingCount)
         return (
             <div>
                 <div className="row">
