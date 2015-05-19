@@ -329,7 +329,7 @@ var FormMixin = {
                         errorCount += c;
                     });
                     if (this.props.onErrorCountChange) {
-                        if (!_.isUndefined(this.props.index)) {
+                        if (_.isUndefined(this.props.index)) {
                             this.props.onErrorCountChange(this.props.attr, errorCount);
                         } else {
                             this.props.onErrorCountChange(this.props.index, errorCount);
