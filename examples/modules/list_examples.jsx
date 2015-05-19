@@ -38,7 +38,8 @@ var EmailItemEditor = React.createClass({
         var id = this.value("email_type");
         return (
             <div>
-                <ChooserGroup attr="email_type"
+                <ChooserGroup key={id}
+                              attr="email_type"
                               initialChoice={id}
                               initialChoiceList={emailTypes}
                               disableSearch={true}
@@ -129,7 +130,7 @@ var ContactForm = React.createClass({
         var emails = this.value("emails");
 
         return (
-            <Form style={formStyle} ref="form">
+            <Form style={formStyle} ref="form" attr="contact-form">
 
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />

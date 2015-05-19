@@ -8,14 +8,17 @@ var {Chooser} = require("../../entry");
 var animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
                  5: "fish", 6: "hedgehog", 7: "banana slug"};
 
+var animalList = _.map(animalMap, (value, key) => {return {id: key, label: value}})
+
+var sortedAnimalList = _.sortBy(animalList, (item) => {return item.label; });
+
 var ChooserExamples = React.createClass({
 
     getInitialState: function() {
 
         return {
-            animalList: _.map(animalMap, function(value, key) {
-                return {id: key, label: value}
-            }),
+            animalList: animalList,
+            sortedAnimalList: sortedAnimalList,
             selection: "",
             missingCount: 0,
         };
@@ -35,7 +38,7 @@ var ChooserExamples = React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <h3>Chooser Examples</h3>
-                        The Chooser widget wraps the combobox and simple pulldown of react-widgets.<br />
+                        The Chooser widget wraps the react-chosen component, which in turn wraps the Chosen jQuery plugin from Harvest.<br />
                     </div>
                 </div>
 
@@ -49,7 +52,7 @@ var ChooserExamples = React.createClass({
 
                         <p />
                         Simple chooser sorted:
-                        <Chooser initialChoiceList={this.state.animalList} sorted={true} width={300}/>
+                        <Chooser initialChoiceList={this.state.sortedAnimalList} width={300}/>
 
 
                         <p />
@@ -58,7 +61,7 @@ var ChooserExamples = React.createClass({
 
                         <p />
                         Chooser with initial choice and sorted:
-                        <Chooser initialChoice={4} initialChoiceList={this.state.animalList} sorted={true} width={300}/>
+                        <Chooser initialChoice={4} initialChoiceList={this.state.sortedAnimalList} width={300}/>
 
                         <p />
                         Chooser disabled:
@@ -69,9 +72,19 @@ var ChooserExamples = React.createClass({
                         <Chooser initialChoice={3} initialChoiceList={this.state.animalList} disableSearch={true} width={300}/>
 
                         <p />
+                        Chooser with single deselect:
+                        <Chooser initialChoice={2} initialChoiceList={this.state.animalList} disableSearch={true} allowSingleDeselect={true}/>
+
+                        <p />
                         Chooser with a required value:
                         <Chooser initialChoiceList={this.state.animalList}  width={300} required={true} showRequired={true} allowSingleDeselect={true} onMissingCountChange={this.handleMissingCountChange}/>
                         Missing count: {this.state.missingCount}
+
+                        <p />
+                        Chooser onChange callback:
+                        <Chooser initialChoiceList={this.state.sortedAnimalList} onChange={this.handleChange}/>
+                        Chosen: {this.state.selection} ({animalMap[this.state.selection]})
+
                     </div>
                 </div>
             </div>

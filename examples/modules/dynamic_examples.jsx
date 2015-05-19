@@ -54,7 +54,7 @@ var bookmarked = {
         name: "TELIANET:telianet-eqx-ash:Peer",
         description: "A foreign endpoint",
         type: 3,
-        foreign_description: "telianet-eqx-ash:Peer",
+        foreign_description: "",
         organization: "TeliaNet"
     },
     3: {
@@ -107,7 +107,7 @@ var EndpointForm = React.createClass({
             case "type":
                 //The endpoint type changed, which changes fields visible,
                 //so set this with setVisibility() using the type as a filter.
-                var obj = _.findWhere(endpointTypes, {"id": value});
+                var obj = _.findWhere(endpointTypes, {"id": parseInt(value)});
                 this.setVisibility(obj.label);
                 break;
         }
@@ -142,7 +142,7 @@ var EndpointForm = React.createClass({
 
                 <h5>Bookmarked endpoints</h5>
 
-                <ChooserGroup attr="bookmarked" width={300} disableSearch={true}
+                <ChooserGroup attr="bookmarked" width={300} disableSearch={false}
                               initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
 
                 <hr />
@@ -183,6 +183,8 @@ var FormExample = React.createClass({
         return {
             "data":  undefined,
             "loaded": false,
+            "missingCount": 0,
+            "errorCount": 0
         };
     },
 
@@ -289,6 +291,7 @@ var FormExample = React.createClass({
                         {this.renderEndpointForm()}
                     </div>
                     <div className="col-md-3">
+                        Errors:
                         <FormErrors showRequired={this.state.showRequired}
                                     missingCount={this.state.missingCount}
                                     numErrors={this.state.errorCount} />

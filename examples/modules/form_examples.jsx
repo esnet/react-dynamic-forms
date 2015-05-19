@@ -101,6 +101,10 @@ var FormExample = React.createClass({
         }, 1500);
     },
 
+    handleChange: function(a, b) {
+        console.log("Form changed", a, b)
+    },
+
     handleSubmit: function(value) {
         this.setState({"data": value});
     },
@@ -126,7 +130,7 @@ var FormExample = React.createClass({
     renderContactForm: function() {
         if (this.state.loaded) {
             return (
-                <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit}/>
+                <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit} onChange={this.handleChange}/>
             );
         } else {
             return (

@@ -2,19 +2,16 @@
 
 var React = require("react/addons");
 var _ = require("underscore");
-var ReactWidgets = require("react-widgets");
+var Chosen = require("react-chosen");
 var hash = require("string-hash");
 
-require("./assets/css/react-widgets.css");
+require("./assets/chosen.css");
 require("./chooser.css");
-
-var {Combobox,
-     DropdownList} = ReactWidgets;
 
 /**
  * React Form control to select an item from a list.
  *
- * Wraps the react-widget library combobox and dropdownlist components.
+ * Wraps the react-chooser library
  *
  * Props:
  *     initialChoice     - Pass in the initial value as an id
@@ -73,14 +70,26 @@ var Chooser = React.createClass({
             // be potentially stale.
             //
 
-            _.defer(function(initialChoice) {
-                var key = self._generateKey(initialChoice, self.props.initialChoiceList);
-                self.setState({
-                    "initialChoice": initialChoice,
-                    "value": initialChoice,
+            //_.defer(function(initialChoice) {
+                var key = this._generateKey(nextProps.initialChoice, this.props.initialChoiceList);
+                
+                this.setState({
+                    "initialChoice": nextProps.initialChoice,
+                    "value": nextProps.initialChoice,
                     "key": key
                 });
-            }, nextProps.initialChoice);
+
+                //The value might have been missing and is now set explicitly with a prop
+                var missing = this.props.required && !this.props.disabled &&
+                                (_.isNull(nextProps.initialChoice) ||
+                                 _.isUndefined(nextProps.initialChoice) ||
+                                 nextProps.initialChoice === "");
+                var missingCount = missing ? 1 : 0;
+                if (this.props.onMissingCountChange) {
+                    this.props.onMissingCountChange(this.props.attr, missingCount);
+                }
+
+            //}, nextProps.initialChoice);
         }
     },
 
@@ -110,32 +119,18 @@ var Chooser = React.createClass({
 
     },
 
-    handleChange: function(v) {
-        var missing = false;
+    handleChange: function(e) {
+        var value = $(e.target).val();
+        var missing = this.props.required && this._isEmpty(value);
 
-        //If v is an object then something was selected
-        //If v is a string, then something was typed in that may or may not be in the
-        //choice list.
-        var selected;
-        if (!_.isObject(v)) {
-            selected = _.findWhere(this.props.initialChoiceList, {label: v});
-        } else {
-            selected = v;
+        //If the chosen id is a number, cast it to a number
+        if (!this._isEmpty(value) && !_.isNaN(Number(value))) {
+            value = Number(value);
         }
-
-        //If the user types something in that's not in the list, we
-        //just ignore that here
-        if (!selected) {
-            missing = this.props.required;
-            this.setState({"value": undefined,
-                           "missing": missing});
-            return;
-        }
-
-        var value = selected.id;
 
         //State changes
-        this.setState({"value": value});
+        this.setState({"value": value,
+                       "missing": missing});
 
         //Callbacks
         if (this.props.onChange) {
@@ -144,24 +139,8 @@ var Chooser = React.createClass({
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
         }
-    },
 
-    onBlur: function(x) {
-        var value = this.state.value;
-        var missing = this.props.required && this._isEmpty(value);
-
-        //State changes
-        this.setState({"value": value,
-                       "missing": missing});
-
-        //Callbacks
-        if (this.props.onChange) {
-            this.props.onChange(this.props.attr, missing ? "" : value );
-        }
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
-        }
-        return false;
+        e.stopPropagation();
     },
 
     render: function() {
@@ -181,52 +160,43 @@ var Chooser = React.createClass({
         var choiceItem = _.find(this.props.initialChoiceList, function(item) {
             return item.id == self.state.value;
         });
-        var choice = choiceItem ? choiceItem.label : undefined;
+        var choice = choiceItem ? choiceItem.id : undefined;
         
-        //List of choices
-        var choiceList = _.map(this.props.initialChoiceList, function(v, i) {
-            return {id: v.id, value: v.label};
-        });
-        
-        //Optionally sort the choice list
-        if (this.props.sorted) {
-            choiceList = _.sortBy(choiceList, function(item){
-                return item.value;
+        //List of choice options
+        var choiceOptions = [];
+        if (!this.props.disabled) {
+            choiceOptions = _.map(self.props.initialChoiceList, function(v, i) {
+                if (_.contains(self.props.disableList, i)) {
+                    return (
+                       <option key={v.id} value={v.id} disabled>{v.label}</option>
+                    );
+                } else {
+                    return (
+                        <option key={v.id} value={v.id}>{v.label}</option>
+                    );
+                }
             });
         }
 
-        if (this.props.disableSearch) {
-            //Disabled search builds a simple pulldown list
-            return (
-                <div className={className} >
-                    <DropdownList disabled={this.props.disabled}
-                                  style={{width: width}}
-                                  key={this.state.key}
-                                  valueField="id" textField="value"
-                                  data={choiceList}
-                                  defaultValue={choice}
-                                  onChange={this.handleChange} />
-                </div>
-            );
-        } else {
-            //Otherwise build a combobox style list
-            return (
-                <div className={className} >
-                    <Combobox ref="chooser"
-                              disabled={this.props.disabled}
-                              style={{width: width}}
-                              key={this.state.key}
-                              onBlur={this.onBlur}
-                              valueField="id"
-                              textField="value"
-                              defaultValue={choice}
-                              data={choiceList}
-                              filter={false}
-                              suggest={true}
-                              onChange={this.handleChange} />
-                </div>
-            );
-        }
+        var allowSingleDeselect = this.props.allowSingleDeselect || false;
+
+        return (
+            <div className={className} >
+                <Chosen
+                    key={this.state.key}
+                    width={width}
+                    defaultValue={choice}
+                    disabled={this.props.disabled}
+                    data-placeholder="Select..."
+                    disableSearch={this.props.disableSearch}
+                    allowSingleDeselect={allowSingleDeselect}
+                    searchContains={true}
+                    onChange={this.handleChange} >
+                        <option value=""></option>
+                        {choiceOptions}
+                 </Chosen>
+            </div>
+        );
     }
 });
 
