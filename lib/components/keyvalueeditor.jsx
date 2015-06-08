@@ -16,9 +16,6 @@ var CreationState = KeyMirror({
     PICK_KEYNAME: null,
 });
 
-
-
-
 var KeyValueListEditor = React.createClass({
     
     displayName: "KeyValueListEditor",
@@ -31,6 +28,7 @@ var KeyValueListEditor = React.createClass({
             keyName: null,
             value: null,
             valueError: false,
+            validationRule: null,
         };
     },
     
@@ -46,13 +44,19 @@ var KeyValueListEditor = React.createClass({
         return {
             "keyName": keyName, 
             "value": value,
-            "valueError": false 
+            "valueError": false,
+            "validationRule": null, 
         };
     },
 
     handleKeyNameSelect: function(attr, value) {
-        console.log("attr",attr);
-        console.log("value",value);
+        var validation = null;
+        _.each(this.props.constraints, function(constraint){
+            if (_.isMatch(constraint, {"keyname":value})) {
+                validation = {"format":constraint["datatype"]};
+            }
+        });
+        this.setState({"validationRule": validation});
         this.setState({"keyName": value});  
     },
 
@@ -64,7 +68,8 @@ var KeyValueListEditor = React.createClass({
         var data = {
             "keyName": this.state.keyName, 
             "value": this.state.value,  
-            "valueError": this.state.valueError
+            "valueError": this.state.valueError,
+            "validationRule": this.state.validationRule
         };
 
         this.transitionTo(CreationState.OFF)();
@@ -73,7 +78,8 @@ var KeyValueListEditor = React.createClass({
         this.setState({
             "keyName": null,
             "value": null,
-            "valueError": false
+            "valueError": false,
+            "validationRule": null
         });
     },
 
@@ -87,7 +93,8 @@ var KeyValueListEditor = React.createClass({
         this.setState({
             "keyName": null,
             "value": null,
-            "valueError": false
+            "valueError": false,
+            "validationRule": null
         });
     },
 
@@ -104,24 +111,59 @@ var KeyValueListEditor = React.createClass({
     },
 
     plusUI: function() {
-        console.log("this.state.items", this.state.items)
         var self = this;
         
         var ui;
+        
+        var keyValueChoice = _.map(this.props.constraints, function(value, keyname) {
+            return {
+                "id": value["keyname"],
+                "label": value["keyname"],
+            }
+        });
+
+        var used = _.object(_.pluck(this.state.items, "keyName"), _.pluck(this.state.items, "keyName"))
+
+        var filteredChoiceList = _.filter(keyValueChoice, function(choice){
+            return !_.has(used, choice.label)
+        });
+
+
         switch (this.state.createState) {
 
             case CreationState.OFF:
                 //Initial UI to show the [+] Contact
-                ui = (
-                    <div className="esdb-plus-action-box"
-                         key="append-new-or-existing"
-                         style={{marginBottom: 10}}
-                         onClick={this.transitionTo(CreationState.PICK_KEYNAME)} >
-                        <i className="glyphicon glyphicon-plus esdb-small-action-icon">
-                            Detail
-                        </i>
-                    </div>
-                );
+                if (filteredChoiceList.length != 0) {
+                    ui = (
+                        <div className="esdb-plus-action-box"
+                            key="append-new-or-existing"
+                            style={{marginBottom: 10}}
+                            onClick={this.transitionTo(CreationState.PICK_KEYNAME)} >
+                            <i className="glyphicon glyphicon-plus esdb-small-action-icon">
+                                Detail    
+                            </i>
+                        </div>
+                        );
+                } else {
+                    var style={
+                        paddingLeft:12,
+                        color:"#FF0000",
+                        float: "left"
+                    } 
+                    ui = (
+                        <div>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <span style={style}>
+                                         All available choices selected
+                                        </span>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        );
+                };
                 break;
 
             case CreationState.PICK_KEYNAME:
@@ -137,24 +179,6 @@ var KeyValueListEditor = React.createClass({
                     width: 55,
                     float: "right"
                 }
-
-                var keyValueChoice = _.map(this.props.constraints, function(value, keyname) {
-                    return {
-                        "id": value["keyname"],
-                        "label": value["keyname"],
-                    }
-                });
-                
-                var used = _.object(_.pluck(this.state.items, "keyName"), _.pluck(this.state.items, "keyName"))
-
-                var filteredChoiceList = _.filter(keyValueChoice, function(choice){
-                    return !_.has(used, choice.label)
-                });
-              
-                console.log("used", used);
-                console.log("this.props.constraints", this.props.constraints)
-                console.log("keyValueChoice", keyValueChoice);
-                console.log("filteredChoiceList", filteredChoiceList);
 
                 cancelButtonElement = (
                     <button style={buttonStyle}
@@ -180,9 +204,7 @@ var KeyValueListEditor = React.createClass({
                                 key="pick-contact-button"
                                 onClick={this.handleDone}>Done</button>
                     );
-                }
-
-                var validationRule = {"format":"email"}
+                }                
 
                 ui = (
                     <div className="esdb-plus-action-box-dialog-lg"
@@ -202,7 +224,7 @@ var KeyValueListEditor = React.createClass({
                             <tr>
                                 <td width="150">Value</td>
                                 <td>
-                                    <TextEdit attr="value" rules={validationRule} onErrorCountChange={this.handleValueError}
+                                    <TextEdit attr="value" rules={this.state.validationRule} onErrorCountChange={this.handleValueError}
                                      onChange={this.handleValueChanged}
                                      width={300} />
                                 </td>
