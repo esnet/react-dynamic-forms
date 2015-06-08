@@ -53,7 +53,11 @@ var KeyValueListEditor = React.createClass({
         var validation = null;
         _.each(this.props.constraints, function(constraint){
             if (_.isMatch(constraint, {"keyname":value})) {
-                validation = {"format":constraint["datatype"]};
+                if (constraint["datatype"] == "integer") {
+                    validation = {"format":constraint["datatype"],"type":"integer"};
+                } else {
+                    validation = {"format":constraint["datatype"],"type":"string"};
+                };    
             }
         });
         this.setState({"validationRule": validation});
@@ -145,19 +149,16 @@ var KeyValueListEditor = React.createClass({
                         </div>
                         );
                 } else {
-                    var style={
-                        paddingLeft:12,
-                        color:"#FF0000",
-                        float: "left"
-                    } 
                     ui = (
-                        <div>
+                        <div> 
                             <table>
                                 <tbody>
                                     <tr>
-                                        <span style={style}>
-                                         All available choices selected
-                                        </span>
+                                        <td>
+                                            <i className="glyphicon glyphicon-plus esdb-small-action-icon text-muted">
+                                                All available choices selected   
+                                            </i>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
