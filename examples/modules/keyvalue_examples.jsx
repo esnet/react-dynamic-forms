@@ -3,7 +3,7 @@ var _ = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 
-var {KeyValue} = require("../../entry");
+var {KeyValueEdit} = require("../../entry");
 
 var text        = require("raw!../markdown/list_examples.md");
 var description = "This shows an example form with a list of keys and values that can be added or removed.";
@@ -46,7 +46,7 @@ var KeyValueExamples = React.createClass({
 					<h4>Key-Value Editor</h4>
 
 					<p />
-						<KeyValue keyValues={keyValues} constraints={constraints}/>
+						<KeyValueEdit keyValues={keyValues} constraints={constraints}/>
 					</div>
 				</div>
 			</div>
