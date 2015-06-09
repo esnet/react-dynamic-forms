@@ -126,10 +126,12 @@ var KeyValueListEditor = React.createClass({
             }
         });
 
-        var used = _.object(_.pluck(this.state.items, "keyName"), _.pluck(this.state.items, "keyName"))
+        // Get a list of keys not already used in the existing items
+        var existingKeys = _.pluck(this.state.items, "keyName");
+        var existingKeySet = _.object(existingKeys, existingKeys);
 
         var filteredChoiceList = _.filter(keyValueChoice, function(choice){
-            return !_.has(used, choice.label)
+            return !_.has(existingKeySet, choice.label)
         });
 
 
@@ -218,7 +220,7 @@ var KeyValueListEditor = React.createClass({
                                 <td>
                                     <Chooser attr="keyName"
                                              initialChoice={null}
-                                             initialChoiceList={filteredChoiceList}  //Need to construct chooser list
+                                             initialChoiceList={filteredChoiceList} 
                                              onChange={this.handleKeyNameSelect} />
                                 </td>
                             </tr>
@@ -279,7 +281,7 @@ var KeyValueEditor = React.createClass({
         var keyValueList=[];
         _.each(keyValues, function(value, keyName) {
             keyValueList.push({"keyName": keyName, "value": value});
-            });
+        });
         var constraints = this.props.constraints;
         return (
             <KeyValueListEditor keyValueList={keyValueList} constraints={constraints}/> 
