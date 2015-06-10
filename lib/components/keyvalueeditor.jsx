@@ -9,6 +9,9 @@ var KeyMirror = require('react/lib/keyMirror');
 var ListEditorMixin = require("./listeditormixin");
 var Chooser = require("./chooser");
 var TextEdit = require("./textedit");
+var Group = require("./group");
+var FormMixin = require("./formmixin");
+var Schema = require("./schema");
 
 //State transitions when adding to the key-value list
 var CreationState = KeyMirror({
@@ -34,7 +37,7 @@ var KeyValueListEditor = React.createClass({
     
     /**  Set initial items */
     initialItems: function() {
-        return this.props.keyValueList || []; 
+        return this.props.keyValues || []; 
     },
 
     /** Create a new item */
@@ -73,11 +76,14 @@ var KeyValueListEditor = React.createClass({
             "keyName": this.state.keyName, 
             "value": this.state.value,  
             "valueError": this.state.valueError,
-            "validationRule": this.state.validationRule
+            "validationRule": this.state.validationRule,
         };
 
         this.transitionTo(CreationState.OFF)();
         this.handleAddItem(data);
+
+        console.log("handleDone State",this.state);
+        console.log("handleDone Props",this.props);
 
         this.setState({
             "keyName": null,
@@ -116,7 +122,7 @@ var KeyValueListEditor = React.createClass({
 
     plusUI: function() {
         var self = this;
-        
+
         var ui;
         
         var keyValueChoice = _.map(this.props.constraints, function(value, keyname) {
@@ -134,7 +140,8 @@ var KeyValueListEditor = React.createClass({
             return !_.has(existingKeySet, choice.label)
         });
 
-
+        console.log("plusUI",this.state)
+        console.log("plusUI Props", this.props)
         switch (this.state.createState) {
 
             case CreationState.OFF:
@@ -275,16 +282,28 @@ var KeyValueListEditor = React.createClass({
 var KeyValueEditor = React.createClass({
 
     displayName: "KeyValueEditor",
-    
+
+    handleChange: function(attr, value) {
+        console.log("attr", attr)
+        console.log("value", value)
+        console.log("this.state",this.state)
+    },
+
     render: function() {
-        var keyValues = this.props.keyValues;
+        
+        var keyValuesDict = this.props.keyValues;
         var keyValueList=[];
-        _.each(keyValues, function(value, keyName) {
+        _.each(keyValuesDict, function(value, keyName) {
             keyValueList.push({"keyName": keyName, "value": value});
         });
         var constraints = this.props.constraints;
+        console.log("this.props", this.props)
+        //console.log("I got here")
         return (
-            <KeyValueListEditor keyValueList={keyValueList} constraints={constraints}/> 
+                <Group attr="keyValues">
+                    <KeyValueListEditor keyValues={keyValueList} constraints={constraints}
+                     onChange={this.props.handleChange} />
+                </Group>         
         );
     }
 });
