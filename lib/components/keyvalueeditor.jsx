@@ -82,9 +82,6 @@ var KeyValueListEditor = React.createClass({
         this.transitionTo(CreationState.OFF)();
         this.handleAddItem(data);
 
-        console.log("handleDone State",this.state);
-        console.log("handleDone Props",this.props);
-
         this.setState({
             "keyName": null,
             "value": null,
@@ -283,24 +280,27 @@ var KeyValueEditor = React.createClass({
 
     displayName: "KeyValueEditor",
 
-    handleChange: function(attr, value) {
-        console.log("KeyValueEditor handleChange", attr, value)
+    handleChange: function(attr, keyValue) {
+        var newKeyValues={};
+        _.each(keyValue, function(keyName) {
+            newKeyValues[keyName["keyName"]]=keyName["value"];
+        });
+        if (this.props.onChange) {
+            this.props.onChange(this.props.attr, newKeyValues);
+        };    
     },
 
     render: function() {
-        
         var keyValuesDict = this.props.keyValues;
         var keyValueList=[];
         _.each(keyValuesDict, function(value, keyName) {
             keyValueList.push({"keyName": keyName, "value": value});
         });
         var constraints = this.props.constraints;
-        console.log("this.props", this.props)
-        //console.log("I got here")
         return (
-            <KeyValueListEditor keyValues={keyValueList}
-                                constraints={constraints}
-                                onChange={this.handleChange} />
+                <KeyValueListEditor keyValues={keyValueList}
+                                    constraints={constraints}
+                                    onChange={this.handleChange} />
         );
     }
 });
