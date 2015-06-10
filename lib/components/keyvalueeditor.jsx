@@ -67,7 +67,7 @@ var KeyValueListEditor = React.createClass({
         this.setState({"keyName": value});  
     },
 
-    handleValueChanged: function(attr, value) {  
+    handleDialogValueChanged: function(attr, value) {  
         this.setState({"value": value});
     },
 
@@ -93,7 +93,7 @@ var KeyValueListEditor = React.createClass({
         });
     },
 
-    handleValueError: function(attr, errorCount) {
+    handleDialogValueError: function(attr, errorCount) {
         this.setState({"valueError": errorCount === 1 ? true : false}); 
     },
 
@@ -140,8 +140,6 @@ var KeyValueListEditor = React.createClass({
             return !_.has(existingKeySet, choice.label)
         });
 
-        console.log("plusUI",this.state)
-        console.log("plusUI Props", this.props)
         switch (this.state.createState) {
 
             case CreationState.OFF:
@@ -152,11 +150,13 @@ var KeyValueListEditor = React.createClass({
                             key="append-new-or-existing"
                             style={{marginBottom: 10}}
                             onClick={this.transitionTo(CreationState.PICK_KEYNAME)} >
-                            <i className="glyphicon glyphicon-plus esdb-small-action-icon">
-                                Detail    
-                            </i>
+                            <div>
+                                <i className="glyphicon glyphicon-plus esnet-forms-small-action-icon">
+                                    Key
+                                </i>
+                            </div>
                         </div>
-                        );
+                    );
                 } else {
                     ui = (
                         <div> 
@@ -214,7 +214,7 @@ var KeyValueListEditor = React.createClass({
                                 key="pick-contact-button"
                                 onClick={this.handleDone}>Done</button>
                     );
-                }                
+                }
 
                 ui = (
                     <div className="esdb-plus-action-box-dialog-lg"
@@ -234,8 +234,8 @@ var KeyValueListEditor = React.createClass({
                             <tr>
                                 <td width="150">Value</td>
                                 <td>
-                                    <TextEdit attr="value" rules={this.state.validationRule} onErrorCountChange={this.handleValueError}
-                                     onChange={this.handleValueChanged}
+                                    <TextEdit attr="value" rules={this.state.validationRule} onErrorCountChange={this.handleDialogValueError}
+                                     onChange={this.handleDialogValueChanged}
                                      width={300} />
                                 </td>
                             </tr>
@@ -265,7 +265,7 @@ var KeyValueListEditor = React.createClass({
                 <table>
                     <tbody>
                         <tr>
-                            <td>{keyName}</td>
+                            <td width="140">{keyName}</td>
                             <td>
                                 <span style={style}>
                                     {value}
@@ -284,9 +284,7 @@ var KeyValueEditor = React.createClass({
     displayName: "KeyValueEditor",
 
     handleChange: function(attr, value) {
-        console.log("attr", attr)
-        console.log("value", value)
-        console.log("this.state",this.state)
+        console.log("KeyValueEditor handleChange", attr, value)
     },
 
     render: function() {
@@ -300,10 +298,9 @@ var KeyValueEditor = React.createClass({
         console.log("this.props", this.props)
         //console.log("I got here")
         return (
-                <Group attr="keyValues">
-                    <KeyValueListEditor keyValues={keyValueList} constraints={constraints}
-                     onChange={this.props.handleChange} />
-                </Group>         
+            <KeyValueListEditor keyValues={keyValueList}
+                                constraints={constraints}
+                                onChange={this.handleChange} />
         );
     }
 });

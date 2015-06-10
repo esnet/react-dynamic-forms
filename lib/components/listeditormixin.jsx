@@ -97,8 +97,11 @@ var ListEditorMixin = {
                        "errors": errorList,
                        "missing": missingList});
 
+        console.log("handleAddItem", this.props);
+
         //Callbacks
         if (this.props.onChange) {
+            console.log("List view onChange called", this.props)
             this.props.onChange(this.props.attr, items);
         }
         if (this.props.onErrorCountChange) {
@@ -201,7 +204,6 @@ var ListEditorMixin = {
         
         _.each(this.state.items, function(item, index) {
             var component = self.renderItem(item, index);
-            console.log("# Render item with key", item.key)
             if (component) {
                 var props = {"key": item.key,
                              "index": index,
