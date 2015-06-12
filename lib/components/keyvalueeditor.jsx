@@ -29,7 +29,7 @@ var KeyValueListEditor = React.createClass({
         return {
             createState: CreationState.OFF,
             keyName: null,
-            value: null,
+            value: "",
             valueError: false,
             validationRule: null,
         };
@@ -84,7 +84,7 @@ var KeyValueListEditor = React.createClass({
 
         this.setState({
             "keyName": null,
-            "value": null,
+            "value": "",
             "valueError": false,
             "validationRule": null
         });
@@ -99,7 +99,7 @@ var KeyValueListEditor = React.createClass({
         this.transitionTo(CreationState.OFF)();
         this.setState({
             "keyName": null,
-            "value": null,
+            "value": "",
             "valueError": false,
             "validationRule": null
         });
@@ -194,8 +194,8 @@ var KeyValueListEditor = React.createClass({
                             key="cancel-button"
                             onClick={this.handleCancel}>Cancel</button>
                 );
-
-                if (this.state.keyName === null || this.state.value === null || this.state.valueError === true) {
+                
+                if (this.state.keyName === null || this.state.value === "" || this.state.valueError === true) {
                     doneButtonElement = (
                         <button style={buttonStyle}
                                 type="button"
