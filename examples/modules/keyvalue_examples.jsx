@@ -65,7 +65,6 @@ var KeyValueForm = React.createClass({
                 <hr />
 
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
-
             </Form>
         );
     }
