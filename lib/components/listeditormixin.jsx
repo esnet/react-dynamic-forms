@@ -97,11 +97,8 @@ var ListEditorMixin = {
                        "errors": errorList,
                        "missing": missingList});
 
-        console.log("handleAddItem", this.props);
-
         //Callbacks
         if (this.props.onChange) {
-            console.log("List view onChange called", this.props)
             this.props.onChange(this.props.attr, items);
         }
         if (this.props.onErrorCountChange) {
