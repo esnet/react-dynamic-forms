@@ -1,6 +1,6 @@
 {
   "name": "esnet-react-forms",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": "true",
   "main": "entry.js",
   "author": "ESnet Tools Team <tools@es.net>",
