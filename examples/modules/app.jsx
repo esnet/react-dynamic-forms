@@ -44,6 +44,8 @@ var App = React.createClass({
                     <li><Link to="dynamic">Dynamic forms</Link></li>
                     <hr />
                     <li><Link to="lists">Lists</Link></li>
+                    <hr />
+                    <li><Link to="keyvalue">Key-Value</Link></li>
                   </ul>
               </div>
             </div>
