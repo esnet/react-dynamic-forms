@@ -35,4 +35,5 @@ module.exports = {
     //Schema
     Schema: require('./lib/components/schema.jsx'),
     Attr: require('./lib/components/attr.jsx'),
+    KeyValueEdit: require('./lib/components/keyvalueeditor.jsx'),
 }

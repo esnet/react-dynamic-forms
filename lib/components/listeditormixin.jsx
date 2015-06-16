@@ -201,7 +201,6 @@ var ListEditorMixin = {
         
         _.each(this.state.items, function(item, index) {
             var component = self.renderItem(item, index);
-            console.log("# Render item with key", item.key)
             if (component) {
                 var props = {"key": item.key,
                              "index": index,
