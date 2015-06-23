@@ -25,8 +25,8 @@ var TagsEdit = React.createClass({
 
     componentWillReceiveProps: function(nextProps) {
         this.setState({
-            tags: nextProps.initialTags,
-            tagList: nextProps.initialTagList
+            tags: nextProps.initialTags || [],
+            tagList: nextProps.initialTagList || []
         });
     },
 
@@ -58,9 +58,10 @@ var TagsEdit = React.createClass({
     },
 
     handleChange: function(e) {
-        this.setState({"tags": $(e.target).val()});
+        var tags = $(e.target).val() || [];
+        this.setState({"tags": tags});
         if (this.props.onChange) {
-            this.props.onChange(this.props.attr, $(e.target).val());
+            this.props.onChange(this.props.attr, tags);
         }
     },
 
@@ -78,8 +79,11 @@ var TagsEdit = React.createClass({
         //The new tag UI, dependent on state.showNewTagUI
         var plusStyle = {"width": this.props.plusWidth ? this.props.plusWidth : 28,
                          "height": 28,
+                         "marginLeft": 10,
                          "marginTop": 0,
+                         "cursor": "pointer",
                          "float": "left"};
+
         if (this.state.showNewTagUI) {
             newTagUI = (<form onSubmit={this.handleSubmitNewTagUI} onBlur={this.blurNewTagUI} >
                             <input autoFocus type="text" ref="newTag" width="20" placeholder="Enter new tag..."/>
@@ -99,29 +103,37 @@ var TagsEdit = React.createClass({
 
         var key = this.state.tags.join("-") + "--" + this.state.tagList.join("-");
 
+        var floatStyle = {
+            float: "left",
+            clear: "none"
+        }
+
+        var clearStyle = {
+            clear: "both"
+        }
+
         return (
             <div>
-                <table style={{width: "100%"}}>
-                    <tr>
-                        <td>
-                            <Chosen
-                                multiple
-                                ref={this.props.attr}
-                                className="editTags"
-                                key={key}
-                                noResultsText="No tags found matching "
-                                defaultValue={this.state.tags}
-                                onChange={this.handleChange}
-                                width="300px"
-                                data-placeholder="Select tags...">
-                                    {chosenOptions}
-                            </Chosen>
-                        </td>
-                        <td>
-                            {newTagUI}
-                        </td>
-                    </tr>
-                </table>
+                <span style={floatStyle}>
+                    <Chosen
+                        multiple
+                        ref={this.props.attr}
+                        className="editTags"
+                        key={key}
+                        noResultsText="No tags found matching "
+                        defaultValue={this.state.tags}
+                        onChange={this.handleChange}
+                        width="300px"
+                        data-placeholder="Select tags...">
+                            {chosenOptions}
+                    </Chosen>
+                </span>
+                <span style={floatStyle}>
+                    {newTagUI}
+                </span>
+
+                <div style={clearStyle} />
+
                 <div className="help-block"></div>
             </div>
         );
