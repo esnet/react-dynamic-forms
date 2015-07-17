@@ -24,7 +24,7 @@ var ErrorExamples = require("./error_examples.jsx");
 var DynamicExamples = require("./dynamic_examples.jsx");
 var ListExamples = require("./list_examples.jsx");
 var KeyValueExamples = require("./keyvalue_examples.jsx");
-
+var NavBarExamples = require("./navbar_examples.jsx");
 var {DefaultRoute, Route, Routes} = require("react-router");
 
 var routes = (
@@ -34,6 +34,7 @@ var routes = (
     <Route name="textarea" handler={TextAreaExamples} />
     <Route name="chooser" handler={ChooserExamples} />
     <Route name="optionbuttons" handler={OptionButtonsExamples} />
+    <Route name="navbar" handler={NavBarExamples} />
     <Route name="listoptions" handler={OptionsListExamples} />
     <Route name="tagging" handler={TaggingExamples} />
     <Route name="filtering" handler={FilterExamples} />
