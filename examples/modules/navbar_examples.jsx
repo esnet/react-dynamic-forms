@@ -11,7 +11,7 @@ var NavBarExamples = React.createClass({
 		return {
 			data: {summary: {label: "Summary"},
 				   circuit: {label: "Circuits"},
-				   diagrams: {label: "Diagrams", url: "/webpack-dev-server/"}
+				   diagrams: {label: "Diagrams"}
 				  },
 			active: "Summary",
 		};
@@ -34,6 +34,8 @@ var NavBarExamples = React.createClass({
 						<NavBar active={this.state.active} 
 								navItems={this.state.data}
 								onChange={this.handleChange}/>
+						<br />
+						Selection: {this.state.active}
 					</div>
 				</div>
 			</div>

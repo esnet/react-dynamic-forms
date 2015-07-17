@@ -38,7 +38,6 @@ var NavBar = React.createClass({
             };             
         });        
 
-        console.log("this.props", this.props)
         return (
             <div>
                 <Nav bsStyle='pills' activeKey={this.props.active}>
@@ -50,17 +49,3 @@ var NavBar = React.createClass({
 });
 
 module.exports = NavBar;
-
-
-//var navInstance = (
-//  
-//    <NavItem eventKey={1} href='/home'>NavItem 1 content</NavItem>
-//    <NavItem eventKey={2} title='Item'>NavItem 2 content</NavItem>
-//    <NavItem eventKey={3} disabled={true}>NavItem 3 content</NavItem>
-//  </Nav>
-//);
-//}
-//React.render(navInstance, mountNode);
-
-//<Nav bsStyle='pills' activeKey={this.state.active} >
-//<NavItem eventKey={label} href={url}>{label}</NavItem>
