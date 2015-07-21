@@ -5,7 +5,7 @@ var _ = require("underscore");
 var {NavItems} = require("../../entry"); 
 
 
-var NavBarExamples = React.createClass({
+var NavItemsExamples = React.createClass({
 
     getInitialState: function() {
         return {
@@ -26,7 +26,7 @@ var NavBarExamples = React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3> Navbar button Examples</h3>
+                        <h3> NavItem Button Examples</h3>
                     </div>
                 </div>
                 <div className="row">
@@ -43,7 +43,7 @@ var NavBarExamples = React.createClass({
     },
 });
 
-module.exports = NavBarExamples;
+module.exports = NavItemsExamples;
 
 
 //
