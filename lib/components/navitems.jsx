@@ -24,9 +24,9 @@ var NavItems = React.createClass({
         var self = this;
 
         var navElements = _.map(this.props.navItems, function(item) {
-            var label = item["label"]
+            var label = item["label"];
             if (_.has(item, "url")) {
-                var url = item["url"]
+                var url = item["url"];
                 return (
                     <NavItem eventKey={label} href={url}>{label}</NavItem>
                 );
