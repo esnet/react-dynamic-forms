@@ -36,5 +36,5 @@ module.exports = {
     Schema: require('./lib/components/schema.jsx'),
     Attr: require('./lib/components/attr.jsx'),
     KeyValueEdit: require('./lib/components/keyvalueeditor.jsx'),
-    NavBar: require('./lib/components/navbar.jsx'),
+    NavItems: require('./lib/components/navitems.jsx'),
 }

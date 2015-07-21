@@ -6,9 +6,9 @@ var _ = require("underscore");
 var {Nav,
      NavItem} = require("react-bootstrap");
 
-var NavBar = React.createClass({
+var NavItems = React.createClass({
     
-    displayName: "NavBar",
+    displayName: "NavItems",
 
     getInitialState: function() {
         return {"active": this.props.active};
@@ -48,4 +48,4 @@ var NavBar = React.createClass({
     },
 });
 
-module.exports = NavBar;
+module.exports = NavItems;
