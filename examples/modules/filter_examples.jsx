@@ -22,7 +22,7 @@ var FilterExamples = React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3>Tagging Example</h3>
+                        <h3>Filter Example</h3>
                     </div>
                 </div>
 

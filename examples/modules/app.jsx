@@ -6,6 +6,8 @@ var {RouteHandler,
      Link} = Router;
 
 require('./app.css');
+var logo = document.createElement('img');
+logo.src = require('../img/logo.png');
 
 var App = React.createClass({
   render: function() {
@@ -14,6 +16,7 @@ var App = React.createClass({
 
           <div className="row">
               <div className="col-md-2">
+                  <img style={{float: "right"}} className="main-image" src={logo.src} width={80}/>
               </div>
               <div className="col-md-10">
                   <h2>ESnet React Forms Library</h2>
