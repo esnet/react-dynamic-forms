@@ -37,6 +37,7 @@ var App = React.createClass({
                     <li><Link to="chooser">Chooser</Link></li>
                     <li><Link to="tagging">Tagging</Link></li>
                     <li><Link to="optionbuttons">OptionButtons</Link></li>
+                    <li><Link to="navitems">NavItems</Link></li>
                     <li><Link to="listoptions">OptionList</Link></li>
                     <li><Link to="filtering">TextFilter</Link></li>
                     <hr />

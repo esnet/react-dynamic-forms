@@ -1,6 +1,6 @@
 {
   "name": "esnet-react-forms",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": "true",
   "main": "entry.js",
   "author": "ESnet Tools Team <tools@es.net>",
@@ -19,7 +19,7 @@
     "react-bootstrap": "^0.16.1",
     "jquery": "^2.1.1",
     "deepcopy": "^0.3.3",
-    "react-chosen": "^0.3.7",
+    "react-chosen": "0.3.7",
     "string-hash": "^1.1.0"
   },
   "peerDependencies": {
