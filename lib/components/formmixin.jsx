@@ -1,7 +1,8 @@
 "use strict";
 
 var _ = require("underscore");
-var React = require("react/addons");
+var React = require("react");
+var cloneWithProps = require('react-clonewithprops');
 var Copy = require("deepcopy");
 
 var Schema = require("./schema");
@@ -15,9 +16,9 @@ function getAttrsFromSchema(schema) {
     }
 
     var attrs = {};
-    if (schema.type === Schema.type) {
+    if (schema.type === Schema) {
         React.Children.forEach(schema.props.children, function (child) {
-            if (child.type === Attr.type) {
+            if (child.type === Attr) {
                 attrs[child.props.name] = Copy(child.props);
             }
         });
@@ -32,9 +33,9 @@ function getRulesFromSchema(schema) {
     }
 
     var rules = {};
-    if (schema.type === Schema.type) {
+    if (schema.type === Schema) {
         React.Children.forEach(schema.props.children, function (child) {
-            if (child.type === Attr.type) {
+            if (child.type === Attr) {
                 var required = child.props.required || false;
                 var validation = Copy(child.props.validation);
                 rules[child.props.name] = {"required": required, "validation": validation};
@@ -684,7 +685,7 @@ var FormMixin = {
                         props["children"] = self.getAttrsForChildren(child.props.children);
                     }
                 }
-                newChild = React.addons.cloneWithProps(child, props);
+                newChild = cloneWithProps(child, props);
 
                 if (childCount > 1) {
                     children.push(newChild);
@@ -715,7 +716,7 @@ var FormMixin = {
 
         var formKey = top.key || "form";
 
-        if (top.type === Form.type) {
+        if (top.type === Form) {
             children = this.getAttrsForChildren(top.props.children);
             return (
                 <form className={formClassName}
@@ -729,7 +730,7 @@ var FormMixin = {
         } else {
             var props = {"key": formKey,
                          "children": this.getAttrsForChildren(top.props.children)};
-            var newTop = React.addons.cloneWithProps(top, props);
+            var newTop = cloneWithProps(top, props);
             return newTop;
         }
     }

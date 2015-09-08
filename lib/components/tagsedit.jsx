@@ -2,9 +2,8 @@
 
 var React = require("react");
 var _ = require("underscore");
-var Chosen = require("react-chosen");
+var Select = require("react-select");
 
-require("./assets/chosen.css");
 require("./chooser.css");
 
 /**
@@ -16,6 +15,7 @@ var TagsEdit = React.createClass({
     displayName: "TagsEdit",
 
     getInitialState: function() {
+        console.log("Initial", this.props.initialTags, this.props.initialTagList)
         return {
             tags: this.props.initialTags || [],
             tagList: this.props.initialTagList || [],
@@ -57,8 +57,10 @@ var TagsEdit = React.createClass({
         }
     },
 
-    handleChange: function(e) {
-        var tags = $(e.target).val() || [];
+    handleChange: function(val, tagList) {
+        const tags = _.unique(_.map(tagList, tag => tag.label));
+        console.log("handleChange:", tags)
+        //var tags = $(e.target).val() || [];
         this.setState({"tags": tags});
         if (this.props.onChange) {
             this.props.onChange(this.props.attr, tags);
@@ -66,78 +68,64 @@ var TagsEdit = React.createClass({
     },
 
     render: function() {
-        var newTagUI;
-        var chosenOptions = [];
+        var className = "";
 
-        //The current list of tags, expressed as select options
-        chosenOptions = _.map(this.state.tagList, function(tag, index) {
-            return (
-                <option key={index} value={tag}>{tag}</option>
-            );
+        var width = this.props.width ? this.props.width + "px" : "100%";
+        if (this.props.showRequired && this._isMissing()) {
+            className = "has-error";
+        }
+
+        const options = _.map(this.state.tagList, (tag, index) => {
+            let disabled = false;
+            if (_.has(this.state.tags, tag)) {
+                disabled = true;
+            }
+            return {value: index, label: tag, disabled: disabled}
         });
 
-        //The new tag UI, dependent on state.showNewTagUI
-        var plusStyle = {"width": this.props.plusWidth ? this.props.plusWidth : 28,
-                         "height": 28,
-                         "marginLeft": 10,
-                         "marginTop": 0,
-                         "cursor": "pointer",
-                         "float": "left"};
-
-        if (this.state.showNewTagUI) {
-            newTagUI = (<form onSubmit={this.handleSubmitNewTagUI} onBlur={this.blurNewTagUI} >
-                            <input autoFocus type="text" ref="newTag" width="20" placeholder="Enter new tag..."/>
-                        </form>);
-        } else {
-            newTagUI = (
-                <div className="esdb-plus-action-box" onClick={this.handleShowNewTagUI} style={plusStyle}>
-                    <i className="glyphicon glyphicon-plus esdb-small-action-icon"></i>
-                </div>
-            );
-        }
         if (_.isUndefined(this.state.tags) || _.isUndefined(this.state.tagList)) {
             console.error("Tags was supplied with bad state: attr is", this.props.attr,
                 " (tags are:", this.state.tags, "and tagList is:", this.state.tagList, ")");
             return null;
         }
 
-        var key = this.state.tags.join("-") + "--" + this.state.tagList.join("-");
-
-        var floatStyle = {
-            float: "left",
-            clear: "none"
-        }
-
-        var clearStyle = {
-            clear: "both"
-        }
+        const key = this.state.tags.join("-") + "--" + this.state.tagList.join("-");
+        const clearable = this.props.allowSingleDeselect;
+        const searchable = !this.props.disableSearch
+        const matchPos = this.props.searchContains ? "any" : "start";
 
         return (
-            <div>
-                <span style={floatStyle}>
-                    <Chosen
-                        multiple
-                        ref={this.props.attr}
-                        className="editTags"
-                        key={key}
-                        noResultsText="No tags found matching "
-                        defaultValue={this.state.tags}
+            <div className={className} style={{width: width}}>
+                <Select multi={true}
+                        placeholder="Select tags..."
+                        value={this.state.tags}
+                        disabled={this.props.disabled}
+                        searchable={searchable}
+                        clearable={clearable}
+                        allowCreate={true}
+                        matchPos={matchPos}
+                        options={options}
                         onChange={this.handleChange}
-                        width="300px"
-                        data-placeholder="Select tags...">
-                            {chosenOptions}
-                    </Chosen>
-                </span>
-                <span style={floatStyle}>
-                    {newTagUI}
-                </span>
-
-                <div style={clearStyle} />
-
+                />
                 <div className="help-block"></div>
             </div>
         );
     }
 });
+
+/*
+    <Chosen
+        multiple
+        ref={this.props.attr}
+        className="editTags"
+        key={key}
+        noResultsText="No tags found matching "
+        defaultValue={this.state.tags}
+        onChange={this.handleChange}
+        width="300px"
+        data-placeholder="Select tags...">
+            {chosenOptions}
+    </Chosen>
+ */
 
 module.exports = TagsEdit;

@@ -1,10 +1,9 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
 
-var {Nav,
-     NavItem} = require("react-bootstrap");
+var {Nav, NavItem} = require("react-bootstrap");
 
 var NavItems = React.createClass({
     
@@ -21,9 +20,7 @@ var NavItems = React.createClass({
     },
 
     render: function() {
-        var self = this;
-
-        var navElements = _.map(this.props.navItems, function(item) {
+        var navElements = _.map(this.props.navItems, (item) => {
             var label = item["label"];
             if (_.has(item, "url")) {
                 var url = item["url"];
@@ -33,10 +30,10 @@ var NavItems = React.createClass({
 
             } else {
                 return (
-                    <NavItem eventKey={label} onSelect={self.handleSelect}>{label}</NavItem>
+                    <NavItem eventKey={label} onSelect={this.handleSelect}>{label}</NavItem>
                 );
-            };             
-        });        
+            };
+        });
 
         return (
             <div>

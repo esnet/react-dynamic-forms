@@ -1,9 +1,9 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
 
-var {Group, Chooser} = require("../../entry");
+var {Group, Chooser} = require("../../index");
 
 var animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
                  5: "fish", 6: "hedgehog", 7: "banana slug"};

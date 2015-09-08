@@ -1,7 +1,7 @@
 "use strict";
 
 var _ = require("underscore");
-var React = require("react/addons");
+var React = require("react");
 var Copy = require("deepcopy");
 
 var Attr = require("./attr");

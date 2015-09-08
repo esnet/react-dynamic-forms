@@ -1,17 +1,16 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
-var Chosen = require("react-chosen");
+var Select = require("react-select");
 var hash = require("string-hash");
 
-require("./assets/chosen.css");
-require("./chooser.css");
+require("./chooser.css")
 
 /**
  * React Form control to select an item from a list.
  *
- * Wraps the react-chooser library
+ * Wraps the react-select library
  *
  * Props:
  *     initialChoice     - Pass in the initial value as an id
@@ -31,6 +30,16 @@ require("./chooser.css");
 var Chooser = React.createClass({
 
     displayName: "Chooser",
+
+    getDefaultProps: function() {
+        return {
+            disabled: false,
+            disableSearch: true,
+            searchContains: true,
+            allowSingleDeselect: false,
+            width: "100%"
+        }
+    },
 
     getInitialState: function() {
         return {"initialChoice": this.props.initialChoice,
@@ -111,7 +120,6 @@ var Chooser = React.createClass({
         //The key needs to change if the initialChoiceList changes, so we set
         //the key to be the hash of the choice list
 
-
         this.setState({
             "missing": missing,
             "key": this._generateKey(this.props.initialChoice, this.props.initialChoiceList)
@@ -119,8 +127,7 @@ var Chooser = React.createClass({
 
     },
 
-    handleChange: function(e) {
-        var value = $(e.target).val();
+    handleChange: function(value) {
         var missing = this.props.required && this._isEmpty(value);
 
         //If the chosen id is a number, cast it to a number
@@ -139,12 +146,10 @@ var Chooser = React.createClass({
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
         }
-
-        e.stopPropagation();
     },
 
     render: function() {
-        var self = this;
+
         var className = "";
         
         if (!this.props.initialChoiceList) {
@@ -157,44 +162,36 @@ var Chooser = React.createClass({
         }
 
         //Current choice
-        var choiceItem = _.find(this.props.initialChoiceList, function(item) {
-            return item.id == self.state.value;
+        var choiceItem = _.find(this.props.initialChoiceList, (item) => {
+            return item.id == this.state.value;
         });
         var choice = choiceItem ? choiceItem.id : undefined;
         
-        //List of choice options
-        var choiceOptions = [];
-        if (!this.props.disabled) {
-            choiceOptions = _.map(self.props.initialChoiceList, function(v, i) {
-                if (_.contains(self.props.disableList, i)) {
-                    return (
-                       <option key={v.id} value={v.id} disabled>{v.label}</option>
-                    );
-                } else {
-                    return (
-                        <option key={v.id} value={v.id}>{v.label}</option>
-                    );
-                }
-            });
-        }
+        // List of choice options
+        const options = _.map(this.props.initialChoiceList, (choice) => {
+            let disabled = false;
+            if (_.contains(this.props.disableList, parseInt(choice.id, 10))) {
+                disabled = true;
+            }
+            return {value: choice.id, label: choice.label, disabled: disabled}
+        });
 
-        var allowSingleDeselect = this.props.allowSingleDeselect || false;
+        const clearable = this.props.allowSingleDeselect;
+        const searchable = !this.props.disableSearch
+        const matchPos = this.props.searchContains ? "any" : "start";
 
         return (
-            <div className={className} >
-                <Chosen
-                    key={this.state.key}
-                    width={width}
-                    defaultValue={choice}
+            <div className={className} style={{width: width}}>
+                <Select
+                    name="form-field-name"
+                    value={choice}
                     disabled={this.props.disabled}
-                    data-placeholder="Select..."
-                    disableSearch={this.props.disableSearch}
-                    allowSingleDeselect={allowSingleDeselect}
-                    searchContains={true}
-                    onChange={this.handleChange} >
-                        <option value=""></option>
-                        {choiceOptions}
-                 </Chosen>
+                    searchable={searchable}
+                    clearable={clearable}
+                    matchPos={matchPos}
+                    options={options}
+                    onChange={this.handleChange}
+                />
             </div>
         );
     }

@@ -1,6 +1,6 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var Router = require("react-router");
 
 var {Route,
@@ -25,7 +25,7 @@ var DynamicExamples = require("./dynamic_examples.jsx");
 var ListExamples = require("./list_examples.jsx");
 var KeyValueExamples = require("./keyvalue_examples.jsx");
 var NavItemsExamples = require("./navitems_examples.jsx");
-var {DefaultRoute, Route, Routes} = require("react-router");
+
 
 var routes = (
   <Route path="/" handler={App}>

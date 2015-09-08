@@ -1,7 +1,9 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
+var classNames = require("classnames");
+var cloneWithProps = require("react-clonewithprops");
 
 require("./group.css");
 
@@ -47,7 +49,7 @@ var Group = React.createClass({
         };
 
         var child = React.Children.only(this.props.children);
-        var childControl = React.addons.cloneWithProps(child, props);
+        var childControl = cloneWithProps(child, props);
 
         var control = (
             <div className="col-sm-9">
@@ -75,8 +77,7 @@ var Group = React.createClass({
         //
 
         var labelText = attr.name;
-        var ClassSet = React.addons.classSet;
-        var labelClasses = ClassSet({
+        var labelClasses = classNames({
             "group-label": true,
             "col-sm-3": true,
             "required": attr.required

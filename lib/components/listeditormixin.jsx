@@ -1,7 +1,8 @@
 "use strict";
 
 var _ = require("underscore");
-var React = require("react/addons");
+var React = require("react");
+var cloneWithProps = require("react-clonewithprops");
 
 var ListEditView = require("./listeditview");
 
@@ -208,7 +209,7 @@ var ListEditorMixin = {
                              "onErrorCountChange": self.handleErrorCountChange,
                              "onMissingCountChange": self.handleMissingCountChange,
                              "onChange": self.handleItemChanged};
-                var extendedComponent = React.addons.cloneWithProps(component, props);
+                var extendedComponent = cloneWithProps(component, props);
                 components.push(extendedComponent);
             }
         });

@@ -1,8 +1,8 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 
-var {TagsEdit} = require("../../entry");
+var {TagsEdit} = require("../../index");
 
 var TaggingExamples = React.createClass({
 
@@ -31,15 +31,16 @@ var TaggingExamples = React.createClass({
                     <div className="col-md-12">
                         <form>
                         <p />
+                        With an initial selection:
                         <TagsEdit attr="tags" initialTags={this.state.selection}
-                                  initialTagList={this.state.choices} onChange={this.handleChange} width={300}/>
-                        <br />
+                                  initialTagList={this.state.choices} onChange={this.handleChange} width={400}/>
                         Selection: {this.state.selection.join(", ")}
 
                         <hr />
 
+                        Without no initial selection:
                         <TagsEdit attr="tags2" initialTags={null}
-                                  initialTagList={this.state.choices} width={300}/>
+                                  initialTagList={this.state.choices} width={400}/>
                         <br />
 
                         </form>

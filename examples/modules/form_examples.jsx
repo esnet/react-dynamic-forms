@@ -1,11 +1,16 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _       = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 
-var {Form, FormMixin, TextEditGroup, Schema, Attr, ChooserGroup} = require("../../entry");
+var {Form,
+     FormMixin,
+     TextEditGroup,
+     Schema,
+     Attr,
+     ChooserGroup} = require("../../index");
 
 var text = require("raw!../markdown/form_examples.md");
 

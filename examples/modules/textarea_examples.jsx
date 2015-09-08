@@ -1,8 +1,8 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 
-var {TextArea} = require("../../entry");
+var {TextArea} = require("../../index");
 
 var TextAreaExamples = React.createClass({
 

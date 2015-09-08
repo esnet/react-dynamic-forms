@@ -1,46 +1,60 @@
 {
-  "name": "esnet-react-forms",
+  "name": "@esnet/react-forms",
   "version": "0.10.0",
-  "private": "true",
-  "main": "entry.js",
+  "description": "ESnet forms library",
+  "main": "index.js",
   "author": "ESnet Tools Team <tools@es.net>",
   "repository": {
     "type": "git",
     "url": "git://github.com:esnet/esnet-react-forms.git"
   },
-  "scripts": {
-    "build-global": "rm -rf build/global && NODE_ENV=production webpack ./entry.js build/global/react-forms.js && NODE_ENV=production COMPRESS=1 webpack ./entry.js build/global/react-forms.min.js && echo \"gzipped, the global build is `gzip -c build/global/react-forms.min.js | wc -c` bytes\"",
-    "start": "webpack-dev-server  --config webpack.examples.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bugs": {
+    "url": "https://github.com/esnet/esnet-react-forms/issues"
   },
+  "scripts": {
+    "lint": "eslint src/*.jsx",
+    "test": "npm run lint",
+    "test-only": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf lib/* && cp src/*.css lib/ && babel src --optional runtime --stage 0 --out-dir lib",
+    "start-website": "webpack-dev-server  --config webpack.examples.config.js -d"
+  },
+  "license": "BSD-3-Clause-LBNL",
   "dependencies": {
-    "underscore": "^1.7.0",
-    "revalidator": "^0.3.1",
-    "react-bootstrap": "^0.16.1",
-    "jquery": "^2.1.1",
+    "classnames": "^2.1.3",
     "deepcopy": "^0.3.3",
-    "react-chosen": "0.3.7",
-    "string-hash": "^1.1.0"
+    "jquery": "^2.1.1",
+    "rc-css-transition-group": "^2.1.4",
+    "react-bootstrap": "^0.25.1",
+    "react-clonewithprops": "^1.0.1",
+    "react-select": "^0.6.7",
+    "revalidator": "^0.3.1",
+    "string-hash": "^1.1.0",
+    "underscore": "^1.7.0"
   },
   "peerDependencies": {
-    "react": "0.12.x"
+    "react": "0.13.x"
   },
   "devDependencies": {
+    "react": "^0.13.x",
+    "react-router": "^0.13.x",
+    "react-markdown-el": "^1.0.2",
+    "eslint": "^0.24.0",
     "bundle-loader": "^0.5.0",
     "url-loader": "^0.5.5",
     "file-loader": "^0.7.2",
-    "jsx-loader": "^0.12.2",
     "json-loader": "^0.5.1",
     "style-loader": "^0.8.0",
-    "css-loader": "^0.9.0",
-    "webpack-dev-server": "^1.6.5",
-    "react-router": "^0.12.x",
-    "react": "^0.12.x",
-    "underscore": "^1.7.0",
-    "highlight.js": "^8.4.0",
-    "react-markdown-el": "^1.0.2",
     "raw-loader": "^0.5.1",
+    "css-loader": "^0.9.0",
+    "babel": "^5.8.3",
+    "babel-loader": "^5.0.0",
     "babel-core": "^5.1.13",
-    "babel-loader": "^5.0.0"
-  }
+    "babel-eslint": "4.0.5",
+    "webpack-dev-server": "^1.6.5"
+  },
+  "keywords": [
+    "forms",
+    "dynamic",
+    "react"
+  ]
 }

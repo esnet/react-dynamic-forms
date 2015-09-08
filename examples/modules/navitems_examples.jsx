@@ -1,8 +1,8 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
-var {NavItems} = require("../../entry"); 
+var {NavItems} = require("../../index"); 
 
 
 var NavItemsExamples = React.createClass({

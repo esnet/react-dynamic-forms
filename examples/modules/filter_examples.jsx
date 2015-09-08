@@ -1,8 +1,8 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 
-var {TextFilter} = require("../../entry");
+var {TextFilter} = require("../../index");
 
 var FilterExamples = React.createClass({
 

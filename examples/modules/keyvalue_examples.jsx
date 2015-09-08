@@ -1,9 +1,14 @@
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
 
-var {KeyValueEdit, Form, FormMixin, Group, Schema, Attr} = require("../../entry");
+var {KeyValueEdit,
+     Form,
+     FormMixin,
+     Group,
+     Schema,
+     Attr} = require("../../index");
 
 var text        = require("raw!../markdown/list_examples.md");
 var description = "This shows an example form with a list of keys and values that can be added or removed.";

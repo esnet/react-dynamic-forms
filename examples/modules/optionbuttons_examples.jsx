@@ -1,8 +1,8 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 
-var {OptionButtons} = require("../../entry");
+var {OptionButtons} = require("../../index");
 
 var OptionButtonsExamples = React.createClass({
 

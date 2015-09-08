@@ -1,8 +1,8 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 
-var {TextEdit} = require("../../entry");
+var {TextEdit} = require("../../index");
 
 var TextEditExamples = React.createClass({
 

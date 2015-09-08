@@ -1,6 +1,6 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var _ = require("underscore");
 var Markdown = require("react-markdown-el");
 var {Alert} = require("react-bootstrap");
@@ -9,7 +9,7 @@ var {Form,
      FormMixin,
      ListEditorMixin,
      TextEditGroup, Group, ChooserGroup,
-     Schema, Attr} = require("../../entry");
+     Schema, Attr} = require("../../index");
 
 var text        = require("raw!../markdown/list_examples.md");
 var description = "This shows an example form with a list of emails that can be added or removed.";
@@ -43,7 +43,7 @@ var EmailItemEditor = React.createClass({
                               initialChoice={id}
                               initialChoiceList={emailTypes}
                               disableSearch={true}
-                              width={100} />
+                              width={150} />
                 <TextEditGroup attr="email" width={300} />
             </div>
         );

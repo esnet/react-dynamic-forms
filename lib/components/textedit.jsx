@@ -1,6 +1,6 @@
 "use strict";
 
-var React = require("react/addons");
+var React = require("react");
 var {validate} = require("revalidator");
 var _ = require("underscore");
 

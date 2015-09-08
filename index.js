@@ -1,9 +1,3 @@
-"use strict";
-
-//
-// Entry point
-//
-
 module.exports = {
     //Form widgets
     TextEdit: require('./lib/components/textedit.jsx'),
