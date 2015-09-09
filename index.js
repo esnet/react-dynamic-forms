@@ -1,34 +1,36 @@
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
+
 module.exports = {
-    //Form widgets
-    TextEdit: require('./lib/components/textedit.jsx'),
-    TextArea: require('./lib/components/textarea.jsx'),
-    Chooser: require('./lib/components/chooser.jsx'),
-    OptionButtons: require('./lib/components/optionbuttons.jsx'),
-    OptionList: require('./lib/components/optionlist.jsx'),
-    TagsEdit: require('./lib/components/tagsedit.jsx'),
-    //Search and filtering
-    SearchBox: require('./lib/components/searchbox.jsx'),
-    TextFilter: require('./lib/components/textfilter.jsx'),
-    //Group widget and group wrappers
-    Group: require('./lib/components/group.jsx'),
-    ChooserGroup: require('./lib/components/choosergroup.jsx'),
-    OptionsGroup: require('./lib/components/choosergroup.jsx'),
-    TagsGroup: require('./lib/components/tagsgroup.jsx'),
-    TextAreaGroup: require('./lib/components/textareagroup.jsx'),
-    TextEditGroup: require('./lib/components/texteditgroup.jsx'),
-    //Actions
-    DeleteAction: require('./lib/components/delete.jsx'),
-    //Top level forms
-    Form: require('./lib/components/form.jsx'),
-    FormMixin: require('./lib/components/formmixin.jsx'),
-    //Top level form error display
-    FormErrors: require('./lib/components/formerrors.jsx'),
-    //Lists
-    ListEditView: require('./lib/components/listeditormixin.jsx'),
-    ListEditorMixin: require('./lib/components/listeditormixin.jsx'),
-    //Schema
-    Schema: require('./lib/components/schema.jsx'),
-    Attr: require('./lib/components/attr.jsx'),
-    KeyValueEdit: require('./lib/components/keyvalueeditor.jsx'),
-    NavItems: require('./lib/components/navitems.jsx'),
+    TextEdit: require("./lib/textedit.js"),
+    TextArea: require("./lib/textarea.js"),
+    Chooser: require("./lib/chooser.js"),
+    OptionButtons: require("./lib/optionbuttons.js"),
+    OptionList: require("./lib/optionlist.js"),
+    TagsEdit: require("./lib/tagsedit.js"),
+    SearchBox: require("./lib/searchbox.js"),
+    TextFilter: require("./lib/textfilter.js"),
+    Group: require("./lib/group.js"),
+    ChooserGroup: require("./lib/choosergroup.js"),
+    OptionsGroup: require("./lib/choosergroup.js"),
+    TagsGroup: require("./lib/tagsgroup.js"),
+    TextAreaGroup: require("./lib/textareagroup.js"),
+    TextEditGroup: require("./lib/texteditgroup.js"),
+    DeleteAction: require("./lib/delete.js"),
+    Form: require("./lib/form.js"),
+    FormMixin: require("./lib/formmixin.js"),
+    FormErrors: require("./lib/formerrors.js"),
+    ListEditView: require("./lib/listeditormixin.js"),
+    ListEditorMixin: require("./lib/listeditormixin.js"),
+    Schema: require("./lib/schema.js"),
+    Attr: require("./lib/attr.js"),
+    KeyValueEdit: require("./lib/keyvalueeditor.js"),
+    NavItems: require("./lib/navitems.js"),
 }

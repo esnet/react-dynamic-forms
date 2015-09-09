@@ -1,30 +1,40 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
+import React from "react";
+import TextArea from "../../src/textarea";
 
-var {TextArea} = require("../../index");
+export default React.createClass({
 
-var TextAreaExamples = React.createClass({
-
-    getInitialState: function() {
+    getInitialState() {
         return {
             errorCount: 0,
             missingCount: 0
         };
     },
 
-    handleErrorCountChange: function(attr, count) {
+    handleErrorCountChange(attr, count) {
         this.setState({"errorCount": count});
     },
 
-    handleMissingCountChange: function(attr, count) {
+    handleMissingCountChange(attr, count) {
         this.setState({"missingCount": count});
     },
 
-    render: function() {
-
-        var text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-
+    render() {
+        const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+anim id est laborum.`;
         return (
             <div>
                 <div className="row">
@@ -91,5 +101,3 @@ var TextAreaExamples = React.createClass({
         );
     }
 });
-
-module.exports = TextAreaExamples;

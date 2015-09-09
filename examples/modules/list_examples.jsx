@@ -1,25 +1,35 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
-var _ = require("underscore");
-var Markdown = require("react-markdown-el");
-var {Alert} = require("react-bootstrap");
+import React from "react";
+import _ from "underscore";
+import Markdown from "react-markdown-el";
+import {Alert} from "react-bootstrap";
+import Form from "../../src/form";
+import FormMixin from "../../src/formmixin";
+import ListEditorMixin from "../../src/listeditormixin";
+import TextEditGroup from "../../src/texteditgroup";
+import Group from "../../src/group";
+import ChooserGroup from "../../src/choosergroup";
+import Schema from "../../src/schema";
+import Attr from "../../src/attr";
 
-var {Form,
-     FormMixin,
-     ListEditorMixin,
-     TextEditGroup, Group, ChooserGroup,
-     Schema, Attr} = require("../../index");
+const text = require("raw!../markdown/list_examples.md");
+const description = "This shows an example form with a list of emails that can be added or removed.";
 
-var text        = require("raw!../markdown/list_examples.md");
-var description = "This shows an example form with a list of emails that can be added or removed.";
-
-var emailTypes = [
+const emailTypes = [
     {"id": 1, "label": "Work"},
     {"id": 2, "label": "Home"}
 ];
 
-var emailSchema = (
+const emailSchema = (
     <Schema>
         <Attr name="key" />
         <Attr name="email" defaultValue="" label="Email" required={true} validation={{"format": "email"}}/>
@@ -30,11 +40,11 @@ var emailSchema = (
 /**
  * Renders a form for entering an email address
  */
-var EmailItemEditor = React.createClass({
+const EmailItemEditor = React.createClass({
 
     mixins: [FormMixin],
 
-    renderForm: function() {
+    renderForm() {
         var id = this.value("email_type");
         return (
             <div>
@@ -58,20 +68,20 @@ var EmailListEditor = React.createClass({
     mixins: [ListEditorMixin],
 
     /**  Set initial items */
-    initialItems: function() {
+    initialItems() {
         return this.props.emails || [];
     },
 
     /** Create a new item */
-    createItem: function() {
+    createItem() {
         return {
-            "email": "",
-            "email_type": 1
+            email: "",
+            email_type: 1
         };
     },
 
     /** Render one of the items */
-    renderItem: function(item) {
+    renderItem(item) {
         return (
             <EmailItemEditor schema={emailSchema}
                              values={item}
@@ -89,9 +99,9 @@ var schema = (
 );
 
 var values = {
-    "first_name": "Bill",
-    "last_name": "Jones",
-    "emails": [
+    first_name: "Bill",
+    last_name: "Jones",
+    emails: [
         {"email": "b.jones@work.com", "email_type": 1},
         {"email": "bill@gmail.com", "email_type": 2},
     ]
@@ -109,7 +119,7 @@ var ContactForm = React.createClass({
     /**
      * Save the form
      */
-    handleSubmit: function(e) {
+    handleSubmit(e) {
         e.preventDefault();
 
         //Example of checking if the form has missing values and turning required On
@@ -124,65 +134,63 @@ var ContactForm = React.createClass({
         this.props.onSubmit && this.props.onSubmit(this.getValues());
     },
 
-    renderForm: function() {
-        var disableSubmit = this.hasErrors();
-        var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
-        var emails = this.value("emails");
+    renderForm() {
+        const disableSubmit = this.hasErrors();
+        const style = {
+            background: "#FAFAFA",
+            padding: 10,
+            borderRadius: 5
+        };
+        const emails = this.value("emails");
 
         return (
-            <Form style={formStyle} ref="form" attr="contact-form">
-
+            <Form style={style} ref="form" attr="contact-form">
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />
                 <Group attr="emails" >
                     <EmailListEditor emails={emails}/>
                 </Group>
-
                 <hr />
-
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
-
             </Form>
         );
     }
 });
 
-var FormExample = React.createClass({
+export default React.createClass({
 
-    getInitialState: function() {
+    getInitialState() {
         return {
-            "data":  undefined,
-            "loaded": false,
+            data:  undefined,
+            loaded: false,
         };
     },
 
-    componentDidMount: function() {
-        var self = this;
-
-        //Simulate ASYNC state update
-        setTimeout(function() {
-            self.setState({
-                "loaded": true
+    componentDidMount() {
+        // Simulate ASYNC state update
+        setTimeout(() => {
+            this.setState({
+                loaded: true
             });
-        }, 1500);
+        }, 0);
     },
 
-    handleSubmit: function(value) {
-        this.setState({"data": value});
+    handleSubmit(value) {
+        this.setState({data: value});
     },
 
-    handleAlertDismiss: function() {
-        this.setState({"data": undefined});
+    handleAlertDismiss() {
+        this.setState({data: undefined});
     },
 
-    renderAlert: function() {
+    renderAlert() {
         if (this.state && this.state.data) {
-            var firstName = this.state.data["first_name"];
-            var lastName = this.state.data["last_name"];
-            var emailList = this.state.data["emails"];
+            const firstName = this.state.data["first_name"];
+            const lastName = this.state.data["last_name"];
+            const emailList = this.state.data["emails"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
-                    <strong>Success!</strong> {firstName} {lastName} was submitted with {emailList.length} email(s). 
+                    <strong>Success!</strong> {firstName} {lastName} was submitted with {emailList.length} email(s).
                 </Alert>
             );
         } else {
@@ -190,7 +198,7 @@ var FormExample = React.createClass({
         }
     },
 
-    renderContactForm: function() {
+    renderContactForm() {
         if (this.state.loaded) {
             return (
                 <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit}/>
@@ -202,7 +210,7 @@ var FormExample = React.createClass({
         }
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -238,5 +246,3 @@ var FormExample = React.createClass({
         );
     }
 });
-
-module.exports = FormExample;

@@ -1,16 +1,28 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
-var Router = require("react-router");
-var {RouteHandler,
-     Link} = Router;
+import React from "react";
+import Router from "react-router";
+const {RouteHandler, Link} = Router;
 
-require('./app.css');
-var logo = document.createElement('img');
-logo.src = require('../img/logo.png');
+import "./app.css";
 
-var App = React.createClass({
-  render: function() {
+const logo = document.createElement("img");
+logo.src = require("../img/logo.png");
+
+const github = document.createElement("img");
+github.src = require("../img/github.png");
+
+export default React.createClass({
+
+  render() {
     return (
       <div>
 
@@ -19,7 +31,7 @@ var App = React.createClass({
                   <img style={{float: "right"}} className="main-image" src={logo.src} width={80}/>
               </div>
               <div className="col-md-10">
-                  <h2>ESnet React Forms Library</h2>
+                  <h2>React Forms Library</h2>
               </div>
           </div>
 
@@ -29,9 +41,22 @@ var App = React.createClass({
 
             <div className="col-md-2">
               <div className="docs-sidebar">
+
                   <ul className="docs-sidenav nav">
-                    <li><Link to="intro">Introduction</Link></li>
+
+                    <li style={{height: 64}}>
+                      <a href="https://github.com/esnet/esnet-react-forms">
+                        <img style={{float: "left"}} className="main-image" src={github.src} width={32} height={32}/>
+                      </a>
+                    </li>
+
                     <hr />
+
+                    <li><Link to="intro">Introduction</Link></li>
+                    
+                    <hr />
+                    
+                    Low level:
                     <li><Link to="textedit">TextEdit</Link></li>
                     <li><Link to="textarea">TextArea</Link></li>
                     <li><Link to="chooser">Chooser</Link></li>
@@ -41,15 +66,18 @@ var App = React.createClass({
                     <li><Link to="listoptions">OptionList</Link></li>
                     <li><Link to="filtering">TextFilter</Link></li>
                     <hr />
+                    Helpers:
                     <li><Link to="group">Groups</Link></li>
                     <hr />
+                    Compound:
+                    <li><Link to="lists">Lists</Link></li>
+                    <li><Link to="keyvalue">Key-Value</Link></li>
+                    Examples:
                     <li><Link to="forms">Contact form</Link></li>
                     <li><Link to="errors">Form errors</Link></li>
                     <li><Link to="dynamic">Dynamic forms</Link></li>
-                    <hr />
-                    <li><Link to="lists">Lists</Link></li>
-                    <hr />
-                    <li><Link to="keyvalue">Key-Value</Link></li>
+
+
                   </ul>
               </div>
             </div>
@@ -63,5 +91,3 @@ var App = React.createClass({
     );
   }
 });
-
-module.exports = App;

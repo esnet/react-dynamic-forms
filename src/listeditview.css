@@ -1,0 +1,143 @@
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
+
+/*
+ * The container includes the whole list, but not the [+] at the bottom
+ */
+.esnet-forms-listeditview-container {
+    padding-left: 0px;
+    list-style-type: none;
+    margin-bottom: 0px;
+}
+
+.esnet-forms-listeditview-container:last-child {
+    margin-bottom: 0;
+}
+
+/*
+ * The inner LI of the container is each item, including the [-] control
+ */
+
+.esnet-forms-listeditview-container li {
+    cursor: pointer;
+    margin-left: 0px;
+    -webkit-user-select: none;
+}
+
+/*
+ * The main styling for each item
+ */
+
+.esnet-forms-listeditview-edit-item {
+    width: 95%;
+    background: #F8F8F8;
+    padding-top: 5px;
+    border-radius: 5px;
+    border-color: #ECECEC;
+    border-style: solid;
+    border-width: 1px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.esnet-forms-listeditview-edit-item.no-controls {
+    width: 95%;
+}
+
+.esnet-forms-listeditview-edit-item-minus-spacer {
+}
+
+
+.esnet-forms-plus-action-box {
+    clear: both;
+    cursor: pointer;
+    border-style: dashed;
+    border-width: 1px;
+    border-color: #C5CCE6;
+    border-radius: 4px;
+    height: 28px;
+    width: 95%;
+    margin-top: 4px;
+}
+
+.esnet-forms-small-action-icon {
+    cursor: pointer;
+    font-size: 14px;
+    padding-bottom: 10px;
+    color: blue;
+    opacity: 0.65;
+    padding: 5px;
+}
+
+/*
+.esnet-forms-minus-action-box {
+    float: left;
+    margin-top: 5px;
+    vertical-align: top;
+    width: 28px;
+    height: 28px;
+    background: #EDEDED;
+    margin-left: -5px;
+    z-index: 10;
+    border: #E5E5E5;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+}*/
+
+.esnet-forms-plus-action-box:hover {
+    background: #F8F8F8;
+    border-color: #ECECEC;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.esnet-forms-plus-action-box-dialog {
+    clear: both;
+    border-width: 1px;
+    border-color: #CEF4D2;
+    border-style: solid;
+    border-radius: 4px;
+    padding: 10px;
+    height: 70px;
+    width: 95%;
+    background: #efe;
+}
+
+/*
+List transitions
+ */
+
+.esnet-forms-list {
+    font-size: 12px;
+}
+
+/** start of entering and end of leaving **/
+li.esnet-forms-list-item-enter,
+li.esnet-forms-list-item-leave.esnet-forms-list-item-leave-active {
+    opacity: 0.01;
+    max-height: 0px;
+}
+
+/** start of leaving and end of entering **/
+li.esnet-forms-list-item-leave,
+li.esnet-forms-list-item-enter.esnet-forms-list-item-enter-active {
+    opacity: 1;
+    max-height: 100px;
+    /*max-height: 50px;*/
+}
+
+/** ease in out quint **/
+li.esnet-forms-list-item-enter,
+li.esnet-forms-list-item-leave {
+    -moz-transition: all 100ms ease 0s;
+    -webkit-transition: all 100ms ease 0s;
+    transition: all 100ms ease 0s;
+}

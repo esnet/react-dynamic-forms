@@ -1,53 +1,58 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
-var Router = require("react-router");
+import React from "react";
+import Router from "react-router";
 
-var {Route,
-     DefaultRoute,
-     RouteHandler,
-     Link} = Router;
+const {Route,
+       DefaultRoute,
+       RouteHandler,
+       Link} = Router;
 
-var App = require("./app.jsx");
-
-var Intro = require("./intro.jsx");
-var TextEditExamples = require("./textedit_examples.jsx");
-var TextAreaExamples = require("./textarea_examples.jsx");
-var ChooserExamples = require("./chooser_examples.jsx");
-var OptionButtonsExamples = require("./optionbuttons_examples.jsx");
-var OptionsListExamples = require("./optionlist_examples.jsx");
-var TaggingExamples = require("./tagging_examples.jsx");
-var FilterExamples = require("./filter_examples.jsx");
-var GroupExamples = require("./group_examples.jsx");
-var FormExamples = require("./form_examples.jsx");
-var ErrorExamples = require("./error_examples.jsx");
-var DynamicExamples = require("./dynamic_examples.jsx");
-var ListExamples = require("./list_examples.jsx");
-var KeyValueExamples = require("./keyvalue_examples.jsx");
-var NavItemsExamples = require("./navitems_examples.jsx");
-
+import App from "./app.jsx";
+import Intro from "./intro.jsx";
+import TextEditExamples from "./textedit_examples.jsx";
+import TextAreaExamples from "./textarea_examples.jsx";
+import ChooserExamples from "./chooser_examples.jsx";
+import OptionButtonsExamples from "./optionbuttons_examples.jsx";
+import OptionsListExamples from "./optionlist_examples.jsx";
+import TaggingExamples from "./tagging_examples.jsx";
+import FilterExamples from "./filter_examples.jsx";
+import GroupExamples from "./group_examples.jsx";
+import FormExamples from "./form_examples.jsx";
+import ErrorExamples from "./error_examples.jsx";
+import DynamicExamples from "./dynamic_examples.jsx";
+import ListExamples from "./list_examples.jsx";
+import KeyValueExamples from "./keyvalue_examples.jsx";
+import NavItemsExamples from "./navitems_examples.jsx";
 
 var routes = (
-  <Route path="/" handler={App}>
-    <DefaultRoute name="intro" handler={Intro} />
-      <Route name="textedit" handler={TextEditExamples} />
-    <Route name="textarea" handler={TextAreaExamples} />
-    <Route name="chooser" handler={ChooserExamples} />
-    <Route name="optionbuttons" handler={OptionButtonsExamples} />
-    <Route name="navitems" handler={NavItemsExamples} />
-    <Route name="listoptions" handler={OptionsListExamples} />
-    <Route name="tagging" handler={TaggingExamples} />
-    <Route name="filtering" handler={FilterExamples} />
-    <Route name="group" handler={GroupExamples} />
-    <Route name="forms" handler={FormExamples} />
-    <Route name="errors" handler={ErrorExamples} />
-    <Route name="dynamic" handler={DynamicExamples} />
-    <Route name="lists" handler={ListExamples} />
-    <Route name="keyvalue" handler={KeyValueExamples} />
-  </Route>
+    <Route path="/" handler={App}>
+        <DefaultRoute name="intro" handler={Intro} />
+        <Route name="textedit" handler={TextEditExamples} />
+        <Route name="textarea" handler={TextAreaExamples} />
+        <Route name="chooser" handler={ChooserExamples} />
+        <Route name="optionbuttons" handler={OptionButtonsExamples} />
+        <Route name="navitems" handler={NavItemsExamples} />
+        <Route name="listoptions" handler={OptionsListExamples} />
+        <Route name="tagging" handler={TaggingExamples} />
+        <Route name="filtering" handler={FilterExamples} />
+        <Route name="group" handler={GroupExamples} />
+        <Route name="forms" handler={FormExamples} />
+        <Route name="errors" handler={ErrorExamples} />
+        <Route name="dynamic" handler={DynamicExamples} />
+        <Route name="lists" handler={ListExamples} />
+        <Route name="keyvalue" handler={KeyValueExamples} />
+    </Route>
 );
 
 Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.getElementById('content'));
+    React.render(<Handler/>, document.getElementById("content"));
 });
-

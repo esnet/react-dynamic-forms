@@ -1,41 +1,35 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
+import React from "react";
+import Markdown from "react-markdown-el";
 
-var Intro = React.createClass({
+const text = require("raw!../../README.md");
 
-    render: function() {
+export default React.createClass({
+
+    render() {
         return (
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3>Introduction</h3>
+                        <h2>Introduction</h2>
                     </div>
                 </div>
 
                 <div className="row">
                     <div className="col-md-12">
-                    The internal ESDB website (ESnet database) allows ESnet staff to maintain a database of
-                    ESnet information that serves as a source of truth for ESnet operations. It covers things
-                    such as ESnet HUB and site locations, organizations, contacts and circuits. Much of this
-                    information is added via forms, which is where this library comes in.
-
-                    <p />
-
-                    This library contains four main pieces:
-
-                    <ul>
-                        <li>Low level forms widgets such as textedit or pulldown type controls</li>
-                        <li>A forms mixin (FormMixin) to help you assemble controls together and track errors and missing values</li>
-                        <li>Helper wrappings (Group and friends) for the low level widget to use within the form mixin</li>
-                        <li>A mixin (ListEditorMixin) to help build lists, each item of which can be another form</li>
-                    </ul>
-
+                        <Markdown text={text}/>
                     </div>
                 </div>
             </div>
         );
     }
 });
-
-module.exports = Intro;

@@ -1,16 +1,25 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
-var _ = require("underscore");
+import React from "react";
+import _ from "underscore";
+import Group from "../../src/group";
+import Chooser from "../../src/chooser";
 
-var {Group, Chooser} = require("../../index");
+// Data
+const animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
+                   5: "fish", 6: "hedgehog", 7: "banana slug"};
 
-var animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
-                 5: "fish", 6: "hedgehog", 7: "banana slug"};
+export default React.createClass({
 
-var GroupExamples = React.createClass({
-
-    getInitialState: function() {
+    getInitialState() {
         return {
             animalList: _.map(animalMap, function(value, key) {
                 return {id: key, label: value}
@@ -24,15 +33,16 @@ var GroupExamples = React.createClass({
             }
         };
     },
-    handleChange: function(attr, value) {
+
+    handleChange(attr, value) {
         this.setState({"selection": value});
     },
 
-    handleMissingCountChange: function(attr, count) {
+    handleMissingCountChange(attr, count) {
         this.setState({"missingCount": count});
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -47,8 +57,8 @@ var GroupExamples = React.createClass({
 
                         <ul>
                             <li> Wrap a form component such that it is shown with a label
-                            and arranged within a the bootstrap grid.</li>
-                            <li> Except standard props that are added to each of the wrapped form 
+                            and arranged within a bootstrap grid layout.</li>
+                            <li> Expect standard props that are added to each of the wrapped form
                             components (attrName, placeholder, validation etc) as a 'attr' object.</li>
                         </ul>
 
@@ -57,9 +67,9 @@ var GroupExamples = React.createClass({
                         this component is pretty hard coded in terms of its layout: 2 columns for
                         the label and 10 for the control.
 
-                        The Group is also meant to be used with the formMixin. The formMixing provides
-                        a getAttr() call that extracts existing formValues, meta info such as label
-                        name, placeholder name. In addition it also supplies callbacks for missing
+                        The Group is also meant to be used with the formMixin. The formMixin provides
+                        a getAttr() call that extracts data such as existing formValues, meta info such as label
+                        name, placeholder name, etc. In addition it also supplies callbacks for missing
                         and error counts as well as value changed that are attached to functions that
                         alter the mixin state.
 
@@ -82,5 +92,3 @@ var GroupExamples = React.createClass({
         );
     }
 });
-
-module.exports = GroupExamples;

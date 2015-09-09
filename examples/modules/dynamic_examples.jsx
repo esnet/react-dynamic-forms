@@ -1,28 +1,32 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
-var _ = require("underscore");
-var Markdown = require("react-markdown-el");
-var {Alert} = require("react-bootstrap");
+import React from "react";
+import _ from "underscore";
+import Markdown from "react-markdown-el";
+import {Alert} from "react-bootstrap";
+import Form from "../../src/form";
+import FormMixin from "../../src/formmixin";
+import FormErrors from "../../src/formerrors";
+import TextEditGroup from "../../src/texteditgroup";
+import TextAreaGroup from "../../src/textareagroup";
+import ChooserGroup from "../../src/choosergroup";
+import Schema from "../../src/schema";
+import Attr from "../../src/attr";
 
-var {Form,
-     FormMixin,
-     FormErrors,
-     TextEditGroup,
-     TextAreaGroup,
-     ChooserGroup,
-     Schema,
-     Attr} = require("../../index");
-
-var text = require("raw!../markdown/dynamic_examples.md");
-
-var description = "This shows a more complicated form where there's conditional fields and pre-filling. " +
+const text = require("raw!../markdown/dynamic_examples.md");
+const description = "This shows a more complicated form where there's conditional fields and pre-filling. " +
     "To use, either select from the top pulldown to choose a preset, or play with the form. The type " +
     "will control which fields below it are hidden or shown. The number of required fields should stay correct.";
 
-//var text = "Testing *this* markdown";
-
-var schema = (
+const schema = (
     <Schema>
         <Attr name="bookmarked" label=""  tags={["all"]} />
         <Attr name="name" label="Name"  tags={["all"]} required={true} />
@@ -39,17 +43,16 @@ var schema = (
     </Schema>
 );
 
-var values = {
-    "type": 2,
+// Data
+const values = {
+    type: 2,
 };
-
-var endpointTypes = [
-    {"id": 1, "label": "Patch Panel"},
-    {"id": 2, "label": "Equipment Port"},
-    {"id": 3, "label": "Foreign"}
+const endpointTypes = [
+    {id: 1, label: "Patch Panel"},
+    {id: 2, label: "Equipment Port"},
+    {id: 3, label: "Foreign"}
 ];
-
-var bookmarked = {
+const bookmarked = {
     1: {
         name: "EQX-ASH-RT1:ge-0/0/2",
         description: "An equipment endpoint",
@@ -78,43 +81,47 @@ var bookmarked = {
 /**
  * Edit a contact
  */
-var EndpointForm = React.createClass({
+const EndpointForm = React.createClass({
 
     mixins: [FormMixin],
 
     displayName: "EndpointForm",
 
-    getInitialVisibility: function() {
-        var currentObj = _.findWhere(endpointTypes, {"id": this.props.values["type"]});
+    getInitialVisibility() {
+        const currentObj = _.findWhere(endpointTypes, {
+            "id": this.props.values["type"]
+        });
         return currentObj.label;
     },
 
-    willHandleChange: function(attrName, value) {
+    willHandleChange(attrName, value) {
         switch (attrName) {
             case "bookmarked":
                 if (value) {
-                    //bookmarked pulldown was changed so transfer existing
-                    //endpoint values onto the form using setValues()
-                    var endpoint = bookmarked[value];
+                    // bookmarked pulldown was changed so transfer existing
+                    // endpoint values onto the form using setValues()
+                    const endpoint = bookmarked[value];
                     this.setValues({
-                        "name": endpoint.name,
-                        "description": endpoint.description,
-                        "type": endpoint.type,
-                        "device_name": endpoint.device_name,
-                        "interface": endpoint.interface,
-                        "foreign_description": endpoint.foreign_description,
-                        "organization": endpoint.organization,
-                        "panel_name": endpoint.panel_name,
-                        "port_id": endpoint.port_id,
-                        "port_side": endpoint.port_side,
-                        "port_location": endpoint.port_location
+                        name: endpoint.name,
+                        description: endpoint.description,
+                        type: endpoint.type,
+                        device_name: endpoint.device_name,
+                        interface: endpoint.interface,
+                        foreign_description: endpoint.foreign_description,
+                        organization: endpoint.organization,
+                        panel_name: endpoint.panel_name,
+                        port_id: endpoint.port_id,
+                        port_side: endpoint.port_side,
+                        port_location: endpoint.port_location
                     });
                 }
                 break;
             case "type":
-                //The endpoint type changed, which changes fields visible,
-                //so set this with setVisibility() using the type as a filter.
-                var obj = _.findWhere(endpointTypes, {"id": parseInt(value)});
+                // The endpoint type changed, which changes fields visible,
+                // so set this with setVisibility() using the type as a filter.
+                const obj = _.findWhere(endpointTypes, {
+                    id: parseInt(value)
+                });
                 this.setVisibility(obj.label);
                 break;
         }
@@ -123,7 +130,7 @@ var EndpointForm = React.createClass({
     /**
      * Save the form
      */
-    handleSubmit: function(e) {
+    handleSubmit(e) {
         e.preventDefault();
 
         if (this.hasMissing()) {
@@ -132,20 +139,23 @@ var EndpointForm = React.createClass({
         }
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
-
         return false;
     },
 
-    renderForm: function() {
-        var disableSubmit = this.hasErrors();
-        var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
-
-        var bookmarks = _.map(bookmarked, function(bookmark, id) {
-            return {"id": id, "label": bookmark.name}
-        });
+    renderForm() {
+        const disableSubmit = this.hasErrors();
+        const style = {
+            background: "#FAFAFA",
+            padding: 10,
+            borderRadius: 5
+        };
+        const bookmarks = _.map(bookmarked, (bookmark, id) => ({
+            id: id,
+            label: bookmark.name
+        }));
 
         return (
-            <Form style={formStyle}>
+            <Form style={style}>
 
                 <h5>Bookmarked endpoints</h5>
 
@@ -184,9 +194,9 @@ var EndpointForm = React.createClass({
     }
 });
 
-var FormExample = React.createClass({
+export default React.createClass({
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             "data":  undefined,
             "loaded": false,
@@ -195,18 +205,16 @@ var FormExample = React.createClass({
         };
     },
 
-    componentDidMount: function() {
-        var self = this;
-
-        //Simulate ASYNC state update
-        setTimeout(function() {
-            self.setState({
+    componentDidMount() {
+        //Simulate ASYNC state update (not necessary)
+        setTimeout(() => {
+            this.setState({
                 "loaded": true
             });
-        }, 1500);
+        }, 0);
     },
 
-    formValues: function() {
+    formValues() {
         if (this.refs.form) {
             return this.refs.form.getValues();
         } else {
@@ -214,46 +222,45 @@ var FormExample = React.createClass({
         }
     },
 
-    hasMissing: function() {
+    hasMissing() {
         return this.state.missingCount > 0;
     },
 
-    canSubmit: function() {
+    canSubmit() {
         return this.state.errorCount === 0;
     },
 
-    showRequired: function(b) {
-        var on = b || true;
+    showRequired(b) {
+        const on = b || true;
         this.setState({"showRequired": on});
     },
 
-    handleSubmit: function() {
-        var values = this.formValues();
-
+    handleSubmit() {
+        const values = this.formValues();
         if (this.hasMissing()) {
             this.showRequired();
             return;
         }
 
-        this.setState({"data": values});
+        this.setState({data: values});
     },
 
-    handleAlertDismiss: function() {
-        this.setState({"data": undefined});
+    handleAlertDismiss() {
+        this.setState({data: undefined});
     },
 
-    handleMissingCountChange: function(attr, count) {
-        this.setState({"missingCount": count});
+    handleMissingCountChange(attr, count) {
+        this.setState({missingCount: count});
     },
 
-    handleErrorCountChange: function(attr, count) {
-        this.setState({"errorCount": count});
+    handleErrorCountChange(attr, count) {
+        this.setState({errorCount: count});
     },
 
-    renderAlert: function() {
+    renderAlert() {
         if (this.state && this.state.data) {
-            var firstName = this.state.data["first_name"];
-            var lastName = this.state.data["last_name"];
+            const firstName = this.state.data["first_name"];
+            const lastName = this.state.data["last_name"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
                     <strong>Success!</strong> {firstName} {lastName} was submitted.
@@ -264,7 +271,7 @@ var FormExample = React.createClass({
         }
     },
 
-    renderEndpointForm: function() {
+    renderEndpointForm() {
         if (this.state.loaded) {
             return (
                 <EndpointForm ref="form"
@@ -283,7 +290,7 @@ var FormExample = React.createClass({
         }
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -326,5 +333,3 @@ var FormExample = React.createClass({
         );
     }
 });
-
-module.exports = FormExample;

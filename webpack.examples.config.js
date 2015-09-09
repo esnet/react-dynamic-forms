@@ -1,6 +1,12 @@
-//
-// webpack.config.js to build an examples/website bundle
-//
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
 module.exports = {
 
@@ -14,8 +20,7 @@ module.exports = {
 
     module: {
         loaders: [
-            { test: /\.(js|jsx)$/,
-              loader: "babel?optional=es7.objectRestSpread" },
+            { test: /\.(js|jsx)$/, loader: "babel?stage=0" },
             { test: /\.css$/, loader: "style-loader!css-loader" },
             { test: /\.(png|jpg|gif)$/, loader: "url-loader?limit=20000"},
             { test: /\.json$/, loader: "json-loader" },

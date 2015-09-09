@@ -1,21 +1,26 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
-var _ = require("underscore");
+import React from "react";
+import _ from "underscore";
+import Chooser from "../../src/chooser";
 
-var {Chooser} = require("../../index");
+// Data
+const animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
+                   5: "fish", 6: "hedgehog", 7: "banana slug"};
+const animalList = _.map(animalMap, (value, key) => ({id: key, label: value}));
+const sortedAnimalList = _.sortBy(animalList, (item) => item.label);
 
-var animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
-                 5: "fish", 6: "hedgehog", 7: "banana slug"};
+export default React.createClass({
 
-var animalList = _.map(animalMap, (value, key) => {return {id: key, label: value}})
-
-var sortedAnimalList = _.sortBy(animalList, (item) => {return item.label; });
-
-var ChooserExamples = React.createClass({
-
-    getInitialState: function() {
-
+    getInitialState() {
         return {
             animalList: animalList,
             sortedAnimalList: sortedAnimalList,
@@ -24,15 +29,15 @@ var ChooserExamples = React.createClass({
         };
     },
 
-    handleChange: function(attr, value) {
+    handleChange(attr, value) {
         this.setState({"selection": value});
     },
 
-    handleMissingCountChange: function(attr, count) {
+    handleMissingCountChange(attr, count) {
         this.setState({"missingCount": count});
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -100,5 +105,3 @@ var ChooserExamples = React.createClass({
         );
     }
 });
-
-module.exports = ChooserExamples;

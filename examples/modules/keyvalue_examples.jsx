@@ -1,44 +1,56 @@
-var React = require("react");
-var _ = require("underscore");
-var Markdown = require("react-markdown-el");
-var {Alert} = require("react-bootstrap");
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var {KeyValueEdit,
-     Form,
-     FormMixin,
-     Group,
-     Schema,
-     Attr} = require("../../index");
+import React from "react";
+import _ from "underscore";
+import Markdown from "react-markdown-el";
+import {Alert} from "react-bootstrap";
+import Form from "../../src/form";
+import FormMixin from "../../src/formmixin";
+import Group from "../../src/group";
+import Schema from "../../src/schema";
+import Attr from "../../src/attr";
+import KeyValueEdit from "../../src/keyvalueeditor";
 
-var text        = require("raw!../markdown/list_examples.md");
-var description = "This shows an example form with a list of keys and values that can be added or removed.";
+const text = require("raw!../markdown/list_examples.md");
+const description = "This shows an example form with a list of keys and values that can be added or removed.";
 
+// Data
+const keyValues = {
+    "Arbor ID": "12345678",
+    "Site Wiki":"https://eng-wiki.es.net/foswiki/Site/CHIC-HUB"
+};
 
-var keyValues = {"Arbor ID":"12345678","Site Wiki":"https://eng-wiki.es.net/foswiki/Site/CHIC-HUB"};
+const constraints = [
+    {keyname: "Arbor ID", datatype: "integer", "content_type": "organization"},
+    {keyname: "Site Wiki", datatype: "url", "content_type": "location"},
+    {keyname: "Web Portal", datatype: "url", "content_type": "organization"},
+    {keyname: "Google Folder", datatype: "url", "content_type": "location"},
+    {keyname: "Special Email", datatype: "email", "content_type": "location"},
+    {keyname: "Site Router Name", datatype: "string", "content_type": "location"},
+    {keyname: "Stub Address", datatype: "ip-address", "content_type": "location"}
+];
 
-var constraints = [
-                    {"keyname":"Arbor ID","datatype":"integer","content_type":"organization"},
-                    {"keyname":"Site Wiki","datatype":"url","content_type":"location"},
-                    {"keyname":"Web Portal","datatype":"url","content_type":"organization"},
-                    {"keyname":"Google Folder","datatype":"url","content_type":"location"},
-                    {"keyname":"Special Email","datatype":"email","content_type":"location"},
-                    {"keyname":"Site Router Name","datatype":"string","content_type":"location"},
-                    {"keyname":"Stub Address","datatype":"ip-address","content_type":"location"},
-                  ];
-
-var keyValueEditSchema = (
+const keyValueEditSchema = (
     <Schema>
         <Attr name="keyValues" label="Key Values" />
     </Schema>
 );
 
-var KeyValueForm = React.createClass({
+const KeyValueForm = React.createClass({
 
     displayName: "KeyValueForm",
 
     mixins: [FormMixin],
 
-    handleSubmit: function(e) {
+    handleSubmit(e) {
         e.preventDefault();
 
         //Example of checking if the form has missing values and turning required On
@@ -53,16 +65,17 @@ var KeyValueForm = React.createClass({
         this.props.onSubmit && this.props.onSubmit(this.getValues());
     },
 
-    renderForm: function() {
-        var formStyle = {background: "#FDFDFD", padding: 10, borderRadius:5};
-        var disableSubmit = this.hasErrors();
-        var keyValues = this.props.keyValues;
-        var constraints = this.props.constraints;
-
-        console.log("Values", this.state.formValues)
-
+    renderForm() {
+        const style = {
+            background: "#FDFDFD",
+            padding: 10,
+            borderRadius: 5
+        };
+        const disableSubmit = this.hasErrors();
+        const keyValues = this.props.keyValues;
+        const constraints = this.props.constraints;
         return(
-            <Form style={formStyle} attr="keyvalue-form">
+            <Form style={style} attr="keyvalue-form">
                 <Group attr="keyValues">
                     <KeyValueEdit keyValues={keyValues} constraints={constraints} />
                 </Group>
@@ -75,42 +88,40 @@ var KeyValueForm = React.createClass({
     }
 });
 
-var KeyValueExamples = React.createClass({
+export default React.createClass({
 
     displayName: "KeyValueExamples",
 
-    getInitialState: function(){
+    getInitialState(){
         return {
-            "data": undefined,
-            "loaded": false,
+            data: undefined,
+            loaded: false,
         };
     },
 
-    componentDidMount: function() {
-        var self = this;
-
-        //Simulate ASYNC state update
-        setTimeout(function() {
-            self.setState({
-                "loaded": true
+    componentDidMount() {
+        //Simulate ASYNC state update (not necessary)
+        setTimeout(() => {
+            this.setState({
+                loaded: true
             });
         }, 1500);
     },
 
-    handleChange: function(a, b) {
+    handleChange(a, b) {
         console.log("Form changed", a, b)
     },
 
-    handleSubmit: function(value) {
+    handleSubmit(value) {
         console.log("value",value)
-        this.setState({"data": value})
+        this.setState({data: value})
     },
 
-    handleAlertDismiss: function() {
-        this.setState({"data": undefined})
+    handleAlertDismiss() {
+        this.setState({data: undefined})
     },
 
-    renderAlert: function() {
+    renderAlert() {
         if (this.state && this.state.data) {
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
@@ -122,7 +133,7 @@ var KeyValueExamples = React.createClass({
         }
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -158,6 +169,3 @@ var KeyValueExamples = React.createClass({
         );
     }
 });
-
-module.exports = KeyValueExamples;
-

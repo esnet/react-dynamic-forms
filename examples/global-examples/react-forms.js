@@ -1,1 +1,0 @@
-../../build/global/react-forms.js

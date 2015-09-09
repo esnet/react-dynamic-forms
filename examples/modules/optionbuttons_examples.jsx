@@ -1,27 +1,34 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react");
+import React from "react";
+import OptionButtons from "../../src/optionbuttons";
 
-var {OptionButtons} = require("../../index");
+export default React.createClass({
 
-var OptionButtonsExamples = React.createClass({
-
-    getInitialState: function() {
+    getInitialState() {
         return {
             choices: {1: "Yes", 2: "No", 3: "Maybe"},
             selection: 1,
         };
     },
 
-    handleChange: function(attr, value) {
+    handleChange(attr, value) {
         this.setState({"selection": value});
     },
 
-    handleMissingCountChange: function(attr, count) {
+    handleMissingCountChange(attr, count) {
         this.setState({"missingCount": count});
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -33,7 +40,9 @@ var OptionButtonsExamples = React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <p />
-                        <OptionButtons initialChoice={this.state.selection} initialChoiceList={this.state.choices} onChange={this.handleChange}/>
+                        <OptionButtons initialChoice={this.state.selection}
+                                       initialChoiceList={this.state.choices}
+                                       onChange={this.handleChange}/>
                         <br />
                         Selection: {this.state.selection} ({this.state.choices[this.state.selection]})
                     </div>
@@ -42,5 +51,3 @@ var OptionButtonsExamples = React.createClass({
         );
     }
 });
-
-module.exports = OptionButtonsExamples;
