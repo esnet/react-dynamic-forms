@@ -21,13 +21,10 @@ export default React.createClass({
     displayName: "TagsGroup",
 
     render() {
-        const {attr, ...others} = this.props;
+        const {attr, children, ...others} = this.props;
         return (
-            <Group attr={attr} >
-                <TagsEdit
-                    initialTags={attr.value}
-                    initialTagList={availableTags}
-                    {...others} />
+            <Group attr={attr}>
+                <TagsEdit {...others} />
             </Group>
         );
     }
