@@ -9,7 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
 import Group from "./group";
 import TextEdit from "./textedit";
 
@@ -17,7 +16,7 @@ import TextEdit from "./textedit";
  * Wraps the textedit widget
  */
 export default React.createClass({
-    
+
     displayName: "TextEditGroup",
 
     render() {

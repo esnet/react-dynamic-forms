@@ -13,16 +13,16 @@ import _ from "underscore";
 import {Nav, NavItem} from "react-bootstrap";
 
 export default React.createClass({
-    
+
     displayName: "NavItems",
 
     getInitialState() {
-        return {"active": this.props.active};
+        return {active: this.props.active};
     },
 
     handleSelect(key) {
         if (this.props.onChange) {
-            this.props.onChange(key)
+            this.props.onChange(key);
         }
     },
 
@@ -39,7 +39,7 @@ export default React.createClass({
                 return (
                     <NavItem eventKey={label} onSelect={this.handleSelect}>{label}</NavItem>
                 );
-            };
+            }
         });
 
         return (

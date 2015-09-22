@@ -9,13 +9,14 @@
  */
 
 import React from "react";
-import _ from "underscore";
 import {Modal, Button, OverlayMixin} from "react-bootstrap";
 
 /**
- * A dialog for confirming that you want to delete something, triggered from a trashcan icon.
+ * A dialog for confirming that you want to delete something,
+ * triggered from a trashcan icon.
  *
- * You can pass in a 'warning' which will be displayed to the user. Something like:
+ * You can pass in a 'warning' which will be displayed to the user.
+ * Something like:
  *      "This will delete the whole organization and all the contacts in it"
  *
  * The dialog will follow this up with the text:
@@ -61,7 +62,7 @@ export default React.createClass({
             isModalOpen: false
         });
 
-        //Action callback
+        // Action callback
         if (this.props.action) {
             this.props.action(this.props.id);
         }
@@ -69,7 +70,8 @@ export default React.createClass({
 
     render() {
         return (
-            <i className="glyphicon glyphicon-trash esdb-action-icon reject" onClick={this.show} ></i>
+            <i className="glyphicon glyphicon-trash esdb-action-icon reject"
+               onClick={this.show} ></i>
         );
     },
 
@@ -79,14 +81,18 @@ export default React.createClass({
         }
 
         return (
-            <Modal title={this.props.title} animation={false} onRequestHide={this.close}>
+            <Modal
+                title={this.props.title} animation={false}
+                onRequestHide={this.close}>
                 <div className="modal-body">
                     <h4>{this.props.warning}</h4>
                     <p>{this.props.text}</p>
                 </div>
                 <div className="modal-footer">
                     <Button onClick={this.close}>Close</Button>
-                    <Button onClick={this.action} bsStyle="danger">Delete</Button>
+                    <Button
+                        onClick={this.action}
+                        bsStyle="danger">Delete</Button>
                 </div>
             </Modal>
         );

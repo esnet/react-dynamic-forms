@@ -9,7 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
 
 /**
  * Filter text extry box.
@@ -27,19 +26,19 @@ export default React.createClass({
     },
 
     onChange(e) {
-        this.setState({"value": e.target.value});
+        this.setState({value: e.target.value});
         if (this.props.onChange) {
             this.props.onChange(e.target.value);
         }
     },
- 
+
     render() {
         const style = {
             height: 27,
             marginTop: 1,
             width: this.props.width
         };
-        
+
         return (
             <div className="input-group" style={style}>
                 <input className="form-control"

@@ -16,10 +16,10 @@ export default React.createClass({
     displayName: "Form",
 
     render() {
-      invariant(
-        false,
-        "%s elements are for use in renderForm() and should not be rendered directly",
-            this.constructor.name
+        invariant(
+            false,
+            `${this.constructor.name} elements are for use in renderForm()
+and should not be rendered directly`,
       );
     }
 });

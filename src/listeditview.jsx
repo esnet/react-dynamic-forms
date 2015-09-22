@@ -60,14 +60,17 @@ export default React.createClass({
             const itemSpanKey = `item-span-${item.key}`;
             const actionSpanKey = `action-span-${item.key}`;
             const itemMinusHide = item.props.hideMinus ? item.props.hideMinus : false;
-            
-            let listEditItemClass="esnet-forms-listeditview-edit-item";
+
+            let listEditItemClass = "esnet-forms-listeditview-edit-item";
             let minus;
-            
+
             if (addMinus && !itemMinusHide) {
                 minus = (
-                    <i id={index} key={minusActionKey} className="glyphicon glyphicon-minus esnet-forms-small-action-icon"
-                       onClick={this.removeItem} />
+                    <i
+                        id={index}
+                        key={minusActionKey}
+                        className="glyphicon glyphicon-minus esnet-forms-small-action-icon"
+                        onClick={this.removeItem} />
                 );
             } else {
                 listEditItemClass += " no-controls";
@@ -76,16 +79,26 @@ export default React.createClass({
                 );
             }
 
-            //JSX for each row, includes: UI Item and [-] remove item button
+            // JSX for each row, includes: UI Item and [-] remove item button
             return (
                 <li height="80px" key={itemKey} className="esnet-forms-list-item">
-                    <span key={itemSpanKey} className={listEditItemClass} style={{"float": "left"}}>{item}</span>
-                    <span key={actionSpanKey} className="esnet-forms-minus-action-box" style={{"float": "left", "verticalAlign": "top"}}>{minus}</span>
+                    <span
+                        key={itemSpanKey}
+                        className={listEditItemClass}
+                        style={{float: "left"}}>
+                            {item}
+                    </span>
+                    <span
+                        key={actionSpanKey}
+                        className="esnet-forms-minus-action-box"
+                        style={{
+                            float: "left",
+                            verticalAlign: "top"}}>{minus}</span>
                 </li>
             );
         });
 
-        //Build the [+] elements
+        // Build the [+] elements
         if (addPlus) {
             if (this.props.plusElement) {
                 plus = this.props.plusElement;
@@ -102,11 +115,9 @@ export default React.createClass({
             );
         }
 
-        //Build the table of item rows, with the [+] at the bottom if required. If there's
-        //no items to show then special UI is shown for that.
-        
-        //if (numItems > 0) {
-        
+        // Build the table of item rows, with the [+] at the bottom if required. If there's
+        // no items to show then special UI is shown for that.
+
         return (
             <div>
                 <ul className="esnet-forms-listeditview-container">

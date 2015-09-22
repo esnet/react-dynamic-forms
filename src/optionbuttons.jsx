@@ -16,18 +16,18 @@ export default React.createClass({
     displayName: "OptionButtons",
 
     getInitialState() {
-        return {"value": this.props.initialChoice};
+        return {value: this.props.initialChoice};
     },
 
     handleChange(e) {
-        const value = $(e.target).val();
+        const value = e.target.value;
         const missing = this.props.required && this._isEmpty(value);
 
-        //State changes
-        this.setState({"value": e.target.value,
-                       "missing": missing});
+        // State changes
+        this.setState({value: value,
+                       missing: missing});
 
-        //Callbacks
+        // Callbacks
         if (this.props.onChange) {
             this.props.onChange(this.props.attr, e.target.value);
         }
@@ -71,7 +71,11 @@ export default React.createClass({
         const list = choiceList.join("-");
 
         return (
-            <div className={classes} key={list} width={width} style={{"marginBottom": 5}}>
+            <div
+                className={classes}
+                key={list}
+                width={width}
+                style={{marginBottom: 5}}>
                 {buttonElements}
             </div>
         );

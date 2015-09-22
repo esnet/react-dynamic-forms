@@ -9,7 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
 
 /**
  * Search text extry box.
@@ -24,15 +23,15 @@ export default React.createClass({
 
     onSubmit() {
         const val = this.refs.search.getDOMNode().value;
-        
-        this.setState({"value": val});
 
-        //Callback
+        this.setState({value: val});
+
+        // Callback
         if (this.props.onSubmit) {
             this.props.onSubmit(val);
         }
     },
- 
+
     render() {
         return (
             <form onSubmit={this.onSubmit}>

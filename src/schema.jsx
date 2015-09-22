@@ -10,16 +10,15 @@
 
 import React from "react";
 import invariant from "react/lib/invariant";
-import _ from "underscore";
 
 export default React.createClass({
 
     displayName: "Schema",
-    
+
     render() {
-      invariant(
-        false,
-        `${this.constructor.name} elements are for schema configuration only and should not be rendered`,
+        invariant(
+            false,
+            `${this.constructor.name} elements are for schema configuration only and should not be rendered`,
       );
     }
 });

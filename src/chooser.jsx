@@ -13,7 +13,7 @@ import _ from "underscore";
 import Select from "react-select";
 import hash from "string-hash";
 
-import "./chooser.css";
+import "./select.css";
 
 /**
  * React Form control to select an item from a list.
@@ -126,6 +126,7 @@ export default React.createClass({
     },
 
     handleChange(v) {
+
         const missing = this.props.required && this._isEmpty(v);
 
         // If the chosen id is a number, cast it to a number
@@ -164,7 +165,13 @@ export default React.createClass({
 
         // Current choice
         const choiceItem = _.find(this.props.initialChoiceList, (item) => {
-            return item.id === this.state.value;
+            let itemId;
+            if (!this._isEmpty(item.id) && !_.isNaN(Number(item.id))) {
+                itemId = Number(item.id);
+            } else {
+                itemId = item.id;
+            }
+            return itemId === this.state.value;
         });
 
         const choice = choiceItem ? choiceItem.id : undefined;
@@ -182,9 +189,14 @@ export default React.createClass({
         const searchable = !this.props.disableSearch;
         const matchPos = this.props.searchContains ? "any" : "start";
 
+        const labelList = _.map(this.props.initialChoiceList, (item) => item.label);
+        const key =
+            `${labelList}--${this.state.choice}`;
+
         return (
             <div className={className} style={{width: width}}>
                 <Select
+                    key={key}
                     name="form-field-name"
                     value={choice}
                     disabled={this.props.disabled}

@@ -59,10 +59,10 @@ export default React.createClass({
         // Validate the value with Revalidator, given the rules in this.props.rules
         let obj = {};
         obj[this.props.attr] = value;
-        
+
         let attrValuePair = {};
         attrValuePair[this.props.attr] = this.props.rules;
-        
+
         const rules = this.props.rules ? {properties: attrValuePair} : null;
         if (obj && rules) {
             const validation = validate(obj, rules, {cast: true});
@@ -105,7 +105,7 @@ export default React.createClass({
                        error: error.validationError,
                        errorMsg: error.validationErrorMessage,
                        missing: missing});
-        
+
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
         }
@@ -120,13 +120,13 @@ export default React.createClass({
         const missing = this.props.required && this._isEmpty(value);
         const error = this._getError(value);
 
-        //State changes
+        // State changes
         this.setState({value: e.target.value,
                        error: error.validationError,
                        errorMsg: error.validationErrorMessage,
                        missing: missing});
 
-        //Callbacks
+        // Callbacks
         if (this.props.onChange) {
             this.props.onChange(this.props.attr, e.target.value);
         }
@@ -134,11 +134,11 @@ export default React.createClass({
             this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
         }
         if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
+            this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
         }
     },
- 
-    onFocus(e) {
+
+    onFocus() {
         this.setState({error: false, errorMsg: ""});
     },
 
@@ -147,7 +147,7 @@ export default React.createClass({
         let className = "";
 
         const w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
-        const textAreaStyle = {"width": w};
+        const textAreaStyle = {width: w};
 
         if (this.state.error || ( this.props.showRequired && this._isMissing(this.state.value))) {
             className = "has-error";

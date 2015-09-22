@@ -9,7 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
 import Group from "./group";
 import TextArea from "./textarea";
 

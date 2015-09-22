@@ -18,18 +18,18 @@ export default React.createClass({
     displayName: "OptionList",
 
     getInitialState() {
-        return {"value": this.props.choice};
+        return {value: this.props.choice};
     },
 
     handleChange(e) {
-        const value = $(e.target).val();
+        const value = e.target.value;
         const missing = this.props.required && this._isEmpty(value);
 
-        //State changes
-        this.setState({"value": e.target.value,
-                       "missing": missing});
+        // State changes
+        this.setState({value: e.target.value,
+                       missing: missing});
 
-        //Callbacks
+        // Callbacks
         if (this.props.onChange) {
             this.props.onChange(this.props.attr, e.target.value);
         }
@@ -66,7 +66,7 @@ export default React.createClass({
 
         const style = this.props.width ? {width: this.props.width} : {};
 
-        //Key based on the choice list
+        // Key based on the choice list
         const choiceList = _.map(this.props.options, choice => choice);
         const list = choiceList.join("-");
 

@@ -56,17 +56,17 @@ export default React.createClass({
             return result;
         }
 
-        //Validate the value with Revalidator, given the rules in this.props.rules
+        // Validate the value with Revalidator, given the rules in this.props.rules
         let obj = {};
         obj[this.props.attr] = value;
-        
+
         let attrValuePair = {};
         attrValuePair[this.props.attr] = this.props.rules;
 
-        const rules = this.props.rules ? {"properties": attrValuePair} : null;
+        const rules = this.props.rules ? {properties: attrValuePair} : null;
 
         if (obj && rules) {
-            const validation = validate(obj, rules, {"cast": true});
+            const validation = validate(obj, rules, {cast: true});
             const name = this.props.name || "Value";
 
             let msg;
@@ -89,7 +89,7 @@ export default React.createClass({
             const missing = this._isMissing(nextProps.initialValue);
             const error = this._getError(nextProps.initialValue);
 
-            //Re-broadcast error and missing states up to the owner
+            // Re-broadcast error and missing states up to the owner
             if (this.props.onErrorCountChange) {
                 this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
             }
@@ -108,7 +108,7 @@ export default React.createClass({
                        error: error.validationError,
                        errorMsg: error.validationErrorMessage,
                        missing: missing});
-        
+
         // Initial error and missing states are fed up to the owner
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
@@ -126,23 +126,23 @@ export default React.createClass({
 
         let cast = value;
 
-        //State changes
+        // State changes
         this.setState({value: e.target.value,
                        error: error.validationError,
                        errorMsg: error.validationErrorMessage,
                        missing: missing});
 
-        //Callbacks
+        // Callbacks
         if (this.props.onChange) {
             if (_.has(this.props.rules, "type")) {
                 switch (this.props.rules.type) {
-                    case "integer":
-                        cast = value === "" ? null : parseInt(value, 10);
-                        break;
-                    case "number":
-                        cast = value === "" ? null : parseFloat(value, 10);
-                        break;
-                };
+                case "integer":
+                    cast = value === "" ? null : parseInt(value, 10);
+                    break;
+                case "number":
+                    cast = value === "" ? null : parseFloat(value, 10);
+                    break;
+                }
             }
             this.props.onChange(this.props.attr, cast);
         }
@@ -150,11 +150,11 @@ export default React.createClass({
             this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
         }
         if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr,  missing ? 1 : 0);
+            this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
         }
     },
- 
-    onFocus(e) {
+
+    onFocus() {
         this.setState({error: false, errorMsg: ""});
     },
 

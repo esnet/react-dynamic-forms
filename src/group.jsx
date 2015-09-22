@@ -9,7 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
 import classNames from "classnames";
 import cloneWithProps from "react-clonewithprops";
 
@@ -40,20 +39,20 @@ export default React.createClass({
             );
         }
 
-        //Control
+        // Control
         const props = {
-            "attr": attr.attr,
-            "key": attr.key,
-            "ref": attr.attr,
-            "disabled": attr.disabled,
-            "placeholder": attr.placeholder,
-            "rules": attr.validation,
-            "required": attr.required,
-            "showRequired": attr.showRequired,
-            "onErrorCountChange": attr.errorCountCallback,
-            "onMissingCountChange": attr.missingCountCallback,
-            "onChange": attr.changeCallback,
-            "validator": this.props.validator
+            attr: attr.attr,
+            key: attr.key,
+            ref: attr.attr,
+            disabled: attr.disabled,
+            placeholder: attr.placeholder,
+            rules: attr.validation,
+            required: attr.required,
+            showRequired: attr.showRequired,
+            onErrorCountChange: attr.errorCountCallback,
+            onMissingCountChange: attr.missingCountCallback,
+            onChange: attr.changeCallback,
+            validator: this.props.validator
         };
 
         const child = React.Children.only(this.props.children);
@@ -77,7 +76,7 @@ export default React.createClass({
         } else {
             required = (
                 <span>&nbsp;</span>
-            )
+            );
         }
 
         //
@@ -88,7 +87,7 @@ export default React.createClass({
         const labelClasses = classNames({
             "group-label": true,
             "col-sm-3": true,
-            "required": attr.required
+            required: attr.required
         });
         const label = (
             <div className={labelClasses} style={{whiteSpace: "nowrap"}}>
@@ -97,7 +96,7 @@ export default React.createClass({
             </div>
         );
 
-        //Group
+        // Group
         return (
             <div className="form-group row">
                 {label} {control}

@@ -33,4 +33,4 @@ module.exports = {
     Attr: require("./lib/attr.js"),
     KeyValueEdit: require("./lib/keyvalueeditor.js"),
     NavItems: require("./lib/navitems.js"),
-}
+};
