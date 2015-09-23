@@ -151,6 +151,21 @@ export default React.createClass({
         }
     },
 
+    getOptionList() {
+        return _.map(this.props.initialChoiceList, (c) => {
+            let disabled = false;
+            if (_.contains(this.props.disableList, c.id) ||
+                (_.has(c, "disabled") && c.disabled === true)) {
+                disabled = true;
+            }
+            return {
+                value: c.id,
+                label: c.label,
+                disabled: disabled
+            };
+        });
+    },
+
     getFilteredOptionList(input, limit, choice) {
         const items = this.props.initialChoiceList;
         const filteredItems = input ? _.filter(items, item => {
@@ -163,7 +178,6 @@ export default React.createClass({
         if (filteredItems.length > limit) {
             results.push({id: null, label: "(truncated)", disabled: true});
         }
-
         return results;
     },
 
@@ -208,22 +222,39 @@ export default React.createClass({
         const labelList = _.map(this.props.initialChoiceList, (item) => item.label);
         const key = `${labelList}--${this.state.choice}`;
 
-        return (
-            <div className={className} style={{width: width}}>
-                <Select
-                    key={key}
-                    name="form-field-name"
-                    value={choice}
-                    options={this.getFilteredOptionList(null, this.props.limit, choice)}
-                    disabled={this.props.disabled}
-                    searchable={searchable}
-                    clearable={clearable}
-                    matchPos={matchPos}
-                    onChange={this.handleChange}
-                    asyncOptions={this.getOptions}
-                    cacheAsyncResults={false}
-                />
-            </div>
-        );
+        if (searchable) {
+            return (
+                <div className={className} style={{width: width}}>
+                    <Select
+                        key={key}
+                        name="form-field-name"
+                        value={choice}
+                        options={this.getFilteredOptionList(null, this.props.limit, choice)}
+                        disabled={this.props.disabled}
+                        searchable={true}
+                        matchPos={matchPos}
+                        onChange={this.handleChange}
+                        asyncOptions={this.getOptions}
+                        cacheAsyncResults={false}
+                    />
+                </div>
+            );
+        } else {
+            return (
+                <div className={className} style={{width: width}}>
+                    <Select
+                        key={key}
+                        name="form-field-name"
+                        value={choice}
+                        options={this.getOptionList()}
+                        disabled={this.props.disabled}
+                        searchable={false}
+                        clearable={clearable}
+                        matchPos={matchPos}
+                        onChange={this.handleChange}
+                    />
+                </div>
+            );
+        }
     }
 });

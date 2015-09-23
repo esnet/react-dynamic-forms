@@ -83,6 +83,13 @@ export default React.createClass({
                             initialChoiceList={this.state.animalList}
                             width={300}/>
 
+                        Chooser with initial choice of null:
+                        <Chooser
+                            initialChoice={null}
+                            initialChoiceList={this.state.animalList}
+                            width={300}/>
+
+
                         <p />
                         Chooser with initial choice and sorted:
                         <Chooser
