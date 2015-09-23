@@ -44,9 +44,10 @@ export default React.createClass({
     getDefaultProps() {
         return {
             disabled: false,
-            disableSearch: true,
+            disableSearch: false,
             searchContains: true,
             allowSingleDeselect: false,
+            limit: 20,
             width: "300"
         };
     },
@@ -150,6 +151,43 @@ export default React.createClass({
         }
     },
 
+    getFilteredOptionList(input, limit, choice) {
+        const items = this.props.initialChoiceList;
+        const filteredItems = input ? _.filter(items, item => {
+            return (item.id === choice || item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !== -1);
+        }) : items;
+        const limitItems = _.first(filteredItems, limit);
+        let results = _.map(limitItems, (c) =>
+            ({value: c.id, label: c.label, disabled: _.has(c, "disabled") ? c.disabled : false}));
+
+        if (filteredItems.length > limit) {
+            results.push({id: null, label: "(truncated)", disabled: true});
+        }
+
+        return results;
+    },
+
+    getOptions(input, cb) {
+        cb(null, {
+            options: this.getFilteredOptionList(input, this.props.limit, this.getCurrentChoice()),
+            complete: false
+        });
+    },
+
+    getCurrentChoice() {
+        const choiceItem = _.find(this.props.initialChoiceList, (item) => {
+            let itemId;
+            if (!this._isEmpty(item.id) && !_.isNaN(Number(item.id))) {
+                itemId = Number(item.id);
+            } else {
+                itemId = item.id;
+            }
+            return itemId === this.state.value;
+        });
+
+        return choiceItem ? choiceItem.id : undefined;
+    },
+
     render() {
         let className = "";
 
@@ -163,35 +201,12 @@ export default React.createClass({
             className = "has-error";
         }
 
-        // Current choice
-        const choiceItem = _.find(this.props.initialChoiceList, (item) => {
-            let itemId;
-            if (!this._isEmpty(item.id) && !_.isNaN(Number(item.id))) {
-                itemId = Number(item.id);
-            } else {
-                itemId = item.id;
-            }
-            return itemId === this.state.value;
-        });
-
-        const choice = choiceItem ? choiceItem.id : undefined;
-
-        // List of choice options
-        const options = _.map(this.props.initialChoiceList, (c) => {
-            // let disabled = false;
-            // if (_.contains(this.props.disableList, parseInt(c.id, 10))){
-            //     disabled = true;
-            // }
-            return {value: c.id, label: c.label};
-        });
-
+        const choice = this.getCurrentChoice();
         const clearable = this.props.allowSingleDeselect;
         const searchable = !this.props.disableSearch;
         const matchPos = this.props.searchContains ? "any" : "start";
-
         const labelList = _.map(this.props.initialChoiceList, (item) => item.label);
-        const key =
-            `${labelList}--${this.state.choice}`;
+        const key = `${labelList}--${this.state.choice}`;
 
         return (
             <div className={className} style={{width: width}}>
@@ -199,12 +214,14 @@ export default React.createClass({
                     key={key}
                     name="form-field-name"
                     value={choice}
+                    options={this.getFilteredOptionList(null, this.props.limit, choice)}
                     disabled={this.props.disabled}
                     searchable={searchable}
                     clearable={clearable}
                     matchPos={matchPos}
-                    options={options}
                     onChange={this.handleChange}
+                    asyncOptions={this.getOptions}
+                    cacheAsyncResults={false}
                 />
             </div>
         );
