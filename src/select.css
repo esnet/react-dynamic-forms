@@ -124,13 +124,14 @@
   cursor: pointer;
   display: inline-block;
   font-size: 16px;
-  padding: 6px 10px;
+  padding: 3px 10px;
   position: absolute;
   right: 17px;
   top: -2px;
 }
+
 .Select-clear:hover {
-  color: #c0392b;
+  color: #616161;
 }
 .Select-clear > span {
   font-size: 1.1em;

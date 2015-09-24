@@ -169,15 +169,34 @@ export default React.createClass({
     getFilteredOptionList(input, limit, choice) {
         const items = this.props.initialChoiceList;
         const filteredItems = input ? _.filter(items, item => {
-            return (item.id === choice || item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !== -1);
+            return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !== -1;
         }) : items;
         const limitItems = _.first(filteredItems, limit);
         let results = _.map(limitItems, (c) =>
             ({value: c.id, label: c.label, disabled: _.has(c, "disabled") ? c.disabled : false}));
 
-        if (filteredItems.length > limit) {
-            results.push({id: null, label: "(truncated)", disabled: true});
+        let limitItemsContainsChoice = false;
+        _.each(results, item => {
+            if (item.value === choice) {
+                limitItemsContainsChoice = true;
+            }
+        });
+
+        if (!input && !limitItemsContainsChoice) {
+            _.each(items, item => {
+                if (item.id === choice) {
+                    // results.push({id: `Math.random()`, label: "...", disabled: true});
+                    results.push({value: item.id, label: item.label});
+                }
+            });
         }
+
+        if (filteredItems.length > limit) {
+            results.push({id: `Math.random()`, label: "(truncated)", disabled: true});
+        }
+
+        console.log(input, results);
+
         return results;
     },
 
@@ -219,17 +238,21 @@ export default React.createClass({
         const clearable = this.props.allowSingleDeselect;
         const searchable = !this.props.disableSearch;
         const matchPos = this.props.searchContains ? "any" : "start";
-        const labelList = _.map(this.props.initialChoiceList, (item) => item.label);
-        const key = `${labelList}--${this.state.choice}`;
+
+
+        console.log("choice is", choice);
 
         if (searchable) {
+            const options = this.getFilteredOptionList(null, this.props.limit, choice);
+            const labelList = _.map(options, (item) => item.label);
+            const key = `${labelList}--${choice}`;
             return (
                 <div className={className} style={{width: width}}>
                     <Select
                         key={key}
                         name="form-field-name"
                         value={choice}
-                        options={this.getFilteredOptionList(null, this.props.limit, choice)}
+                        options={options}
                         disabled={this.props.disabled}
                         searchable={true}
                         matchPos={matchPos}
@@ -240,13 +263,16 @@ export default React.createClass({
                 </div>
             );
         } else {
+            const options = this.getOptionList();
+            const labelList = _.map(options, (item) => item.label);
+            const key = `${labelList}--${choice}`;
             return (
                 <div className={className} style={{width: width}}>
                     <Select
                         key={key}
                         name="form-field-name"
                         value={choice}
-                        options={this.getOptionList()}
+                        options={options}
                         disabled={this.props.disabled}
                         searchable={false}
                         clearable={clearable}

@@ -25,6 +25,18 @@ for (let i = 1; i < 5000; i++) {
     largeList.push({id: i, label: chance.word()});
 }
 
+let locationList = [
+    {id: 12, label: "Spain"},
+    {id: 14, label: "Portugal"},
+    {id: 16, label: "Italy"},
+    {id: 78, label: "France"},
+    {id: 99, label: "Germany"},
+    {id: 104, label: "Norway"},
+    {id: 112, label: "Denmark"},
+    {id: 154, label: "Greece"},
+    {id: 206, label: "Holland"}
+];
+
 export default React.createClass({
 
     getInitialState() {
@@ -153,6 +165,13 @@ export default React.createClass({
 
                         Chosen: {this.state.selection}
 
+                        <p />
+                        Locations (Denmark pre-selected):
+                        <Chooser
+                            initialChoice={112}
+                            initialChoiceList={locationList}
+                            limit={5}
+                            width={300} />
                         <div style={{height: 200}} />
                     </div>
                 </div>
