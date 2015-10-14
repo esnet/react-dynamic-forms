@@ -195,8 +195,6 @@ export default React.createClass({
             results.push({id: `Math.random()`, label: "(truncated)", disabled: true});
         }
 
-        console.log(input, results);
-
         return results;
     },
 
@@ -238,9 +236,6 @@ export default React.createClass({
         const clearable = this.props.allowSingleDeselect;
         const searchable = !this.props.disableSearch;
         const matchPos = this.props.searchContains ? "any" : "start";
-
-
-        console.log("choice is", choice);
 
         if (searchable) {
             const options = this.getFilteredOptionList(null, this.props.limit, choice);
