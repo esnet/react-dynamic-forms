@@ -222,12 +222,18 @@ export default React.createClass({
     render() {
         let className = "";
 
+        const width = this.props.width ? this.props.width + "px" : "100%";
+
+        const chooserStyle = {
+            width: width,
+            marginBottom: 10
+        };
+
         if (!this.props.initialChoiceList) {
             console.warn("No initial choice list supplied for attr",
                 this.props.attr);
         }
 
-        const width = this.props.width ? this.props.width + "px" : "100%";
         if (this.props.showRequired && this._isMissing()) {
             className = "has-error";
         }
@@ -242,7 +248,7 @@ export default React.createClass({
             const labelList = _.map(options, (item) => item.label);
             const key = `${labelList}--${choice}`;
             return (
-                <div className={className} style={{width: width}}>
+                <div className={className} style={chooserStyle}>
                     <Select
                         key={key}
                         name="form-field-name"
@@ -262,7 +268,7 @@ export default React.createClass({
             const labelList = _.map(options, (item) => item.label);
             const key = `${labelList}--${choice}`;
             return (
-                <div className={className} style={{width: width}}>
+                <div className={className} style={chooserStyle}>
                     <Select
                         key={key}
                         name="form-field-name"
