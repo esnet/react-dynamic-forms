@@ -1,27 +1,34 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react/addons");
+import React from "react";
+import OptionList from "../../src/optionlist";
 
-var {OptionList} = require("../../entry");
+export default React.createClass({
 
-var OptionListExamples = React.createClass({
-
-    getInitialState: function() {
+    getInitialState() {
         return {
             choices: {1: "Yes", 2: "No", 3: "Maybe"},
             selection: 1,
         };
     },
 
-    handleChange: function(attr, value) {
+    handleChange(attr, value) {
         this.setState({"selection": value});
     },
 
-    handleMissingCountChange: function(attr, count) {
+    handleMissingCountChange(attr, count) {
         this.setState({"missingCount": count});
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -44,5 +51,3 @@ var OptionListExamples = React.createClass({
         );
     }
 });
-
-module.exports = OptionListExamples;

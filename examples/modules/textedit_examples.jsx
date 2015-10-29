@@ -1,35 +1,42 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react/addons");
+import React from "react";
+import TextEdit from "../../src/textedit";
 
-var {TextEdit} = require("../../entry");
+export default React.createClass({
 
-var TextEditExamples = React.createClass({
-
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			errorCount: 0,
 			missingCount: 0
 		};
 	},
 
-	handleErrorCountChange: function(attr, count) {
+	handleErrorCountChange(attr, count) {
 		this.setState({"errorCount": count});
 	},
 
-	handleMissingCountChange: function(attr, count) {
+	handleMissingCountChange(attr, count) {
 		this.setState({"missingCount": count});
 	},
 
-	handleIntegerValidate: function(attr, value) {
+	handleIntegerValidate(attr, value) {
 		this.setState({"typeofInt": typeof value})
 	},
 
-	handleEmailValidate: function(attr, value) {
+	handleEmailValidate(attr, value) {
 		this.setState({"typeofEmail": typeof value})
 	},
 
-  	render: function() {
+  	render() {
 	    return (
 	    	<div>
 	          	<div className="row">
@@ -106,5 +113,3 @@ var TextEditExamples = React.createClass({
 	    );
   	}
 });
-
-module.exports = TextEditExamples;

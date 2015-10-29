@@ -1,20 +1,29 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react/addons");
-var _       = require("underscore");
-var Markdown = require("react-markdown-el");
-var {Alert} = require("react-bootstrap");
+import React from "react";
+import _ from "underscore";
+import Markdown from "react-markdown-el";
+import {Alert} from "react-bootstrap";
+import Form from "../../src/form";
+import FormMixin from "../../src/formmixin";
+import TextEditGroup from "../../src/texteditgroup";
+import Schema from "../../src/schema";
+import Attr from "../../src/attr";
+import ChooserGroup from "../../src/choosergroup";
 
-var {Form, FormMixin, TextEditGroup, Schema, Attr, ChooserGroup} = require("../../entry");
+const text = require("raw!../markdown/form_examples.md");
+const description = "This shows a simple form where the schema and values of the form are loaded " +
+                    "at some future time, such as if they were read from a REST API.";
 
-var text = require("raw!../markdown/form_examples.md");
-
-var description = "This shows a simple form where the schema and values of the form are loaded " +
-                  "at some future time, such as if they were read from a REST API.";
-
-//var text = "Testing *this* markdown";
-
-var schema = (
+const schema = (
     <Schema>
         <Attr name="type" label="Type" placeholder="Enter contact type" required={true}/>
         <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
@@ -23,16 +32,16 @@ var schema = (
     </Schema>
 );
 
-var values = {
-    "first_name": "Bill",
-    "last_name": "Jones",
-    "email": "bill@gmail.com"
+const values = {
+    first_name: "Bill",
+    last_name: "Jones",
+    email: "bill@gmail.com"
 };
 
 /**
  * Edit a contact
  */
-var ContactForm = React.createClass({
+const ContactForm = React.createClass({
 
     mixins: [FormMixin],
 
@@ -41,7 +50,7 @@ var ContactForm = React.createClass({
     /**
      * Save the form
      */
-    handleSubmit: function(e) {
+    handleSubmit(e) {
         e.preventDefault();
 
         //Example of checking if the form has missing values and turning required On
@@ -58,13 +67,19 @@ var ContactForm = React.createClass({
         return false;
     },
 
-    renderForm: function() {
-        var disableSubmit = this.hasErrors();
-        var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
-        var types = [{id: 0, label: "Friend"},
-                     {id: 1, label: "Acquaintance"}]
+    renderForm() {
+        const disableSubmit = this.hasErrors();
+        const style = {
+            background: "#FAFAFA",
+            padding: 10,
+            borderRadius: 5
+        };
+        const types = [
+            {id: 0, label: "Friend"},
+            {id: 1, label: "Acquaintance"}
+        ];
         return (
-            <Form style={formStyle}>
+            <Form style={style}>
                 <div>
                     <ChooserGroup attr="type" width={150}
                                   initialChoice={0}
@@ -81,39 +96,37 @@ var ContactForm = React.createClass({
     }
 });
 
-var FormExample = React.createClass({
+export default React.createClass({
 
-    getInitialState: function() {
+    getInitialState() {
         return {
-            "data":  undefined,
-            "loaded": false,
+            data:  undefined,
+            loaded: false,
         };
     },
 
-    componentDidMount: function() {
-        var self = this;
-
-        //Simulate ASYNC state update
-        setTimeout(function() {
-            self.setState({
-                "loaded": true
+    componentDidMount() {
+        //Simulate ASYNC state update (not required)
+        setTimeout(() => {
+            this.setState({
+                loaded: true
             });
-        }, 1500);
+        }, 0);
     },
 
-    handleChange: function(a, b) {
+    handleChange(a, b) {
         console.log("Form changed", a, b)
     },
 
-    handleSubmit: function(value) {
-        this.setState({"data": value});
+    handleSubmit(value) {
+        this.setState({data: value});
     },
 
-    handleAlertDismiss: function() {
-        this.setState({"data": undefined});
+    handleAlertDismiss() {
+        this.setState({data: undefined});
     },
 
-    renderAlert: function() {
+    renderAlert() {
         if (this.state && this.state.data) {
             var firstName = this.state.data["first_name"];
             var lastName = this.state.data["last_name"];
@@ -127,7 +140,7 @@ var FormExample = React.createClass({
         }
     },
 
-    renderContactForm: function() {
+    renderContactForm() {
         if (this.state.loaded) {
             return (
                 <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit} onChange={this.handleChange}/>
@@ -139,7 +152,7 @@ var FormExample = React.createClass({
         }
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -171,13 +184,7 @@ var FormExample = React.createClass({
                         </div>
                     </div>
                 </div>
-
             </div>
-
-
-
         );
     }
 });
-
-module.exports = FormExample;

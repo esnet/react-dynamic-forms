@@ -1,17 +1,28 @@
-"use strict";
+/**
+ *  Copyright (c) 2015, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
 
-var React = require("react/addons");
-var _ = require("underscore");
-var Markdown = require("react-markdown-el");
-var {Alert} = require("react-bootstrap");
+import React from "react";
+import _ from "underscore";
+import Markdown from "react-markdown-el";
+import {Alert} from "react-bootstrap";
+import Form from "../../src/form";
+import FormMixin from "../../src/formmixin";
+import FormErrors from "../../src/formerrors";
+import TextEditGroup from "../../src/texteditgroup";
+import Schema from "../../src/schema";
+import Attr from "../../src/attr";
 
-var {Form, FormMixin, FormErrors, TextEditGroup, Schema, Attr} = require("../../entry");
+const text = require("raw!../markdown/errors_examples.md");
+const description = "This shows a simple form where we track form validation errors and incomplete fields";
 
-var text = require("raw!../markdown/errors_examples.md");
-
-var description = "This shows a simple form where we track form validation errors and incomplete fields";
-
-var schema = (
+const schema = (
     <Schema>
         <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
         <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
@@ -19,26 +30,30 @@ var schema = (
     </Schema>
 );
 
-var values = {
-    "first_name": "",
-    "last_name": "",
-    "email": ""
+const values = {
+    first_name: "",
+    last_name: "",
+    email: ""
 };
 
 /**
  * Edit a contact
  */
-var ContactForm = React.createClass({
+const ContactForm = React.createClass({
 
     mixins: [FormMixin],
 
     displayName: "ContactForm",
 
-    renderForm: function() {
-        var disableSubmit = this.hasErrors();
-        var formStyle = {background: "#FAFAFA", padding: 10, borderRadius:5};
+    renderForm() {
+        const disableSubmit = this.hasErrors();
+        const style = {
+            background: "#FAFAFA",
+            padding: 10,
+            borderRadius: 5
+        };
         return (
-            <Form style={formStyle}>
+            <Form style={style}>
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />
                 <TextEditGroup attr="email" width={500} />
@@ -47,35 +62,34 @@ var ContactForm = React.createClass({
     }
 });
 
-var FormExample = React.createClass({
+export default React.createClass({
 
-    getInitialState: function() {
+    getInitialState() {
         return {
-            "data": null,
-            "showRequired": false,
-            "missingCount": 0,
-            "errorCount": 0
+            data: null,
+            showRequired: false,
+            missingCount: 0,
+            errorCount: 0
         };
     },
 
-
-    handleAlertDismiss: function() {
-        this.setState({"data": undefined});
+    handleAlertDismiss() {
+        this.setState({data: undefined});
     },
 
-    handleMissingCountChange: function(attr, count) {
-        this.setState({"missingCount": count});
+    handleMissingCountChange(attr, count) {
+        this.setState({missingCount: count});
     },
 
-    handleErrorCountChange: function(attr, count) {
-        this.setState({"errorCount": count});
+    handleErrorCountChange(attr, count) {
+        this.setState({errorCount: count});
     },
 
     //
     // Submit and related functions
     //
 
-    formValues: function() {
+    formValues() {
         if (this.refs.form) {
             return this.refs.form.getValues();
         } else {
@@ -83,38 +97,36 @@ var FormExample = React.createClass({
         }
     },
 
-    hasMissing: function() {
+    hasMissing() {
         return this.state.missingCount > 0;
     },
 
-    canSubmit: function() {
+    canSubmit() {
         return this.state.errorCount === 0;
     },
 
-    showRequired: function(b) {
-        var on = b || true;
-        this.setState({"showRequired": on});
+    showRequired(b) {
+        const on = b || true;
+        this.setState({showRequired: on});
     },
 
-    handleSubmit: function() {
-        var values = this.formValues();
-
+    handleSubmit() {
+        const values = this.formValues();
         if (this.hasMissing()) {
             this.showRequired();
             return;
         }
-
-        this.setState({"data": values});
+        this.setState({data: values});
     },
 
     //
     // Render functions
     //
 
-    renderAlert: function() {
+    renderAlert() {
         if (this.state && this.state.data) {
-            var firstName = this.state.data["first_name"];
-            var lastName = this.state.data["last_name"];
+            const firstName = this.state.data["first_name"];
+            const lastName = this.state.data["last_name"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
                     <strong>Success!</strong> {firstName} {lastName} was submitted.
@@ -125,7 +137,7 @@ var FormExample = React.createClass({
         }
     },
 
-    renderContactForm: function() {
+    renderContactForm() {
         return (
             <ContactForm ref="form"
                          attr="contact"
@@ -138,7 +150,7 @@ var FormExample = React.createClass({
         );
     },
 
-    render: function() {
+    render() {
         return (
             <div>
                 <div className="row">
@@ -189,5 +201,3 @@ var FormExample = React.createClass({
         );
     }
 });
-
-module.exports = FormExample;
