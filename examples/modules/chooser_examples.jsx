@@ -156,7 +156,7 @@ export default React.createClass({
                         Missing count: {this.state.missingCount}
 
                         <p />
-                        Chooser onChange callback:
+                        Searchable chooser with 5000 items, onChange callback:
                         <Chooser
                             initialChoice={this.state.selection}
                             initialChoiceList={largeList}
@@ -166,7 +166,7 @@ export default React.createClass({
                         Chosen: {this.state.selection}
 
                         <p />
-                        Locations (Denmark pre-selected):
+                        Locations (Denmark pre-selected), limit 5:
                         <Chooser
                             initialChoice={112}
                             initialChoiceList={locationList}
