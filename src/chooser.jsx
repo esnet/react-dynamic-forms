@@ -212,7 +212,8 @@ export default React.createClass({
             const msg = `(showing first ${limit} matches only)`;
             results.push({
                 id: `#{Math.random()}`,
-                label: msg, disabled: true
+                label: msg,
+                disabled: true
             });
         }
 
