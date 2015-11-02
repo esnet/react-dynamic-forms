@@ -47,8 +47,8 @@ export default React.createClass({
             disableSearch: false,
             searchContains: true,
             allowSingleDeselect: false,
-            limit: 20,
-            width: "300"
+            limit: 200,
+            width: 300
         };
     },
 
@@ -166,43 +166,69 @@ export default React.createClass({
         });
     },
 
-    getFilteredOptionList(input, limit, choice) {
+    getFilteredOptionList(input, limit) {
         const items = this.props.initialChoiceList;
+
+        //
+        // If we don't have an input yet (the user hasn't typed a search) then
+        // do one of two things:
+        // - If the number of items is under the limit, just show them all
+        // - If the number of items is larger than the limit, don't show anything
+        //   until the user does type something (and react-select) will show the
+        //   "Type to search" message.
+        //
+
+        if (!input || input.length < 1) {
+            if (items.length < limit) {
+                return _.map(items, (c) => ({
+                    value: c.id,
+                    label: c.label,
+                    disabled: _.has(c, "disabled") ? c.disabled : false
+                }));
+            } else {
+                return [];
+            }
+        }
+
+        //
+        // Build a limited set of results if necessary
+        //
+
         const filteredItems = input ? _.filter(items, item => {
             return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !== -1;
         }) : items;
         const limitItems = _.first(filteredItems, limit);
-        let results = _.map(limitItems, (c) =>
-            ({value: c.id, label: c.label, disabled: _.has(c, "disabled") ? c.disabled : false}));
+        let results = _.map(limitItems, (c) => ({
+            value: c.id,
+            label: c.label,
+            disabled: _.has(c, "disabled") ? c.disabled : false
+        }));
 
-        let limitItemsContainsChoice = false;
-        _.each(results, item => {
-            if (item.value === choice) {
-                limitItemsContainsChoice = true;
-            }
-        });
-
-        if (!input && !limitItemsContainsChoice) {
-            _.each(items, item => {
-                if (item.id === choice) {
-                    // results.push({id: `Math.random()`, label: "...", disabled: true});
-                    results.push({value: item.id, label: item.label});
-                }
-            });
-        }
+        //
+        //  If the results are limited then print a message at the bottom
+        //
 
         if (filteredItems.length > limit) {
-            results.push({id: `Math.random()`, label: "(truncated)", disabled: true});
+            const msg = `(showing first ${limit} matches only)`;
+            results.push({
+                id: `#{Math.random()}`,
+                label: msg,
+                disabled: true
+            });
         }
 
         return results;
     },
 
     getOptions(input, cb) {
-        cb(null, {
-            options: this.getFilteredOptionList(input, this.props.limit, this.getCurrentChoice()),
-            complete: false
-        });
+        const options =
+            this.getFilteredOptionList(input, this.props.limit);
+        if (options) {
+            cb(null, {
+                options: options,
+                complete: true
+            });
+        }
     },
 
     getCurrentChoice() {
@@ -244,15 +270,25 @@ export default React.createClass({
         const matchPos = this.props.searchContains ? "any" : "start";
 
         if (searchable) {
-            const options = this.getFilteredOptionList(null, this.props.limit, choice);
+            const options = this.getFilteredOptionList(null, this.props.limit);
             const labelList = _.map(options, (item) => item.label);
             const key = `${labelList}--${choice}`;
+
+            // Choose the item based on label, so it will show even when there's
+            // no items in the list yet
+            let choiceString = "";
+            _.each(this.props.initialChoiceList, item => {
+                if (item.id === choice) {
+                    choiceString = item.label;
+                }
+            });
+
             return (
                 <div className={className} style={chooserStyle}>
                     <Select
                         key={key}
                         name="form-field-name"
-                        value={choice}
+                        value={choiceString}
                         options={options}
                         disabled={this.props.disabled}
                         searchable={true}
