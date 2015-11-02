@@ -1,6 +1,6 @@
 {
   "name": "@esnet/react-forms",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "ESnet forms library",
   "main": "index.js",
   "author": "ESnet Tools Team <tools@es.net>",
