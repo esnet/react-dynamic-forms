@@ -20,7 +20,7 @@ export default React.createClass({
     displayName: "TagsGroup",
 
     render() {
-        const {attr, children, ...others} = this.props;
+        const {attr, children, ...others} = this.props; //eslint-disable-line
         return (
             <Group attr={attr}>
                 <TagsEdit {...others} />

@@ -19,7 +19,7 @@ export default React.createClass({
     displayName: "OptionsGroup",
 
     render() {
-        const {attr, ...others} = this.props;
+        const {attr, ...others} = this.props; //eslint-disable-line
         return (
             <Group attr={attr}>
                 <OptionButtons {...others}/>
