@@ -26,8 +26,7 @@ export default React.createClass({
         const missing = this.props.required && this._isEmpty(value);
 
         // State changes
-        this.setState({value: e.target.value,
-                       missing: missing});
+        this.setState({value, missing});
 
         // Callbacks
         if (this.props.onChange) {
@@ -39,7 +38,7 @@ export default React.createClass({
         const classes = "list-group";
 
         if (!this.props.options) {
-            console.warn("No initial choice list supplied for attr", this.props.attr);
+            throw new Error(`No initial choice list supplied for attr '${this.props.attr}'`);
         }
 
         const listElements = _.map(this.props.options, (option, i) => {

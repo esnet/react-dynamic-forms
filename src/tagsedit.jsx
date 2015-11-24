@@ -48,7 +48,7 @@ export default React.createClass({
         });
 
         this.setState({
-            tags: tags,
+            tags,
             tagList: newAvailableTags
         });
         if (this.props.onChange) {
@@ -69,30 +69,29 @@ export default React.createClass({
             if (_.has(this.state.tags, tag)) {
                 disabled = true;
             }
-            return {value: index, label: tag, disabled: disabled};
+            return {value: index, label: tag, disabled};
         });
 
         if (_.isUndefined(this.state.tags) ||
             _.isUndefined(this.state.tagList)) {
-            console.error("Tags was supplied with bad state: attr is",
-                this.props.attr,
-                " (tags are:", this.state.tags,
-                    "and tagList is:", this.state.tagList, ")");
-            return null;
+            let err = `Tags was supplied with bad state: attr is ${this.props.attr}`;
+            err += ` (tags are: ${this.state.tags} and tagList is: ${this.state.tagList})`;
+            throw new Error(err);
         }
 
         const key =
             `${this.state.tags.join("-")}--${this.state.tagList.join("-")}`;
         return (
-            <div className={className} style={{width: width}}>
-                <Select key={key}
-                        multi={true}
-                        disabled={this.props.disabled}
-                        placeholder="Select tags..."
-                        value={this.state.tags}
-                        allowCreate={true}
-                        options={options}
-                        onChange={this.handleChange}
+            <div className={className} style={{width}}>
+                <Select
+                    key={key}
+                    multi={true}
+                    disabled={this.props.disabled}
+                    placeholder="Select tags..."
+                    value={this.state.tags}
+                    allowCreate={true}
+                    options={options}
+                    onChange={this.handleChange}
                 />
                 <div className="help-block"></div>
             </div>

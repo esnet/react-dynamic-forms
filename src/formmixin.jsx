@@ -10,7 +10,6 @@
 
 import _ from "underscore";
 import React from "react";
-import cloneWithProps from "react-clonewithprops";
 import Copy from "deepcopy";
 import Schema from "./schema";
 import Attr from "./attr";
@@ -44,10 +43,7 @@ function getRulesFromSchema(schema) {
             if (child.type === Attr) {
                 const required = child.props.required || false;
                 const validation = Copy(child.props.validation);
-                rules[child.props.name] = {
-                    required: required,
-                    validation: validation
-                };
+                rules[child.props.name] = {required, validation};
             }
         });
     }
@@ -116,7 +112,7 @@ function getRulesFromSchema(schema) {
 export default { /* FormMixin */
 
     propTypes: {
-        schema: React.PropTypes.object.isRequired,
+        schema: React.PropTypes.object.isRequired
     },
 
     getInitialState() {
@@ -215,8 +211,7 @@ export default { /* FormMixin */
             }
 
         } else {
-            console.warn("Attr '" + attrName + "' is not a part of the form schema");
-            return;
+            throw new Error(`Attr '${attrName}' is not a part of the form schema`);
         }
 
         if (_.has(formRules, attrName)) {
@@ -250,8 +245,7 @@ export default { /* FormMixin */
     initialValue(attrName) {
         const formValues = this.state.formValues;
         if (!_.has(formValues, attrName)) {
-            console.warn("Requested initialValue for attr that could not be found", attrName);
-            return null;
+            throw new Error(`Requested initialValue for attr '${attrName}' could not be found`);
         }
         return Copy(formValues[attrName].initialValue);
     },
@@ -259,8 +253,7 @@ export default { /* FormMixin */
     value(attrName) {
         const formValues = this.state.formValues;
         if (!_.has(formValues, attrName)) {
-            console.warn("Requested initialValue for attr that could not be found", attrName);
-            return null;
+            throw new Error(`Requested value for attr '${attrName}' could not be found`);
         }
         return Copy(formValues[attrName].value);
     },
@@ -388,7 +381,7 @@ export default { /* FormMixin */
         this._pendingFormValues = this._pendingFormValues ||
                                   Copy(this.state.formValues);
         if (!_.has(this._pendingFormValues, key)) {
-            console.warn("Tried to set value on form, but key doesn't exist:", key);
+            throw new Error(`Tried to set value on form, but key '${key}' doesn't exist`);
         }
 
         this._pendingFormValues[key].initialValue = v;
@@ -417,8 +410,7 @@ export default { /* FormMixin */
                                       Copy(this.state.formValues);
 
             if (!_.has(this._pendingFormValues, key)) {
-                console.warn("Tried to set value on form, but key doesn't exist:",
-                    key, this._pendingFormValues);
+                throw new Error(`Tried to set value on form, but key '${key}' doesn't exist`);
             }
 
             this._pendingFormValues[key].initialValue = v;
@@ -655,8 +647,7 @@ export default { /* FormMixin */
 
         // Check to see if the key is actually in the formValues
         if (!_.has(this._pendingFormValues, key)) {
-            console.warn("handleChange: Tried to set value on form, but key doesn't exist:", key);
-            return;
+            throw new Error(`Tried to set value on form, but key '${key}' doesn't exist`);
         }
 
         // Now handle the actual update of the attr value into the pendingFormValues
@@ -675,7 +666,7 @@ export default { /* FormMixin */
             if (child) {
                 const key = child.key || `key-${i}`;
                 let newChild;
-                let props = {key: key};
+                let props = {key};
                 if (typeof child.props.children !== "string") {
                     // Child has a prop attr={attrName} on it
                     if (_.has(child.props, "attr")) {
@@ -691,7 +682,7 @@ export default { /* FormMixin */
                     }
                 }
 
-                newChild = cloneWithProps(child, props);
+                newChild = React.cloneElement(child, props);
 
                 if (childCount > 1) {
                     children.push(newChild);
@@ -738,7 +729,7 @@ export default { /* FormMixin */
                 key: formKey,
                 children: this.getAttrsForChildren(top.props.children)
             };
-            return cloneWithProps(top, props);
+            return React.cloneElement(top, props);
         }
     }
 };

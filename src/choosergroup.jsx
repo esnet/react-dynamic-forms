@@ -17,7 +17,7 @@ export default React.createClass({
     displayName: "ChooserGroup",
 
     render() {
-        const {attr, children, ...others} = this.props;
+        const {attr, children, ...others} = this.props; //eslint-disable-line
         return (
             <Group attr={attr}>
                 <Chooser {...others} />

@@ -8,13 +8,11 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-import React from "react";
-import Router from "react-router";
+/* eslint max-len:0 */
 
-const {Route,
-       DefaultRoute,
-       RouteHandler,
-       Link} = Router;
+import React from "react";
+import { render } from "react-dom";
+import { Router, Route, IndexRoute } from "react-router";
 
 import App from "./app.jsx";
 import Intro from "./intro.jsx";
@@ -33,26 +31,24 @@ import ListExamples from "./list_examples.jsx";
 import KeyValueExamples from "./keyvalue_examples.jsx";
 import NavItemsExamples from "./navitems_examples.jsx";
 
-var routes = (
-    <Route path="/" handler={App}>
-        <DefaultRoute name="intro" handler={Intro} />
-        <Route name="textedit" handler={TextEditExamples} />
-        <Route name="textarea" handler={TextAreaExamples} />
-        <Route name="chooser" handler={ChooserExamples} />
-        <Route name="optionbuttons" handler={OptionButtonsExamples} />
-        <Route name="navitems" handler={NavItemsExamples} />
-        <Route name="listoptions" handler={OptionsListExamples} />
-        <Route name="tagging" handler={TaggingExamples} />
-        <Route name="filtering" handler={FilterExamples} />
-        <Route name="group" handler={GroupExamples} />
-        <Route name="forms" handler={FormExamples} />
-        <Route name="errors" handler={ErrorExamples} />
-        <Route name="dynamic" handler={DynamicExamples} />
-        <Route name="lists" handler={ListExamples} />
-        <Route name="keyvalue" handler={KeyValueExamples} />
-    </Route>
-);
-
-Router.run(routes, function (Handler) {
-    React.render(<Handler/>, document.getElementById("content"));
-});
+render((
+    <Router>
+        <Route path="/" component={App}>
+            <IndexRoute component={Intro}/>
+            <Route path="textedit" component={TextEditExamples} />
+            <Route path="textarea" component={TextAreaExamples} />
+            <Route path="chooser" component={ChooserExamples} />
+            <Route path="optionbuttons" component={OptionButtonsExamples} />
+            <Route path="navitems" component={NavItemsExamples} />
+            <Route path="listoptions" component={OptionsListExamples} />
+            <Route path="tagging" component={TaggingExamples} />
+            <Route path="filtering" component={FilterExamples} />
+            <Route path="group" component={GroupExamples} />
+            <Route path="forms" component={FormExamples} />
+            <Route path="errors" component={ErrorExamples} />
+            <Route path="dynamic" component={DynamicExamples} />
+            <Route path="lists" component={ListExamples} />
+            <Route path="keyvalue" component={KeyValueExamples} />
+        </Route>
+    </Router>
+), document.getElementById("content"));

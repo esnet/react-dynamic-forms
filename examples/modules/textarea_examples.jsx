@@ -20,12 +20,12 @@ export default React.createClass({
         };
     },
 
-    handleErrorCountChange(attr, count) {
-        this.setState({"errorCount": count});
+    handleErrorCountChange(attr, errorCount) {
+        this.setState({errorCount});
     },
 
-    handleMissingCountChange(attr, count) {
-        this.setState({"missingCount": count});
+    handleMissingCountChange(attr, missingCount) {
+        this.setState({missingCount});
     },
 
     render() {
@@ -78,14 +78,14 @@ anim id est laborum.`;
 
                     Validated field (email address):
                     <p />
-                    <TextArea initialValue="bob.at.gmail.com" rules={{ "format": "email"}}/>
+                    <TextArea initialValue="bob.at.gmail.com" rules={{format: "email"}}/>
 
                     <hr />
                     <h4>Callbacks</h4>
 
                     Validated field (email address) with error callback:
                     <p />
-                    <TextArea initialValue="bob.at.gmail.com" onErrorCountChange={this.handleErrorCountChange} rules={{ "format": "email"}}/>
+                    <TextArea initialValue="bob.at.gmail.com" onErrorCountChange={this.handleErrorCountChange} rules={{format: "email"}}/>
                     Error count: {this.state.errorCount}
                     <p />
 

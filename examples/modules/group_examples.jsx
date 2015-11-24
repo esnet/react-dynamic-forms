@@ -14,32 +14,39 @@ import Group from "../../src/group";
 import Chooser from "../../src/chooser";
 
 // Data
-const animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
-                   5: "fish", 6: "hedgehog", 7: "banana slug"};
+const animalMap = {
+    1: "dog",
+    2: "duck",
+    3: "cat",
+    4: "donkey",
+    5: "fish",
+    6: "hedgehog",
+    7: "banana slug"
+};
 
 export default React.createClass({
 
     getInitialState() {
         return {
-            animalList: _.map(animalMap, function(value, key) {
-                return {id: key, label: value}
+            animalList: _.map(animalMap, (value, key) => {
+                return {id: key, label: value};
             }),
             attr: {
                 name: "Animals",
                 placeholder: "Pick an animal",
                 help: "Some animals are small and cute.",
                 disabled: false,
-                initialValue: "cat",
+                initialValue: "cat"
             }
         };
     },
 
-    handleChange(attr, value) {
-        this.setState({"selection": value});
+    handleChange(attr, selection) {
+        this.setState({selection});
     },
 
-    handleMissingCountChange(attr, count) {
-        this.setState({"missingCount": count});
+    handleMissingCountChange(attr, missingCount) {
+        this.setState({missingCount});
     },
 
     render() {

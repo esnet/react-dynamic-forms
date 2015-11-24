@@ -10,7 +10,7 @@
 
 import React from "react";
 import _ from "underscore";
-import {Nav, NavItem} from "react-bootstrap";
+import { Nav, NavItem } from "react-bootstrap";
 
 export default React.createClass({
 
@@ -44,10 +44,10 @@ export default React.createClass({
 
         return (
             <div>
-                <Nav bsStyle='pills' activeKey={this.props.active}>
+                <Nav bsStyle="pills" activeKey={this.props.active}>
                     {navElements}
                 </Nav>
             </div>
         );
-    },
+    }
 });

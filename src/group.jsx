@@ -10,7 +10,6 @@
 
 import React from "react";
 import classNames from "classnames";
-import cloneWithProps from "react-clonewithprops";
 
 import "./group.css";
 
@@ -28,7 +27,7 @@ export default React.createClass({
         const attr = this.props.attr;
 
         if (!attr) {
-            console.error("Attr not found");
+            throw new Error("Group: Attr not found");
         }
 
         const hidden = attr.hidden || false;
@@ -56,7 +55,7 @@ export default React.createClass({
         };
 
         const child = React.Children.only(this.props.children);
-        const childControl = cloneWithProps(child, props);
+        const childControl = React.cloneElement(child, props);
 
         const control = (
             <div className="col-sm-9">

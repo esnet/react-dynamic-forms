@@ -1,11 +1,11 @@
-###Dynamic form example###
+### Dynamic form example
 
 The forms library allows you to create forms that dynamically change depending on other filled out attrs. An example of this is a form which has a type field and that field controls several other fields that only apply to that type. In this case we want to:
 
  * Hide and show fields in reaction to a change in the type
  * Have hidden fields not be required, i.e. support conditional requires
 
-#### Render ####
+#### Render
 
 The above example begins with a pretty simple `renderForm()` implementation. In fact there's not much to see here. Regardless of the visibility that we'll control in a minute, we can just render all the fields and the forms code will take care of selectively hiding fields for us. Here is the main part of the renderForm() function, excluding a little code to get out bookmarks map for the Bookmark chooser choice list.
 
@@ -32,7 +32,7 @@ The above example begins with a pretty simple `renderForm()` implementation. In 
     );
 
 
-#### Tags ####
+#### Tags
 
 The forms library schema supports visibility tags, which can be used to quickly control which set of fields show be visible and which should not, rather than setting each one. The schema for our example looks like this
 
@@ -55,7 +55,7 @@ You can see that for each attr we've defined a tags prop. This is a list of visi
 
 To turn on visibility we use the `setVisibility()` method on the FormMixin. This method takes as its argument the tag to match against the schema to control the visibility of the attrs. For example, if we passed in "Equipment Port" then all the attrs with a tag of "all" would be shown, as would those with a tag of "Equipment Port" ("device_name" and "interface"). All others would be hidden.
 
-#### willHandleChange() ####
+#### willHandleChange()
 
 Next we need a place to respond to the change in attribute. The FormsMixin code provides for this with a hook function called `willHandleChange()` that is called when a value is changed (either by the user or programmatically). It is possible to use this function to change other form state (as we'll do here), or if you return a value, actually modify the value before it is stored in the form. Here is our implementation of `willHandleChange()`:
 
@@ -95,7 +95,7 @@ The subtle thing here to note is that one of the attrs we are setting is `type`.
 
 In the UI it is also possible to just change the type directly, in which case the second (type case) part of the switch statement handles this directly and fields are shown and hidden based on the `setVisibility()` call.
 
-#### getInitialVisibility() ####
+#### getInitialVisibility()
 
 The final thing to note in this example is how you control the initial visibility state. This is done with a hook function called `getInitialVisibility()`. You implement this to return the tag you want to show.
 

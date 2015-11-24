@@ -9,18 +9,13 @@
  */
 
 import React from "react";
-import _ from "underscore";
-import Markdown from "react-markdown-el";
-import {Alert} from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 import Form from "../../src/form";
 import FormMixin from "../../src/formmixin";
 import Group from "../../src/group";
 import Schema from "../../src/schema";
 import Attr from "../../src/attr";
 import KeyValueEdit from "../../src/keyvalueeditor";
-
-const text = require("raw!../markdown/list_examples.md");
-const description = "This shows an example form with a list of keys and values that can be added or removed.";
 
 // Data
 const keyValues = {
@@ -29,13 +24,13 @@ const keyValues = {
 };
 
 const constraints = [
-    {keyname: "Arbor ID", datatype: "integer", "content_type": "organization"},
-    {keyname: "Site Wiki", datatype: "url", "content_type": "location"},
-    {keyname: "Web Portal", datatype: "url", "content_type": "organization"},
-    {keyname: "Google Folder", datatype: "url", "content_type": "location"},
-    {keyname: "Special Email", datatype: "email", "content_type": "location"},
-    {keyname: "Site Router Name", datatype: "string", "content_type": "location"},
-    {keyname: "Stub Address", datatype: "ip-address", "content_type": "location"}
+    {keyname: "Arbor ID", datatype: "integer", content_type: "organization"},
+    {keyname: "Site Wiki", datatype: "url", content_type: "location"},
+    {keyname: "Web Portal", datatype: "url", content_type: "organization"},
+    {keyname: "Google Folder", datatype: "url", content_type: "location"},
+    {keyname: "Special Email", datatype: "email", content_type: "location"},
+    {keyname: "Site Router Name", datatype: "string", content_type: "location"},
+    {keyname: "Stub Address", datatype: "ip-address", content_type: "location"}
 ];
 
 const keyValueEditSchema = (
@@ -59,8 +54,8 @@ const KeyValueForm = React.createClass({
             return;
         }
 
-        //Example of fetching current and initial values
-        console.log("values:", this.getValues());
+        // Example of fetching current and initial values
+        // console.log("values:", this.getValues());
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
     },
@@ -92,15 +87,15 @@ export default React.createClass({
 
     displayName: "KeyValueExamples",
 
-    getInitialState(){
+    getInitialState() {
         return {
             data: undefined,
-            loaded: false,
+            loaded: false
         };
     },
 
     componentDidMount() {
-        //Simulate ASYNC state update (not necessary)
+        // Simulate ASYNC state update (not necessary)
         setTimeout(() => {
             this.setState({
                 loaded: true
@@ -109,16 +104,16 @@ export default React.createClass({
     },
 
     handleChange(a, b) {
-        console.log("Form changed", a, b)
+        console.log("Form changed", a, b);
     },
 
-    handleSubmit(value) {
-        console.log("value",value)
-        this.setState({data: value})
+    handleSubmit(data) {
+        console.log("submit value", data);
+        this.setState({data});
     },
 
     handleAlertDismiss() {
-        this.setState({data: undefined})
+        this.setState({data: undefined});
     },
 
     renderAlert() {

@@ -24,8 +24,7 @@ export default React.createClass({
         const missing = this.props.required && this._isEmpty(value);
 
         // State changes
-        this.setState({value: value,
-                       missing: missing});
+        this.setState({value, missing});
 
         // Callbacks
         if (this.props.onChange) {
@@ -37,7 +36,7 @@ export default React.createClass({
         const classes = "btn-group btn-group-sm esdb-";
 
         if (!this.props.initialChoiceList) {
-            console.warn("No initial choice list supplied for attr", this.props.attr);
+            throw new Error(`No initial choice list supplied for attr '${this.props.attr}'`);
         }
 
         const buttonElements = _.map(this.props.initialChoiceList, (choice, i) => {

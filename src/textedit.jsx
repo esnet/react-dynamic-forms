@@ -28,11 +28,13 @@ export default React.createClass({
     },
 
     getInitialState() {
-        return {initialValue: this.props.initialValue,
-                value: this.props.initialValue,
-                error: null,
-                errorMsg: "",
-                missing: false};
+        return {
+            initialValue: this.props.initialValue,
+            value: this.props.initialValue,
+            error: null,
+            errorMsg: "",
+            missing: false
+        };
     },
 
     _isEmpty(value) {
@@ -46,9 +48,10 @@ export default React.createClass({
     },
 
     _getError(value) {
-        var result = {
+        const result = {
             validationError: false,
-            validationErrorMessage: null};
+            validationErrorMessage: null
+        };
 
         // If the user has a field blank then that is never an error. Likewise if the field
         // is disabled then that is never an error.
@@ -103,11 +106,13 @@ export default React.createClass({
     componentDidMount() {
         const missing = this._isMissing(this.props.initialValue);
         const error = this._getError(this.props.initialValue);
+        const value = this.props.initialValue;
 
-        this.setState({value: this.props.initialValue,
-                       error: error.validationError,
-                       errorMsg: error.validationErrorMessage,
-                       missing: missing});
+        this.setState({
+            value, missing,
+            error: error.validationError,
+            errorMsg: error.validationErrorMessage
+        });
 
         // Initial error and missing states are fed up to the owner
         if (this.props.onErrorCountChange) {
@@ -119,29 +124,31 @@ export default React.createClass({
         }
     },
 
-    onBlur(e) {
-        const value = this.refs.input.getDOMNode().value;
+    onBlur() {
+        const value = this.refs.input.value;
         const missing = this.props.required && this._isEmpty(value);
         const error = this._getError(value);
 
         let cast = value;
 
         // State changes
-        this.setState({value: e.target.value,
-                       error: error.validationError,
-                       errorMsg: error.validationErrorMessage,
-                       missing: missing});
+        this.setState({
+            value,
+            missing,
+            error: error.validationError,
+            errorMsg: error.validationErrorMessage
+        });
 
         // Callbacks
         if (this.props.onChange) {
             if (_.has(this.props.rules, "type")) {
                 switch (this.props.rules.type) {
-                case "integer":
-                    cast = value === "" ? null : parseInt(value, 10);
-                    break;
-                case "number":
-                    cast = value === "" ? null : parseFloat(value, 10);
-                    break;
+                    case "integer":
+                        cast = value === "" ? null : parseInt(value, 10);
+                        break;
+                    case "number":
+                        cast = value === "" ? null : parseFloat(value, 10);
+                        break;
                 }
             }
             this.props.onChange(this.props.attr, cast);
@@ -181,17 +188,18 @@ export default React.createClass({
 
         return (
             <div className={className} >
-                <input required
-                       key={key}
-                       style={style}
-                       className="form-control input-sm"
-                       type="text"
-                       ref="input"
-                       disabled={this.props.disabled}
-                       placeholder={this.props.placeholder}
-                       defaultValue={this.state.value}
-                       onBlur={this.onBlur}
-                       onFocus={this.onFocus}>
+                <input
+                    required
+                    key={key}
+                    style={style}
+                    className="form-control input-sm"
+                    type="text"
+                    ref="input"
+                    disabled={this.props.disabled}
+                    placeholder={this.props.placeholder}
+                    defaultValue={this.state.value}
+                    onBlur={this.onBlur}
+                    onFocus={this.onFocus}>
                 </input>
                 <div className={helpClassName}>{msg}</div>
             </div>

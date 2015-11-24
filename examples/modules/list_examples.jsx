@@ -9,9 +9,8 @@
  */
 
 import React from "react";
-import _ from "underscore";
-import Markdown from "react-markdown-el";
-import {Alert} from "react-bootstrap";
+import Markdown from "react-markdown";
+import { Alert } from "react-bootstrap";
 import Form from "../../src/form";
 import FormMixin from "../../src/formmixin";
 import ListEditorMixin from "../../src/listeditormixin";
@@ -20,19 +19,20 @@ import Group from "../../src/group";
 import ChooserGroup from "../../src/choosergroup";
 import Schema from "../../src/schema";
 import Attr from "../../src/attr";
+import Highlighter from "./highlighter";
 
 const text = require("raw!../markdown/list_examples.md");
 const description = "This shows an example form with a list of emails that can be added or removed.";
 
 const emailTypes = [
-    {"id": 1, "label": "Work"},
-    {"id": 2, "label": "Home"}
+    {id: 1, label: "Work"},
+    {id: 2, label: "Home"}
 ];
 
 const emailSchema = (
     <Schema>
         <Attr name="key" />
-        <Attr name="email" defaultValue="" label="Email" required={true} validation={{"format": "email"}}/>
+        <Attr name="email" defaultValue="" label="Email" required={true} validation={{format: "email"}}/>
         <Attr name="email_type" defaultValue={1} label="Type" required={true}/>
     </Schema>
 );
@@ -45,7 +45,7 @@ const EmailItemEditor = React.createClass({
     mixins: [FormMixin],
 
     renderForm() {
-        var id = this.value("email_type");
+        const id = this.value("email_type");
         return (
             <div>
                 <ChooserGroup key={id}
@@ -63,7 +63,7 @@ const EmailItemEditor = React.createClass({
 /**
  * Renders a list of emails that can be edited. Each item in the list is a EmailItemEditor.
  */
-var EmailListEditor = React.createClass({
+const EmailListEditor = React.createClass({
 
     mixins: [ListEditorMixin],
 
@@ -87,30 +87,30 @@ var EmailListEditor = React.createClass({
                              values={item}
                              showRequired={this.props.showRequired}/>
         );
-    },
+    }
 });
 
-var schema = (
+const schema = (
     <Schema>
-        <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
-        <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
+        <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{type: "string"}}/>
+        <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{type: "string"}}/>
         <Attr name="emails" label="Emails"/>
     </Schema>
 );
 
-var values = {
+const values = {
     first_name: "Bill",
     last_name: "Jones",
     emails: [
-        {"email": "b.jones@work.com", "email_type": 1},
-        {"email": "bill@gmail.com", "email_type": 2},
+        {email: "b.jones@work.com", email_type: 1},
+        {email: "bill@gmail.com", email_type: 2}
     ]
 };
 
 /**
  * Edit a contact
  */
-var ContactForm = React.createClass({
+const ContactForm = React.createClass({
 
     mixins: [FormMixin],
 
@@ -122,13 +122,13 @@ var ContactForm = React.createClass({
     handleSubmit(e) {
         e.preventDefault();
 
-        //Example of checking if the form has missing values and turning required On
+        // Example of checking if the form has missing values and turning required On
         if (this.hasMissing()) {
             this.showRequiredOn();
             return;
         }
 
-        //Example of fetching current and initial values
+        // Example of fetching current and initial values
         console.log("values:", this.getValues());
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
@@ -159,10 +159,12 @@ var ContactForm = React.createClass({
 
 export default React.createClass({
 
+    mixins: [Highlighter],
+
     getInitialState() {
         return {
             data:  undefined,
-            loaded: false,
+            loaded: false
         };
     },
 
@@ -238,7 +240,7 @@ export default React.createClass({
                                     borderTopColor: "rgb(244, 244, 244)",
                                     paddingTop: 5,
                                     marginTop: 20}}>
-                            <Markdown text={text}/>
+                            <Markdown source={text}/>
                         </div>
                     </div>
                 </div>

@@ -83,9 +83,9 @@ export default React.createClass({
             const key = this._generateKey(nextProps.initialChoice,
                                         this.props.initialChoiceList);
             this.setState({
+                key,
                 initialChoice: nextProps.initialChoice,
-                value: nextProps.initialChoice,
-                key: key
+                value: nextProps.initialChoice
             });
 
             // The value might have been missing and is now set explicitly
@@ -120,7 +120,7 @@ export default React.createClass({
         // The key needs to change if the initialChoiceList changes, so we set
         // the key to be the hash of the choice list
         this.setState({
-            missing: missing,
+            missing,
             key: this._generateKey(this.props.initialChoice,
                                    this.props.initialChoiceList)
         });
@@ -139,8 +139,7 @@ export default React.createClass({
         }
 
         // State changes
-        this.setState({value: value,
-                       missing: missing});
+        this.setState({value, missing});
 
         // Callbacks
         if (this.props.onChange) {
@@ -161,7 +160,7 @@ export default React.createClass({
             return {
                 value: c.id,
                 label: c.label,
-                disabled: disabled
+                disabled
             };
         });
     },
@@ -224,10 +223,7 @@ export default React.createClass({
         const options =
             this.getFilteredOptionList(input, this.props.limit);
         if (options) {
-            cb(null, {
-                options: options,
-                complete: true
-            });
+            cb(null, {options, complete: true});
         }
     },
 
@@ -251,13 +247,12 @@ export default React.createClass({
         const width = this.props.width ? this.props.width + "px" : "100%";
 
         const chooserStyle = {
-            width: width,
+            width,
             marginBottom: 10
         };
 
         if (!this.props.initialChoiceList) {
-            console.warn("No initial choice list supplied for attr",
-                this.props.attr);
+            throw new Error(`No initial choice list supplied for attr '${this.props.attr}'`);
         }
 
         if (this.props.showRequired && this._isMissing()) {

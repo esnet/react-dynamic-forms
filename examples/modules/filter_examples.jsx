@@ -16,12 +16,12 @@ export default React.createClass({
     getInitialState() {
         return {
             choices: ["Red", "Green", "Blue"],
-            filter: "",
+            filter: ""
         };
     },
 
     handleChange(value) {
-        this.setState({"filter": value});
+        this.setState({filter: value});
     },
 
     render() {

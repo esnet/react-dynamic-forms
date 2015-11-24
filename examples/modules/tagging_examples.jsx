@@ -17,12 +17,12 @@ export default React.createClass({
         return {
             choices: ["Red", "Green", "Blue"],
             emptyChoices: null,
-            selection: ["Green"],
+            selection: ["Green"]
         };
     },
 
     handleChange(attr, value) {
-        this.setState({"selection": value});
+        this.setState({selection: value});
     },
 
     render() {
@@ -39,15 +39,22 @@ export default React.createClass({
                         <form>
                         <p />
                         With an initial selection:
-                        <TagsEdit attr="tags" initialTags={this.state.selection}
-                                  initialTagList={this.state.choices} onChange={this.handleChange} width={400}/>
+                        <TagsEdit
+                            attr="tags"
+                            initialTags={this.state.selection}
+                            initialTagList={this.state.choices}
+                            onChange={this.handleChange}
+                            width={400} />
                         Selection: {this.state.selection.join(", ")}
 
                         <hr />
 
                         Without no initial selection:
-                        <TagsEdit attr="tags2" initialTags={null}
-                                  initialTagList={this.state.choices} width={400}/>
+                        <TagsEdit
+                            attr="tags2"
+                            initialTags={null}
+                            initialTagList={this.state.choices}
+                            width={400} />
                         <br />
 
                         </form>
