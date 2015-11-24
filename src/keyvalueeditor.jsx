@@ -10,16 +10,15 @@
 
 import _ from "underscore";
 import React from "react";
-import KeyMirror from "react/lib/keyMirror";
 import ListEditorMixin from "./listeditormixin";
 import Chooser from "./chooser";
 import TextEdit from "./textedit";
 
 // State transitions when adding to the key-value list
-const CreationState = KeyMirror({
-    OFF: null,
-    PICK_KEYNAME: null,
-});
+const CreationState = {
+    OFF: "OFF",
+    PICK_KEYNAME: "PICK_KEYNAME"
+};
 
 const KeyValueListEditor = React.createClass({
 
@@ -33,7 +32,7 @@ const KeyValueListEditor = React.createClass({
             keyName: null,
             value: "",
             valueError: false,
-            validationRule: null,
+            validationRule: null
         };
     },
 
@@ -47,10 +46,10 @@ const KeyValueListEditor = React.createClass({
         const keyName = data.keyName;
         const value = data.value;
         return {
-            keyName: keyName,
-            value: value,
+            keyName,
+            value,
             valueError: false,
-            validationRule: null,
+            validationRule: null
         };
     },
 
@@ -76,7 +75,7 @@ const KeyValueListEditor = React.createClass({
     },
 
     handleDialogValueChanged(attr, value) {
-        this.setState({value: value});
+        this.setState({value});
     },
 
     handleDone() {
@@ -84,7 +83,7 @@ const KeyValueListEditor = React.createClass({
             keyName: this.state.keyName,
             value: this.state.value,
             valueError: this.state.valueError,
-            validationRule: this.state.validationRule,
+            validationRule: this.state.validationRule
         };
 
         this.transitionTo(CreationState.OFF)();
@@ -125,7 +124,7 @@ const KeyValueListEditor = React.createClass({
         const keyValueChoice = _.map(this.props.constraints, (value) => {
             return {
                 id: value["keyname"],
-                label: value["keyname"],
+                label: value["keyname"]
             };
         });
 
@@ -137,117 +136,118 @@ const KeyValueListEditor = React.createClass({
         });
 
         switch (this.state.createState) {
-        case CreationState.OFF:
-            // Initial UI to show the [+] Contact
-            if (filteredChoiceList.length !== 0) {
-                ui = (
-                    <div className="esdb-plus-action-box"
-                        key="append-new-or-existing"
-                        style={{marginBottom: 10}}
-                        onClick={this.transitionTo(CreationState.PICK_KEYNAME)} >
-                        <div>
-                            <i className="glyphicon glyphicon-plus esnet-forms-small-action-icon">
-                                Key
-                            </i>
+
+            case CreationState.OFF:
+                // Initial UI to show the [+] Contact
+                if (filteredChoiceList.length !== 0) {
+                    ui = (
+                        <div className="esdb-plus-action-box"
+                            key="append-new-or-existing"
+                            style={{marginBottom: 10}}
+                            onClick={this.transitionTo(CreationState.PICK_KEYNAME)} >
+                            <div>
+                                <i className="glyphicon glyphicon-plus esnet-forms-small-action-icon">
+                                    Key
+                                </i>
+                            </div>
                         </div>
-                    </div>
+                    );
+                } else {
+                    ui = (
+                        <div>
+                            <table>
+                                <tbody>
+                                    <tr><td>
+                                        <i className="glyphicon glyphicon-plus esdb-small-action-icon text-muted">
+                                            All available choices selected
+                                        </i>
+                                    </td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    );
+                }
+                break;
+
+            case CreationState.PICK_KEYNAME:
+                let doneButtonElement;
+                let cancelButtonElement;
+
+                const buttonStyle = {
+                    marginLeft: 0,
+                    marginRight: 10,
+                    marginTop: 10,
+                    marginBottom: 10,
+                    height: 22,
+                    width: 55,
+                    float: "right"
+                };
+
+                cancelButtonElement = (
+                    <button style={buttonStyle}
+                            type="button"
+                            className="btn btn-xs btn-default"
+                            key="cancel-button"
+                            onClick={this.handleCancel}>Cancel</button>
                 );
-            } else {
+
+                if (this.state.keyName === null || this.state.value === "" || this.state.valueError === true) {
+                    doneButtonElement = (
+                        <button style={buttonStyle}
+                                type="button"
+                                key="pick-contact-button-disabled"
+                                className="btn btn-xs btn-default"
+                                disabled="disabled">Done</button>
+                    );
+                } else {
+                    doneButtonElement = (
+                       <button style={buttonStyle}
+                                type="button"
+                                className="btn btn-xs btn-default"
+                                key="pick-contact-button"
+                                onClick={this.handleDone}>Done</button>
+                    );
+                }
+
                 ui = (
-                    <div>
+                    <div className="esdb-plus-action-box-dialog-lg"
+                         key="select-existing"
+                         style={{marginBottom: 10}}>
                         <table>
-                            <tbody>
-                                <tr><td>
-                                    <i className="glyphicon glyphicon-plus esdb-small-action-icon text-muted">
-                                        All available choices selected
-                                    </i>
-                                </td></tr>
-                            </tbody>
+                        <tbody>
+                            <tr>
+                                <td width="150">Key Name</td>
+                                <td>
+                                    <Chooser
+                                        attr="keyName"
+                                        initialChoice={null}
+                                        initialChoiceList={filteredChoiceList}
+                                        onChange={this.handleKeyNameSelect} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="150">Value</td>
+                                <td>
+                                    <TextEdit
+                                        attr="value"
+                                        rules={this.state.validationRule}
+                                        onErrorCountChange={this.handleDialogValueError}
+                                        onChange={this.handleDialogValueChanged}
+                                        width={300} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <span>{cancelButtonElement}</span>
+                                    <span>{doneButtonElement}</span>
+                                </td>
+                            </tr>
+                        </tbody>
                         </table>
                     </div>
                 );
-            }
-            break;
-
-        case CreationState.PICK_KEYNAME:
-            let doneButtonElement;
-            let cancelButtonElement;
-
-            const buttonStyle = {
-                marginLeft: 0,
-                marginRight: 10,
-                marginTop: 10,
-                marginBottom: 10,
-                height: 22,
-                width: 55,
-                float: "right"
-            };
-
-            cancelButtonElement = (
-                <button style={buttonStyle}
-                        type="button"
-                        className="btn btn-xs btn-default"
-                        key="cancel-button"
-                        onClick={this.handleCancel}>Cancel</button>
-            );
-
-            if (this.state.keyName === null || this.state.value === "" || this.state.valueError === true) {
-                doneButtonElement = (
-                    <button style={buttonStyle}
-                            type="button"
-                            key="pick-contact-button-disabled"
-                            className="btn btn-xs btn-default"
-                            disabled="disabled">Done</button>
-                );
-            } else {
-                doneButtonElement = (
-                   <button style={buttonStyle}
-                            type="button"
-                            className="btn btn-xs btn-default"
-                            key="pick-contact-button"
-                            onClick={this.handleDone}>Done</button>
-                );
-            }
-
-            ui = (
-                <div className="esdb-plus-action-box-dialog-lg"
-                     key="select-existing"
-                     style={{marginBottom: 10}}>
-                    <table>
-                    <tbody>
-                        <tr>
-                            <td width="150">Key Name</td>
-                            <td>
-                                <Chooser
-                                    attr="keyName"
-                                    initialChoice={null}
-                                    initialChoiceList={filteredChoiceList}
-                                    onChange={this.handleKeyNameSelect} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="150">Value</td>
-                            <td>
-                                <TextEdit
-                                    attr="value"
-                                    rules={this.state.validationRule}
-                                    onErrorCountChange={this.handleDialogValueError}
-                                    onChange={this.handleDialogValueChanged}
-                                    width={300} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <span>{cancelButtonElement}</span>
-                                <span>{doneButtonElement}</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                    </table>
-                </div>
-            );
-            break;
+                break;
         }
         return ui;
     },
@@ -275,7 +275,7 @@ const KeyValueListEditor = React.createClass({
                 </table>
             </div>
         );
-    },
+    }
 });
 
 export default React.createClass({
@@ -298,16 +298,14 @@ export default React.createClass({
         const keyValuesDict = this.props.keyValues;
         let keyValueList = [];
         _.each(keyValuesDict, (value, keyName) => {
-            keyValueList.push({
-                keyName: keyName,
-                value: value
-            });
+            keyValueList.push({keyName, value});
         });
 
         return (
-                <KeyValueListEditor keyValues={keyValueList}
-                                    constraints={this.props.constraints}
-                                    onChange={this.handleChange} />
+                <KeyValueListEditor
+                    keyValues={keyValueList}
+                    constraints={this.props.constraints}
+                                onChange={this.handleChange} />
         );
     }
 });

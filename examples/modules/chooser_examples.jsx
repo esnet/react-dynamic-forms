@@ -10,9 +10,11 @@
 
 import React from "react";
 import _ from "underscore";
+import Chance from "chance";
 import Chooser from "../../src/chooser";
+import Highlighter from "./highlighter";
 
-var chance = require("chance").Chance();
+const chance = Chance.Chance();
 
 // Data
 const animalMap = {1: "dog", 2: "duck", 3: "cat", 4: "donkey",
@@ -39,12 +41,14 @@ let locationList = [
 
 export default React.createClass({
 
+    mixins: [Highlighter],
+
     getInitialState() {
         return {
-            animalList: animalList,
-            sortedAnimalList: sortedAnimalList,
+            animalList,
+            sortedAnimalList,
             selection: "",
-            missingCount: 0,
+            missingCount: 0
         };
     },
 

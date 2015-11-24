@@ -9,7 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
 import NavItems from "../../src/navitems";
 
 export default React.createClass({
@@ -20,12 +19,12 @@ export default React.createClass({
                    circuit: {label: "Circuits"},
                    diagrams: {label: "Diagrams"}
                   },
-            active: "Summary",
+            active: "Summary"
         };
     },
 
     handleChange(value) {
-        this.setState({"active": value});
+        this.setState({active: value});
     },
 
     render() {
@@ -33,19 +32,20 @@ export default React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3> NavItem Button Examples</h3>
+                        <h3>NavItem Button Examples</h3>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <NavItems active={this.state.active} 
-                                  navItems={this.state.data}
-                                  onChange={this.handleChange}/>
+                        <NavItems
+                            active={this.state.active}
+                            navItems={this.state.data}
+                            onChange={this.handleChange}/>
                         <br />
                         Selection: {this.state.active}
                     </div>
                 </div>
             </div>
         );
-    },
+    }
 });

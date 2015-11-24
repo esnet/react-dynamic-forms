@@ -9,7 +9,7 @@
  */
 
 import React from "react";
-import invariant from "react/lib/invariant";
+import invariant from "invariant";
 
 export default React.createClass({
 

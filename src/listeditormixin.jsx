@@ -9,7 +9,7 @@
  */
 
 import _ from "underscore";
-import cloneWithProps from "react-clonewithprops";
+import React from "react";
 import ListEditView from "./listeditview";
 
 /**
@@ -39,7 +39,7 @@ export default {
         });
 
         return {
-            items: items,  // array of items
+            items,         // array of items
             errors: [],    // number of errors
             missing: []    // required fields that are still not filled out
         };
@@ -71,8 +71,8 @@ export default {
         }
 
         let items = this.state.items;
-        let errorList = this.state.errors;
-        let missingList = this.state.missing;
+        let errors = this.state.errors;
+        let missing = this.state.missing;
         let created = this.createItem(data);
 
         if (!_.isArray(created)) {
@@ -80,36 +80,34 @@ export default {
                 created.key = "key-" + Math.random();
             }
             items.push(created);
-            errorList.push(0);
-            missingList.push(0);
+            errors.push(0);
+            missing.push(0);
         } else {
-            var n = 1;
+            let n = 1;
             _.each(created, (newItem) => {
                 if (!_.has(newItem, "key")) {
                     newItem.key = "key-" + Math.random();
                     newItem.multiPart = n;
                 }
                 items.push(newItem);
-                errorList.push(0);
-                missingList.push(0);
+                errors.push(0);
+                missing.push(0);
                 n++;
             });
         }
 
         // Set state
-        this.setState({items: items,
-                       errors: errorList,
-                       missing: missingList});
+        this.setState({items, errors, missing});
 
         // Callbacks
         if (this.props.onChange) {
             this.props.onChange(this.props.attr, items);
         }
         if (this.props.onErrorCountChange) {
-            this.props.onErrorCountChange(this.props.attr, this._totalErrorCounts());
+            this.props.onErrorCountChange(this.props.attr, this.totalErrorCounts());
         }
         if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr, this._totalMissingCounts());
+            this.props.onMissingCountChange(this.props.attr, this.totalMissingCounts());
         }
     },
 
@@ -128,24 +126,22 @@ export default {
 
         items.splice(i - n + 1, n);
 
-        let errorList = this.state.errors;
-        let missingList = this.state.missing;
-        errorList.splice(i - n + 1, n);
-        missingList.splice(i - n + 1, n);
+        let errors = this.state.errors;
+        let missing = this.state.missing;
+        errors.splice(i - n + 1, n);
+        missing.splice(i - n + 1, n);
 
-        this.setState({items: items,
-                       errors: errorList,
-                       missing: missingList});
+        this.setState({items, errors, missing});
 
         // Callbacks
         if (this.props.onChange) {
             this.props.onChange(this.props.attr, items);
         }
         if (this.props.onErrorCountChange) {
-            this.props.onErrorCountChange(this.props.attr, this._totalErrorCounts());
+            this.props.onErrorCountChange(this.props.attr, this.totalErrorCounts());
         }
         if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr, this._totalMissingCounts());
+            this.props.onMissingCountChange(this.props.attr, this.totalMissingCounts());
         }
     },
 
@@ -156,7 +152,7 @@ export default {
         let items = this.state.items;
         items[i] = value;
 
-        this.setState({items: items});
+        this.setState({items});
 
         // Callback
         if (this.props.onChange) {
@@ -201,15 +197,19 @@ export default {
     render() {
         let components = [];
         _.each(this.state.items, (item, index) => {
-            var component = this.renderItem(item, index);
+            const component = this.renderItem(item, index);
+            const key = item.key;
+            const id = item.id;
             if (component) {
-                const props = {key: item.key,
-                               index: index,
-                               id: item.id,
-                               onErrorCountChange: this.handleErrorCountChange,
-                               onMissingCountChange: this.handleMissingCountChange,
-                               onChange: this.handleItemChanged};
-                components.push(cloneWithProps(component, props));
+                const props = {
+                    key,
+                    index,
+                    id,
+                    onErrorCountChange: this.handleErrorCountChange,
+                    onMissingCountChange: this.handleMissingCountChange,
+                    onChange: this.handleItemChanged
+                };
+                components.push(React.cloneElement(component, props));
             }
         });
 
@@ -218,21 +218,21 @@ export default {
         const plusElement = _.has(this, "plusUI") ? this.plusUI() : null;
 
         return (
-            <ListEditView items={components}
-                          canAddItems={canAddItems}
-                          canRemoveItems={canRemoveItems}
-                          plusWidth={400}
-                          plusElement={plusElement}
-                          onAddItem={this.handleAddItem}
-                          onRemoveItem={this.handleItemRemoved}/>
+            <ListEditView
+                items={components}
+                canAddItems={canAddItems}
+                canRemoveItems={canRemoveItems}
+                plusWidth={400}
+                plusElement={plusElement}
+                onAddItem={this.handleAddItem}
+                onRemoveItem={this.handleItemRemoved}/>
         );
-
     },
 
     /**
      * Determine the total count of missing fields in the entire list
      */
-    _totalMissingCounts() {
+    totalMissingCounts() {
         const counts = this.state.missingCounts;
         let total = 0;
         _.each(counts, c => {
@@ -244,12 +244,12 @@ export default {
     /**
      * Determine the total count of error fields in the entire list
      */
-    _totalErrorCounts() {
+    totalErrorCounts() {
         const counts = this.state.errorCounts;
         let total = 0;
         _.each(counts, (c) => {
             total += c;
         });
         return total;
-    },
+    }
 };

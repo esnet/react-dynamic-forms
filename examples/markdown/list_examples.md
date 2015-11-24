@@ -1,4 +1,4 @@
-###List example###
+### List example
 
 To create a list that can be added and removed, the Forms library provides a ListEditorMixin.
 

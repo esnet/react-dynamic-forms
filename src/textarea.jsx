@@ -104,7 +104,7 @@ export default React.createClass({
         this.setState({value: this.props.initialValue,
                        error: error.validationError,
                        errorMsg: error.validationErrorMessage,
-                       missing: missing});
+                       missing});
 
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.attr, error.validationError ? 1 : 0);
@@ -116,7 +116,7 @@ export default React.createClass({
     },
 
     onBlur(e) {
-        const value = this.refs.input.getDOMNode().value;
+        const value = this.refs.input.value;
         const missing = this.props.required && this._isEmpty(value);
         const error = this._getError(value);
 
@@ -124,7 +124,7 @@ export default React.createClass({
         this.setState({value: e.target.value,
                        error: error.validationError,
                        errorMsg: error.validationErrorMessage,
-                       missing: missing});
+                       missing});
 
         // Callbacks
         if (this.props.onChange) {
@@ -166,17 +166,18 @@ export default React.createClass({
 
         return (
             <div className={className} >
-                <textarea style={textAreaStyle}
-                          className="form-control"
-                          type="text"
-                          ref="input"
-                          key={key}
-                          disabled={this.props.disabled}
-                          placeholder={this.props.placeholder}
-                          defaultValue={this.state.value}
-                          rows={this.props.rows}
-                          onBlur={this.onBlur}
-                          onFocus={this.onFocus}>
+                <textarea
+                    style={textAreaStyle}
+                    className="form-control"
+                    type="text"
+                    ref="input"
+                    key={key}
+                    disabled={this.props.disabled}
+                    placeholder={this.props.placeholder}
+                    defaultValue={this.state.value}
+                    rows={this.props.rows}
+                    onBlur={this.onBlur}
+                    onFocus={this.onFocus}>
                 </textarea>
                 <div className={helpClassName}>{msg}</div>
             </div>

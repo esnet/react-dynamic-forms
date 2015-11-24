@@ -9,8 +9,7 @@
  */
 
 import React from "react";
-import _ from "underscore";
-import Markdown from "react-markdown-el";
+import Markdown from "react-markdown";
 import {Alert} from "react-bootstrap";
 import Form from "../../src/form";
 import FormMixin from "../../src/formmixin";
@@ -18,6 +17,7 @@ import TextEditGroup from "../../src/texteditgroup";
 import Schema from "../../src/schema";
 import Attr from "../../src/attr";
 import ChooserGroup from "../../src/choosergroup";
+import Highlighter from "./highlighter";
 
 const text = require("raw!../markdown/form_examples.md");
 const description = "This shows a simple form where the schema and values of the form are loaded " +
@@ -26,9 +26,9 @@ const description = "This shows a simple form where the schema and values of the
 const schema = (
     <Schema>
         <Attr name="type" label="Type" placeholder="Enter contact type" required={true}/>
-        <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
-        <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
-        <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
+        <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{type: "string"}}/>
+        <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{type: "string"}}/>
+        <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{format: "email"}}/>
     </Schema>
 );
 
@@ -59,8 +59,8 @@ const ContactForm = React.createClass({
             return;
         }
 
-        //Example of fetching current and initial values
-        console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
+        // Example of fetching current and initial values
+        // console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
 
         this.props.onSubmit && this.props.onSubmit(this.getValues());
 
@@ -98,10 +98,12 @@ const ContactForm = React.createClass({
 
 export default React.createClass({
 
+    mixins: [Highlighter],
+
     getInitialState() {
         return {
             data:  undefined,
-            loaded: false,
+            loaded: false
         };
     },
 
@@ -115,7 +117,7 @@ export default React.createClass({
     },
 
     handleChange(a, b) {
-        console.log("Form changed", a, b)
+        console.log("Form changed", a, b);
     },
 
     handleSubmit(value) {
@@ -128,8 +130,8 @@ export default React.createClass({
 
     renderAlert() {
         if (this.state && this.state.data) {
-            var firstName = this.state.data["first_name"];
-            var lastName = this.state.data["last_name"];
+            const firstName = this.state.data["first_name"];
+            const lastName = this.state.data["last_name"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
                     <strong>Success!</strong> {firstName} {lastName} was submitted.
@@ -180,7 +182,7 @@ export default React.createClass({
                                     borderTopColor: "rgb(244, 244, 244)",
                                     paddingTop: 5,
                                     marginTop: 20}}>
-                            <Markdown text={text}/>
+                            <Markdown source={text}/>
                         </div>
                     </div>
                 </div>

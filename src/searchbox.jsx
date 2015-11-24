@@ -22,7 +22,7 @@ export default React.createClass({
     },
 
     onSubmit() {
-        const val = this.refs.search.getDOMNode().value;
+        const val = this.refs.search.value;
 
         this.setState({value: val});
 

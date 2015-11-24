@@ -15,17 +15,21 @@ export default React.createClass({
 
     getInitialState() {
         return {
-            choices: {1: "Yes", 2: "No", 3: "Maybe"},
-            selection: 1,
+            choices: {
+                1: "Yes",
+                2: "No",
+                3: "Maybe"
+            },
+            selection: 1
         };
     },
 
     handleChange(attr, value) {
-        this.setState({"selection": value});
+        this.setState({selection: value});
     },
 
     handleMissingCountChange(attr, count) {
-        this.setState({"missingCount": count});
+        this.setState({missingCount: count});
     },
 
     render() {
@@ -40,9 +44,10 @@ export default React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <p />
-                        <OptionButtons initialChoice={this.state.selection}
-                                       initialChoiceList={this.state.choices}
-                                       onChange={this.handleChange}/>
+                        <OptionButtons
+                            initialChoice={this.state.selection}
+                            initialChoiceList={this.state.choices}
+                            onChange={this.handleChange}/>
                         <br />
                         Selection: {this.state.selection} ({this.state.choices[this.state.selection]})
                     </div>

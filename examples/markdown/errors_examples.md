@@ -1,12 +1,12 @@
-###Error example###
+### Error example
 
 The forms library has several facilities to help with tracking of errors and missing values on the form.
 
-#### Widgets ####
+#### Widgets
 
 At the lowest level, each widget, such as a TextEdit widget, has been adapted to keep track of its status with respect to the validation rules that were passed to it, either directly or using a form schema. These rules specifiy both what kind of data or format is valid for a field as well as if the field is required or not. As the status of the form widget changes with user input (on blur and focus) the field will pass this information up to the creater of the widget via callbacks.
 
-#### Forms ####
+#### Forms
 
 At the next level up, a form contains many widgets. Using the Group wrappers such as TextEditGroup within a FormMixin `renderForm` method will add tracking of its widgets by adding callbacks to those widgets and keeping track of the result. The result will be a mapping of widgets to if they are currently displaying a error as well as a mapping of widget to if they are required to be filled but aren't. From these two mappings we can sum the totals and so a form knowns how many errors and missing fields exist within its widgets. To access these totals you can call `errorCount()` (or `hasErrors()`) and `missingCount()` (or `hasMissing()`) on the FormMixin component. You can also get notifications from outside of the FormMixin component by adding callbacks as props, such as in this example:
 
@@ -26,7 +26,7 @@ Missing values can be similarly handled.
 
 Note that all of this applied to list editors as well. Total counts of the list editors within a form will be correctly reported back up to the form.
 
-#### Show Required ####
+#### Show Required
 
 Showing the user which forms are required is a tricky user experience dance. On one hand you don't want to throw up all missing fields as errors from the beginning. That would be kind of hostile. On the other hand it needs to be clear which form fields must be filled out.
 
@@ -38,7 +38,7 @@ In this example, showRequired is simply a state which is turned on by hitting th
 
 **Note**: The way we handle required fields may be refined over time.
 
-#### Form Error Component ####
+#### Form Error Component
 
 Above all this the forms library also has a component called `FormErrors` for displaying these errors and warnings in a consistent way across our applications. This is shown in the example to the right of the form. You can, of course, just listen to the callbacks and display the totals in whatever way you want, as well as implement any other logic you need to based on them.
 

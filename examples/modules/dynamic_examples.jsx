@@ -10,7 +10,7 @@
 
 import React from "react";
 import _ from "underscore";
-import Markdown from "react-markdown-el";
+import Markdown from "react-markdown";
 import {Alert} from "react-bootstrap";
 import Form from "../../src/form";
 import FormMixin from "../../src/formmixin";
@@ -20,6 +20,7 @@ import TextAreaGroup from "../../src/textareagroup";
 import ChooserGroup from "../../src/choosergroup";
 import Schema from "../../src/schema";
 import Attr from "../../src/attr";
+import Highlighter from "./highlighter";
 
 const text = require("raw!../markdown/dynamic_examples.md");
 const description = "This shows a more complicated form where there's conditional fields and pre-filling. " +
@@ -45,7 +46,7 @@ const schema = (
 
 // Data
 const values = {
-    type: 2,
+    type: 2
 };
 const endpointTypes = [
     {id: 1, label: "Patch Panel"},
@@ -76,7 +77,7 @@ const bookmarked = {
         port_side: "BACK",
         port_location: "BOIS"
     }
-}
+};
 
 /**
  * Edit a contact
@@ -89,7 +90,7 @@ const EndpointForm = React.createClass({
 
     getInitialVisibility() {
         const currentObj = _.findWhere(endpointTypes, {
-            "id": this.props.values["type"]
+            id: this.props.values["type"]
         });
         return currentObj.label;
     },
@@ -150,7 +151,7 @@ const EndpointForm = React.createClass({
             borderRadius: 5
         };
         const bookmarks = _.map(bookmarked, (bookmark, id) => ({
-            id: id,
+            id,
             label: bookmark.name
         }));
 
@@ -196,12 +197,14 @@ const EndpointForm = React.createClass({
 
 export default React.createClass({
 
+    mixins: [Highlighter],
+
     getInitialState() {
         return {
-            "data":  undefined,
-            "loaded": false,
-            "missingCount": 0,
-            "errorCount": 0
+            data:  undefined,
+            loaded: false,
+            missingCount: 0,
+            errorCount: 0
         };
     },
 
@@ -209,7 +212,7 @@ export default React.createClass({
         //Simulate ASYNC state update (not necessary)
         setTimeout(() => {
             this.setState({
-                "loaded": true
+                loaded: true
             });
         }, 0);
     },
@@ -232,7 +235,7 @@ export default React.createClass({
 
     showRequired(b) {
         const on = b || true;
-        this.setState({"showRequired": on});
+        this.setState({showRequired: on});
     },
 
     handleSubmit() {
@@ -324,7 +327,7 @@ export default React.createClass({
                                     borderTopColor: "rgb(244, 244, 244)",
                                     paddingTop: 5,
                                     marginTop: 20}}>
-                            <Markdown text={text}/>
+                            <Markdown source={text}/>
                         </div>
                     </div>
                 </div>

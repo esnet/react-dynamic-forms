@@ -9,24 +9,24 @@
  */
 
 import React from "react";
-import _ from "underscore";
-import Markdown from "react-markdown-el";
-import {Alert} from "react-bootstrap";
+import Markdown from "react-markdown";
+import { Alert } from "react-bootstrap";
 import Form from "../../src/form";
 import FormMixin from "../../src/formmixin";
 import FormErrors from "../../src/formerrors";
 import TextEditGroup from "../../src/texteditgroup";
 import Schema from "../../src/schema";
 import Attr from "../../src/attr";
+import Highlighter from "./highlighter";
 
 const text = require("raw!../markdown/errors_examples.md");
 const description = "This shows a simple form where we track form validation errors and incomplete fields";
 
 const schema = (
     <Schema>
-        <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{"type": "string"}}/>
-        <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{"type": "string"}}/>
-        <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{"format": "email"}}/>
+        <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{type: "string"}}/>
+        <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{type: "string"}}/>
+        <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{format: "email"}}/>
     </Schema>
 );
 
@@ -46,7 +46,6 @@ const ContactForm = React.createClass({
     displayName: "ContactForm",
 
     renderForm() {
-        const disableSubmit = this.hasErrors();
         const style = {
             background: "#FAFAFA",
             padding: 10,
@@ -63,6 +62,8 @@ const ContactForm = React.createClass({
 });
 
 export default React.createClass({
+
+    mixins: [Highlighter],
 
     getInitialState() {
         return {
@@ -192,7 +193,7 @@ export default React.createClass({
                                     borderTopColor: "rgb(244, 244, 244)",
                                     paddingTop: 5,
                                     marginTop: 20}}>
-                            <Markdown text={text}/>
+                            <Markdown source={text}/>
                         </div>
                     </div>
                 </div>

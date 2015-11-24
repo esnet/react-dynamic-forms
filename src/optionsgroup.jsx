@@ -9,6 +9,7 @@
  */
 
 import React from "react";
+import Group from "./group";
 import OptionButtons from "./optionbuttons";
 
 /**

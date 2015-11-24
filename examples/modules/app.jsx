@@ -9,85 +9,76 @@
  */
 
 import React from "react";
-import Router from "react-router";
-const {RouteHandler, Link} = Router;
-
-import "./app.css";
+import { Link } from "react-router";
 
 const logo = document.createElement("img");
 logo.src = require("../img/logo.png");
 
-const github = document.createElement("img");
-github.src = require("../img/github.png");
-
 export default React.createClass({
 
-  render() {
-    return (
-      <div>
+    render() {
+        return (
+            <div className="row">
 
-          <div className="row">
-              <div className="col-md-2">
-                  <img style={{float: "right"}} className="main-image" src={logo.src} width={80}/>
-              </div>
-              <div className="col-md-10">
-                  <h2>React Forms Library</h2>
-              </div>
-          </div>
+                <div className="col-sm-3 col-md-2 sidebar">
+                    <p />
+                    <ul className="nav nav-sidebar">
+                        <li><Link to="/">Introduction</Link></li>
+                    </ul>
 
-          <hr />
+                    <div className="sidebar-heading">Low level API</div>
 
-          <div className="row">
+                    <ul className="nav nav-sidebar">
+                      <li><Link to="textedit">TextEdit</Link></li>
+                      <li><Link to="textarea">TextArea</Link></li>
+                      <li><Link to="chooser">Chooser</Link></li>
+                      <li><Link to="tagging">Tagging</Link></li>
+                      <li><Link to="optionbuttons">OptionButtons</Link></li>
+                      <li><Link to="navitems">NavItems</Link></li>
+                      <li><Link to="listoptions">OptionList</Link></li>
+                      <li><Link to="filtering">TextFilter</Link></li>
+                    </ul>
 
-            <div className="col-md-2">
-              <div className="docs-sidebar">
+                    <div className="sidebar-heading">Helpers</div>
+                    <ul className="nav nav-sidebar">
+                        <li><Link to="group">Groups</Link></li>
+                    </ul>
 
-                  <ul className="docs-sidenav nav">
+                    <div className="sidebar-heading">Compound</div>
+                    <ul className="nav nav-sidebar">
+                        <li><Link to="lists">Lists</Link></li>
+                        <li><Link to="keyvalue">Key-Value</Link></li>
+                    </ul>
 
-                    <li style={{height: 64}}>
-                      <a href="https://github.com/esnet/esnet-react-forms">
-                        <img style={{float: "left"}} className="main-image" src={github.src} width={32} height={32}/>
-                      </a>
-                    </li>
+                    <div className="sidebar-heading">Examples</div>
+                    <ul className="nav nav-sidebar">
+                      <li><Link to="forms">Contact form</Link></li>
+                      <li><Link to="errors">Form errors</Link></li>
+                      <li><Link to="dynamic">Dynamic forms</Link></li>
+                    </ul>
 
-                    <hr />
+                    <div className="sidebar-heading">Links</div>
 
-                    <li><Link to="intro">Introduction</Link></li>
-                    
-                    <hr />
-                    
-                    Low level:
-                    <li><Link to="textedit">TextEdit</Link></li>
-                    <li><Link to="textarea">TextArea</Link></li>
-                    <li><Link to="chooser">Chooser</Link></li>
-                    <li><Link to="tagging">Tagging</Link></li>
-                    <li><Link to="optionbuttons">OptionButtons</Link></li>
-                    <li><Link to="navitems">NavItems</Link></li>
-                    <li><Link to="listoptions">OptionList</Link></li>
-                    <li><Link to="filtering">TextFilter</Link></li>
-                    <hr />
-                    Helpers:
-                    <li><Link to="group">Groups</Link></li>
-                    <hr />
-                    Compound:
-                    <li><Link to="lists">Lists</Link></li>
-                    <li><Link to="keyvalue">Key-Value</Link></li>
-                    Examples:
-                    <li><Link to="forms">Contact form</Link></li>
-                    <li><Link to="errors">Form errors</Link></li>
-                    <li><Link to="dynamic">Dynamic forms</Link></li>
+                    <ul className="nav nav-sidebar">
+                        <li><a href="https://github.com/esnet/esnet-react-forms">GitHub</a></li>
+                        <li><a href="https://www.es.net/">ESnet</a></li>
+                        <li><a href="http://software.es.net/">Open Source</a></li>
+                    </ul>
 
+                    <div className="sidebar-heading">Related Projects</div>
 
-                  </ul>
-              </div>
+                    <ul className="nav nav-sidebar">
+                        <li><a href="http://software.es.net/react-network-diagrams/">React Network Diagrams</a></li>
+                        <li><a href="http://software.es.net/react-timeseries-charts/">React Timeseries Charts</a></li>
+                        <li><a href="http://software.es.net/pond/">Pond - Timeseries abstraction</a></li>
+                    </ul>
+                </div>
+
+                <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    {this.props.children}
+                </div>
+
             </div>
-
-            <div className="col-md-10">
-              <RouteHandler />
-            </div>
-
-          </div>
-      </div>
-    );
-  }
+        );
+    }
 });
