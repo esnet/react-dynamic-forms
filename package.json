@@ -27,7 +27,7 @@
     "build"
   ],
   "gh-pages-deploy": {
-    "staticpath": "website",
+    "staticpath": "examples",
     "prep": [
       "build-website"
     ]
