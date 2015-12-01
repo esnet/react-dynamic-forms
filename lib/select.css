@@ -224,7 +224,10 @@
   color: #007eff;
   display: inline-block;
   font-size: 1em;
-  margin: 2px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 2px;
+  margin-left: 2px;
   height: 20px;
 }
 .Select-item-icon,
