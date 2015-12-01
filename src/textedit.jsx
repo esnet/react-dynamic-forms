@@ -199,8 +199,7 @@ export default React.createClass({
                     placeholder={this.props.placeholder}
                     defaultValue={this.state.value}
                     onBlur={this.onBlur}
-                    onFocus={this.onFocus}>
-                </input>
+                    onFocus={this.onFocus} />
                 <div className={helpClassName}>{msg}</div>
             </div>
         );
