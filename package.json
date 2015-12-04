@@ -1,6 +1,6 @@
 {
   "name": "react-dynamic-forms",
-  "version": "0.12.3",
+  "version": "0.13.0",
   "description": "Dynamic forms library for React",
   "license": "BSD-3-Clause-LBNL",
   "main": "index.js",
