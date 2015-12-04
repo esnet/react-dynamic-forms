@@ -11,6 +11,7 @@
 import React from "react";
 import {validate} from "revalidator";
 import _ from "underscore";
+import hash from "string-hash";
 
 import "./textarea.css";
 
@@ -162,7 +163,7 @@ export default React.createClass({
             helpClassName += " has-error";
         }
 
-        const key = this.state.initialValue || "";
+        const key = hash(this.state.initialValue || "");
 
         return (
             <div className={className} >
@@ -177,8 +178,7 @@ export default React.createClass({
                     defaultValue={this.state.value}
                     rows={this.props.rows}
                     onBlur={this.onBlur}
-                    onFocus={this.onFocus}>
-                </textarea>
+                    onFocus={this.onFocus} />
                 <div className={helpClassName}>{msg}</div>
             </div>
         );

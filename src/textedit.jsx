@@ -11,6 +11,7 @@
 import React from "react";
 import {validate} from "revalidator";
 import _ from "underscore";
+import hash from "string-hash";
 
 require("./textedit.css");
 
@@ -184,7 +185,7 @@ export default React.createClass({
             helpClassName += " has-error";
         }
 
-        const key = this.state.initialValue || "";
+        const key = hash(this.state.initialValue || "");
 
         return (
             <div className={className} >
@@ -199,8 +200,7 @@ export default React.createClass({
                     placeholder={this.props.placeholder}
                     defaultValue={this.state.value}
                     onBlur={this.onBlur}
-                    onFocus={this.onFocus}>
-                </input>
+                    onFocus={this.onFocus} />
                 <div className={helpClassName}>{msg}</div>
             </div>
         );

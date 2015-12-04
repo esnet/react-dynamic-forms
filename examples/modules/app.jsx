@@ -26,17 +26,20 @@ export default React.createClass({
                         <li><Link to="/">Introduction</Link></li>
                     </ul>
 
-                    <div className="sidebar-heading">Low level API</div>
+                    <div className="sidebar-heading">Examples</div>
+                    <ul className="nav nav-sidebar">
+                      <li><Link to="dynamic">Dynamic forms</Link></li>
+                      <li><Link to="forms">Contact form</Link></li>
+                      <li><Link to="errors">Form errors</Link></li>
+                    </ul>
 
+                    <div className="sidebar-heading">Low level API</div>
                     <ul className="nav nav-sidebar">
                       <li><Link to="textedit">TextEdit</Link></li>
                       <li><Link to="textarea">TextArea</Link></li>
                       <li><Link to="chooser">Chooser</Link></li>
                       <li><Link to="tagging">Tagging</Link></li>
                       <li><Link to="optionbuttons">OptionButtons</Link></li>
-                      <li><Link to="navitems">NavItems</Link></li>
-                      <li><Link to="listoptions">OptionList</Link></li>
-                      <li><Link to="filtering">TextFilter</Link></li>
                     </ul>
 
                     <div className="sidebar-heading">Helpers</div>
@@ -50,15 +53,7 @@ export default React.createClass({
                         <li><Link to="keyvalue">Key-Value</Link></li>
                     </ul>
 
-                    <div className="sidebar-heading">Examples</div>
-                    <ul className="nav nav-sidebar">
-                      <li><Link to="forms">Contact form</Link></li>
-                      <li><Link to="errors">Form errors</Link></li>
-                      <li><Link to="dynamic">Dynamic forms</Link></li>
-                    </ul>
-
                     <div className="sidebar-heading">Links</div>
-
                     <ul className="nav nav-sidebar">
                         <li><a href="https://github.com/esnet/esnet-react-forms">GitHub</a></li>
                         <li><a href="https://www.es.net/">ESnet</a></li>
@@ -66,11 +61,10 @@ export default React.createClass({
                     </ul>
 
                     <div className="sidebar-heading">Related Projects</div>
-
                     <ul className="nav nav-sidebar">
                         <li><a href="http://software.es.net/react-network-diagrams/">React Network Diagrams</a></li>
                         <li><a href="http://software.es.net/react-timeseries-charts/">React Timeseries Charts</a></li>
-                        <li><a href="http://software.es.net/pond/">Pond - Timeseries abstraction</a></li>
+                        <li><a href="http://software.es.net/pond/">Pond.js - Timeseries abstraction</a></li>
                     </ul>
                 </div>
 

@@ -20,16 +20,13 @@ import TextEditExamples from "./textedit_examples.jsx";
 import TextAreaExamples from "./textarea_examples.jsx";
 import ChooserExamples from "./chooser_examples.jsx";
 import OptionButtonsExamples from "./optionbuttons_examples.jsx";
-import OptionsListExamples from "./optionlist_examples.jsx";
 import TaggingExamples from "./tagging_examples.jsx";
-import FilterExamples from "./filter_examples.jsx";
 import GroupExamples from "./group_examples.jsx";
 import FormExamples from "./form_examples.jsx";
 import ErrorExamples from "./error_examples.jsx";
 import DynamicExamples from "./dynamic_examples.jsx";
 import ListExamples from "./list_examples.jsx";
 import KeyValueExamples from "./keyvalue_examples.jsx";
-import NavItemsExamples from "./navitems_examples.jsx";
 
 render((
     <Router>
@@ -39,10 +36,7 @@ render((
             <Route path="textarea" component={TextAreaExamples} />
             <Route path="chooser" component={ChooserExamples} />
             <Route path="optionbuttons" component={OptionButtonsExamples} />
-            <Route path="navitems" component={NavItemsExamples} />
-            <Route path="listoptions" component={OptionsListExamples} />
             <Route path="tagging" component={TaggingExamples} />
-            <Route path="filtering" component={FilterExamples} />
             <Route path="group" component={GroupExamples} />
             <Route path="forms" component={FormExamples} />
             <Route path="errors" component={ErrorExamples} />
