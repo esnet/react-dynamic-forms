@@ -10,7 +10,7 @@
 
 import React from "react";
 import _ from "underscore";
-import ReactCSSTransitionGroup from "rc-css-transition-group";
+import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 import "./listeditview.css";
 
