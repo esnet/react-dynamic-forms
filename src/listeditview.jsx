@@ -121,7 +121,10 @@ export default React.createClass({
         return (
             <div>
                 <ul className="esnet-forms-listeditview-container">
-                    <ReactCSSTransitionGroup transitionName="esnet-forms-list-item">
+                    <ReactCSSTransitionGroup
+                        transitionName="esnet-forms-list-item"
+                        transitionEnterTimeout={500}
+                        transitionLeaveTimeout={300}>
                         {itemList}
                     </ReactCSSTransitionGroup>
                 </ul>
