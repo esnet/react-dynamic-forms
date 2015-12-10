@@ -24,7 +24,7 @@ const text = require("raw!../markdown/form_examples.md");
 const description = "This shows a simple form where the schema and values of the form are loaded " +
                     "at some future time, such as if they were read from a REST API.";
 
-const today = new Date();
+const birthday = new Date("1964-08-22");
 
 const schema = (
     <Schema>
@@ -41,7 +41,7 @@ const values = {
     first_name: "Bill",
     last_name: "Jones",
     email: "bill@gmail.com",
-    birthdate: today
+    birthdate: birthday
 };
 
 /**
@@ -86,10 +86,11 @@ const ContactForm = React.createClass({
         ];
         return (
             <Form style={style}>
-                <ChooserGroup attr="type" width={150}
-                              initialChoice={0}
-                              initialChoiceList={types}
-                              disableSearch={true}/>
+                <ChooserGroup
+                    attr="type" width={150}
+                    initialChoice={0}
+                    initialChoiceList={types}
+                    disableSearch={true}/>
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />
                 <TextEditGroup attr="email" />
