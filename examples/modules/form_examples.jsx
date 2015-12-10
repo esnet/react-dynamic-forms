@@ -14,6 +14,7 @@ import {Alert} from "react-bootstrap";
 import Form from "../../src/form";
 import FormMixin from "../../src/formmixin";
 import TextEditGroup from "../../src/texteditgroup";
+import DateEditGroup from "../../src/dateeditgroup";
 import Schema from "../../src/schema";
 import Attr from "../../src/attr";
 import ChooserGroup from "../../src/choosergroup";
@@ -23,19 +24,24 @@ const text = require("raw!../markdown/form_examples.md");
 const description = "This shows a simple form where the schema and values of the form are loaded " +
                     "at some future time, such as if they were read from a REST API.";
 
+const today = new Date();
+
 const schema = (
     <Schema>
         <Attr name="type" label="Type" placeholder="Enter contact type" required={true}/>
         <Attr name="first_name" label="First name" placeholder="Enter first name" required={true} validation={{type: "string"}}/>
         <Attr name="last_name" label="Last name" placeholder="Enter last name" required={true} validation={{type: "string"}}/>
         <Attr name="email" label="Email" placeholder="Enter valid email address" validation={{format: "email"}}/>
+        <Attr name="birthdate" label="Birthdate"  required={true} />
     </Schema>
 );
 
 const values = {
+    type: 0,
     first_name: "Bill",
     last_name: "Jones",
-    email: "bill@gmail.com"
+    email: "bill@gmail.com",
+    birthdate: today
 };
 
 /**
@@ -80,15 +86,14 @@ const ContactForm = React.createClass({
         ];
         return (
             <Form style={style}>
-                <div>
-                    <ChooserGroup attr="type" width={150}
-                                  initialChoice={0}
-                                  initialChoiceList={types}
-                                  disableSearch={true}/>
-                </div>
+                <ChooserGroup attr="type" width={150}
+                              initialChoice={0}
+                              initialChoiceList={types}
+                              disableSearch={true}/>
                 <TextEditGroup attr="first_name" width={300} />
                 <TextEditGroup attr="last_name" width={300} />
                 <TextEditGroup attr="email" />
+                <DateEditGroup attr="birthdate" />
                 <hr />
                 <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
             </Form>
@@ -145,7 +150,12 @@ export default React.createClass({
     renderContactForm() {
         if (this.state.loaded) {
             return (
-                <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit} onChange={this.handleChange}/>
+                <ContactForm
+                    attr="contact"
+                    schema={schema}
+                    values={values}
+                    onSubmit={this.handleSubmit}
+                    onChange={this.handleChange} />
             );
         } else {
             return (

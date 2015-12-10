@@ -65,7 +65,7 @@ Here we see the main pieces of the API:
 
 * `initialItems()` is used to populate the initial list, which in this case we pass in as a prop from the larger contact form. It is an array of objects, each object containing the `email` and `email_type`.
 
-* `createItem()` is the new item creation function. This is called when the [+] button is pressed. It is expected to return an object reprsenting the new item of the list. In this case we create an empty email and a default type.
+* `createItem()` is the new item creation function. This is called when the [+] button is pressed. It is expected to return an object representing the new item of the list. In this case we create an empty email and a default type.
 
 * `renderItem()` is called to render each item. It will be called for each item as the list itself renders. Passed in is the item to render. In our case we return an instance of our `EmailItemEditor` form, passing in the item as the values for the form.
 

@@ -131,9 +131,9 @@ export default { /* FormMixin */
             if (initialValues) {
                 const v = _.has(initialValues, attrName) ?
                     initialValues[attrName] : defaultValue;
-                values[attrName] = {value: v, initialValue: v};
+                values[attrName] = {value: v, initialValue: Copy(v)};
             } else {
-                values[attrName] = {value: defaultValue, initialValue: defaultValue};
+                values[attrName] = {value: defaultValue, initialValue: Copy(defaultValue)};
             }
         });
 
@@ -629,7 +629,6 @@ export default { /* FormMixin */
      * up state is flushed.
      */
     handleChange(key, value) {
-
         // Hook to allow the component to alter the value before it is set
         // or perform other actions in response to a particular attr changing.
         // Note: Calling this opens potentially a lot of changes to the form
