@@ -12,6 +12,7 @@ The form elements are defined by a **schema**. Schemas can be defined with JSX o
                   required={true} validation={{"type": "string"}}/>
             <Attr name="email" label="Email" placeholder="Enter valid email address"
                   validation={{"format": "email"}}/>
+            <Attr name="birthdate" label="Birthdate"  required={true} />
         </Schema>
     );
 
@@ -34,17 +35,18 @@ And then implement the form layout like this:
                     <TextEditGroup attr="first_name" width={300} />
                     <TextEditGroup attr="last_name" width={300} />
                     <TextEditGroup attr="email" width={500} />
+                    <DateEditGroup attr="birthdate" />
                     <hr />
                     <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
                 </Form>
             );
         }
 
-As you can see, we return a `<Form>` element which contains further JSX, which is a convenience. In fact, you can define this with a `<form>` too. You can use any JSX in here to render the form however you like. This makes the layout of the form as flexable as any other React code.
+As you can see, we return a `<Form>` element which contains further JSX, which is a convenience. In fact, you can define this with a `<form>` too. You can use any JSX in here to render the form however you like. This makes the layout of the form as flexible as any other React code.
 
 The special elements here are the `TextEditGroup`s. They specify an `attr` prop which references the schema (we'll see how to get the schema hooked up in a minute). Each TextEditGroup will generate a label and a form control (in this case a `TextEdit`). We use Bootstrap for the layout. In addition to TextEditGroups there's also: `TextAreaGroup`, `ChooserGroup`, `OptionsGroup` and `TagsGroup`. You can also wrap your own controls in the generic `Group`.
 
-Now that we have out form it's time to use it. Typically the form will be contained (rendered by) another React component which will hold the buisness logic of sourcing the schema and initial values, as well as handling the submit of the form in some way.
+Now that we have out form it's time to use it. Typically the form will be contained (rendered by) another React component which will hold the business logic of sourcing the schema and initial values, as well as handling the submit of the form in some way.
 
 To render the form we created above we need to pass in the initial values and schema. Here is the key part of render function for this page's example:
 
@@ -56,7 +58,6 @@ To render the form we created above we need to pass in the initial values and sc
 
 Note that the schema is required, so you cannot render the form until one is available. If this is being loaded from the server you would display a Spinner until it is available.
 
-Currently values can only be passed in once. After that they will always be the initial state of the form. Changing values in later renders of the form will not change the form.
 
 
 ---

@@ -4,7 +4,7 @@ The forms library has several facilities to help with tracking of errors and mis
 
 #### Widgets
 
-At the lowest level, each widget, such as a TextEdit widget, has been adapted to keep track of its status with respect to the validation rules that were passed to it, either directly or using a form schema. These rules specifiy both what kind of data or format is valid for a field as well as if the field is required or not. As the status of the form widget changes with user input (on blur and focus) the field will pass this information up to the creater of the widget via callbacks.
+At the lowest level, each widget, such as a TextEdit widget, has been adapted to keep track of its status with respect to the validation rules that were passed to it, either directly or using a form schema. These rules specify both what kind of data or format is valid for a field as well as if the field is required or not. As the status of the form widget changes with user input (on blur and focus) the field will pass this information up to the creator of the widget via callbacks.
 
 #### Forms
 
@@ -50,13 +50,13 @@ Here is an example of using the FormErrors:
 
 In this form we use the callbacks to hold our own state as to what the error and missing counts are, as well as the showRequired field. These are passed into the FormErrors component and the result is nicely displayed.
 
-This manages three types of error/warning infomation that is displayed to the user:
+This manages three types of error/warning information that is displayed to the user:
 
   - A hard error, which will display in preference to other messages. A hard error
     might be something like "The form could not be saved". This type of error, passed
     in as the `error` prop, is an object with two parts:
        `msg`     - The main error message
-       `details` - Further information about the message, like "Unable to make internet connection", or perhaps a raw server message.
+       `details` - Further information about the message, like "Unable to make Internet connection", or perhaps a raw server message.
 
   - error count, passed in as `numErrors` prop. If this is passed in then this
     component will display the number of errors on the form. This is used with the

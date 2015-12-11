@@ -21,6 +21,8 @@ module.exports = {
     TextAreaGroup: require("./lib/textareagroup.js"),
     Chooser: require("./lib/chooser.js"),
     ChooserGroup: require("./lib/choosergroup.js"),
+    DateEdit: require("./lib/dateedit.js"),
+    DateEditGroup: require("./lib/dateeditgroup.js"),
     TagsEdit: require("./lib/tagsedit.js"),
     TagsGroup: require("./lib/tagsgroup.js"),
     OptionButtons: require("./lib/optionbuttons.js"),
