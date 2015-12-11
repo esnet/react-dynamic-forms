@@ -93,21 +93,6 @@ export default React.createClass({
         }
     },
 
-    handleOnBlur() {
-        const missing = this.props.required && this.isEmpty(value);
-        const value = this.state.value;
-
-        this.setState({value, missing});
-
-        // Callbacks
-        if (this.props.onChange) {
-            this.props.onChange(this.props.attr, value);
-        }
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
-        }
-    },
-
     render() {
         const selected = this.state.value ? moment(this.state.value) : null;
         let className = "datepicker__input rdf";
