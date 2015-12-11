@@ -14,19 +14,20 @@ import React from "react";
 import { render } from "react-dom";
 import { Router, Route, IndexRoute } from "react-router";
 
-import App from "./app.jsx";
-import Intro from "./intro.jsx";
-import TextEditExamples from "./textedit_examples.jsx";
-import TextAreaExamples from "./textarea_examples.jsx";
-import ChooserExamples from "./chooser_examples.jsx";
-import OptionButtonsExamples from "./optionbuttons_examples.jsx";
-import TaggingExamples from "./tagging_examples.jsx";
-import GroupExamples from "./group_examples.jsx";
-import FormExamples from "./form_examples.jsx";
-import ErrorExamples from "./error_examples.jsx";
-import DynamicExamples from "./dynamic_examples.jsx";
-import ListExamples from "./list_examples.jsx";
-import KeyValueExamples from "./keyvalue_examples.jsx";
+import App from "./app";
+import Intro from "./intro";
+import TextEditExamples from "./textedit_examples";
+import TextAreaExamples from "./textarea_examples";
+import ChooserExamples from "./chooser_examples";
+import DateEditExamples from "./dateedit_examples";
+import OptionButtonsExamples from "./optionbuttons_examples";
+import TaggingExamples from "./tagging_examples";
+import GroupExamples from "./group_examples";
+import FormExamples from "./form_examples";
+import ErrorExamples from "./error_examples";
+import DynamicExamples from "./dynamic_examples";
+import ListExamples from "./list_examples";
+import KeyValueExamples from "./keyvalue_examples";
 
 render((
     <Router>
@@ -35,6 +36,7 @@ render((
             <Route path="textedit" component={TextEditExamples} />
             <Route path="textarea" component={TextAreaExamples} />
             <Route path="chooser" component={ChooserExamples} />
+            <Route path="dateedit" component={DateEditExamples} />
             <Route path="optionbuttons" component={OptionButtonsExamples} />
             <Route path="tagging" component={TaggingExamples} />
             <Route path="group" component={GroupExamples} />

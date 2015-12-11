@@ -39,6 +39,7 @@ export default React.createClass({
                       <li><Link to="textarea">TextArea</Link></li>
                       <li><Link to="chooser">Chooser</Link></li>
                       <li><Link to="tagging">Tagging</Link></li>
+                      <li><Link to="dateedit">DateEdit</Link></li>
                       <li><Link to="optionbuttons">OptionButtons</Link></li>
                     </ul>
 

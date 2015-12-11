@@ -89,7 +89,7 @@ Next we need a place to respond to the change in attribute. The FormsMixin code 
         }
     },
 
-For our example we allow the user to switch between different pre-set bookmarked endpoints. In response `willHandleChange` will be called with the attrName being "bookmarked", which we handle in the first part of the switch statement. In response we set the bookmarked endpoint's values on the form itself using `setValues()`.
+For our example we allow the user to switch between different preset bookmarked endpoints. In response `willHandleChange` will be called with the attrName being "bookmarked", which we handle in the first part of the switch statement. In response we set the bookmarked endpoint's values on the form itself using `setValues()`.
 
 The subtle thing here to note is that one of the attrs we are setting is `type`. This is also a handled attr in `willHandleChange()` and will be taken care of in the first part of the switch statement. This is what controls the visibility based on the type as it calls `setVisibility()` with the set type (converted from id to string).
 

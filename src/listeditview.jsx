@@ -10,7 +10,7 @@
 
 import React from "react";
 import _ from "underscore";
-import ReactCSSTransitionGroup from "rc-css-transition-group";
+import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 
 import "./listeditview.css";
 
@@ -121,7 +121,10 @@ export default React.createClass({
         return (
             <div>
                 <ul className="esnet-forms-listeditview-container">
-                    <ReactCSSTransitionGroup transitionName="esnet-forms-list-item">
+                    <ReactCSSTransitionGroup
+                        transitionName="esnet-forms-list-item"
+                        transitionEnterTimeout={500}
+                        transitionLeaveTimeout={300}>
                         {itemList}
                     </ReactCSSTransitionGroup>
                 </ul>
