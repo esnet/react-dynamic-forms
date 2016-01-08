@@ -267,7 +267,7 @@ export default React.createClass({
         if (searchable) {
             const options = this.getFilteredOptionList(null, this.props.limit);
             const labelList = _.map(options, (item) => item.label);
-            const key = `${labelList}--${choice}`;
+            const key = `${labelList}`;
 
             // Choose the item based on label, so it will show even when there's
             // no items in the list yet
@@ -297,7 +297,7 @@ export default React.createClass({
         } else {
             const options = this.getOptionList();
             const labelList = _.map(options, (item) => item.label);
-            const key = `${labelList}--${choice}`;
+            const key = `${labelList}`;
             return (
                 <div className={className} style={chooserStyle}>
                     <Select
