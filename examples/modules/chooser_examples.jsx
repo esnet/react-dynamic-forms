@@ -78,6 +78,7 @@ export default React.createClass({
                         Simple chooser:
                         <Chooser
                             initialChoiceList={this.state.animalList}
+                            placeholder="Select an Animal..."
                             width={300}/>
 
                         <p />
