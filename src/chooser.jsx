@@ -291,6 +291,7 @@ export default React.createClass({
                         onChange={this.handleChange}
                         asyncOptions={this.getOptions}
                         cacheAsyncResults={false}
+                        placeholder={this.props.placeholder}
                     />
                 </div>
             );
@@ -310,6 +311,7 @@ export default React.createClass({
                         clearable={clearable}
                         matchPos={matchPos}
                         onChange={this.handleChange}
+                        placeholder={this.props.placeholder}
                     />
                 </div>
             );
