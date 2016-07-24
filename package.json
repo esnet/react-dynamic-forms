@@ -39,7 +39,7 @@
     "moment": "^2.10.6",
     "react-addons-css-transition-group": "^0.14.3",
     "react-bootstrap": "^0.28.1",
-    "react-datepicker": "^0.15.2",
+    "react-datepicker": "^0.17.0",
     "react-select": "^0.9.1",
     "revalidator": "^0.3.1",
     "string-hash": "^1.1.0",
