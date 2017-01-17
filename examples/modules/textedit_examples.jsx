@@ -16,7 +16,8 @@ export default React.createClass({
     getInitialState() {
         return {
             errorCount: 0,
-            missingCount: 0
+            missingCount: 0,
+            integerTestValue: "bob"
         };
     },
 
@@ -29,7 +30,7 @@ export default React.createClass({
     },
 
     handleIntegerValidate(attr, value) {
-        this.setState({typeofInt: typeof value});
+        this.setState({typeofInt: typeof value, integerTestValue: value});
     },
 
     handleEmailValidate(attr, value) {
@@ -53,11 +54,11 @@ export default React.createClass({
 
                     Simple single line text input, with default value:
                     <p />
-                    <TextEdit initialValue="Bob" width={300}/>
+                    <TextEdit value="Bob" width={300}/>
 
                     Disabled:
                     <p />
-                    <TextEdit initialValue="Bob" disabled={true} width={300}/>
+                    <TextEdit value="Bob" disabled={true} width={300}/>
 
                     Placeholder:
                     <p />
@@ -76,20 +77,20 @@ export default React.createClass({
 
                     Required field (with showRequired turned ON and initial value):
                     <p />
-                    <TextEdit initialValue="Bob" required={true} showRequired={true}/>
+                    <TextEdit value="Bob" required={true} showRequired={true}/>
 
                     Validated field (email address):
                     <p />
-                    <TextEdit initialValue="bob.at.gmail.com" rules={{format: "email"}} onChange={this.handleEmailValidate}/>
+                    <TextEdit value="bob.at.gmail.com" rules={{format: "email"}} onChange={this.handleEmailValidate}/>
                     <br />
                     Type of value: {this.state.typeofEmail}
 
                     <p />
                     Validated field (integer):
                     <p />
-                    <TextEdit initialValue="42" rules={{type: "integer"}}/>
+                    <TextEdit value="42" rules={{type: "integer"}}/>
 
-                    <TextEdit initialValue="bob" rules={{type: "integer"}} onChange={this.handleIntegerValidate}/>
+                    <TextEdit attr="integer-test" value={this.state.integerTestValue} rules={{type: "integer"}} onChange={this.handleIntegerValidate}/>
                     Type of value: {this.state.typeofInt}
 
                     <hr />
@@ -97,7 +98,7 @@ export default React.createClass({
 
                     Validated field (email address) with error callback:
                     <p />
-                    <TextEdit initialValue="bob.at.gmail.com" onErrorCountChange={this.handleErrorCountChange} rules={{format: "email"}}/>
+                    <TextEdit value="bob.at.gmail.com" onErrorCountChange={this.handleErrorCountChange} rules={{format: "email"}}/>
                     Error count: {this.state.errorCount}
                     <p />
 

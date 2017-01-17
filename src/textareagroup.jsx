@@ -20,9 +20,9 @@ export default React.createClass({
     displayName: "TextAreaGroup",
 
     render() {
-        const {attr, ...others} = this.props; //eslint-disable-line
+        const {attr, inline, ...others} = this.props; //eslint-disable-line
         return (
-            <Group attr={attr} >
+            <Group attr={attr} inline={inline} >
                 <TextArea initialValue={attr.initialValue} {...others} />
             </Group>
         );

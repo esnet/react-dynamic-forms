@@ -9,7 +9,7 @@
  */
 
 import React from "react";
-import classNames from "classnames";
+import FlexBox from "react-flexbox";
 
 import "./group.css";
 
@@ -22,6 +22,48 @@ import "./group.css";
 export default React.createClass({
 
     displayName: "Group",
+
+    getDefaultProps() {
+        return {
+            inline: false
+        };
+    },
+
+    getInitialState() {
+        return {
+            edit: !this.props.inline,
+            editHover: false,
+            missing: true
+        };
+    },
+
+    handleEdit() {
+        const edit = !this.state.edit;
+        this.setState({edit});
+    },
+
+    handleMissingCountChange(attr, attrName, value) {
+        if (attr.missingCountCallback) {
+            attr.missingCountCallback(attrName, value);
+        }
+        this.setState({missing: value > 0});
+    },
+
+    handleValueChange(attr, attrName, value) {
+        if (attr.changeCallback) {
+            attr.changeCallback(attrName, value);
+        }
+
+        if (this.props.inline) {
+            this.setState({edit: false});
+        }
+    },
+
+    handleCancelEdit() {
+        if (this.props.inline) {
+            this.setState({edit: false});
+        }
+    },
 
     render() {
         const attr = this.props.attr;
@@ -47,30 +89,79 @@ export default React.createClass({
             placeholder: attr.placeholder,
             rules: attr.validation,
             required: attr.required,
-            showRequired: attr.showRequired,
+            showRequired: this.props.inline ? true : attr.showRequired,
             onErrorCountChange: attr.errorCountCallback,
-            onMissingCountChange: attr.missingCountCallback,
-            onChange: attr.changeCallback,
-            validator: this.props.validator
+            onMissingCountChange: (a, v) => this.handleMissingCountChange(attr, a, v),
+            onChange: (a, v) => this.handleValueChange(attr, a, v),
+            validator: this.props.validator,
+            autofocus: this.props.inline && this.state.edit,
+            onCancel: this.props.inline ? this.handleCancelEdit : null
         };
 
         const child = React.Children.only(this.props.children);
         const childControl = React.cloneElement(child, props);
 
-        const control = (
-            <div className="col-sm-9">
-                {childControl}
-            </div>
-        );
+        //
+        // Edit for inlines
+        //
+
+        let editAction = null;
+        if (this.props.inline && !this.state.edit) {
+            editAction = (
+                <span
+                    style={{paddingLeft: 10}}
+                    className="glyphicon glyphicon-pencil"
+                    onClick={this.handleEdit}>
+                </span>
+            );
+        }
 
         //
-        // Required
+        // Control or view
+        //
+
+
+        const controlStyle = {
+            justifyContent: "flex-start"
+        };
+
+        let control;
+        if (this.state.edit) {
+            control = (
+                <FlexBox row style={controlStyle}>
+                    <FlexBox column width={1}>
+                        {childControl}
+                    </FlexBox>
+                </FlexBox>
+            );
+        } else {
+            control = (
+                <FlexBox row style={controlStyle}>
+                    <FlexBox column width={0}>
+                        <span style={{paddingLeft: 10}}>
+                            {
+                                this.props.display ?
+                                this.props.display : attr.value
+                            }
+                        </span>
+                    </FlexBox>
+                    <FlexBox column width="20px">
+                        {editAction}
+                    </FlexBox>
+                </FlexBox>
+            );
+        }
+
+        //
+        // Required state for non-inlines
         //
 
         let required;
-        if (attr.required) {
+        if ((!this.props.inline || this.state.edit) && attr.required) {
+            const className = this.state.missing ?
+                "group-required" : "group-required fulfilled";
             required = (
-                <span className="group-required" style={{paddingLeft: 3}}>*</span>
+                <span className={className} style={{paddingLeft: 3}}>*</span>
             );
         } else {
             required = (
@@ -82,24 +173,37 @@ export default React.createClass({
         // Label
         //
 
-        const labelText = attr.name;
-        const labelClasses = classNames({
-            "group-label": true,
-            "col-sm-3": true,
-            required: attr.required
-        });
+        const labelStyle = {
+            justifyContent: "flex-start",
+            textAlign: "right",
+            paddingRight: 0,
+            paddingTop: 3,
+            paddingBottom: 3,
+            textTransform: "uppercase",
+            fontSize: "smaller"
+        };
+
         const label = (
-            <div className={labelClasses} style={{whiteSpace: "nowrap"}}>
-                <label muted={attr.disabled} htmlFor={attr.key}>{labelText}</label>
-                {required}
-            </div>
+            <FlexBox row style={labelStyle}>
+                <FlexBox column width={0}>
+                    <label
+                        muted={attr.disabled}
+                        htmlFor={attr.key}>
+                        {attr.name}
+                    </label>
+                </FlexBox>
+                <FlexBox column width="20px">
+                    {required}
+                </FlexBox>
+            </FlexBox>
         );
 
         // Group
         return (
-            <div className="form-group row">
-                {label} {control}
-            </div>
+            <FlexBox row>
+                <FlexBox column width="160px">{label}</FlexBox>
+                <FlexBox column width={1}>{control}</FlexBox>
+            </FlexBox>
         );
     }
 });

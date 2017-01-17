@@ -9,6 +9,7 @@
  */
 
 import React from "react";
+import _ from "underscore";
 import Group from "./group";
 import Chooser from "./chooser";
 
@@ -17,10 +18,16 @@ export default React.createClass({
     displayName: "ChooserGroup",
 
     render() {
-        const {attr, children, ...others} = this.props; //eslint-disable-line
+        const {attr, inline, ...others} = this.props; //eslint-disable-line
+        let displayLabel = attr.value;
+        _.each(this.props.initialChoiceList, item => {
+            if (item.id === attr.value) {
+                displayLabel = item.label;
+            }
+        });
         return (
-            <Group attr={attr}>
-                <Chooser {...others} />
+            <Group attr={attr} inline={inline} display={displayLabel}>
+                <Chooser value={attr.value} {...others} />
             </Group>
         );
     }

@@ -28,6 +28,7 @@ import ErrorExamples from "./error_examples";
 import DynamicExamples from "./dynamic_examples";
 import ListExamples from "./list_examples";
 import KeyValueExamples from "./keyvalue_examples";
+import InlineExamples from "./inline_examples";
 
 render((
     <Router>
@@ -43,6 +44,7 @@ render((
             <Route path="forms" component={FormExamples} />
             <Route path="errors" component={ErrorExamples} />
             <Route path="dynamic" component={DynamicExamples} />
+            <Route path="inline" component={InlineExamples} />
             <Route path="lists" component={ListExamples} />
             <Route path="keyvalue" component={KeyValueExamples} />
         </Route>

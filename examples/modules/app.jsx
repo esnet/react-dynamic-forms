@@ -31,6 +31,7 @@ export default React.createClass({
                       <li><Link to="dynamic">Dynamic forms</Link></li>
                       <li><Link to="forms">Contact form</Link></li>
                       <li><Link to="errors">Form errors</Link></li>
+                      <li><Link to="inline">Inline forms</Link></li>
                     </ul>
 
                     <div className="sidebar-heading">Low level API</div>

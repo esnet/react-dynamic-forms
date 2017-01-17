@@ -52,54 +52,26 @@ export default React.createClass({
         };
     },
 
-    getInitialState() {
-        return {
-            initialChoice: this.props.initialChoice,
-            value: this.props.initialChoice,
-            missing: false
-        };
-    },
-
     _isEmpty(value) {
-        return (_.isNull(value) ||
-                _.isUndefined(value) ||
-                value === "");
+        return (
+            _.isNull(value) ||
+            _.isUndefined(value) ||
+            value === ""
+        );
     },
 
-    _isMissing() {
-        return this.props.required &&
-                !this.props.disabled &&
-                this._isEmpty(this.state.value);
+    _isMissing(value) {
+        return (
+            this.props.required &&
+            !this.props.disabled &&
+            this._isEmpty(value)
+        );
     },
 
     _generateKey(choice, choiceList) {
         let key = hash(_.map(choiceList, label => label).join("-"));
         key += "-" + choice;
         return key;
-    },
-
-    componentWillReceiveProps(nextProps) {
-        if (this.state.initialChoice !== nextProps.initialChoice) {
-            const key = this._generateKey(nextProps.initialChoice,
-                                        this.props.initialChoiceList);
-            this.setState({
-                key,
-                initialChoice: nextProps.initialChoice,
-                value: nextProps.initialChoice
-            });
-
-            // The value might have been missing and is now set explicitly
-            // with a prop
-            const missing = this.props.required && !this.props.disabled &&
-                            (_.isNull(nextProps.initialChoice) ||
-                             _.isUndefined(nextProps.initialChoice) ||
-                             nextProps.initialChoice === "");
-            const missingCount = missing ? 1 : 0;
-
-            if (this.props.onMissingCountChange) {
-                this.props.onMissingCountChange(this.props.attr, missingCount);
-            }
-        }
     },
 
     /**
@@ -111,23 +83,16 @@ export default React.createClass({
                         (_.isNull(this.props.initialChoice) ||
                          _.isUndefined(this.props.initialChoice) ||
                          this.props.initialChoice === "");
-        const missingCount = missing ? 1 : 0;
-
         if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.attr, missingCount);
+            this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
         }
 
-        // The key needs to change if the initialChoiceList changes, so we set
-        // the key to be the hash of the choice list
-        this.setState({
-            missing,
-            key: this._generateKey(this.props.initialChoice,
-                                   this.props.initialChoiceList)
-        });
+        if (this.props.autofocus) {
+            this.refs.chooser.focus();
+        }
     },
 
     handleChange(v) {
-
         const missing = this.props.required && this._isEmpty(v);
 
         // If the chosen id is a number, cast it to a number
@@ -145,6 +110,27 @@ export default React.createClass({
         if (this.props.onChange) {
             this.props.onChange(this.props.attr, value);
         }
+        if (this.props.onMissingCountChange) {
+            this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+        }
+    },
+
+    handleBlur() {
+        const v = this.props.value;
+        const missing = this.props.required && this._isEmpty(v);
+
+        // If the chosen id is a number, cast it to a number
+        let value;
+        if (!this._isEmpty(v) && !_.isNaN(Number(v))) {
+            value = Number(v);
+        } else {
+            value = v;
+        }
+
+        if (this.props.onChange) {
+            this.props.onChange(this.props.attr, value);
+        }
+
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
         }
@@ -228,6 +214,7 @@ export default React.createClass({
     },
 
     getCurrentChoice() {
+        console.log("getCurrentChoice", this.props.value);
         const choiceItem = _.find(this.props.initialChoiceList, (item) => {
             let itemId;
             if (!this._isEmpty(item.id) && !_.isNaN(Number(item.id))) {
@@ -235,7 +222,7 @@ export default React.createClass({
             } else {
                 itemId = item.id;
             }
-            return itemId === this.state.value;
+            return itemId === this.props.value;
         });
 
         return choiceItem ? choiceItem.id : undefined;
@@ -255,7 +242,7 @@ export default React.createClass({
             throw new Error(`No initial choice list supplied for attr '${this.props.attr}'`);
         }
 
-        if (this.props.showRequired && this._isMissing()) {
+        if (this.props.showRequired && this._isMissing(this.props.value)) {
             className = "has-error";
         }
 
@@ -263,6 +250,10 @@ export default React.createClass({
         const clearable = this.props.allowSingleDeselect;
         const searchable = !this.props.disableSearch;
         const matchPos = this.props.searchContains ? "any" : "start";
+
+
+        console.log("XXX", choice);
+
 
         if (searchable) {
             const options = this.getFilteredOptionList(null, this.props.limit);
@@ -282,6 +273,7 @@ export default React.createClass({
                 <div className={className} style={chooserStyle}>
                     <Select
                         key={key}
+                        ref="chooser"
                         name="form-field-name"
                         value={choiceString}
                         options={options}
@@ -289,6 +281,7 @@ export default React.createClass({
                         searchable={true}
                         matchPos={matchPos}
                         onChange={this.handleChange}
+                        onBlur={this.handleBlur}
                         asyncOptions={this.getOptions}
                         cacheAsyncResults={false}
                     />
@@ -302,6 +295,7 @@ export default React.createClass({
                 <div className={className} style={chooserStyle}>
                     <Select
                         key={key}
+                        ref="chooser"
                         name="form-field-name"
                         value={choice}
                         options={options}
@@ -310,6 +304,7 @@ export default React.createClass({
                         clearable={clearable}
                         matchPos={matchPos}
                         onChange={this.handleChange}
+                        onBlur={this.handleBlur}
                     />
                 </div>
             );

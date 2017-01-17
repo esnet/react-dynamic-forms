@@ -13,6 +13,11 @@
     font-size: larger;
 }
 
+.group-required.fulfilled {
+    color: #E3E3E3;
+    font-size: larger;
+}
+
 .group-label {
     text-align: right;
     padding-right: 0px;
