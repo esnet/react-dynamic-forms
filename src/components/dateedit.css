@@ -9,6 +9,10 @@
  */
 
 input.datepicker__input.rdf {
+    font-size: 12px;
+    height: 30px;
+    border-radius: 3px;
+    padding-left: 6px;
     color: #555555;
     background-color: #ffffff;
     background-image: none;

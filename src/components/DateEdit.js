@@ -14,7 +14,7 @@ import moment from "moment";
 import React from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
-import "./dateedit.css";
+//import "./dateedit.css";
 
 /**
  * Form control to edit a date text field.

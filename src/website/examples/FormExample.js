@@ -219,7 +219,8 @@ export default React.createClass({
           onDismiss={this.handleAlertDismiss}
           style={{ margin: 5 }}
         >
-          <strong>Success!</strong>{firstName}{lastName}was submitted.
+          <strong>Success! </strong>
+          <span>{`${firstName} ${lastName} was submitted.`}</span>
         </Alert>
       );
     } else {

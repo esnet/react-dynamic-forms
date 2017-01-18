@@ -82,7 +82,9 @@ export default React.createClass({
               >
               </i>
             </span>
-            <span className="formerrors-text">Form incomplete</span>
+            <span className="formerrors-text">
+              Form incomplete
+            </span>
           </div>
         );
       } else if (this.props.missingCount > 0) {
@@ -90,7 +92,7 @@ export default React.createClass({
           return (
             <div>
               <span className="formerrors-text">
-                {this.props.missingCount}fields still required
+                {`${this.props.missingCount} fields still required`}
               </span>
             </div>
           );
@@ -98,7 +100,7 @@ export default React.createClass({
           return (
             <div>
               <span className="formerrors-text">
-                {this.props.missingCount}field still required
+                {`${this.props.missingCount} field still required`}
               </span>
             </div>
           );
@@ -113,7 +115,9 @@ export default React.createClass({
             <i className="glyphicon formerrors-icon glyphicon-exclamation-sign">
             </i>
           </span>
-          <span className="formerrors-text">{this.props.numErrors}Error</span>
+          <span className="formerrors-text">
+            {`${this.props.numErrors} Error`}
+          </span>
         </div>
       );
     } else if (this.props.numErrors > 1) {
@@ -123,7 +127,9 @@ export default React.createClass({
             <i className="glyphicon formerrors-icon glyphicon-exclamation-sign">
             </i>
           </span>
-          <span className="formerrors-text">{this.props.numErrors}Errors</span>
+          <span className="formerrors-text">
+            {`${this.props.numErrors} Errors`}
+          </span>
         </div>
       );
     } else {

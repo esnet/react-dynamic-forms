@@ -53,7 +53,12 @@ class App extends Component {
                     <div className="sidebar-heading">Examples</div>
 
                     <ul className="nav nav-sidebar">
-                        <li><Link to="/example/contact">Contact Form</Link></li>
+                        <li><Link to="/example/contact">Basic Form</Link></li>
+                        <li><Link to="/example/dynamic">Dynamically changing Form</Link></li>
+                        <li><Link to="/example/list">List example</Link></li>
+                        <li><Link to="/example/keyvalue">Key value example</Link></li>
+                        <li><Link to="/example/errors">Error handling example</Link></li>
+
                      </ul>
 
                     <div className="sidebar-heading">API</div>

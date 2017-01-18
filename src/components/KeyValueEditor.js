@@ -247,6 +247,8 @@ const KeyValueListEditor = React.createClass({
           </div>
         );
         break;
+      default:
+        //pass
     }
     return ui;
   },

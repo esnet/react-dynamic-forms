@@ -13,7 +13,8 @@ import _ from "underscore";
 import Select from "react-select";
 import hash from "string-hash";
 
-import "./select.css";
+import "react-select/dist/react-select.css";
+import "./chooser.css";
 
 /**
  * React Form control to select an item from a list.
@@ -120,7 +121,6 @@ export default React.createClass({
   },
   handleChange(v) {
     let { value } = v;
-    console.log("handleChange", value);
     const missing = this.props.required && this._isEmpty(v);
 
     // If the chosen id is a number, cast it to a number
@@ -163,7 +163,7 @@ export default React.createClass({
     if (!input || input.length < 1) {
       if (items.length < limit) {
         return _.map(items, c => ({
-          value: c.id,
+          value: `${c.id}`,
           label: c.label,
           disabled: _.has(c, "disabled") ? c.disabled : false
         }));
@@ -181,7 +181,7 @@ export default React.createClass({
       }) : items;
     const limitItems = _.first(filteredItems, limit);
     let results = _.map(limitItems, c => ({
-      value: c.id,
+      value: `${c.id}`,
       label: c.label,
       disabled: _.has(c, "disabled") ? c.disabled : false
     }));
@@ -205,11 +205,11 @@ export default React.createClass({
   getCurrentChoice() {
     const choiceItem = _.find(this.props.initialChoiceList, item => {
       let itemId;
-      if (!this._isEmpty(item.id) && !_.isNaN(Number(item.id))) {
-        itemId = Number(item.id);
-      } else {
-        itemId = item.id;
-      }
+      //if (!this._isEmpty(item.id) && !_.isNaN(Number(item.id))) {
+      //  itemId = Number(item.id);
+      //} else {
+      itemId = item.id;
+      //}
       return itemId === this.state.value;
     });
 
@@ -237,28 +237,17 @@ export default React.createClass({
     const searchable = !this.props.disableSearch;
     const matchPos = this.props.searchContains ? "any" : "start";
 
-    console.log("Chooser");
-
     if (searchable) {
       const options = this.getFilteredOptionList(null, this.props.limit);
       const labelList = _.map(options, item => item.label);
       const key = `${labelList}--${choice}`;
-
-      // Choose the item based on label, so it will show even when there's
-      // no items in the list yet
-      let choiceString = "";
-      _.each(this.props.initialChoiceList, item => {
-        if (item.id === choice) {
-          choiceString = item.label;
-        }
-      });
-
       return (
         <div className={className} style={chooserStyle}>
           <Select
+            className={"sectionTest"}
             key={key}
             name="form-field-name"
-            value={choiceString}
+            value={choice}
             options={options}
             disabled={this.props.disabled}
             searchable={true}
@@ -274,13 +263,13 @@ export default React.createClass({
       const options = this.getOptionList();
       const labelList = _.map(options, item => item.label);
       const key = `${labelList}--${choice}`;
-      console.log("Chooser options", options);
       return (
         <div className={className} style={chooserStyle}>
           <Select
+            className={"sectionTest"}
             key={key}
             name="form-field-name"
-            value={choice}
+            value={2}
             options={options}
             disabled={this.props.disabled}
             searchable={false}

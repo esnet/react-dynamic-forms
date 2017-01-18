@@ -148,10 +148,9 @@ export default React.createClass({
     const w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
     const textAreaStyle = { width: w };
 
-    if (
-      this.state.error ||
-        this.props.showRequired && this._isMissing(this.state.value)
-    ) {
+    const requiredError = this.props.showRequired &&
+      this._isMissing(this.state.value);
+    if (this.state.error || requiredError) {
       className = "has-error";
     }
 
