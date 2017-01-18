@@ -1,4 +1,5 @@
-This repository contains a set of React based forms components which are used within ESnet for our network database application (ESDB), but could be used by any React based project needing to build complex forms. It allows you to specify form schema while still allowing complete control over layout in the form render(). It makes it simple to track errors and missing values within a page. And it makes it easy to build forms which dynamically change based on the current state of the form.
+export default `
+This library contains a set of React based forms components which are used within ESnet for our network database application (ESDB), but could be used by any React based project needing to build complex forms. It allows you to specify form schema while still allowing complete control over layout in the form render(). It makes it simple to track errors and missing values within a page. And it makes it easy to build forms which dynamically change based on the current state of the form.
 
 This library contains four main pieces:
 
@@ -26,7 +27,7 @@ Once installed, you can import the necessary components from the library:
 
     import {Form, FormMixin, TextEditGroup, Schema, Attr, ChooserGroup} from "react-dynamic-forms";
 
-A schema can be specified using JSX to define the basic rules of each form fields. As an example, here is a form that will take the first name, last name and email of a contact. We can define also that the email should be of format `email` and that the first and last names are `required`:
+A schema can be specified using JSX to define the basic rules of each form fields. As an example, here is a form that will take the first name, last name and email of a contact. We can define also that the email should be of format \`email\` and that the first and last names are \`required\`:
 
     var schema = (
         <Schema>
@@ -39,7 +40,7 @@ A schema can be specified using JSX to define the basic rules of each form field
         </Schema>
     );
 
-We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's `render()` function, just like any other React component, but in a way that we refer to our schema attributes using an `attr` prop:
+We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's \`render()\` function, just like any other React component, but in a way that we refer to our schema attributes using an \`attr\` prop:
 
     var ContactForm = React.createClass({
 
@@ -88,7 +89,7 @@ Then, point your browser to:
 
 [http://localhost:8080/webpack-dev-server/](http://localhost:8080/webpack-dev-server/)
 
-Licence
+License
 -------
 
 This code is distributed under a BSD style license, see the LICENSE file for complete information.
@@ -101,3 +102,5 @@ ESnet's React Dynamic Forms Library, Copyright (c) 2015-2017, The Regents of the
 If you have questions about your rights to use or distribute this software, please contact Berkeley Lab's Technology Transfer Department at TTD@lbl.gov.
 
 NOTICE. This software is owned by the U.S. Department of Energy. As such, the U.S. Government has been granted for itself and others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the Software to reproduce, prepare derivative works, and perform publicly and display publicly. Beginning five (5) years after the date permission to assert copyright is obtained from the U.S. Department of Energy, and subject to any subsequent five (5) year renewals, the U.S. Government is granted for itself and others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the Software to reproduce, prepare derivative works, distribute copies to the public, perform publicly and display publicly, and to permit others to do so.
+`;
+
