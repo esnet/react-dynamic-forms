@@ -1,3 +1,5 @@
+<img src="https://github.com/esnet/react-dynamic-forms/blob/react-15/src/website/img/forms.png" alt="logo" width="160px"/>
+
 This repository contains a set of React based forms components which are used within ESnet for our network database application (ESDB), but could be used by any React based project needing to build complex forms. It allows you to specify form schema while still allowing complete control over layout in the form render(). It makes it simple to track errors and missing values within a page. And it makes it easy to build forms which dynamically change based on the current state of the form.
 
 This library contains four main pieces:
