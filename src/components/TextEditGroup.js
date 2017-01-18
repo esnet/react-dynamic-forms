@@ -20,7 +20,6 @@ export default React.createClass({
   displayName: "TextEditGroup",
   render() {
     const { attr, ...others } = this.props;
-    //eslint-disable-line
     return (
       <Group attr={attr}>
         <TextEdit initialValue={attr.initialValue} {...others} />

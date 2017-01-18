@@ -143,8 +143,8 @@ export default React.createClass({
           case "number":
             cast = value === "" ? null : parseFloat(value, 10);
             break;
-        default:
-            throw new Error("Unknown rule type", this.props.rules.type);
+          //pass
+          default:
         }
       }
       this.props.onChange(this.props.attr, cast);
@@ -168,7 +168,8 @@ export default React.createClass({
     const style = { width: w };
 
     let className = "";
-    const requiredError = this.props.showRequired && this._isMissing(this.state.value);
+    const requiredError = this.props.showRequired &&
+      this._isMissing(this.state.value);
     if (this.state.error || requiredError) {
       className = "has-error";
     }
@@ -186,13 +187,19 @@ export default React.createClass({
 
     return (
       <div className={className}>
-        <input required key={key} style={
-          style
-        } className="form-control input-sm" type="text" ref="input" disabled={
-          this.props.disabled
-        } placeholder={this.props.placeholder} defaultValue={
-          this.state.value
-        } onBlur={this.onBlur} onFocus={this.onFocus} />
+        <input
+          required
+          key={key}
+          style={style}
+          className="form-control input-sm"
+          type="text"
+          ref="input"
+          disabled={this.props.disabled}
+          placeholder={this.props.placeholder}
+          defaultValue={this.state.value}
+          onBlur={this.onBlur}
+          onFocus={this.onFocus}
+        />
         <div className={helpClassName}>{msg}</div>
       </div>
     );

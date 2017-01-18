@@ -119,14 +119,13 @@ export default React.createClass({
     });
   },
   handleChange(v) {
+    let { value } = v;
+    console.log("handleChange", value);
     const missing = this.props.required && this._isEmpty(v);
 
     // If the chosen id is a number, cast it to a number
-    let value;
     if (!this._isEmpty(v) && !_.isNaN(Number(v))) {
-      value = Number(v);
-    } else {
-      value = v;
+      value = +v;
     }
 
     // State changes
@@ -163,15 +162,11 @@ export default React.createClass({
     //
     if (!input || input.length < 1) {
       if (items.length < limit) {
-        return _.map(
-          items,
-          c =>
-            ({
-              value: c.id,
-              label: c.label,
-              disabled: _.has(c, "disabled") ? c.disabled : false
-            })
-        );
+        return _.map(items, c => ({
+          value: c.id,
+          label: c.label,
+          disabled: _.has(c, "disabled") ? c.disabled : false
+        }));
       } else {
         return [];
       }
@@ -185,15 +180,11 @@ export default React.createClass({
           -1;
       }) : items;
     const limitItems = _.first(filteredItems, limit);
-    let results = _.map(
-      limitItems,
-      c =>
-        ({
-          value: c.id,
-          label: c.label,
-          disabled: _.has(c, "disabled") ? c.disabled : false
-        })
-    );
+    let results = _.map(limitItems, c => ({
+      value: c.id,
+      label: c.label,
+      disabled: _.has(c, "disabled") ? c.disabled : false
+    }));
 
     //
     //  If the results are limited then print a message at the bottom
@@ -275,7 +266,8 @@ export default React.createClass({
             onChange={this.handleChange}
             asyncOptions={this.getOptions}
             cacheAsyncResults={false}
-            placeholder={this.props.placeholder} />
+            placeholder={this.props.placeholder}
+          />
         </div>
       );
     } else {
@@ -295,7 +287,8 @@ export default React.createClass({
             clearable={clearable}
             matchPos={matchPos}
             onChange={this.handleChange}
-            placeholder={this.props.placeholder} />
+            placeholder={this.props.placeholder}
+          />
         </div>
       );
     }

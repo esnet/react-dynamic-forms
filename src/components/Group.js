@@ -53,18 +53,20 @@ export default React.createClass({
     const child = React.Children.only(this.props.children);
     const childControl = React.cloneElement(child, props);
 
-    const control = <div className="col-sm-9">
-      {childControl}
-    </div>;
+    const control = (
+      <div className="col-sm-9">
+        {childControl}
+      </div>
+    );
 
     //
     // Required
     //
     let required;
     if (attr.required) {
-      required = <span className="group-required" style={
-        { paddingLeft: 3 }
-      }>*</span>;
+      required = (
+        <span className="group-required" style={{ paddingLeft: 3 }}>*</span>
+      );
     } else {
       required = <span></span>;
     }
@@ -78,12 +80,12 @@ export default React.createClass({
       "col-sm-3": true,
       required: attr.required
     });
-    const label = <div className={labelClasses} style={
-      { whiteSpace: "nowrap" }
-    }>
-      <label muted={attr.disabled} htmlFor={attr.key}>{labelText}</label>
-      {required}
-    </div>;
+    const label = (
+      <div className={labelClasses} style={{ whiteSpace: "nowrap" }}>
+        <label muted={attr.disabled} htmlFor={attr.key}>{labelText}</label>
+        {required}
+      </div>
+    );
 
     // Group
     return (

@@ -90,21 +90,37 @@ Note that the schema is required, so you cannot render the form until one is ava
 
 const birthday = new Date("1964-08-22");
 
-const schema = <Schema>
-  <Attr name="type" label="Type" placeholder="Enter contact type" required={
-    true
-  } />
-  <Attr name="first_name" label="First name" placeholder="Enter first name" required={
-    true
-  } validation={{ type: "string" }} />
-  <Attr name="last_name" label="Last name" placeholder="Enter last name" required={
-    true
-  } validation={{ type: "string" }} />
-  <Attr name="email" label="Email" placeholder="Enter valid email address" validation={
-    { format: "email" }
-  } />
-  <Attr name="birthdate" label="Birthdate" required={true} />
-</Schema>;
+const schema = (
+  <Schema>
+    <Attr
+      name="type"
+      label="Type"
+      placeholder="Enter contact type"
+      required={true}
+    />
+    <Attr
+      name="first_name"
+      label="First name"
+      placeholder="Enter first name"
+      required={true}
+      validation={{ type: "string" }}
+    />
+    <Attr
+      name="last_name"
+      label="Last name"
+      placeholder="Enter last name"
+      required={true}
+      validation={{ type: "string" }}
+    />
+    <Attr
+      name="email"
+      label="Email"
+      placeholder="Enter valid email address"
+      validation={{ format: "email" }}
+    />
+    <Attr name="birthdate" label="Birthdate" required={true} />
+  </Schema>
+);
 
 const values = {
   type: 0,
@@ -120,9 +136,7 @@ const values = {
 const ContactForm = React.createClass({
   mixins: [ FormMixin ],
   displayName: "ContactForm",
-  /**
-     * Save the form
-     */
+  //Save the form
   handleSubmit(e) {
     e.preventDefault();
 
@@ -135,7 +149,7 @@ const ContactForm = React.createClass({
     // Example of fetching current and initial values
     // console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
     if (this.props.onSubmit) {
-        this.props.onSubmit(this.getValues());
+      this.props.onSubmit(this.getValues());
     }
 
     return false;
@@ -149,17 +163,24 @@ const ContactForm = React.createClass({
     ];
     return (
       <Form style={style}>
-        <ChooserGroup attr="type" width={150} initialChoice={
-          0
-        } initialChoiceList={types} disableSearch={true} />
+        <ChooserGroup
+          attr="type"
+          width={150}
+          initialChoice={0}
+          initialChoiceList={types}
+          disableSearch={true}
+        />
         <TextEditGroup attr="first_name" width={300} />
         <TextEditGroup attr="last_name" width={300} />
         <TextEditGroup attr="email" />
         <DateEditGroup attr="birthdate" />
         <hr />
-        <input className="btn btn-default" type="submit" value="Submit" disabled={
-          disableSubmit
-        } />
+        <input
+          className="btn btn-default"
+          type="submit"
+          value="Submit"
+          disabled={disableSubmit}
+        />
       </Form>
     );
   }
@@ -193,9 +214,11 @@ export default React.createClass({
       const firstName = this.state.data["first_name"];
       const lastName = this.state.data["last_name"];
       return (
-        <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={
-          { margin: 5 }
-        }>
+        <Alert
+          bsStyle="success"
+          onDismiss={this.handleAlertDismiss}
+          style={{ margin: 5 }}
+        >
           <strong>Success!</strong>{firstName}{lastName}was submitted.
         </Alert>
       );
@@ -205,9 +228,15 @@ export default React.createClass({
   },
   renderContactForm() {
     if (this.state.loaded) {
-      return <ContactForm attr="contact" schema={schema} values={
-        values
-      } onSubmit={this.handleSubmit} onChange={this.handleChange} />;
+      return (
+        <ContactForm
+          attr="contact"
+          schema={schema}
+          values={values}
+          onSubmit={this.handleSubmit}
+          onChange={this.handleChange}
+        />
+      );
     } else {
       return <div style={{ marginTop: 50 }}><b>Loading...</b></div>;
     }
@@ -233,14 +262,16 @@ export default React.createClass({
         </div>
         <div className="row">
           <div className="col-md-12">
-            <div style={
-              {
-                borderTopStyle: "solid",
-                borderTopColor: "rgb(244, 244, 244)",
-                paddingTop: 5,
-                marginTop: 20
+            <div
+              style={
+                {
+                  borderTopStyle: "solid",
+                  borderTopColor: "rgb(244, 244, 244)",
+                  paddingTop: 5,
+                  marginTop: 20
+                }
               }
-            }>
+            >
               <Markdown source={text} />
             </div>
           </div>

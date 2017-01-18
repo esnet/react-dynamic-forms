@@ -73,11 +73,16 @@ export default React.createClass({
     const key = `${this.state.tags.join("-")}--${this.state.tagList.join("-")}`;
     return (
       <div className={className} style={{ width }}>
-        <Select key={key} multi={true} disabled={
-          this.props.disabled
-        } placeholder="Select tags..." value={this.state.tags} allowCreate={
-          true
-        } options={options} onChange={this.handleChange} />
+        <Select
+          key={key}
+          multi={true}
+          disabled={this.props.disabled}
+          placeholder="Select tags..."
+          value={this.state.tags}
+          allowCreate={true}
+          options={options}
+          onChange={this.handleChange}
+        />
         <div className="help-block"></div>
       </div>
     );

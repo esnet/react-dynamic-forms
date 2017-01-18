@@ -43,14 +43,16 @@ export default React.createClass({
     if (this.props.error) {
       const error = this.props.error.msg;
       const details = this.props.error.details || "";
-
       return (
         <table>
           <tbody>
             <tr>
               <td width="40px">
                 <span>
-                  <i className="glyphicon formerrors-icon glyphicon-exclamation-sign"></i>
+                  <i
+                    className="glyphicon formerrors-icon glyphicon-exclamation-sign"
+                  >
+                  </i>
                 </span>
               </td>
               <td>
@@ -74,7 +76,12 @@ export default React.createClass({
       if (this.props.showRequired && this.props.missingCount > 0) {
         return (
           <div>
-            <span><i className="glyphicon formerrors-icon glyphicon-exclamation-sign"></i></span>
+            <span>
+              <i
+                className="glyphicon formerrors-icon glyphicon-exclamation-sign"
+              >
+              </i>
+            </span>
             <span className="formerrors-text">Form incomplete</span>
           </div>
         );
@@ -102,14 +109,20 @@ export default React.createClass({
     } else if (this.props.numErrors === 1) {
       return (
         <div>
-          <span><i className="glyphicon formerrors-icon glyphicon-exclamation-sign"></i></span>
+          <span>
+            <i className="glyphicon formerrors-icon glyphicon-exclamation-sign">
+            </i>
+          </span>
           <span className="formerrors-text">{this.props.numErrors}Error</span>
         </div>
       );
     } else if (this.props.numErrors > 1) {
       return (
         <div>
-          <span><i className="glyphicon formerrors-icon glyphicon-exclamation-sign"></i></span>
+          <span>
+            <i className="glyphicon formerrors-icon glyphicon-exclamation-sign">
+            </i>
+          </span>
           <span className="formerrors-text">{this.props.numErrors}Errors</span>
         </div>
       );

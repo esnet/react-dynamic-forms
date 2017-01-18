@@ -88,18 +88,24 @@ export default React.createClass({
   render() {
     const selected = this.state.value ? moment(this.state.value) : null;
     let className = "datepicker__input rdf";
-    const requiredError = this.props.showRequired && this._isMissing(this.state.value);
+    const requiredError = this.props.showRequired &&
+      this.isMissing(this.state.value);
     if (this.state.error || requiredError) {
       className = "datepicker__input rdf has-error";
     }
     return (
       <div>
         <div>
-          <DatePicker key={`bob`} ref="input" className={className} disabled={
-            this.props.disabled
-          } placeholderText={this.props.placeholder} selected={
-            selected
-          } onBlur={this.handleOnBlur} onChange={this.handleDateChange} />
+          <DatePicker
+            key={`bob`}
+            ref="input"
+            className={className}
+            disabled={this.props.disabled}
+            placeholderText={this.props.placeholder}
+            selected={selected}
+            onBlur={this.handleOnBlur}
+            onChange={this.handleDateChange}
+          />
         </div>
       </div>
     );

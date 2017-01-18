@@ -61,29 +61,38 @@ export default React.createClass({
       let minus;
 
       if (addMinus && !itemMinusHide) {
-        minus = <i id={index} key={
-          minusActionKey
-        } className="glyphicon glyphicon-minus esnet-forms-small-action-icon" onClick={
-          this.removeItem
-        } />;
+        minus = (
+          <i
+            id={index}
+            key={minusActionKey}
+            className="glyphicon glyphicon-minus esnet-forms-small-action-icon"
+            onClick={this.removeItem}
+          />
+        );
       } else {
         listEditItemClass += " no-controls";
-        minus = <div className="esnet-forms-listeditview-edit-item-minus-spacer" />;
+        minus = (
+          <div className="esnet-forms-listeditview-edit-item-minus-spacer" />
+        );
       }
 
       // JSX for each row, includes: UI Item and [-] remove item button
       return (
         <li height="80px" key={itemKey} className="esnet-forms-list-item">
-          <span key={itemSpanKey} className={listEditItemClass} style={
-            { float: "left" }
-          }>
+          <span
+            key={itemSpanKey}
+            className={listEditItemClass}
+            style={{ float: "left" }}
+          >
             {item}
           </span>
-          <span key={
-            actionSpanKey
-          } className="esnet-forms-minus-action-box" style={
-            { float: "left", verticalAlign: "top" }
-          }>{minus}</span>
+          <span
+            key={actionSpanKey}
+            className="esnet-forms-minus-action-box"
+            style={{ float: "left", verticalAlign: "top" }}
+          >
+            {minus}
+          </span>
         </li>
       );
     });
@@ -93,11 +102,19 @@ export default React.createClass({
       if (this.props.plusElement) {
         plus = this.props.plusElement;
       } else {
-        plus = <div className="esnet-forms-plus-action-box" key={
-          plusActionKey
-        } onClick={this.addItem}>
-          <i className="glyphicon glyphicon-plus esnet-forms-small-action-icon"></i>
-        </div>;
+        plus = (
+          <div
+            className="esnet-forms-plus-action-box"
+            key={plusActionKey}
+            onClick={this.addItem}
+          >
+            <i
+              className="glyphicon glyphicon-plus esnet-forms-small-action-icon"
+            >
+              
+            </i>
+          </div>
+        );
       }
     } else {
       plus = <div />;
@@ -108,9 +125,11 @@ export default React.createClass({
     return (
       <div>
         <ul className="esnet-forms-listeditview-container">
-          <ReactCSSTransitionGroup transitionName="esnet-forms-list-item" transitionEnterTimeout={
-            500
-          } transitionLeaveTimeout={300}>
+          <ReactCSSTransitionGroup
+            transitionName="esnet-forms-list-item"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={300}
+          >
             {itemList}
           </ReactCSSTransitionGroup>
         </ul>

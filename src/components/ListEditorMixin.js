@@ -225,11 +225,17 @@ export default {
       : true;
     const plusElement = _.has(this, "plusUI") ? this.plusUI() : null;
 
-    return <ListEditView items={components} canAddItems={
-      canAddItems
-    } canRemoveItems={canRemoveItems} plusWidth={400} plusElement={
-      plusElement
-    } onAddItem={this.handleAddItem} onRemoveItem={this.handleItemRemoved} />;
+    return (
+      <ListEditView
+        items={components}
+        canAddItems={canAddItems}
+        canRemoveItems={canRemoveItems}
+        plusWidth={400}
+        plusElement={plusElement}
+        onAddItem={this.handleAddItem}
+        onRemoveItem={this.handleItemRemoved}
+      />
+    );
   },
   /**
      * Determine the total count of missing fields in the entire list

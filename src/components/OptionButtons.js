@@ -40,17 +40,25 @@ export default React.createClass({
     const buttonElements = _.map(this.props.initialChoiceList, (choice, i) => {
       if (Number(i) === Number(this.props.initialChoice)) {
         return (
-          <button type="button" className="active btn btn-default" key={
-            i
-          } value={i} onClick={this.handleChange}>
+          <button
+            type="button"
+            className="active btn btn-default"
+            key={i}
+            value={i}
+            onClick={this.handleChange}
+          >
             {choice}
           </button>
         );
       } else {
         return (
-          <button type="button" className="btn btn-default" key={i} value={
-            i
-          } onClick={this.handleChange}>
+          <button
+            type="button"
+            className="btn btn-default"
+            key={i}
+            value={i}
+            onClick={this.handleChange}
+          >
             {choice}
           </button>
         );
@@ -64,9 +72,12 @@ export default React.createClass({
     const list = choiceList.join("-");
 
     return (
-      <div className={classes} key={list} width={width} style={
-        { marginBottom: 5 }
-      }>
+      <div
+        className={classes}
+        key={list}
+        width={width}
+        style={{ marginBottom: 5 }}
+      >
         {buttonElements}
       </div>
     );

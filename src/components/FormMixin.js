@@ -529,7 +529,8 @@ export default {
       //
       this._pendingMissing = this._pendingMissing ||
         deepCopy(this.state.missingCounts);
-      this._pendingErrors = this._pendingErrors || deepCopy(this.state.errorCounts);
+      this._pendingErrors = this._pendingErrors ||
+        deepCopy(this.state.errorCounts);
 
       // Determine and set new hidden state on formAttr entry
       if (_.isArray(tag)) {
@@ -580,7 +581,8 @@ export default {
      * in _pendingErrors until built up state is flushed.
      */
   handleErrorCountChange(key, errorCount) {
-    this._pendingErrors = this._pendingErrors || deepCopy(this.state.errorCounts) ||
+    this._pendingErrors = this._pendingErrors ||
+      deepCopy(this.state.errorCounts) ||
       {};
     this._pendingErrors[key] = errorCount;
     this.updateState(`error change ${key} ${errorCount}`);
@@ -698,9 +700,13 @@ export default {
     if (top.type === Form) {
       children = this.getAttrsForChildren(top.props.children);
       return (
-        <form className={formClassName} style={formStyle} key={
-          formKey
-        } onSubmit={this.handleSubmit} noValidate>
+        <form
+          className={formClassName}
+          style={formStyle}
+          key={formKey}
+          onSubmit={this.handleSubmit}
+          noValidate
+        >
           {children}
         </form>
       );

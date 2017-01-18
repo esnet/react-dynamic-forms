@@ -112,27 +112,40 @@ const KeyValueListEditor = React.createClass({
       case CreationState.OFF:
         // Initial UI to show the [+] Contact
         if (filteredChoiceList.length !== 0) {
-          ui = <div className="esdb-plus-action-box" key="append-new-or-existing" style={
-            { marginBottom: 10 }
-          } onClick={this.transitionTo(CreationState.PICK_KEYNAME)}>
-            <div>
-              <i className="glyphicon glyphicon-plus esnet-forms-small-action-icon">
-                Key
-              </i>
+          ui = (
+            <div
+              className="esdb-plus-action-box"
+              key="append-new-or-existing"
+              style={{ marginBottom: 10 }}
+              onClick={this.transitionTo(CreationState.PICK_KEYNAME)}
+            >
+              <div>
+                <i
+                  className="glyphicon glyphicon-plus esnet-forms-small-action-icon"
+                >
+                  Key
+                </i>
+              </div>
             </div>
-          </div>;
+          );
         } else {
-          ui = <div>
-            <table>
-              <tbody>
-                <tr><td>
-                  <i className="glyphicon glyphicon-plus esdb-small-action-icon text-muted">
-                    All available choices selected
-                  </i>
-                </td></tr>
-              </tbody>
-            </table>
-          </div>;
+          ui = (
+            <div>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                    <i
+                      className="glyphicon glyphicon-plus esdb-small-action-icon text-muted"
+                    >
+                      All available choices selected
+                    </i>
+                  </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          );
         }
         break;
 
@@ -150,62 +163,89 @@ const KeyValueListEditor = React.createClass({
           float: "right"
         };
 
-        cancelButtonElement = <button style={
-          buttonStyle
-        } type="button" className="btn btn-xs btn-default" key="cancel-button" onClick={
-          this.handleCancel
-        }>Cancel</button>;
+        cancelButtonElement = (
+          <button
+            style={buttonStyle}
+            type="button"
+            className="btn btn-xs btn-default"
+            key="cancel-button"
+            onClick={this.handleCancel}
+          >
+            Cancel
+          </button>
+        );
 
         if (
           this.state.keyName === null || this.state.value === "" ||
             this.state.valueError === true
         ) {
-          doneButtonElement = <button style={
-            buttonStyle
-          } type="button" key="pick-contact-button-disabled" className="btn btn-xs btn-default" disabled="disabled">Done</button>;
+          doneButtonElement = (
+            <button
+              style={buttonStyle}
+              type="button"
+              key="pick-contact-button-disabled"
+              className="btn btn-xs btn-default"
+              disabled="disabled"
+            >
+              Done
+            </button>
+          );
         } else {
-          doneButtonElement = <button style={
-            buttonStyle
-          } type="button" className="btn btn-xs btn-default" key="pick-contact-button" onClick={
-            this.handleDone
-          }>Done</button>;
+          doneButtonElement = (
+            <button
+              style={buttonStyle}
+              type="button"
+              className="btn btn-xs btn-default"
+              key="pick-contact-button"
+              onClick={this.handleDone}
+            >
+              Done
+            </button>
+          );
         }
 
-        ui = <div className="esdb-plus-action-box-dialog-lg" key="select-existing" style={
-          { marginBottom: 10 }
-        }>
-          <table>
-            <tbody>
-              <tr>
-                <td width="150">Key Name</td>
-                <td>
-                  <Chooser attr="keyName" initialChoice={
-                    null
-                  } initialChoiceList={filteredChoiceList} onChange={
-                    this.handleKeyNameSelect
-                  } />
-                </td>
-              </tr>
-              <tr>
-                <td width="150">Value</td>
-                <td>
-                  <TextEdit attr="value" rules={
-                    this.state.validationRule
-                  } onErrorCountChange={this.handleDialogValueError} onChange={
-                    this.handleDialogValueChanged
-                  } width={300} />
-                </td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>
-                  <span>{cancelButtonElement}</span>
-                  <span>{doneButtonElement}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>;
+        ui = (
+          <div
+            className="esdb-plus-action-box-dialog-lg"
+            key="select-existing"
+            style={{ marginBottom: 10 }}
+          >
+            <table>
+              <tbody>
+                <tr>
+                  <td width="150">Key Name</td>
+                  <td>
+                    <Chooser
+                      attr="keyName"
+                      initialChoice={null}
+                      initialChoiceList={filteredChoiceList}
+                      onChange={this.handleKeyNameSelect}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td width="150">Value</td>
+                  <td>
+                    <TextEdit
+                      attr="value"
+                      rules={this.state.validationRule}
+                      onErrorCountChange={this.handleDialogValueError}
+                      onChange={this.handleDialogValueChanged}
+                      width={300}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <span>{cancelButtonElement}</span>
+                    <span>{doneButtonElement}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
         break;
     }
     return ui;
@@ -253,9 +293,13 @@ export default React.createClass({
       keyValueList.push({ keyName, value });
     });
 
-    return <KeyValueListEditor keyValues={keyValueList} constraints={
-      this.props.constraints
-    } onChange={this.handleChange} />;
+    return (
+      <KeyValueListEditor
+        keyValues={keyValueList}
+        constraints={this.props.constraints}
+        onChange={this.handleChange}
+      />
+    );
   }
 })
 
