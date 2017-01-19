@@ -13,24 +13,19 @@
 import React from "react";
 import { Link } from "react-router";
 import _ from "underscore";
-import { Flexbox, FlexItem } from "flexbox-react";
 
-import Highlighter from "../Highlighter";
+import Highlighter from "./Highlighter";
 import APIDoc from "./APIDoc";
 import docsFile from "./docs.json";
 
 export default React.createClass({
-
-    mixins: [Highlighter],
-
+    mixins: [ Highlighter ],
     render() {
         const component = this.props.params.component;
         const path = `src/components/${component}.js`;
 
         if (!_.has(docsFile, path)) {
-            return (
-                <div>API could not be found</div>
-            );
+            return <div>API could not be found</div>;
         }
         const title = component;
         return (
@@ -38,10 +33,11 @@ export default React.createClass({
                 <h2>{title}</h2>
                 <div className="row">
                     <div className="col-md-12">
-                        <APIDoc file={path}/>
+                        <APIDoc file={path} />
                     </div>
                 </div>
             </div>
         );
     }
-});
+})
+

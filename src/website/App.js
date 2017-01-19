@@ -75,6 +75,18 @@ class App extends Component {
             </ul>
             <div className="sidebar-heading">API</div>
             <ul className="nav nav-sidebar">
+              <li><Link to="api/Chooser">Chooser</Link></li>
+              <li><Link to="api/DateEdit">DateEdit</Link></li>
+              <li><Link to="api/Form">Form</Link></li>
+              <li><Link to="api/FormErrors">FormErrors</Link></li>
+              <li><Link to="api/Group">Group</Link></li>
+              <li><Link to="api/KeyValueEditor">KeyValueEditor</Link></li>
+              <li><Link to="api/ListEditView">ListEditView</Link></li>
+              <li><Link to="api/OptionButtons">OptionButtons</Link></li>
+              <li><Link to="api/Schema">Schema</Link></li>
+              <li><Link to="api/TagsEdit">TagsEdit</Link></li>
+              <li><Link to="api/TextArea">TextArea</Link></li>
+              <li><Link to="api/TextEdit">TextEdit</Link></li>
             </ul>
             <div className="sidebar-heading">Tests</div>
             <ul className="nav nav-sidebar">

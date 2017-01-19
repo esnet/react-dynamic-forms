@@ -1,0 +1,470 @@
+{
+  "src/components/Attr.js": {
+    "description": "",
+    "displayName": "Attr",
+    "methods": []
+  },
+  "src/components/Chooser.js": {
+    "description": "React Form control to select an item from a list.\n\nWraps the react-select library\n\nProps:\n    initialChoice     - Pass in the initial value as an id\n\n    initialChoiceList - Pass in the available list of options as a list of\n                        objects.\n                        e.g. [{id: 1: label: \"cat\"},\n                              {id: 2: label: \"dog\"},\n                              ... ]\n\n    attr              - The identifier of the property being editted\n\n    onChange          - Callback for when value changes.\n                        Will be passed the attr and new value as a string.\nStates:\n    value             - The current value (index) of the chosen selector.",
+    "displayName": "Chooser",
+    "methods": [
+      {
+        "name": "_isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "_isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "_generateKey",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "choice",
+            "type": null
+          },
+          {
+            "name": "choiceList",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getOptionList",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "getFilteredOptionList",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "input",
+            "type": null
+          },
+          {
+            "name": "limit",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getOptions",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "input",
+            "type": null
+          },
+          {
+            "name": "cb",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getCurrentChoice",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      }
+    ],
+    "props": {
+      "disabled": {
+        "defaultValue": {
+          "value": "false",
+          "computed": false
+        }
+      },
+      "disableSearch": {
+        "defaultValue": {
+          "value": "false",
+          "computed": false
+        }
+      },
+      "searchContains": {
+        "defaultValue": {
+          "value": "true",
+          "computed": false
+        }
+      },
+      "allowSingleDeselect": {
+        "defaultValue": {
+          "value": "false",
+          "computed": false
+        }
+      },
+      "limit": {
+        "defaultValue": {
+          "value": "200",
+          "computed": false
+        }
+      },
+      "width": {
+        "defaultValue": {
+          "value": "300",
+          "computed": false
+        }
+      }
+    }
+  },
+  "src/components/ChooserGroup.js": {
+    "description": "",
+    "displayName": "ChooserGroup",
+    "methods": []
+  },
+  "src/components/DateEdit.js": {
+    "description": "Form control to edit a date text field.\n\nSet the initial value with 'initialValue' and set a callback for\nvalue changed with 'onChange'.",
+    "displayName": "DateEdit",
+    "methods": [
+      {
+        "name": "isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleDateChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ],
+    "props": {
+      "width": {
+        "defaultValue": {
+          "value": "\"100%\"",
+          "computed": false
+        }
+      }
+    }
+  },
+  "src/components/DateEditGroup.js": {
+    "description": "Wraps the dateedit widget",
+    "displayName": "DateEditGroup",
+    "methods": []
+  },
+  "src/components/Form.js": {
+    "description": "",
+    "displayName": "Form",
+    "methods": []
+  },
+  "src/components/FormErrors.js": {
+    "description": "Display errors for a form. This manages three types of error/warning infomation that is\ndisplayed to the user:\n\n  - A hard error, which will display in preference to other\n    messages. A hard error might be something like \"The form\n    could not be saved\". This type of error, passed in as the\n    'error' prop, is an object with two parts:\n        * msg     - The main error message\n        * details - Further information about the message\n\n  - error count, passed in as 'numErrors' prop. If this is\n    passed in then this component will display the number of\n    errors on the form. This is used with the Form code so\n    that the user can see live how many validation errors are\n    left on the page\n\n  - missing count, passed in as 'missingCount' prop. If there\n    is not an error on the page but missingCount > 0 then this\n    component will display a n fields to complete message. If\n    the prop 'showRequired' is passed in as true, then the\n    form is in the mode of actually displaying as an error\n    all missing fields. The message in this case will be\n    simply \"Form incomplete\".",
+    "displayName": "FormErrors",
+    "methods": []
+  },
+  "src/components/Group.js": {
+    "description": "Example:\n <Group attr={this.getAttr(\"contact_type\")} >\n     <Chooser initialChoice={contactType} initialChoiceList={contactTypes} disableSearch={true}/>\n </Group>",
+    "displayName": "Group",
+    "methods": []
+  },
+  "src/components/KeyValueEditor.js": {
+    "description": "",
+    "displayName": "KeyValueEditor",
+    "methods": [
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "attr",
+            "type": null
+          },
+          {
+            "name": "keyValue",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/ListEditView.js": {
+    "description": "Editing of a list of widgets. This The widgets themselves are passed in as 'items'.\n\nA ListEditView is created within the ListEditorMixin, so you do not generally need\nto use this component directly.\n\nThis user of this component should supply event handlers to manage the list\nwhen items are added or removed. This is done in the ListEditorMixin render() method.\n\nThese are onAddItem() and onRemoveItem(). Each item padded in should have\nand id set (item.props.id). This item is used to uniquely identify each row so that\nremoving a row happens correctly. Finally, 'canAddItems' lets you hide the [+] icon\n(for instance if there's no possible items that can be added from a list).",
+    "displayName": "ListEditView",
+    "methods": [
+      {
+        "name": "addItem",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "removeItem",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "e",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/OptionButtons.js": {
+    "description": "",
+    "displayName": "OptionButtons",
+    "methods": [
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "e",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/OptionsGroup.js": {
+    "description": "Wraps the option button widget",
+    "displayName": "OptionsGroup",
+    "methods": []
+  },
+  "src/components/Schema.js": {
+    "description": "",
+    "displayName": "Schema",
+    "methods": []
+  },
+  "src/components/TagsEdit.js": {
+    "description": "Form control to select tags from a pull down list.\nYou can also add a new tag with the Add tag button.",
+    "displayName": "TagsEdit",
+    "methods": [
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "val",
+            "type": null
+          },
+          {
+            "name": "tagList",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/TagsGroup.js": {
+    "description": "Wraps the tags editor widget",
+    "displayName": "TagsGroup",
+    "methods": []
+  },
+  "src/components/TextArea.js": {
+    "description": "Form control to edit a Text Area field",
+    "displayName": "TextArea",
+    "methods": [
+      {
+        "name": "_isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "_isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "_getError",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "onBlur",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "e",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "onFocus",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      }
+    ],
+    "props": {
+      "width": {
+        "defaultValue": {
+          "value": "\"100%\"",
+          "computed": false
+        }
+      },
+      "rows": {
+        "defaultValue": {
+          "value": "4",
+          "computed": false
+        }
+      }
+    }
+  },
+  "src/components/TextAreaGroup.js": {
+    "description": "Wraps the TextArea widget",
+    "displayName": "TextAreaGroup",
+    "methods": []
+  },
+  "src/components/TextEdit.js": {
+    "description": "Form control to edit a text field.\nSet the initial value with 'initialValue' and set a callback for\nvalue changed with 'onChange'.",
+    "displayName": "TextEdit",
+    "methods": [
+      {
+        "name": "_isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "_isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "_getError",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "onBlur",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "onFocus",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      }
+    ],
+    "props": {
+      "width": {
+        "defaultValue": {
+          "value": "\"100%\"",
+          "computed": false
+        }
+      }
+    }
+  },
+  "src/components/TextEditGroup.js": {
+    "description": "Wraps the TextEdit widget",
+    "displayName": "TextEditGroup",
+    "methods": []
+  }
+}

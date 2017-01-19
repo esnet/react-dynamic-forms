@@ -3,7 +3,7 @@
   "version": "0.15.0",
   "description": "Dynamic forms library for React",
   "license": "BSD-3-Clause-LBNL",
-  "main": "index.js",
+  "main": "lib/entry.js",
   "author": "ESnet Tools Team <tools@es.net>",
   "repository": {
     "type": "git",
@@ -13,10 +13,10 @@
     "url": "https://github.com/esnet/esnet-react-forms/issues"
   },
   "scripts": {
-    "docs": "echo \"*** Building API docs\n\" && react-docgen src/components -x js -o src/website/api/docs.json --pretty",
+    "docs": "echo \"*** Building API docs\n\" && react-docgen src/components -x js -o src/website/docs.json --pretty -e FormMixin.js -e ListEditorMixin.js",
     "lint": "eslint src/components/*.js",
     "test": "react-scripts test --env=jsdom",
-    "build": "echo \"*** Building lib\n\" && rm -rf lib/* && babel src/components --optional runtime --stage 0 --out-dir lib/components && babel src/js --optional runtime --stage 0 --out-dir lib/js && babel src/entry.js --optional runtime --stage 0 --out-file lib/entry.js",
+    "build": "echo \"*** Building lib\n\" && rm -rf lib && mkdir lib && babel src/components --optional runtime --stage 0 --ignore __tests__/* --out-dir lib/components && cp ./src/components/*.css ./lib/components && babel src/entry.js --optional runtime --stage 0 --out-file lib/entry.js",
     "start-website": "react-scripts start",
     "build-website": "echo \"*** Building website\n\" && rm -rf docs && react-scripts build && mv build docs"
   },

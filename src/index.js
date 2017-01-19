@@ -18,7 +18,8 @@ import Errors from "./website/examples/ErrorExample";
 // Tests
 import TextEditTest from "./website/tests/TextEditTests";
 
-//import API from "./website/api/API";
+import API from "./website/API";
+
 ReactDOM.render(
     (
         <Router history={hashHistory}>
@@ -30,7 +31,7 @@ ReactDOM.render(
                 <Route path="example/keyvalue" component={KeyValue} />
                 <Route path="example/errors" component={Errors} />
                 <Route path="test/textedit" component={TextEditTest} />
-                {}
+                <Route path="api/:component" component={API} />
             </Route>
         </Router>
     ),
