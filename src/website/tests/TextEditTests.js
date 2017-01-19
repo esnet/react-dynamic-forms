@@ -10,7 +10,16 @@
 
 import React from "react";
 import Markdown from "react-markdown";
-import { Test1 } from "../../components_test/TextEditExamples";
+import {
+  TestBasic,
+  TextEditDisabled,
+  TextEditPlaceholder,
+  TextEditRequired1,
+  TextEditRequired2,
+  TextEditRequired3,
+  TextEditValidate,
+  TextEditValidateInt
+} from "../../components_test/TextEditExamples";
 
 export default React.createClass({
   render() {
@@ -19,7 +28,22 @@ export default React.createClass({
         <div className="row">
           <div className="col-md-12">
             <h3>TextEdit Tests</h3>
-            <Test1 />
+            TextEdit initial value
+            <TestBasic />
+            Diabled TextEdit
+            <TextEditDisabled />
+            With a placeholder
+            <TextEditPlaceholder />
+            Required field (with showRequired turned ON):
+            <TextEditRequired1 />
+            Required field (with showRequired turned OFF):
+            <TextEditRequired2 />
+            Required field (with showRequired turned ON and initial value):
+            <TextEditRequired3 />
+            Validated field (email address)
+            <TextEditValidate />
+            Validated field (integer)
+            <TextEditValidateInt />
           </div>
         </div>
       </div>
