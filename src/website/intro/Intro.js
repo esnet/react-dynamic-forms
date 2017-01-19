@@ -10,28 +10,27 @@
 
 import React from "react";
 
-import Highlighter from "..//Highlighter";
+import Highlighter from "../Highlighter";
 import Markdown from "react-markdown";
 import logo from "../img/forms.png";
 
 import text from "./intro.md.js";
 
 export default React.createClass({
-
-    mixins: [Highlighter],
-
+    mixins: [ Highlighter ],
     render() {
         return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
-                        <img src={logo} alt="ESnet" width={120} height={120}/>
+                        <img src={logo} alt="ESnet" width={120} height={120} />
                     </div>
                     <div className="col-md-9">
-                        <Markdown source={text}/>
+                        <Markdown source={text} />
                     </div>
                 </div>
             </div>
         );
     }
-});
+})
+

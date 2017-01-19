@@ -53,7 +53,6 @@ const KeyValueForm = React.createClass({
 
     // Example of fetching current and initial values
     // console.log("values:", this.getValues());
-
     if (this.props.onSubmit) {
       this.props.onSubmit(this.getValues());
     }

@@ -15,21 +15,25 @@ import List from "./website/examples/ListExample";
 import KeyValue from "./website/examples/KeyValueExample";
 import Errors from "./website/examples/ErrorExample";
 
+// Tests
+import TextEditTest from "./website/tests/TextEditTests";
+
 //import API from "./website/api/API";
 ReactDOM.render(
-  (
-    <Router history={hashHistory}>
-      <Route path="/" component={App}>
-        <IndexRoute component={Intro} />
-        <Route path="example/contact" component={Form} />
-        <Route path="example/dynamic" component={Dynamic} />
-        <Route path="example/list" component={List} />
-        <Route path="example/keyvalue" component={KeyValue} />
-        <Route path="example/errors" component={Errors} />
-        {}
-      </Route>
-    </Router>
-  ),
-  document.getElementById("root")
+    (
+        <Router history={hashHistory}>
+            <Route path="/" component={App}>
+                <IndexRoute component={Intro} />
+                <Route path="example/contact" component={Form} />
+                <Route path="example/dynamic" component={Dynamic} />
+                <Route path="example/list" component={List} />
+                <Route path="example/keyvalue" component={KeyValue} />
+                <Route path="example/errors" component={Errors} />
+                <Route path="test/textedit" component={TextEditTest} />
+                {}
+            </Route>
+        </Router>
+    ),
+    document.getElementById("root")
 );
 
