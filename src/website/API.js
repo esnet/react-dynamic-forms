@@ -11,7 +11,6 @@
 /* eslint max-len:0 */
 
 import React from "react";
-import { Link } from "react-router";
 import _ from "underscore";
 
 import Highlighter from "./Highlighter";

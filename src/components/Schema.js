@@ -11,14 +11,36 @@
 import React from "react";
 import invariant from "invariant";
 
+/**
+ * A schema can be specified using JSX to define the rules for
+ * each form field. As an example, here is a form that will take the
+ * first name, last name and email of a contact. We can define also
+ * that the email should be of format `email` and that the first and
+ * last names are `required`:
+ *
+ * ```
+ *    const schema = (
+ *        <Schema>
+ *            <Attr name="first_name" label="First name" placeholder="Enter first name"
+ *                  required={true} validation={{"type": "string"}}/>
+ *            <Attr name="last_name" label="Last name" placeholder="Enter last name"
+ *                  required={true} validation={{"type": "string"}}/>
+ *            <Attr name="email" label="Email" placeholder="Enter valid email address"
+ *                  validation={{"format": "email"}}/>
+ *        </Schema>
+ *    );
+ * ```
+ *
+ * See also `Attr`.
+ */
 export default React.createClass({
-  displayName: "Schema",
-  render() {
-    invariant(
-      false,
-      `${this.constructor.name} elements are for schema configuration only and should not be rendered`
-    );
-    return;
-  }
+    displayName: "Schema",
+    render() {
+        invariant(
+            false,
+            `${this.constructor.name} elements are for schema configuration only and should not be rendered`
+        );
+        return;
+    }
 })
 

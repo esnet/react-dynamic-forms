@@ -14,10 +14,34 @@ import classNames from "classnames";
 import "./group.css";
 
 /**
+ * Groups are intended to be used with the `formMixin` and provide a shorthand
+ * method of adding a control and its label to a form, including support for
+ * managing missing and error fields automatically.
+ *
+ * A group has two main purposes:
+ *
+ *  * Wrap a form component such that it is shown with a label and arranged
+ *    within a bootstrap grid layout.
+ *  * Expect standard props that are added to each of the wrapped form
+ *    components (attrName, placeholder, validation etc) as a 'attr' object.
+ *
+ * Within ESDB we display the same form layout for each form element over and over.
+ * This component is used to reduce all that boiler plate code. As such this
+ * component is pretty hard coded in terms of its layout: 2 columns for the label
+ * and 10 for the control. The Group is also meant to be used with the `formMixin`.
+ * The `formMixin` provides a `getAttr()` call that extracts data such as existing
+ * formValues, meta info such as label name, placeholder name, etc. In addition
+ * it also supplies callbacks for missing and error counts as well as value changed
+ * that are attached to functions that alter the mixin state.
+ *
  * Example:
+ *
+ * ```
  *  <Group attr={this.getAttr("contact_type")} >
  *      <Chooser initialChoice={contactType} initialChoiceList={contactTypes} disableSearch={true}/>
  *  </Group>
+ * ```
+ *
  */
 export default React.createClass({
   displayName: "Group",

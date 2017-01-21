@@ -17,6 +17,7 @@ import Errors from "./website/examples/ErrorExample";
 
 // Tests
 import TextEditTest from "./website/tests/TextEditTests";
+import ChooserTest from "./website/tests/ChooserTests";
 
 import API from "./website/API";
 
@@ -31,6 +32,7 @@ ReactDOM.render(
                 <Route path="example/keyvalue" component={KeyValue} />
                 <Route path="example/errors" component={Errors} />
                 <Route path="test/textedit" component={TextEditTest} />
+                <Route path="test/chooser" component={ChooserTest} />
                 <Route path="api/:component" component={API} />
             </Route>
         </Router>

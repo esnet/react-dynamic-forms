@@ -75,6 +75,7 @@ class App extends Component {
             </ul>
             <div className="sidebar-heading">API</div>
             <ul className="nav nav-sidebar">
+              <li><Link to="api/Attr">Attr</Link></li>
               <li><Link to="api/Chooser">Chooser</Link></li>
               <li><Link to="api/DateEdit">DateEdit</Link></li>
               <li><Link to="api/Form">Form</Link></li>
@@ -92,6 +93,7 @@ class App extends Component {
             <ul className="nav nav-sidebar">
               <li>
                 <Link to="test/textedit">TextEdit</Link>
+                <Link to="test/chooser">Chooser</Link>
               </li>
             </ul>
             <div className="sidebar-heading">Links</div>

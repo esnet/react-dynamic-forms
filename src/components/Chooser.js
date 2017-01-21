@@ -9,11 +9,14 @@
  */
 
 import React from "react";
+import VirtualizedSelect from "react-virtualized-select";
 import _ from "underscore";
-import Select from "react-select";
 import hash from "string-hash";
 
 import "react-select/dist/react-select.css";
+import "react-virtualized/styles.css";
+import "react-virtualized-select/styles.css";
+
 import "./chooser.css";
 
 /**
@@ -21,22 +24,60 @@ import "./chooser.css";
  *
  * Wraps the react-select library
  *
- * Props:
- *     initialChoice     - Pass in the initial value as an id
+ * ### Example
  *
- *     initialChoiceList - Pass in the available list of options as a list of
- *                         objects.
- *                         e.g. [{id: 1: label: "cat"},
- *                               {id: 2: label: "dog"},
- *                               ... ]
+ * ```
+ *     const animalMap = {1: "dog", 2: "duck", 3: "cat", ...};
+ *     const animalList = animalMap.map((value, key) => ({id: key, label: value}));
  *
- *     attr              - The identifier of the property being editted
+ *     ...
  *
- *     onChange          - Callback for when value changes.
- *                         Will be passed the attr and new value as a string.
- * States:
- *     value             - The current value (index) of the chosen selector.
+ *     <Chooser
+ *         initialChoiceList={animalList}
+ *         placeholder="Select an Animal..."
+ *         width={300}
+ *     />
+ * ```
  *
+ * Generally you would use the Chooser as part of a `ChooserGroup`:
+ *
+ * ```
+ *    <ChooserGroup
+ *        attr="contact_type"
+          initialChoice={contactType}
+          initialChoiceList={contactTypes}
+          disableSearch={true}
+          width={200}
+      />
+ * ```
+ *
+ * ### Props
+ *
+ *  * *initialChoice* - Pass in the initial value as an id
+ *
+ *  * *initialChoiceList* - Pass in the available list of options as a list of
+ *    objects. For example:
+ *
+ *    ```
+ *    [{id: 1: label: "cat"},
+ *     {id: 2: label: "dog"},
+ *     ... ]
+ *    ```
+ *  * *disableSearch* - If true the chooser becomes a simple pulldown menu
+ *    rather than allowing the user to type into it.
+ *
+ *  * *width* - Customize the horizontal size of the Chooser.
+ *
+ *  * *attr* - The identifier of the property being editted
+ *
+ *  * *onChange* - Callback for when value changes. Will be passed the attr and
+ *    new value as a string.
+ *
+ *  * *allowSingleDeselect* - Add a [x] icon to the chooser allowing the user to
+ *    clear the selected value
+ *
+ *  * *searchContains* - Can be "any" or "start", indicating how the search is
+ *    matched within the items (anywhere, or starting with).
  */
 export default React.createClass({
   displayName: "Chooser",
@@ -46,7 +87,6 @@ export default React.createClass({
       disableSearch: false,
       searchContains: true,
       allowSingleDeselect: false,
-      limit: 200,
       width: 300
     };
   },
@@ -120,7 +160,7 @@ export default React.createClass({
     });
   },
   handleChange(v) {
-    let { value } = v;
+    let { value } = v || {};
     const missing = this.props.required && this._isEmpty(v);
 
     // If the chosen id is a number, cast it to a number
@@ -149,68 +189,27 @@ export default React.createClass({
       return { value: c.id, label: c.label, disabled };
     });
   },
-  getFilteredOptionList(input, limit) {
+  getFilteredOptionList(input) {
     const items = this.props.initialChoiceList;
-
-    //
-    // If we don't have an input yet (the user hasn't typed a search) then
-    // do one of two things:
-    // - If the number of items is under the limit, just show them all
-    // - If the number of items is larger than the limit, don't show anything
-    //   until the user does type something (and react-select) will show the
-    //   "Type to search" message.
-    //
-    if (!input || input.length < 1) {
-      if (items.length < limit) {
-        return _.map(items, c => ({
-          value: `${c.id}`,
-          label: c.label,
-          disabled: _.has(c, "disabled") ? c.disabled : false
-        }));
-      } else {
-        return [];
-      }
-    }
-
-    //
-    // Build a limited set of results if necessary
-    //
     const filteredItems = input ? _.filter(items, item => {
         return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !==
           -1;
       }) : items;
-    const limitItems = _.first(filteredItems, limit);
-    let results = _.map(limitItems, c => ({
+    return _.map(filteredItems, c => ({
       value: `${c.id}`,
       label: c.label,
       disabled: _.has(c, "disabled") ? c.disabled : false
     }));
-
-    //
-    //  If the results are limited then print a message at the bottom
-    //
-    if (filteredItems.length > limit) {
-      const msg = `(showing first ${limit} matches only)`;
-      results.push({ id: `#{Math.random()}`, label: msg, disabled: true });
-    }
-
-    return results;
   },
   getOptions(input, cb) {
-    const options = this.getFilteredOptionList(input, this.props.limit);
+    const options = this.getFilteredOptionList(input);
     if (options) {
       cb(null, { options, complete: true });
     }
   },
   getCurrentChoice() {
     const choiceItem = _.find(this.props.initialChoiceList, item => {
-      let itemId;
-      //if (!this._isEmpty(item.id) && !_.isNaN(Number(item.id))) {
-      //  itemId = Number(item.id);
-      //} else {
-      itemId = item.id;
-      //}
-      return itemId === this.state.value;
+      return item.id === this.state.value;
     });
 
     return choiceItem ? choiceItem.id : undefined;
@@ -238,12 +237,12 @@ export default React.createClass({
     const matchPos = this.props.searchContains ? "any" : "start";
 
     if (searchable) {
-      const options = this.getFilteredOptionList(null, this.props.limit);
+      const options = this.getFilteredOptionList(null);
       const labelList = _.map(options, item => item.label);
       const key = `${labelList}--${choice}`;
       return (
         <div className={className} style={chooserStyle}>
-          <Select
+          <VirtualizedSelect
             className={"sectionTest"}
             key={key}
             name="form-field-name"
@@ -253,8 +252,6 @@ export default React.createClass({
             searchable={true}
             matchPos={matchPos}
             onChange={this.handleChange}
-            asyncOptions={this.getOptions}
-            cacheAsyncResults={false}
             placeholder={this.props.placeholder}
           />
         </div>
@@ -265,11 +262,11 @@ export default React.createClass({
       const key = `${labelList}--${choice}`;
       return (
         <div className={className} style={chooserStyle}>
-          <Select
+          <VirtualizedSelect
             className={"sectionTest"}
             key={key}
             name="form-field-name"
-            value={2}
+            value={choice}
             options={options}
             disabled={this.props.disabled}
             searchable={false}

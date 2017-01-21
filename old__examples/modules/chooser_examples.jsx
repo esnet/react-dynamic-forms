@@ -24,7 +24,7 @@ const sortedAnimalList = _.sortBy(animalList, (item) => item.label);
 
 let largeList = [];
 for (let i = 1; i < 5000; i++) {
-    largeList.push({id: i, label: chance.word()});
+    largeList.push({id: `${i}`, label: chance.word()});
 }
 
 let locationList = [
