@@ -9,21 +9,21 @@
  */
 
 import React from "react";
-import Group from "./group";
+import Group from "./Group";
 import TagsEdit from "./TagsEdit";
 
 /**
  * Wraps the tags editor widget
  */
 export default React.createClass({
-  displayName: "TagsGroup",
-  render() {
-    const { attr, children, ...others } = this.props;
-    return (
-      <Group attr={attr}>
-        <TagsEdit {...others} />
-      </Group>
-    );
-  }
-})
+    displayName: "TagsGroup",
+    render() {
+        const { attr, ...others } = this.props;
+        return (
+            <Group attr={attr}>
+                <TagsEdit {...others} />
+            </Group>
+        );
+    }
+});
 
