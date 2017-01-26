@@ -4713,12 +4713,9 @@ react-addons-css-transition-group@15.3.2:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react-addons-css-transition-group/-/react-addons-css-transition-group-15.3.2.tgz#d8fa52bec9bb61bdfde8b9e4652b80297cbff667"
 
-react-addons-shallow-compare@^15.3.2:
-  version "15.4.2"
-  resolved "https://registry.yarnpkg.com/react-addons-shallow-compare/-/react-addons-shallow-compare-15.4.2.tgz#027ffd9720e3a1e0b328dcd8fc62e214a0d174a5"
-  dependencies:
-    fbjs "^0.8.4"
-    object-assign "^4.1.0"
+react-addons-shallow-compare@15.3.2:
+  version "15.3.2"
+  resolved "https://registry.yarnpkg.com/react-addons-shallow-compare/-/react-addons-shallow-compare-15.3.2.tgz#c9edba49b9eab44d0c59024d289beb1ab97318b5"
 
 react-addons-test-utils@^15.4.2:
   version "15.4.2"
