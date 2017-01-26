@@ -31,7 +31,8 @@ export default React.createClass({
       value: this.props.initialValue,
       error: null,
       errorMsg: "",
-      missing: false
+      missing: false,
+      type: "text"
     };
   },
   _isEmpty(value) {
@@ -192,7 +193,7 @@ export default React.createClass({
           key={key}
           style={style}
           className="form-control input-sm"
-          type="text"
+          type={this.props.type}
           ref="input"
           disabled={this.props.disabled}
           placeholder={this.props.placeholder}
@@ -204,5 +205,5 @@ export default React.createClass({
       </div>
     );
   }
-})
+});
 

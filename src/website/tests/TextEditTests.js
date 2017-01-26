@@ -13,6 +13,7 @@ import {
   TestBasic,
   TextEditDisabled,
   TextEditPlaceholder,
+  TextEditPassword,
   TextEditRequired1,
   TextEditRequired2,
   TextEditRequired3,
@@ -33,6 +34,8 @@ export default React.createClass({
             <TextEditDisabled />
             With a placeholder
             <TextEditPlaceholder />
+            Password type
+            <TextEditPassword />
             Required field (with showRequired turned ON):
             <TextEditRequired1 />
             Required field (with showRequired turned OFF):
@@ -48,5 +51,5 @@ export default React.createClass({
       </div>
     );
   }
-})
+});
 

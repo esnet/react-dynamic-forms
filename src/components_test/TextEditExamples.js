@@ -29,6 +29,18 @@ export const TextEditPlaceholder = React.createClass({
     }
 });
 
+export const TextEditPassword = React.createClass({
+    render() {
+        return (
+            <TextEdit
+                type="password"
+                placeholder="Enter first name"
+                width={300}
+            />
+        );
+    }
+});
+
 export const TextEditRequired1 = React.createClass({
     render() {
         return <TextEdit required={true} showRequired={true} />;
