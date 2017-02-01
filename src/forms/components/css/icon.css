@@ -1,0 +1,24 @@
+
+.icon {
+    cursor: pointer;
+    font-size: 14px;
+    padding-bottom: 10px;
+    color: #AAA;
+    padding: 5px;
+}
+
+.delete-action:hover {
+    color: #b94a48;
+}
+
+.edit-action:hover {
+    color: steelblue;
+}
+
+.edit-action.active {
+    color: steelblue;
+}
+
+.add-action:hover {
+    color: green;
+}

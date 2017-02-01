@@ -39,8 +39,7 @@ import invariant from "invariant";
  * for the validation property.
  *
  */
-export default React.createClass({
-    displayName: "Attr",
+export default class Attr extends React.Component {
     render() {
         invariant(
             false,
@@ -49,5 +48,4 @@ configuration only and should not be rendered`
         );
         return;
     }
-})
-
+}

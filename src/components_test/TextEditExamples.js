@@ -8,15 +8,18 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-import TextEdit from "../components/TextEdit";
+import TextEdit from "../forms/components/TextEdit";
 import React from "react";
 
 export const TestBasic = React.createClass({
     render() {
-        return <TextEdit initialValue="Bob" width={300} />;
+        const attr = {
+            name: "Basic"
+        };
+        return <TextEdit attr={attr} value="Bob" width={300} />;
     }
 });
-
+/*
 export const TextEditDisabled = React.createClass({
     render() {
         return <TextEdit initialValue="Bob" disabled={true} width={300} />;
@@ -81,4 +84,4 @@ export const TextEditValidateInt = React.createClass({
         return <TextEdit initialValue="42" rules={{ type: "integer" }} />;
     }
 });
-
+*/

@@ -33,14 +33,12 @@ import invariant from "invariant";
  *
  * See also `Attr`.
  */
-export default React.createClass({
-    displayName: "Schema",
-    render() {
-        invariant(
-            false,
-            `${this.constructor.name} elements are for schema configuration only and should not be rendered`
-        );
-        return;
-    }
-})
-
+export default class Schema {
+  render() {
+    invariant(
+      false,
+      `${this.constructor.name} elements are for schema configuration only and should not be rendered`
+    );
+    return;
+  }
+}

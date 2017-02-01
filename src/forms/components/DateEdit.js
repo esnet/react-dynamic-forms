@@ -13,8 +13,10 @@ import DatePicker from "react-datepicker";
 import moment from "moment";
 import React from "react";
 
+import formGroup from "../formGroup";
+
 import "react-datepicker/dist/react-datepicker.css";
-import "./dateedit.css";
+import "./css/dateedit.css";
 
 /**
  * Form control to edit a date text field.
@@ -22,25 +24,27 @@ import "./dateedit.css";
  * Set the initial value with 'initialValue' and set a callback for
  * value changed with 'onChange'.
  */
-export default React.createClass({
-  displayName: "DateEdit",
-  getDefaultProps() {
-    return { width: "100%" };
-  },
-  getInitialState() {
-    return {
-      initialValue: this.props.initialValue,
-      value: this.props.initialValue,
+class DateEdit extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      initialValue: props.initialValue,
+      value: props.initialValue,
       missing: false,
       showPicker: false
     };
-  },
+  }
+
   isEmpty(value) {
-    return _.isNull(value);
-  },
+    return _.isNull(value) || _.isUndefined(value);
+  }
+
   isMissing(v) {
+    console.log("date", v);
     return this.props.required && !this.props.disabled && this.isEmpty(v);
-  },
+  }
+
   componentWillReceiveProps(nextProps) {
     const previousValue = this.state.initialValue
       ? this.state.initialValue.getTime()
@@ -61,7 +65,8 @@ export default React.createClass({
         this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
       }
     }
-  },
+  }
+
   componentDidMount() {
     const missing = this.isMissing(this.props.initialValue);
     const value = this.props.initialValue;
@@ -71,10 +76,14 @@ export default React.createClass({
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
     }
-  },
+  }
+
   handleDateChange(v) {
     const value = v ? v.toDate() : null;
     const missing = this.props.required && this.isEmpty(value);
+
+    console.log("handleDateChange", value);
+
     this.setState({ value, missing });
 
     // Callbacks
@@ -84,31 +93,79 @@ export default React.createClass({
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
     }
-  },
+  }
+
+  inlineStyle(hasError, isMissing) {
+    let color = "inherited";
+    let background = "inherited";
+    let borderLeftStyle = "inherited";
+    let borderLeftColor = "inherited";
+    let borderLeftWidth = 2;
+    if (this.state.error) {
+      color = "#b94a48";
+      background = "#fff0f3";
+      borderLeftStyle = "solid";
+      borderLeftColor = "#b94a48";
+    } else if (isMissing) {
+      background = "floralwhite";
+      borderLeftStyle = "solid";
+      borderLeftColor = "orange";
+    }
+    return {
+      color,
+      background,
+      borderLeftStyle,
+      borderLeftColor,
+      borderLeftWidth,
+      height: 23,
+      width: "100%",
+      paddingLeft: 3
+    };
+  }
+
   render() {
     const selected = this.state.value ? moment(this.state.value) : null;
     let className = "datepicker__input rdf";
-    const requiredError = this.props.showRequired &&
-      this.isMissing(this.state.value);
-    if (this.state.error || requiredError) {
+    const isMissing = this.isMissing(this.state.value);
+    if (this.state.error) {
       className = "datepicker__input rdf has-error";
     }
-    return (
-      <div>
-        <div>
-          <DatePicker
-            key={`bob`}
-            ref="input"
-            className={className}
-            disabled={this.props.disabled}
-            placeholderText={this.props.placeholder}
-            selected={selected}
-            onBlur={this.handleOnBlur}
-            onChange={this.handleDateChange}
-          />
-        </div>
-      </div>
-    );
-  }
-})
+    if (isMissing) {
+      className += " is-missing";
+    }
 
+    if (this.props.edit) {
+      return (
+        <div>
+          <div>
+            <DatePicker
+              key={`date`}
+              ref="input"
+              className={className}
+              disabled={this.props.disabled}
+              placeholderText={this.props.placeholder}
+              selected={selected}
+              onBlur={() => this.handleOnBlur()}
+              onChange={v => this.handleDateChange(v)}
+            />
+          </div>
+        </div>
+      );
+    } else {
+      const isMissing = this.isMissing(this.state.value);
+      const hasError = this.state.error;
+      let text = selected ? selected.format("MM/DD/YYYY") : "";
+      if (isMissing) {
+        text = " ";
+      }
+      const style = this.inlineStyle(hasError, isMissing);
+      return <div style={style}>{text}</div>;
+    }
+  }
+}
+
+DateEdit.defaultProps = {
+  width: "100%"
+};
+
+export default formGroup(DateEdit);

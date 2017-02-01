@@ -11,13 +11,17 @@
 import React from "react";
 import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
-import Form from "../../../src/components/Form";
-import FormMixin from "../../../src/components/FormMixin";
-import TextEditGroup from "../../../src/components/TextEditGroup";
-import DateEditGroup from "../../../src/components/DateEditGroup";
-import Schema from "../../../src/components/Schema";
-import Attr from "../../../src/components/Attr";
-import ChooserGroup from "../../../src/components/ChooserGroup";
+
+import Form from "../../forms/components/Form";
+import Schema from "../../forms/components/Schema";
+import Attr from "../../forms/components/Attr";
+
+import TextEdit from "../../forms/components/TextEdit";
+import DateEdit from "../../forms/components/DateEdit";
+import Chooser from "../../forms/components/Chooser";
+
+import { FormEditStates } from "../../forms/constants";
+
 import Highlighter from "../Highlighter";
 
 const description = `
@@ -60,10 +64,10 @@ And then implement the form layout like this:
             var disableSubmit = this.hasErrors();
             return (
                 <Form>
-                    <TextEditGroup attr="first_name" width={300} />
-                    <TextEditGroup attr="last_name" width={300} />
-                    <TextEditGroup attr="email" width={500} />
-                    <DateEditGroup attr="birthdate" />
+                    <TextEdit attr="first_name" width={300} />
+                    <TextEdit attr="last_name" width={300} />
+                    <TextEdit attr="email" width={500} />
+                    <DateEdit attr="birthdate" />
                     <hr />
                     <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
                 </Form>
@@ -72,7 +76,7 @@ And then implement the form layout like this:
 
 As you can see, we return a \`<Form>\` element which contains further JSX, which is a convenience. In fact, you can define this with a \`<form>\` too. You can use any JSX in here to render the form however you like. This makes the layout of the form as flexible as any other React code.
 
-The special elements here are the \`TextEditGroup\`s. They specify an \`attr\` prop which references the schema (we'll see how to get the schema hooked up in a minute). Each TextEditGroup will generate a label and a form control (in this case a \`TextEdit\`). We use Bootstrap for the layout. In addition to TextEditGroups there's also: \`TextAreaGroup\`, \`ChooserGroup\`, \`OptionsGroup\` and \`TagsGroup\`. You can also wrap your own controls in the generic \`Group\`.
+The special elements here are the \`TextEdit\`s. They specify an \`attr\` prop which references the schema (we'll see how to get the schema hooked up in a minute). Each TextEditGroup will generate a label and a form control (in this case a \`TextEdit\`). We use Bootstrap for the layout. In addition to TextEditGroups there's also: \`TextAreaGroup\`, \`ChooserGroup\`, \`OptionsGroup\` and \`TagsGroup\`. You can also wrap your own controls in the generic \`Group\`.
 
 Now that we have out form it's time to use it. Typically the form will be contained (rendered by) another React component which will hold the business logic of sourcing the schema and initial values, as well as handling the submit of the form in some way.
 
@@ -116,13 +120,14 @@ const schema = (
       name="email"
       label="Email"
       placeholder="Enter valid email address"
+      required={true}
       validation={{ format: "email" }}
     />
     <Attr name="birthdate" label="Birthdate" required={true} />
   </Schema>
 );
 
-const values = {
+const initialValues = {
   type: 0,
   first_name: "Bill",
   last_name: "Jones",
@@ -130,66 +135,14 @@ const values = {
   birthdate: birthday
 };
 
-/**
- * Edit a contact
- */
-const ContactForm = React.createClass({
-  mixins: [ FormMixin ],
-  displayName: "ContactForm",
-  //Save the form
-  handleSubmit(e) {
-    e.preventDefault();
-
-    //Example of checking if the form has missing values and turning required On
-    if (this.hasMissing()) {
-      this.showRequiredOn();
-      return;
-    }
-
-    // Example of fetching current and initial values
-    // console.log("initial email:", this.initialValue("email"), "final email:", this.value("email"));
-    if (this.props.onSubmit) {
-      this.props.onSubmit(this.getValues());
-    }
-
-    return false;
-  },
-  renderForm() {
-    const disableSubmit = this.hasErrors();
-    const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
-    const types = [
-      { id: 0, label: "Friend" },
-      { id: 1, label: "Acquaintance" }
-    ];
-    return (
-      <Form style={style}>
-        <ChooserGroup
-          attr="type"
-          width={150}
-          initialChoice={0}
-          initialChoiceList={types}
-          disableSearch={true}
-        />
-        <TextEditGroup attr="first_name" width={300} />
-        <TextEditGroup attr="last_name" width={300} />
-        <TextEditGroup attr="email" />
-        <DateEditGroup attr="birthdate" />
-        <hr />
-        <input
-          className="btn btn-default"
-          type="submit"
-          value="Submit"
-          disabled={disableSubmit}
-        />
-      </Form>
-    );
-  }
-});
-
 export default React.createClass({
-  mixins: [ Highlighter ],
+  mixins: [Highlighter],
   getInitialState() {
-    return { data: undefined, loaded: false };
+    return {
+      values: initialValues,
+      loaded: false,
+      editMode: FormEditStates.ALWAYS
+    };
   },
   componentDidMount() {
     //Simulate ASYNC state update (not required)
@@ -200,11 +153,17 @@ export default React.createClass({
       0
     );
   },
-  handleChange(a, b) {
-    console.log("Form changed", a, b);
+  handleChange(attr, values) {
+    this.setState({ values });
   },
-  handleSubmit(value) {
-    this.setState({ data: value });
+  handleErrorCountChange(attr, errors) {
+    console.log("Errors:", errors > 0);
+  },
+  handleSubmit(e) {
+    console.log("HANDLE SUBMIT", this.state.values);
+    this.setState({
+      editMode: FormEditStates.SELECTED
+    });
   },
   handleAlertDismiss() {
     this.setState({ data: undefined });
@@ -228,15 +187,61 @@ export default React.createClass({
     }
   },
   renderContactForm() {
+    //const disableSubmit = false;
+    //this.hasErrors();
+    const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
+    const types = [
+      { id: 0, label: "Friend" },
+      { id: 1, label: "Acquaintance" }
+    ];
+
+    let submit;
+    if (this.state.editMode === FormEditStates.ALWAYS) {
+      submit = (
+        <input
+          className="btn btn-primary"
+          type="submit"
+          value="Submit"
+          disabled={this.state.hasErrors || this.state.hasMissing}
+        />
+      );
+    } else {
+      submit = <div>Make changes to the form by clicking the pencil icons</div>;
+    }
+
     if (this.state.loaded) {
       return (
-        <ContactForm
-          attr="contact"
+        <Form
+          style={style}
           schema={schema}
-          values={values}
+          values={this.state.values}
+          edit={this.state.editMode}
+          labelWidth={200}
           onSubmit={this.handleSubmit}
           onChange={this.handleChange}
-        />
+          onMissingCountChange={(attr, missing) =>
+            this.setState({ hasMissing: missing > 0 })}
+          onErrorCountChange={(attr, errors) =>
+            this.setState({ hasErrors: errors > 0 })}
+        >
+          <Chooser
+            attr="type"
+            width={150}
+            choiceList={types}
+            disableSearch={true}
+          />
+          <TextEdit attr="first_name" width={300} />
+          <TextEdit attr="last_name" width={300} />
+          <TextEdit attr="email" width={400} />
+          <DateEdit attr="birthdate" width={100} />
+          <hr />
+          <div className="row">
+            <div className="col-md-3" />
+            <div className="col-md-9">
+              {submit}
+            </div>
+          </div>
+        </Form>
       );
     } else {
       return <div style={{ marginTop: 50 }}><b>Loading...</b></div>;
@@ -251,9 +256,23 @@ export default React.createClass({
             <div style={{ marginBottom: 20 }}>{description}</div>
           </div>
         </div>
+        <hr />
         <div className="row">
-          <div className="col-md-9">
+          <div className="col-md-8">
             {this.renderContactForm()}
+          </div>
+          <div className="col-md-4">
+            <b>STATE:</b>
+            <pre style={{ borderLeftColor: "steelblue" }}>
+              values = {" "}
+              {JSON.stringify(this.state.values, null, 3)}
+            </pre>
+            <pre style={{ borderLeftColor: "#b94a48" }}>
+              {`hasErrors: ${this.state.hasErrors}`}
+            </pre>
+            <pre style={{ borderLeftColor: "orange" }}>
+              {`hasMissing: ${this.state.hasMissing}`}
+            </pre>
           </div>
         </div>
         <div className="row">
@@ -264,14 +283,12 @@ export default React.createClass({
         <div className="row">
           <div className="col-md-12">
             <div
-              style={
-                {
-                  borderTopStyle: "solid",
-                  borderTopColor: "rgb(244, 244, 244)",
-                  paddingTop: 5,
-                  marginTop: 20
-                }
-              }
+              style={{
+                borderTopStyle: "solid",
+                borderTopColor: "rgb(244, 244, 244)",
+                paddingTop: 5,
+                marginTop: 20
+              }}
             >
               <Markdown source={text} />
             </div>
@@ -280,5 +297,4 @@ export default React.createClass({
       </div>
     );
   }
-})
-
+});

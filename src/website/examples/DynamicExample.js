@@ -11,16 +11,19 @@
 import React from "react";
 import _ from "underscore";
 import Markdown from "react-markdown";
-import {Alert} from "react-bootstrap";
+import { Alert } from "react-bootstrap";
+import merge from "merge";
 
-import Form from "../../../src/components/Form";
-import FormMixin from "../../../src/components/FormMixin";
-import FormErrors from "../../../src/components/FormErrors";
-import TextEditGroup from "../../../src/components/TextEditGroup";
-import TextAreaGroup from "../../../src/components/TextAreaGroup";
-import ChooserGroup from "../../../src/components/ChooserGroup";
-import Schema from "../../../src/components/Schema";
-import Attr from "../../../src/components/Attr";
+import Form from "../../forms/components/Form";
+import Schema from "../../forms/components/Schema";
+import Attr from "../../forms/components/Attr";
+
+import TextEdit from "../../forms/components/TextEdit";
+import TextArea from "../../forms/components/TextArea";
+import Chooser from "../../forms/components/Chooser";
+
+import { FormEditStates } from "../../forms/constants";
+
 import Highlighter from "../Highlighter";
 
 const description = `
@@ -54,21 +57,21 @@ choice list.
 
     return (
         <Form style={formStyle}>
-            <ChooserGroup attr="bookmarked" width={300} initialChoiceList={bookmarks}/>
+            <Chooser attr="bookmarked" width={300} initialChoiceList={bookmarks}/>
                 <hr />
-            <TextEditGroup attr="name" width={300} />
-            <TextAreaGroup attr="description" />
+            <TextEdit attr="name" width={300} />
+            <TextArea attr="description" />
                 <hr />
-            <ChooserGroup attr="type" width={200} initialChoice={this.value("type")}
+            <Chooser attr="type" width={200} initialChoice={this.value("type")}
                           initialChoiceList={endpointTypes} disableSearch={true} />
-            <TextEditGroup attr="device_name" />
-            <TextEditGroup attr="interface" />
-            <TextEditGroup attr="foreign_description" />
-            <TextEditGroup attr="organization" />
-            <TextEditGroup attr="panel_name" />
-            <TextEditGroup attr="port_id" />
-            <TextEditGroup attr="port_side" />
-            <TextEditGroup attr="port_location" />
+            <TextEdit attr="device_name" />
+            <TextEdit attr="interface" />
+            <TextEdit attr="foreign_description" />
+            <TextEdit attr="organization" />
+            <TextEdit attr="panel_name" />
+            <TextEdit attr="port_id" />
+            <TextEdit attr="port_side" />
+            <TextEdit attr="port_location" />
                 <hr />
             <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
         </Form>
@@ -181,49 +184,93 @@ want to show.
 
 const schema = (
     <Schema>
-        <Attr name="bookmarked" label=""  tags={["all"]} />
-        <Attr name="name" label="Name"  tags={["all"]} required={true} />
-        <Attr name="description" label="Description"  tags={["all"]} required={true} />
-        <Attr name="type" label="Type"  tags={["all"]} required={true} />
-        <Attr name="device_name" label="Device name"  tags={["Equipment Port"]} required={true} />
-        <Attr name="interface" label="Interface" tags={["Equipment Port"]} required={true} />
-        <Attr name="foreign_description" label="Foreign description" tags={["Foreign"]} required={true} />
-        <Attr name="organization" label="Organization" tags={["Foreign"]} required={true} />
-        <Attr name="panel_name" label="Panel name" tags={["Patch Panel"]} required={true}  />
-        <Attr name="port_id" label="Port Id" tags={["Patch Panel"]} required={true} />
-        <Attr name="port_side" label="Port side" tags={["Patch Panel"]} required={true} />
-        <Attr name="port_location" label="Port location" tags={["Patch Panel"]} required={true} />
+        <Attr name="bookmarked" label="" tags={["all"]} required={true} />
+        <Attr name="name" label="Name" tags={["all"]} required={true} />
+        <Attr
+            name="description"
+            label="Description"
+            tags={["all"]}
+            required={true}
+        />
+        <Attr name="type" label="Type" tags={["all"]} required={true} />
+        <Attr
+            name="device_name"
+            label="Device name"
+            tags={["Equipment Port"]}
+            required={true}
+        />
+        <Attr
+            name="interface"
+            label="Interface"
+            tags={["Equipment Port"]}
+            required={true}
+        />
+        <Attr
+            name="foreign_description"
+            label="Foreign description"
+            tags={["Foreign"]}
+            required={true}
+        />
+        <Attr
+            name="organization"
+            label="Organization"
+            tags={["Foreign"]}
+            required={true}
+        />
+        <Attr
+            name="panel_name"
+            label="Panel name"
+            tags={["Patch Panel"]}
+            required={true}
+        />
+        <Attr
+            name="port_id"
+            label="Port Id"
+            tags={["Patch Panel"]}
+            required={true}
+        />
+        <Attr
+            name="port_side"
+            label="Port side"
+            tags={["Patch Panel"]}
+            required={true}
+        />
+        <Attr
+            name="port_location"
+            label="Port location"
+            tags={["Patch Panel"]}
+            required={true}
+        />
     </Schema>
 );
 
-// Data
-const values = {
-    type: 2
-};
+// Database
+
 const endpointTypes = [
-    {id: 1, label: "Patch Panel"},
-    {id: 2, label: "Equipment Port"},
-    {id: 3, label: "Foreign"}
+    { id: "type-id-1", label: "Patch Panel" },
+    { id: "type-id-2", label: "Equipment Port" },
+    { id: "type-id-3", label: "Foreign" }
 ];
+
 const bookmarked = {
-    1: {
+    "id-1": {
         name: "EQX-ASH-RT1:ge-0/0/2",
         description: "An equipment endpoint",
-        type: 2,
+        type: "type-id-2",
         device_name: "EQX-ASH-RT1",
         interface: "ge-0/0/2"
     },
-    2: {
+    "id-2": {
         name: "TELIANET:telianet-eqx-ash:Peer",
         description: "A foreign endpoint",
-        type: 3,
+        type: "type-id-3",
         foreign_description: "",
         organization: "TeliaNet"
     },
-    3: {
+    "id-3": {
         name: "PPx1322:1254",
         description: "A patch panel endpoint",
-        type: 1,
+        type: "type-id-1",
         panel_name: "PPx1322",
         port_id: "1254",
         port_side: "BACK",
@@ -231,263 +278,186 @@ const bookmarked = {
     }
 };
 
-/**
- * Edit a contact
- */
-const EndpointForm = React.createClass({
+// Initial values
+const initialValues = {
+    bookmarked: "id-3",
+    ...bookmarked["id-3"]
+};
 
-    mixins: [FormMixin],
-
-    displayName: "EndpointForm",
-
-    getInitialVisibility() {
-        const currentObj = _.findWhere(endpointTypes, {
-            id: this.props.values["type"]
-        });
-        return currentObj.label;
-    },
-
-    willHandleChange(attrName, value) {
-        switch (attrName) {
-            case "bookmarked":
-                if (value) {
-                    // bookmarked pulldown was changed so transfer existing
-                    // endpoint values onto the form using setValues()
-                    const endpoint = bookmarked[value];
-                    this.setValues({
-                        name: endpoint.name,
-                        description: endpoint.description,
-                        type: endpoint.type,
-                        device_name: endpoint.device_name,
-                        interface: endpoint.interface,
-                        foreign_description: endpoint.foreign_description,
-                        organization: endpoint.organization,
-                        panel_name: endpoint.panel_name,
-                        port_id: endpoint.port_id,
-                        port_side: endpoint.port_side,
-                        port_location: endpoint.port_location
-                    });
-                }
-                break;
-            case "type":
-                // The endpoint type changed, which changes fields visible,
-                // so set this with setVisibility() using the type as a filter.
-                const obj = _.findWhere(endpointTypes, {
-                    id: parseInt(value, 10)
-                });
-                this.setVisibility(obj.label);
-                break;
-            default:
-                // pass
-        }
-    },
-   
-    /**
-     * Save the form
-     */
-    handleSubmit(e) {
-        e.preventDefault();
-
-        if (this.hasMissing()) {
-            this.showRequiredOn();
-            return;
-        }
-
-        if (this.props.onSubmit) {
-            this.props.onSubmit(this.getValues());
-        }
-        return false;
-    },
-
-    renderForm() {
-        const disableSubmit = this.hasErrors();
-        const style = {
-            background: "#FAFAFA",
-            padding: 10,
-            borderRadius: 5
-        };
-        const bookmarks = _.map(bookmarked, (bookmark, id) => ({
-            id,
-            label: bookmark.name
-        }));
-
-        return (
-            <Form style={style}>
-
-                <h5>Bookmarked endpoints</h5>
-
-                <ChooserGroup attr="bookmarked" width={300} disableSearch={false}
-                              initialChoice={this.value("bookmarked")} initialChoiceList={bookmarks}/>
-
-                <hr />
-
-                <h5>General information</h5>
-
-                <TextEditGroup attr="name" width={300} />
-                <TextAreaGroup attr="description" />
-
-                <hr />
-
-                <h5>Endpoint type</h5>
-
-                <ChooserGroup attr="type" width={200} disableSearch={true}
-                              initialChoice={this.value("type")}
-                              initialChoiceList={endpointTypes} />
-                <TextEditGroup attr="device_name" />
-                <TextEditGroup attr="interface" hidden={true}/>
-                <TextEditGroup attr="foreign_description" />
-                <TextEditGroup attr="organization" />
-                <TextEditGroup attr="panel_name" />
-                <TextEditGroup attr="port_id" />
-                <TextEditGroup attr="port_side" />
-                <TextEditGroup attr="port_location" />
-
-                <hr />
-
-                <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
-
-            </Form>
-        );
-    }
-});
+console.log("initialValues", initialValues);
 
 export default React.createClass({
-
     mixins: [Highlighter],
-
     getInitialState() {
-        return {
-            data:  undefined,
-            loaded: false,
-            missingCount: 0,
-            errorCount: 0
-        };
+        return { values: initialValues, visibility: "all", loaded: false };
     },
-
     componentDidMount() {
         //Simulate ASYNC state update (not necessary)
-        setTimeout(() => {
-            this.setState({
-                loaded: true
-            });
-        }, 0);
+        setTimeout(
+            () => {
+                this.setState({ loaded: true });
+            },
+            0
+        );
     },
-
-    formValues() {
-        if (this.refs.form) {
-            return this.refs.form.getValues();
+    handleChange(attr, values) {
+        // If the bookmark changes then merge in the attr
+        // values associated with that bookmark
+        if (values.bookmarked !== this.state.values.bookmarked) {
+            const endpoint = bookmarked[values.bookmarked];
+            const newValues = merge(true, values, endpoint);
+            this.setState({ values: newValues });
         } else {
-            return {};
+            this.setState({ values });
         }
     },
-
-    hasMissing() {
-        return this.state.missingCount > 0;
+    handleErrorCountChange(attr, errors) {
+        console.log("Errors:", errors > 0);
     },
-
-    canSubmit() {
-        return this.state.errorCount === 0;
-    },
-
-    showRequired(b) {
-        const on = b || true;
-        this.setState({showRequired: on});
-    },
-
     handleSubmit() {
-        const values = this.formValues();
-        if (this.hasMissing()) {
-            this.showRequired();
-            return;
-        }
-
-        this.setState({data: values});
+        console.log("HANDLE SUBMIT", this.state.values);
     },
-
-    handleAlertDismiss() {
-        this.setState({data: undefined});
-    },
-
-    handleMissingCountChange(attr, count) {
-        this.setState({missingCount: count});
-    },
-
-    handleErrorCountChange(attr, count) {
-        this.setState({errorCount: count});
-    },
-
     renderAlert() {
         if (this.state && this.state.data) {
             const firstName = this.state.data["first_name"];
             const lastName = this.state.data["last_name"];
             return (
-                <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{margin: 5}}>
-                    <strong>Success!</strong> {firstName} {lastName} was submitted.
+                <Alert
+                    bsStyle="success"
+                    onDismiss={this.handleAlertDismiss}
+                    style={{ margin: 5 }}
+                >
+                    <strong>Success!</strong>
+                    {" "}
+                    {firstName}
+                    {" "}
+                    {lastName}
+                    {" "}was submitted.
                 </Alert>
             );
         } else {
             return null;
         }
     },
+    renderForm() {
+        const { values } = this.state;
+        const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
-    renderEndpointForm() {
+        // Bookmark list for chooser
+        const bookmarkList = _.map(bookmarked, (bookmark, id) => ({
+            id,
+            label: bookmark.name
+        }));
+
+        // Visibility tag
+        console.log("XXX", values.type);
+        const object = _.findWhere(endpointTypes, {
+            id: values.type
+        });
+        const visiblityTag = object.label;
+
         if (this.state.loaded) {
             return (
-                <EndpointForm ref="form"
-                              attr="endpoint"
-                              schema={schema}
-                              values={values}
-                              showRequired={this.state.showRequired}
-                              onMissingCountChange={this.handleMissingCountChange}
-                              onErrorCountChange={this.handleErrorCountChange}
-                              onSubmit={this.handleSubmit}/>
+                <Form
+                    style={style}
+                    schema={schema}
+                    values={values}
+                    edit={FormEditStates.SELECTED}
+                    visible={visiblityTag}
+                    onSubmit={this.handleSubmit}
+                    onChange={this.handleChange}
+                    onMissingCountChange={(attr, missing) =>
+                        this.setState({ hasMissing: missing > 0 })}
+                    onErrorCountChange={(attr, errors) =>
+                        this.setState({ hasErrors: errors > 0 })}
+                >
+                    <h5>Bookmarked endpoints</h5>
+                    <Chooser
+                        attr="bookmarked"
+                        width={300}
+                        disableSearch={false}
+                        choiceList={bookmarkList}
+                    />
+                    <hr />
+                    <h5>General information</h5>
+                    <TextEdit attr="name" width={300} />
+                    <TextArea attr="description" />
+                    <hr />
+                    <h5>Endpoint type</h5>
+                    <Chooser
+                        attr="type"
+                        width={200}
+                        disableSearch={true}
+                        choiceList={endpointTypes}
+                    />
+                    <TextEdit attr="device_name" />
+                    <TextEdit attr="interface" hidden={true} />
+                    <TextEdit attr="foreign_description" />
+                    <TextEdit attr="organization" />
+                    <TextEdit attr="panel_name" />
+                    <TextEdit attr="port_id" />
+                    <TextEdit attr="port_side" />
+                    <TextEdit attr="port_location" />
+                    <hr />
+                    <input
+                        className="btn btn-default"
+                        type="submit"
+                        value="Submit"
+                        disabled={this.state.hasErrors || this.state.hasMissing}
+                    />
+                </Form>
             );
         } else {
-            return (
-                <div style={{marginTop: 50}}><b>Loading...</b></div>
-            );
+            return <div style={{ marginTop: 50 }}><b>Loading...</b></div>;
         }
     },
-
     render() {
         return (
             <div>
                 <div className="row">
                     <div className="col-md-12">
                         <h3>Dynamic endpoint form</h3>
-                        <div style={{marginBottom: 20}}>{description}</div>
+                        <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>
-
+                <hr />
                 <div className="row">
-                    <div className="col-md-9">
-                        {this.renderEndpointForm()}
+                    <div className="col-md-8">
+                        {this.renderForm()}
                     </div>
-                    <div className="col-md-3">
-                        Errors:
-                        <FormErrors showRequired={this.state.showRequired}
-                                    missingCount={this.state.missingCount}
-                                    numErrors={this.state.errorCount} />
+                    <div className="col-md-4">
+                        <b>STATE:</b>
+                        <pre style={{ borderLeftColor: "steelblue" }}>
+                            values = {" "}
+                            {JSON.stringify(this.state.values, null, 3)}
+                        </pre>
+                        <pre style={{ borderLeftColor: "#b94a48" }}>
+                            {`hasErrors: ${this.state.hasErrors}`}
+                        </pre>
+                        <pre style={{ borderLeftColor: "orange" }}>
+                            {`hasMissing: ${this.state.hasMissing}`}
+                        </pre>
                     </div>
                 </div>
-
                 <div className="row">
                     <div className="col-md-9">
                         {this.renderAlert()}
                     </div>
                 </div>
-
                 <div className="row">
                     <div className="col-md-12">
-                        <div style={{borderTopStyle: "solid",
-                                    borderTopColor: "rgb(244, 244, 244)",
-                                    paddingTop: 5,
-                                    marginTop: 20}}>
-                            <Markdown source={text}/>
+                        <div
+                            style={{
+                                borderTopStyle: "solid",
+                                borderTopColor: "rgb(244, 244, 244)",
+                                paddingTop: 5,
+                                marginTop: 20
+                            }}
+                        >
+                            <Markdown source={text} />
                         </div>
                     </div>
                 </div>
-
             </div>
         );
     }

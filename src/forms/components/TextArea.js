@@ -13,37 +13,38 @@ import { validate } from "revalidator";
 import _ from "underscore";
 import hash from "string-hash";
 
-import "./textarea.css";
+import formGroup from "../formGroup";
+import "./css/textarea.css";
 
 /**
  * Form control to edit a Text Area field
  */
-export default React.createClass({
-  displayName: "TextArea",
-  getDefaultProps() {
-    return { width: "100%", rows: 4 };
-  },
-  getInitialState() {
-    return {
-      initialValue: this.props.initialValue,
-      value: this.props.initialValue,
+class TextArea extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      rows: 4,
+      value: this.props.value,
       error: null,
       errorMsg: "",
       missing: false
     };
-  },
-  _isEmpty(value) {
+  }
+
+  isEmpty(value) {
     return _.isNull(value) || _.isUndefined(value) || value === "";
-  },
-  _isMissing(v) {
-    return this.props.required && !this.props.disabled && this._isEmpty(v);
-  },
-  _getError(value) {
+  }
+
+  isMissing(v) {
+    return this.props.required && !this.props.disabled && this.isEmpty(v);
+  }
+
+  getError(value) {
     let result = { validationError: false, validationErrorMessage: null };
 
     // If the user has a field blank then that is never an error
     // Likewise if this item is disabled it can't be called an error
-    if (this._isEmpty(value) || this.props.disabled) {
+    if (this.isEmpty(value) || this.props.disabled) {
       return result;
     }
 
@@ -65,16 +66,14 @@ export default React.createClass({
       }
     }
     return result;
-  },
-  componentWillReceiveProps(nextProps) {
-    if (this.state.initialValue !== nextProps.initialValue) {
-      this.setState({
-        initialValue: nextProps.initialValue,
-        value: nextProps.initialValue
-      });
+  }
 
-      const missing = this._isMissing(nextProps.initialValue);
-      const error = this._getError(nextProps.initialValue);
+  componentWillReceiveProps(nextProps) {
+    if (this.state.value !== nextProps.value) {
+      this.setState({ value: nextProps.value });
+
+      const missing = this.isMissing(nextProps.value);
+      const error = this.getError(nextProps.value);
 
       // Callbacks
       if (this.props.onErrorCountChange) {
@@ -88,16 +87,18 @@ export default React.createClass({
         this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
       }
     }
-  },
+  }
+
   componentDidMount() {
-    const missing = this._isMissing(this.props.initialValue);
-    const error = this._getError(this.props.initialValue);
+    const missing = this.isMissing(this.props.value);
+    const error = this.getError(this.props.value);
+    const value = this.props.value;
 
     this.setState({
-      value: this.props.initialValue,
+      value,
+      missing,
       error: error.validationError,
-      errorMsg: error.validationErrorMessage,
-      missing
+      errorMsg: error.validationErrorMessage
     });
 
     if (this.props.onErrorCountChange) {
@@ -110,11 +111,12 @@ export default React.createClass({
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
     }
-  },
+  }
+
   onBlur(e) {
     const value = this.refs.input.value;
-    const missing = this.props.required && this._isEmpty(value);
-    const error = this._getError(value);
+    const missing = this.props.required && this.isEmpty(value);
+    const error = this.getError(value);
 
     // State changes
     this.setState({
@@ -137,52 +139,85 @@ export default React.createClass({
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
     }
-  },
+  }
+
   onFocus() {
     this.setState({ error: false, errorMsg: "" });
-  },
-  render() {
-    let msg = "";
-    let className = "";
-
-    const w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
-    const textAreaStyle = { width: w };
-
-    const requiredError = this.props.showRequired &&
-      this._isMissing(this.state.value);
-    if (this.state.error || requiredError) {
-      className = "has-error";
-    }
-
-    if (this.state.error) {
-      msg = this.state.errorMsg;
-    }
-
-    let helpClassName = "help-block";
-    if (this.state.error) {
-      helpClassName += " has-error";
-    }
-
-    const key = hash(this.state.initialValue || "");
-
-    return (
-      <div className={className}>
-        <textarea
-          style={textAreaStyle}
-          className="form-control"
-          type="text"
-          ref="input"
-          key={key}
-          disabled={this.props.disabled}
-          placeholder={this.props.placeholder}
-          defaultValue={this.state.value}
-          rows={this.props.rows}
-          onBlur={this.onBlur}
-          onFocus={this.onFocus}
-        />
-        <div className={helpClassName}>{msg}</div>
-      </div>
-    );
   }
-})
 
+  inlineStyle(hasError, isMissing) {
+    let color = "inherited";
+    let background = "inherited";
+    let borderLeftStyle = "inherited";
+    let borderLeftColor = "inherited";
+    let borderLeftWidth = 2;
+    if (this.state.error) {
+      color = "#b94a48";
+      background = "#fff0f3";
+      borderLeftStyle = "solid";
+      borderLeftColor = "#b94a48";
+    } else if (isMissing) {
+      background = "floralwhite";
+      borderLeftStyle = "solid";
+      borderLeftColor = "orange";
+    }
+    return {
+      color,
+      background,
+      borderLeftStyle,
+      borderLeftColor,
+      borderLeftWidth,
+      height: 23,
+      width: "100%",
+      paddingLeft: 3
+    };
+  }
+
+  render() {
+    if (this.props.edit) {
+      // Error text
+      const msg = this.state.error ? this.state.errorMsg : "";
+      let helpClassName = "help-block";
+      if (this.state.error) {
+        helpClassName += " has-error";
+      }
+
+      // Warning style
+      const style = this.isMissing(this.state.value)
+        ? { background: "floralwhite" }
+        : {};
+
+      const key = hash(this.state.value || "");
+
+      return (
+        <div>
+          <textarea
+            className="form-control"
+            style={style}
+            type="text"
+            ref="input"
+            key={key}
+            disabled={this.props.disabled}
+            placeholder={this.props.placeholder}
+            defaultValue={this.state.value}
+            rows={this.props.rows}
+            onBlur={() => this.onBlur}
+            onFocus={() => this.onFocus}
+          />
+          <div className={helpClassName}>{msg}</div>
+        </div>
+      );
+    } else {
+      const isMissing = this.isMissing(this.state.value);
+      const hasError = this.state.error;
+      let text = this.props.value;
+      if (isMissing) {
+        text = " ";
+      }
+      const style = { height: 100, ...this.inlineStyle(hasError, isMissing) };
+      return <div style={style}>{text}</div>;
+    }
+  }
+}
+
+export default formGroup(TextArea);

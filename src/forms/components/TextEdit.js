@@ -13,52 +13,53 @@ import { validate } from "revalidator";
 import _ from "underscore";
 import hash from "string-hash";
 
-require("./textedit.css");
+import formGroup from "../formGroup";
+import "./css/textedit.css";
 
 /**
  * Form control to edit a text field.
  * Set the initial value with 'initialValue' and set a callback for
  * value changed with 'onChange'.
  */
-export default React.createClass({
-  displayName: "TextEdit",
-  getDefaultProps() {
-    return { width: "100%" };
-  },
-  getInitialState() {
-    return {
-      initialValue: this.props.initialValue,
-      value: this.props.initialValue,
+class TextEdit extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: props.value,
       error: null,
       errorMsg: "",
       missing: false,
       type: "text"
     };
-  },
-  _isEmpty(value) {
+  }
+
+  isEmpty(value) {
     return _.isNull(value) || _.isUndefined(value) || value === "";
-  },
-  _isMissing(v) {
-    return this.props.required && !this.props.disabled && this._isEmpty(v);
-  },
-  _getError(value) {
+  }
+
+  isMissing(v) {
+    return this.props.required && !this.props.disabled && this.isEmpty(v);
+  }
+
+  getError(value) {
     const result = { validationError: false, validationErrorMessage: null };
 
     // If the user has a field blank then that is never an error. Likewise if the field
     // is disabled then that is never an error.
-    if (this._isEmpty(value) || this.props.disabled) {
+    if (this.isEmpty(value) || this.props.disabled) {
       return result;
     }
+
+    console.log("** validate rules", this.props.rules, this.props.validation);
 
     // Validate the value with Revalidator, given the rules in this.props.rules
     let obj = {};
     obj[this.props.attr] = value;
 
     let attrValuePair = {};
-    attrValuePair[this.props.attr] = this.props.rules;
+    attrValuePair[this.props.attr] = this.props.validation;
 
-    const rules = this.props.rules ? { properties: attrValuePair } : null;
-
+    const rules = this.props.validation ? { properties: attrValuePair } : null;
     if (obj && rules) {
       const validation = validate(obj, rules, { cast: true });
       const name = this.props.name || "Value";
@@ -71,16 +72,17 @@ export default React.createClass({
       }
     }
     return result;
-  },
-  componentWillReceiveProps(nextProps) {
-    if (this.state.initialValue !== nextProps.initialValue) {
-      this.setState({
-        initialValue: nextProps.initialValue,
-        value: nextProps.initialValue
-      });
+  }
 
-      const missing = this._isMissing(nextProps.initialValue);
-      const error = this._getError(nextProps.initialValue);
+  componentWillReceiveProps(nextProps) {
+    if (this.state.value !== nextProps.value) {
+      console.log(" textedit next state", this.state.value, nextProps.value);
+      this.setState({ value: nextProps.value });
+
+      const missing = this.isMissing(nextProps.value);
+      const error = this.getError(nextProps.value);
+
+      console.log("**", nextProps.value, missing, error);
 
       // Re-broadcast error and missing states up to the owner
       if (this.props.onErrorCountChange) {
@@ -94,11 +96,12 @@ export default React.createClass({
         this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
       }
     }
-  },
+  }
+
   componentDidMount() {
-    const missing = this._isMissing(this.props.initialValue);
-    const error = this._getError(this.props.initialValue);
-    const value = this.props.initialValue;
+    const missing = this.isMissing(this.props.value);
+    const error = this.getError(this.props.value);
+    const value = this.props.value;
 
     this.setState({
       value,
@@ -118,11 +121,14 @@ export default React.createClass({
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
     }
-  },
+  }
+
   onBlur() {
     const value = this.refs.input.value;
-    const missing = this.props.required && this._isEmpty(value);
-    const error = this._getError(value);
+    const missing = this.props.required && this.isEmpty(value);
+    const error = this.getError(value);
+
+    console.log("onBlur", value);
 
     let cast = value;
 
@@ -159,51 +165,85 @@ export default React.createClass({
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
     }
-  },
+  }
+
   onFocus() {
     this.setState({ error: false, errorMsg: "" });
-  },
-  render() {
-    let msg = "";
-    const w = _.isUndefined(this.props.width) ? "100%" : this.props.width;
-    const style = { width: w };
-
-    let className = "";
-    const requiredError = this.props.showRequired &&
-      this._isMissing(this.state.value);
-    if (this.state.error || requiredError) {
-      className = "has-error";
-    }
-
-    if (this.state.error) {
-      msg = this.state.errorMsg;
-    }
-
-    let helpClassName = "help-block";
-    if (this.state.error) {
-      helpClassName += " has-error";
-    }
-
-    const key = hash(this.state.initialValue || "");
-
-    return (
-      <div className={className}>
-        <input
-          required
-          key={key}
-          style={style}
-          className="form-control input-sm"
-          type={this.props.type}
-          ref="input"
-          disabled={this.props.disabled}
-          placeholder={this.props.placeholder}
-          defaultValue={this.state.value}
-          onBlur={this.onBlur}
-          onFocus={this.onFocus}
-        />
-        <div className={helpClassName}>{msg}</div>
-      </div>
-    );
   }
-});
 
+  inlineStyle(hasError, isMissing) {
+    let color = "inherited";
+    let background = "inherited";
+    let borderLeftStyle = "inherited";
+    let borderLeftColor = "inherited";
+    let borderLeftWidth = 2;
+    if (this.state.error) {
+      color = "#b94a48";
+      background = "#fff0f3";
+      borderLeftStyle = "solid";
+      borderLeftColor = "#b94a48";
+    } else if (isMissing) {
+      background = "floralwhite";
+      borderLeftStyle = "solid";
+      borderLeftColor = "orange";
+    }
+    return {
+      color,
+      background,
+      borderLeftStyle,
+      borderLeftColor,
+      borderLeftWidth,
+      height: 23,
+      width: "100%",
+      paddingLeft: 3
+    };
+  }
+
+  render() {
+    if (this.props.edit) {
+      // Error text
+      const msg = this.state.error ? this.state.errorMsg : "";
+      let helpClassName = "help-block";
+      if (this.state.error) {
+        helpClassName += " has-error";
+      }
+
+      // Warning style
+      const style = this.isMissing(this.state.value)
+        ? { background: "floralwhite" }
+        : {};
+
+      const key = hash(this.props.value || "");
+
+      return (
+        <div>
+          <input
+            required
+            key={key}
+            className="form-control input-sm"
+            style={style}
+            type={this.props.type}
+            ref="input"
+            disabled={this.props.disabled}
+            placeholder={this.props.placeholder}
+            defaultValue={this.props.value}
+            onBlur={() => this.onBlur()}
+            onFocus={() => this.onFocus()}
+          />
+          <div className={helpClassName}>{msg}</div>
+        </div>
+      );
+    } else {
+      const isMissing = this.isMissing(this.state.value);
+      const hasError = this.state.error;
+      let text = this.props.value;
+      if (isMissing) {
+        text = " ";
+      }
+      const style = this.inlineStyle(hasError, isMissing);
+      return <div style={style}>{text}</div>;
+    }
+  }
+}
+
+export default formGroup(TextEdit);

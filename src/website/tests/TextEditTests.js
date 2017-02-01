@@ -11,14 +11,14 @@
 import React from "react";
 import {
   TestBasic,
-  TextEditDisabled,
-  TextEditPlaceholder,
-  TextEditPassword,
-  TextEditRequired1,
-  TextEditRequired2,
-  TextEditRequired3,
-  TextEditValidate,
-  TextEditValidateInt
+// TextEditDisabled,
+// TextEditPlaceholder,
+// TextEditPassword,
+// TextEditRequired1,
+// TextEditRequired2,
+// TextEditRequired3,
+// TextEditValidate,
+// TextEditValidateInt
 } from "../../components_test/TextEditExamples";
 
 export default React.createClass({
@@ -30,6 +30,8 @@ export default React.createClass({
             <h3>TextEdit Tests</h3>
             TextEdit initial value
             <TestBasic />
+            {
+              /*}
             Diabled TextEdit
             <TextEditDisabled />
             With a placeholder
@@ -45,11 +47,11 @@ export default React.createClass({
             Validated field (email address)
             <TextEditValidate />
             Validated field (integer)
-            <TextEditValidateInt />
+            <TextEditValidateInt /> */
+            }
           </div>
         </div>
       </div>
     );
   }
 });
-
