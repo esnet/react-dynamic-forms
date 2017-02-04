@@ -50,12 +50,11 @@ class TextArea extends React.Component {
 
     // Validate the value with Revalidator, given the rules in this.props.rules
     let obj = {};
-    obj[this.props.attr] = value;
+    obj[this.props.name] = value;
 
-    let attrValuePair = {};
-    attrValuePair[this.props.attr] = this.props.rules;
-
-    const rules = this.props.rules ? { properties: attrValuePair } : null;
+    let properties = {};
+    properties[this.props.name] = this.props.rules;
+    const rules = this.props.rules ? { properties } : null;
     if (obj && rules) {
       const validation = validate(obj, rules, { cast: true });
       if (!validation.valid) {
@@ -78,13 +77,13 @@ class TextArea extends React.Component {
       // Callbacks
       if (this.props.onErrorCountChange) {
         this.props.onErrorCountChange(
-          this.props.attr,
+          this.props.name,
           error.validationError ? 1 : 0
         );
       }
 
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+        this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
       }
     }
   }
@@ -103,13 +102,13 @@ class TextArea extends React.Component {
 
     if (this.props.onErrorCountChange) {
       this.props.onErrorCountChange(
-        this.props.attr,
+        this.props.name,
         error.validationError ? 1 : 0
       );
     }
 
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 
@@ -128,16 +127,16 @@ class TextArea extends React.Component {
 
     // Callbacks
     if (this.props.onChange) {
-      this.props.onChange(this.props.attr, e.target.value);
+      this.props.onChange(this.props.name, e.target.value);
     }
     if (this.props.onErrorCountChange) {
       this.props.onErrorCountChange(
-        this.props.attr,
+        this.props.name,
         error.validationError ? 1 : 0
       );
     }
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 

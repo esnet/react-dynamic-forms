@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -12,16 +12,18 @@ import React from "react";
 import invariant from "invariant";
 
 /**
- * An `Attr` is a part of the JSX definition of a `Schema`. Each `Attr` describes
+ * A `Field` is a part of the JSX definition of a `Schema`. Each `Field` describes
  * the rules and meta data associated with a field on the `Form`.
  *
- * For example, here is an `Attr` which defines a field that takes the users
- * email address:
+ * For example, here is an `Field` which will input the users email address, defining
+ * a user friendly label "Email", a placeholder and a validation rule that expects
+ * the field to be a valid email address. The field is also required to be filled in.
  *
  * ```
  *   <Schema>
  *     ...
- *     <Attr
+ *     <Field
+ *         required
  *         name="email"
  *         label="Email"
  *         placeholder="Enter valid email address"
@@ -39,7 +41,7 @@ import invariant from "invariant";
  * for the validation property.
  *
  */
-export default class Attr extends React.Component {
+export default class Field extends React.Component {
     render() {
         invariant(
             false,

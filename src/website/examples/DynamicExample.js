@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -12,16 +12,14 @@ import React from "react";
 import _ from "underscore";
 import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
-import merge from "merge";
+import Immutable from "immutable";
 
 import Form from "../../forms/components/Form";
 import Schema from "../../forms/components/Schema";
-import Attr from "../../forms/components/Attr";
-
+import Field from "../../forms/components/Field";
 import TextEdit from "../../forms/components/TextEdit";
 import TextArea from "../../forms/components/TextArea";
 import Chooser from "../../forms/components/Chooser";
-
 import { FormEditStates } from "../../forms/constants";
 
 import Highlighter from "../Highlighter";
@@ -38,7 +36,7 @@ const text = `
 ### Dynamic form example
 
 The forms library allows you to create forms that dynamically change
-depending on other filled out attrs. An example of this is a form which
+depending on other filled out fields. An example of this is a form which
 has a type field and that field controls several other fields that only
 apply to that type. In this case we want to:
 
@@ -57,21 +55,21 @@ choice list.
 
     return (
         <Form style={formStyle}>
-            <Chooser attr="bookmarked" width={300} initialChoiceList={bookmarks}/>
+            <Chooser field="bookmarked" width={300} initialChoiceList={bookmarks}/>
                 <hr />
-            <TextEdit attr="name" width={300} />
-            <TextArea attr="description" />
+            <TextEdit field="name" width={300} />
+            <TextArea field="description" />
                 <hr />
-            <Chooser attr="type" width={200} initialChoice={this.value("type")}
+            <Chooser field="type" width={200} initialChoice={this.value("type")}
                           initialChoiceList={endpointTypes} disableSearch={true} />
-            <TextEdit attr="device_name" />
-            <TextEdit attr="interface" />
-            <TextEdit attr="foreign_description" />
-            <TextEdit attr="organization" />
-            <TextEdit attr="panel_name" />
-            <TextEdit attr="port_id" />
-            <TextEdit attr="port_side" />
-            <TextEdit attr="port_location" />
+            <TextEdit field="device_name" />
+            <TextEdit field="interface" />
+            <TextEdit field="foreign_description" />
+            <TextEdit field="organization" />
+            <TextEdit field="panel_name" />
+            <TextEdit field="port_id" />
+            <TextEdit field="port_side" />
+            <TextEdit field="port_location" />
                 <hr />
             <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
         </Form>
@@ -86,156 +84,155 @@ not, rather than setting each one. The schema for our example looks like
 this
 
     <Schema>
-        <Attr name="bookmarked" label=""  tags={["all"]} />
-        <Attr name="name" label="Name"  tags={["all"]} required={true} />
-        <Attr name="description" label="Description"  tags={["all"]} required={true} />
-        <Attr name="type" label="Type"  tags={["all"]} required={true} />
-        <Attr name="device_name" label="Device name"  tags={["Equipment Port"]} required={true} />
-        <Attr name="interface" label="Interface" tags={["Equipment Port"]} required={true} />
-        <Attr name="foreign_description" label="Foreign description" tags={["Foreign"]} required={true} />
-        <Attr name="organization" label="Organization" tags={["Foreign"]} required={true} />
-        <Attr name="panel_name" label="Panel name" tags={["Patch Panel"]} required={true}  />
-        <Attr name="port_id" label="Port Id" tags={["Patch Panel"]} required={true} />
-        <Attr name="port_side" label="Port side" tags={["Patch Panel"]} required={true} />
-        <Attr name="port_location" label="Port location" tags={["Patch Panel"]} required={true} />
+        <Field name="bookmarked" label=""  tags={["all"]} />
+        <Field name="name" label="Name"  tags={["all"]} required={true} />
+        <Field name="description" label="Description"  tags={["all"]} required={true} />
+        <Field name="type" label="Type"  tags={["all"]} required={true} />
+        <Field name="device_name" label="Device name"  tags={["Equipment Port"]} required={true} />
+        <Field name="interface" label="Interface" tags={["Equipment Port"]} required={true} />
+        <Field name="foreign_description" label="Foreign description" tags={["Foreign"]} required={true} />
+        <Field name="organization" label="Organization" tags={["Foreign"]} required={true} />
+        <Field name="panel_name" label="Panel name" tags={["Patch Panel"]} required={true}  />
+        <Field name="port_id" label="Port Id" tags={["Patch Panel"]} required={true} />
+        <Field name="port_side" label="Port side" tags={["Patch Panel"]} required={true} />
+        <Field name="port_location" label="Port location" tags={["Patch Panel"]} required={true} />
     </Schema>
 
-You can see that for each attr we've defined a tags prop. This is a list
+You can see that for each Field we've defined a tags prop. This is a list
 of visibility tags. Here we've named our tags based on our type values
 ("Equipment Port", "Patch Panel" and "Foreign"). A special tag "all"
 can also be added meaning that the attr will always be visible.
 
-To turn on visibility we use the \`setVisibility()\` method on the
-\`FormMixin\`. This method takes as its argument the tag to match
-against the schema to control the visibility of the attrs. For example,
-if we passed in "Equipment Port" then all the attrs with a tag of
-    "all" would be shown, as would those with a tag of "Equipment Port"
-("device_name" and "interface"). All others would be hidden.
+To turn on visibility we use the \`visibility\` prop on the \`Form\`.
+This method takes as its argument the tag to match against the schema
+to control the visibility of the fields. For example, if we passed in
+"Equipment Port" then all the attrs with a tag of "all" would be shown,
+as would those with a tag of "Equipment Port" ("device_name" and
+"interface"). All others would be hidden.
 
-#### willHandleChange()
+## Dynamic changing the form
 
-Next we need a place to respond to the change in attribute. The \`FormMixin\`
-code provides for this with a hook function called \`willHandleChange()\`
-that is called when a value is changed (either by the user or
-programmatically). It is possible to use this function to change
-other form state (as we'll do here), or if you return a value,
-actually modify the value before it is stored in the form. Here is
-our implementation of \`willHandleChange()\`:
+In this form we have a bookmark chooser. When the user selects a preset
+from this chooser it will fill the form with values. The subtle thing here
+is that this also sets the type chooser further down the form, which itself
+controls what fields will be shown. It's this kind of behavior that the
+forms code is designed to handle.
 
-    willHandleChange: function(attrName, value) {
-        switch (attrName) {
-            case "bookmarked":
-                if (value) {
-                    //bookmarked pulldown was changed so transfer existing
-                    //endpoint values onto the form using setValues()
-                    var endpoint = bookmarked[value];
-                    this.setValues({
-                        "name": endpoint.name,
-                        "description": endpoint.description,
-                        "type": endpoint.type,
-                        "device_name": endpoint.device_name,
-                        "interface": endpoint.interface,
-                        "foreign_description": endpoint.foreign_description,
-                        "organization": endpoint.organization,
-                        "panel_name": endpoint.panel_name,
-                        "port_id": endpoint.port_id,
-                        "port_side": endpoint.port_side,
-                        "port_location": endpoint.port_location
-                    });
-                }
-                break;
-            case "type":
-                //The endpoint type changed, which changes fields visible,
-                //so set this with setVisibility() using the type as a filter.
-                this.setVisibility(endpointTypes[value]);
-                break;
+Let's think this through:
+
+ 1. The first thing that happens is that the user selects a bookmark
+    from the top chooser.
+ 2. We know when the user changes something by handling onChange in
+    handleChange(), so we can compare the previous and next version
+    of the form value.
+ 3. If the bookmark has indeed changed then we can merge in some
+    pre-baked data for that bookmark into the form value before setting
+    it as our source of truth. In this way the change of a single item
+    can be applied to many items.
+
+        if (value.get("bookmarked") !== this.state.value.get("bookmarked")) {
+            const bookmark = bookmarked[value.get("bookmarked")];
+            const merged = value.merge(bookmark);
+            this.setState({ value: merged });
+        } else {
+            this.setState({ value });
         }
-    },
 
-For our example we allow the user to switch between different preset
-bookmarked endpoints. In response \`willHandleChange\` will be called
-with the attrName being "bookmarked", which we handle in the first
-part of the switch statement. In response we set the bookmarked
-endpoint's values on the form itself using \`setValues()\`.
+ 4. The form will then re-render and update to show the new values. However
+    we need to handle the visibility state of the form. The visibility
+    of the form is a function of the data in the form (at least in this case),
+    meaning that if the form data is in a particular state, we only show
+    certain fields. In this case when we set the "type" between three possible
+    values we show different fields that only apply to that "type". Therefore,
+    in our render function we get the "type" out of our form state and then
+    set our visibility based on that:
 
-The subtle thing here to note is that one of the attrs we are setting
-is \`type\`. This is also a handled attr in \`willHandleChange()\`
-and will be taken care of in the first part of the switch statement.
-This is what controls the visibility based on the type as it calls
-\`setVisibility()\` with the set type (converted from id to string).
+    render() {
 
-In the UI it is also possible to just change the type directly, in
-which case the second (type case) part of the switch statement handles
-this directly and fields are shown and hidden based on the
-\`setVisibility()\` call.
+        // Current type
+        const currentType = values.get("type");
 
-#### getInitialVisibility()
+        // Find the visibility tag given our current type
+        const visiblityTag = getVisibilityTag(currentType);
 
-The final thing to note in this example is how you control the initial
-visibility state. This is done with a hook function called
-\`getInitialVisibility()\`. You implement this to return the tag you
-want to show.
+        ...
+    }
 
-    getInitialVisibility: function() {
-        return endpointTypes[this.props.values["type"]];
-    },
+    As mentioned above, we encode the tags within the Schema, so here we are
+    simply mapping between those tags and the type.
 
+ 5. Finally, to complete the dynamically updating form, we simply render
+    the form but set the visibility prop to our \`visibilityTag\`.
+
+    render() {
+        ...
+
+        return (
+            <Form
+                ...
+                visible={visiblityTag}
+                ...
+            >
+                ...
+            </Form>
+        );
+    }
 `;
 
 const schema = (
     <Schema>
-        <Attr name="bookmarked" label="" tags={["all"]} required={true} />
-        <Attr name="name" label="Name" tags={["all"]} required={true} />
-        <Attr
+        <Field name="bookmarked" label="" tags={["all"]} required={true} />
+        <Field name="name" label="Name" tags={["all"]} required={true} />
+        <Field
             name="description"
             label="Description"
             tags={["all"]}
             required={true}
         />
-        <Attr name="type" label="Type" tags={["all"]} required={true} />
-        <Attr
+        <Field name="type" label="Type" tags={["all"]} required={true} />
+        <Field
             name="device_name"
             label="Device name"
             tags={["Equipment Port"]}
             required={true}
         />
-        <Attr
+        <Field
             name="interface"
             label="Interface"
             tags={["Equipment Port"]}
             required={true}
         />
-        <Attr
+        <Field
             name="foreign_description"
             label="Foreign description"
             tags={["Foreign"]}
             required={true}
         />
-        <Attr
+        <Field
             name="organization"
             label="Organization"
             tags={["Foreign"]}
             required={true}
         />
-        <Attr
+        <Field
             name="panel_name"
             label="Panel name"
             tags={["Patch Panel"]}
             required={true}
         />
-        <Attr
+        <Field
             name="port_id"
             label="Port Id"
             tags={["Patch Panel"]}
             required={true}
         />
-        <Attr
+        <Field
             name="port_side"
             label="Port side"
             tags={["Patch Panel"]}
             required={true}
         />
-        <Attr
+        <Field
             name="port_location"
             label="Port location"
             tags={["Patch Panel"]}
@@ -284,12 +281,14 @@ const initialValues = {
     ...bookmarked["id-3"]
 };
 
-console.log("initialValues", initialValues);
-
 export default React.createClass({
     mixins: [Highlighter],
     getInitialState() {
-        return { values: initialValues, visibility: "all", loaded: false };
+        return {
+            value: Immutable.fromJS(initialValues),
+            visibility: "all",
+            loaded: false
+        };
     },
     componentDidMount() {
         //Simulate ASYNC state update (not necessary)
@@ -300,22 +299,22 @@ export default React.createClass({
             0
         );
     },
-    handleChange(attr, values) {
+    handleChange(formName, value) {
         // If the bookmark changes then merge in the attr
         // values associated with that bookmark
-        if (values.bookmarked !== this.state.values.bookmarked) {
-            const endpoint = bookmarked[values.bookmarked];
-            const newValues = merge(true, values, endpoint);
-            this.setState({ values: newValues });
+        if (value.get("bookmarked") !== this.state.value.get("bookmarked")) {
+            const endpoint = bookmarked[value.get("bookmarked")];
+            const updatedValue = value.merge(endpoint);
+            this.setState({ value: updatedValue });
         } else {
-            this.setState({ values });
+            this.setState({ value });
         }
     },
     handleErrorCountChange(attr, errors) {
         console.log("Errors:", errors > 0);
     },
     handleSubmit() {
-        console.log("HANDLE SUBMIT", this.state.values);
+        console.log("Submit:", this.state.value);
     },
     renderAlert() {
         if (this.state && this.state.data) {
@@ -340,7 +339,7 @@ export default React.createClass({
         }
     },
     renderForm() {
-        const { values } = this.state;
+        const { value } = this.state;
         const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
         // Bookmark list for chooser
@@ -349,55 +348,60 @@ export default React.createClass({
             label: bookmark.name
         }));
 
-        // Visibility tag
-        console.log("XXX", values.type);
+        // Visibility tag. Here we look at our endpointTypes and
+        // find the one with id = the current value of "type" in our values.
+        // This is the lower chooser in this example. Based on that type
+        // we need to set a visibility tag to show and hide widgets based
+        // on that type.
+        const currentType = value.get("type");
         const object = _.findWhere(endpointTypes, {
-            id: values.type
+            id: currentType
         });
         const visiblityTag = object.label;
 
         if (this.state.loaded) {
             return (
                 <Form
+                    name="dynamic"
                     style={style}
                     schema={schema}
-                    values={values}
-                    edit={FormEditStates.SELECTED}
+                    value={value}
+                    edit={FormEditStates.ALWAYS}
                     visible={visiblityTag}
                     onSubmit={this.handleSubmit}
                     onChange={this.handleChange}
-                    onMissingCountChange={(attr, missing) =>
+                    onMissingCountChange={(formName, missing) =>
                         this.setState({ hasMissing: missing > 0 })}
-                    onErrorCountChange={(attr, errors) =>
+                    onErrorCountChange={(formName, errors) =>
                         this.setState({ hasErrors: errors > 0 })}
                 >
                     <h5>Bookmarked endpoints</h5>
                     <Chooser
-                        attr="bookmarked"
+                        field="bookmarked"
                         width={300}
                         disableSearch={false}
                         choiceList={bookmarkList}
                     />
                     <hr />
                     <h5>General information</h5>
-                    <TextEdit attr="name" width={300} />
-                    <TextArea attr="description" />
+                    <TextEdit field="name" width={300} />
+                    <TextArea field="description" />
                     <hr />
                     <h5>Endpoint type</h5>
                     <Chooser
-                        attr="type"
+                        field="type"
                         width={200}
                         disableSearch={true}
                         choiceList={endpointTypes}
                     />
-                    <TextEdit attr="device_name" />
-                    <TextEdit attr="interface" hidden={true} />
-                    <TextEdit attr="foreign_description" />
-                    <TextEdit attr="organization" />
-                    <TextEdit attr="panel_name" />
-                    <TextEdit attr="port_id" />
-                    <TextEdit attr="port_side" />
-                    <TextEdit attr="port_location" />
+                    <TextEdit field="device_name" />
+                    <TextEdit field="interface" hidden={true} />
+                    <TextEdit field="foreign_description" />
+                    <TextEdit field="organization" />
+                    <TextEdit field="panel_name" />
+                    <TextEdit field="port_id" />
+                    <TextEdit field="port_side" />
+                    <TextEdit field="port_location" />
                     <hr />
                     <input
                         className="btn btn-default"
@@ -412,6 +416,7 @@ export default React.createClass({
         }
     },
     render() {
+        console.log("@@ RENDER", this.state.value.toJSON());
         return (
             <div>
                 <div className="row">
@@ -428,8 +433,8 @@ export default React.createClass({
                     <div className="col-md-4">
                         <b>STATE:</b>
                         <pre style={{ borderLeftColor: "steelblue" }}>
-                            values = {" "}
-                            {JSON.stringify(this.state.values, null, 3)}
+                            value = {" "}
+                            {JSON.stringify(this.state.value.toJSON(), null, 3)}
                         </pre>
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}

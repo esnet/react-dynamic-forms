@@ -8,7 +8,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-import React from "react";
+// import React from "react";
 import invariant from "invariant";
 
 /**
@@ -34,11 +34,11 @@ import invariant from "invariant";
  * See also `Attr`.
  */
 export default class Schema {
-  render() {
-    invariant(
-      false,
-      `${this.constructor.name} elements are for schema configuration only and should not be rendered`
-    );
-    return;
-  }
+    render() {
+        invariant(
+            false,
+            `${this.constructor.name} elements are for schema configuration only and should not be rendered`
+        );
+        return;
+    }
 }

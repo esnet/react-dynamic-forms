@@ -11,6 +11,7 @@
 import classNames from "classnames";
 import Flexbox from "flexbox-react";
 import React from "react";
+import Immutable from "immutable";
 
 import "./components/css/group.css";
 import "./components/css/icon.css";
@@ -41,7 +42,6 @@ export default function formGroup(Widget) {
   return class Group extends React.Component {
     constructor(props) {
       super(props);
-      console.log("Bob!");
       this.state = { over: false };
     }
 
@@ -62,8 +62,8 @@ export default function formGroup(Widget) {
     render() {
       const { hidden = false, width, allowEdit, ...props } = this.props;
       const {
-        attr,
         name,
+        label,
         key,
         edit,
         disabled,
@@ -115,7 +115,7 @@ export default function formGroup(Widget) {
         "group-label": true,
         required
       });
-      const label = (
+      const fieldLabel = (
         <div
           className={labelClasses}
           style={{
@@ -125,7 +125,7 @@ export default function formGroup(Widget) {
             color: this.state.error ? "b94a48" : "inherit"
           }}
         >
-          <label muted={disabled} htmlFor={key}>{name}</label>
+          <label muted={disabled} htmlFor={key}>{label}</label>
         </div>
       );
       const labelWidth = this.props.labelWidth
@@ -135,8 +135,9 @@ export default function formGroup(Widget) {
       //
       // Edit
       //
+      const isList = Immutable.List.isList(props.value);
       let editIcon = <span />;
-      if (allowEdit && this.state.over) {
+      if (allowEdit && this.state.over && !isList) {
         const isBeingEdited = edit;
         editIcon = (
           <i
@@ -145,7 +146,7 @@ export default function formGroup(Widget) {
                 ? "glyphicon glyphicon-pencil icon edit-action active"
                 : "glyphicon glyphicon-pencil icon edit-action"
             }
-            onClick={() => onSelectItem ? onSelectItem(attr) : null}
+            onClick={() => onSelectItem ? onSelectItem(name) : null}
           />
         );
       }
@@ -158,7 +159,7 @@ export default function formGroup(Widget) {
           onMouseLeave={() => this.handleMouseLeave()}
         >
           <Flexbox width={labelWidth}>
-            {label}
+            {fieldLabel}
           </Flexbox>
           <Flexbox width="25px">
             {requiredMarker}

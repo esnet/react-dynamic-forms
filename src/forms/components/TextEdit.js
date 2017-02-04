@@ -50,16 +50,14 @@ class TextEdit extends React.Component {
       return result;
     }
 
-    console.log("** validate rules", this.props.rules, this.props.validation);
-
     // Validate the value with Revalidator, given the rules in this.props.rules
     let obj = {};
-    obj[this.props.attr] = value;
+    obj[this.props.name] = value;
 
-    let attrValuePair = {};
-    attrValuePair[this.props.attr] = this.props.validation;
+    let properties = {};
+    properties[this.props.name] = this.props.validation;
 
-    const rules = this.props.validation ? { properties: attrValuePair } : null;
+    const rules = this.props.validation ? { properties } : null;
     if (obj && rules) {
       const validation = validate(obj, rules, { cast: true });
       const name = this.props.name || "Value";
@@ -76,24 +74,20 @@ class TextEdit extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.state.value !== nextProps.value) {
-      console.log(" textedit next state", this.state.value, nextProps.value);
       this.setState({ value: nextProps.value });
-
       const missing = this.isMissing(nextProps.value);
       const error = this.getError(nextProps.value);
-
-      console.log("**", nextProps.value, missing, error);
 
       // Re-broadcast error and missing states up to the owner
       if (this.props.onErrorCountChange) {
         this.props.onErrorCountChange(
-          this.props.attr,
+          this.props.name,
           error.validationError ? 1 : 0
         );
       }
 
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+        this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
       }
     }
   }
@@ -113,13 +107,13 @@ class TextEdit extends React.Component {
     // Initial error and missing states are fed up to the owner
     if (this.props.onErrorCountChange) {
       this.props.onErrorCountChange(
-        this.props.attr,
+        this.props.name,
         error.validationError ? 1 : 0
       );
     }
 
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 
@@ -127,8 +121,6 @@ class TextEdit extends React.Component {
     const value = this.refs.input.value;
     const missing = this.props.required && this.isEmpty(value);
     const error = this.getError(value);
-
-    console.log("onBlur", value);
 
     let cast = value;
 
@@ -154,16 +146,16 @@ class TextEdit extends React.Component {
           default:
         }
       }
-      this.props.onChange(this.props.attr, cast);
+      this.props.onChange(this.props.name, cast);
     }
     if (this.props.onErrorCountChange) {
       this.props.onErrorCountChange(
-        this.props.attr,
+        this.props.name,
         error.validationError ? 1 : 0
       );
     }
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 
@@ -177,7 +169,7 @@ class TextEdit extends React.Component {
     let borderLeftStyle = "inherited";
     let borderLeftColor = "inherited";
     let borderLeftWidth = 2;
-    if (this.state.error) {
+    if (hasError) {
       color = "#b94a48";
       background = "#fff0f3";
       borderLeftStyle = "solid";
@@ -220,10 +212,10 @@ class TextEdit extends React.Component {
           <input
             required
             key={key}
+            ref="input"
             className="form-control input-sm"
             style={style}
             type={this.props.type}
-            ref="input"
             disabled={this.props.disabled}
             placeholder={this.props.placeholder}
             defaultValue={this.props.value}

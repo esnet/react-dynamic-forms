@@ -25,17 +25,17 @@ Install the forms library with npm:
 
 Once installed, you can import the necessary components from the library:
 
-    import {Form, FormMixin, TextEditGroup, Schema, Attr, ChooserGroup} from "react-dynamic-forms";
+    import {Form, FormMixin, TextEditGroup, Schema, Field, Chooser} from "react-dynamic-forms";
 
 A schema can be specified using JSX to define the basic rules of each form fields. As an example, here is a form that will take the first name, last name and email of a contact. We can define also that the email should be of format \`email\` and that the first and last names are \`required\`:
 
     var schema = (
         <Schema>
-            <Attr name="first_name" label="First name" placeholder="Enter first name"
+            <Field name="first_name" label="First name" placeholder="Enter first name"
                   required={true} validation={{"type": "string"}}/>
-            <Attr name="last_name" label="Last name" placeholder="Enter last name"
+            <Field name="last_name" label="Last name" placeholder="Enter last name"
                   required={true} validation={{"type": "string"}}/>
-            <Attr name="email" label="Email" placeholder="Enter valid email address"
+            <Field name="email" label="Email" placeholder="Enter valid email address"
                   validation={{"format": "email"}}/>
         </Schema>
     );
@@ -43,18 +43,13 @@ A schema can be specified using JSX to define the basic rules of each form field
 We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's \`render()\` function, just like any other React component, but in a way that we refer to our schema attributes using an \`attr\` prop:
 
     var ContactForm = React.createClass({
-
-        mixins: [FormMixin],
-
-        ...
-
         render() {
             ...
             return (
                 <Form style={formStyle}>
-                    <TextEditGroup attr="first_name" width={300} />
-                    <TextEditGroup attr="last_name" width={300} />
-                    <TextEditGroup attr="email" />
+                    <TextEdit field="first_name" width={300} />
+                    <TextEdit field="last_name" width={300} />
+                    <TextEdit field="email" />
                     <hr />
                     <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
                 </Form>
@@ -66,7 +61,7 @@ Finally, within the context of the rest of our application, we render our form. 
 
     <ContactForm
         schema={schema}
-        values={initialValues}
+        value={initialValue}
         onSubmit={this.handleSubmit}
         onChange={this.handleChange} />
 
@@ -103,4 +98,3 @@ If you have questions about your rights to use or distribute this software, plea
 
 NOTICE. This software is owned by the U.S. Department of Energy. As such, the U.S. Government has been granted for itself and others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the Software to reproduce, prepare derivative works, and perform publicly and display publicly. Beginning five (5) years after the date permission to assert copyright is obtained from the U.S. Department of Energy, and subject to any subsequent five (5) year renewals, the U.S. Government is granted for itself and others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the Software to reproduce, prepare derivative works, distribute copies to the public, perform publicly and display publicly, and to permit others to do so.
 `;
-

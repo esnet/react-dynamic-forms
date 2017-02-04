@@ -11,11 +11,12 @@
 import React from "react";
 import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
+import Immutable from "immutable";
 import Highlighter from "../Highlighter";
 
 import Form from "../../forms/components/Form";
 import Schema from "../../forms/components/Schema";
-import Attr from "../../forms/components/Attr";
+import Field from "../../forms/components/Field";
 
 import Chooser from "../../forms/components/Chooser";
 import TextEdit from "../../forms/components/TextEdit";
@@ -38,22 +39,35 @@ This shows an example form with a list of emails that can be added or removed.
  */
 class EmailForm extends React.Component {
   static defaultValues = { email_type: 1, email: "" };
+
   static schema = (
     <Schema>
-      <Attr
+      <Field
         name="email"
         defaultValue=""
         label="Email"
         required={true}
         validation={{ format: "email" }}
       />
-      <Attr name="email_type" defaultValue={1} label="Type" required={true} />
+      <Field name="email_type" defaultValue={1} label="Type" required={true} />
     </Schema>
   );
 
-  handleChange(attr, values) {
+  handleChange(form, value) {
     if (this.props.onChange) {
-      this.props.onChange(attr, values);
+      this.props.onChange(form, value);
+    }
+  }
+
+  handleMissingCountChange(form, count) {
+    if (this.props.onMissingCountChange) {
+      this.props.onMissingCountChange(form, count);
+    }
+  }
+
+  handleErrorCountChange(form, count) {
+    if (this.props.onErrorCountChange) {
+      this.props.onErrorCountChange(form, count);
     }
   }
 
@@ -64,7 +78,7 @@ class EmailForm extends React.Component {
   emailTypeLabel() {
     let result;
     this.emailTypes().forEach(obj => {
-      if (obj.id === this.props.values["email_type"]) {
+      if (obj.id === this.props.value.get("email_type")) {
         result = obj.label;
       }
     });
@@ -72,38 +86,44 @@ class EmailForm extends React.Component {
   }
 
   render() {
-    const values = this.props.values || EmailForm.defaultValues;
-    if (this.props.edit) {
-      return (
-        <Form
-          attr={this.props.attr}
-          schema={EmailForm.schema}
-          values={values}
-          edit={FormEditStates.ALWAYS}
-          labelWidth={50}
-          onChange={(attr, values) => this.handleChange(attr, values)}
-        >
-          <Chooser
-            attr="email_type"
-            choiceList={this.emailTypes()}
-            disableSearch={true}
-            width={150}
-          />
-          <TextEdit attr="email" width={300} />
-        </Form>
-      );
+    const value = this.props.value || EmailForm.defaultValues;
+    //if (this.props.edit) {
+    return (
+      <Form
+        name={this.props.name}
+        schema={EmailForm.schema}
+        value={value}
+        edit={this.props.edit ? FormEditStates.ALWAYS : FormEditStates.NEVER}
+        labelWidth={50}
+        onChange={(fieldName, value) => this.handleChange(fieldName, value)}
+        onMissingCountChange={(fieldName, value) =>
+          this.handleMissingCountChange(fieldName, value)}
+        onErrorCountChange={(fieldName, value) =>
+          this.handleErrorCountChange(fieldName, value)}
+      >
+        <Chooser
+          field="email_type"
+          choiceList={this.emailTypes()}
+          disableSearch={true}
+          width={150}
+        />
+        <TextEdit field="email" width={300} />
+      </Form>
+    );
+    /*
     } else {
       return (
-        <tr>
-          <td>{this.props.values["email"]}</td>
-          <td>
-            <span style={{ padding: 5, color: "#AAA" }}>
-              ({this.emailTypeLabel()})
-            </span>
-          </td>
-        </tr>
+        <div>
+          <span>
+            {this.props.value.get("email")}
+          </span>
+          <span style={{ padding: 5, color: "#AAA" }}>
+            ({this.emailTypeLabel()})
+          </span>
+        </div>
       );
     }
+    */
   }
 }
 
@@ -118,72 +138,74 @@ const ContactForm = React.createClass({
   schema() {
     return (
       <Schema>
-        <Attr
+        <Field
           name="first_name"
           label="First name"
           placeholder="Enter first name"
           required={true}
           validation={{ type: "string" }}
         />
-        <Attr
+        <Field
           name="last_name"
           label="Last name"
           placeholder="Enter last name"
           required={true}
           validation={{ type: "string" }}
         />
-        <Attr name="emails" label="Emails" />
+        <Field name="emails" label="Emails" />
       </Schema>
     );
   },
   // Save the form
   handleSubmit(e) {
     e.preventDefault();
-
-    // Example of checking if the form has missing values and turning required On
     if (this.hasMissing()) {
       this.showRequiredOn();
       return;
     }
-
-    // Example of fetching current and initial values
-    console.log("values:", this.getValues());
-
     if (this.props.onSubmit) {
       this.props.onSubmit(this.getValues());
     }
   },
-  handleChange(attr, values) {
-    if (this.props.onChange) {
-      this.props.onChange(attr, values);
+  handleMissingCountChange(form, missingCount) {
+    if (this.props.onMissingCountChange) {
+      this.props.onMissingCountChange(form, missingCount);
     }
   },
-  handleErrorCountChange(attr, errors) {
-    console.log("Errors:", errors > 0);
+  handleErrorCountChange(form, errorCount) {
+    if (this.props.onErrorCountChange) {
+      this.props.onErrorCountChange(form, errorCount);
+    }
+  },
+  handleChange(form, value) {
+    if (this.props.onChange) {
+      this.props.onChange(form, value);
+    }
   },
   render() {
     const disableSubmit = false;
-    //this.hasErrors();
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
-    const { values } = this.props;
-    const emails = values.emails;
+    const { value } = this.props;
+    const emails = value.get("emails");
 
     return (
       <Form
-        attr="contact-form"
+        field="contact-form"
         style={style}
         schema={this.schema()}
-        values={values}
+        value={value}
+        edit={FormEditStates.SELECTED}
+        labelWidth={100}
         onSubmit={() => this.handleSubmit()}
-        onChange={(attr, values) => this.handleChange(attr, values)}
-        onMissingCountChange={(attr, missing) =>
-          this.setState({ hasMissing: missing > 0 })}
-        onErrorCountChange={(attr, errors) =>
-          this.setState({ hasErrors: errors > 0 })}
+        onChange={(fieldName, value) => this.handleChange(fieldName, value)}
+        onMissingCountChange={(form, missing) =>
+          this.handleMissingCountChange(form, missing)}
+        onErrorCountChange={(form, errors) =>
+          this.handleErrorCountChange(form, errors)}
       >
-        <TextEdit attr="first_name" width={300} />
-        <TextEdit attr="last_name" width={300} />
-        <Emails attr="emails" values={emails} />
+        <TextEdit field="first_name" width={300} />
+        <TextEdit field="last_name" width={300} />
+        <Emails field="emails" value={emails} />
         <hr />
         <input
           className="btn btn-default"
@@ -200,15 +222,15 @@ export default React.createClass({
   mixins: [Highlighter],
   getInitialState() {
     const loaded = false;
-    const values = {
+    const value = new Immutable.fromJS({
       first_name: "Bill",
       last_name: "Jones",
       emails: [
         { email: "b.jones@work.com", email_type: 1 },
         { email: "bill@gmail.com", email_type: 2 }
       ]
-    };
-    return { values, loaded };
+    });
+    return { value, loaded };
   },
   componentDidMount() {
     // Simulate ASYNC state update
@@ -219,14 +241,17 @@ export default React.createClass({
       0
     );
   },
-  handleChange(attr, values) {
-    this.setState({ values });
-  },
-  handleErrorCountChange(attr, errors) {
-    console.log("Errors:", errors > 0);
-  },
   handleSubmit(value) {
     this.setState({ data: value });
+  },
+  handleChange(form, value) {
+    this.setState({ value });
+  },
+  handleMissingCountChange(form, missing) {
+    this.setState({ hasMissing: missing > 0 });
+  },
+  handleErrorCountChange(form, errors) {
+    this.setState({ hasErrors: errors > 0 });
   },
   handleAlertDismiss() {
     this.setState({ data: undefined });
@@ -258,8 +283,10 @@ export default React.createClass({
     if (this.state.loaded) {
       return (
         <ContactForm
-          values={this.state.values}
+          value={this.state.value}
           onChange={this.handleChange}
+          onMissingCountChange={this.handleMissingCountChange}
+          onErrorCountChange={this.handleErrorCountChange}
           onSubmit={this.handleSubmit}
         />
       );
@@ -284,8 +311,8 @@ export default React.createClass({
           <div className="col-md-4">
             <b>STATE:</b>
             <pre style={{ borderLeftColor: "steelblue" }}>
-              values = {" "}
-              {JSON.stringify(this.state.values, null, 3)}
+              value = {" "}
+              {JSON.stringify(this.state.value, null, 3)}
             </pre>
             <pre style={{ borderLeftColor: "#b94a48" }}>
               {`hasErrors: ${this.state.hasErrors}`}

@@ -22,41 +22,10 @@ import "./css/chooser.css";
 /**
  * React Form control to select an item from a list.
  *
- * Wraps the react-virtualized-select library, which itself
- * wraps react-select but with support for large lists.
- *
- * ### Example
- *
- * ```
- *     const animalMap = {1: "dog", 2: "duck", 3: "cat", ...};
- *     const animalList = animalMap.map((value, key) => ({id: key, label: value}));
- *
- *     ...
- *
- *     <Chooser
- *         initialChoiceList={animalList}
- *         placeholder="Select an Animal..."
- *         width={300}
- *     />
- * ```
- *
- * Generally you would use the Chooser as part of a `ChooserGroup`:
- *
- * ```
- *    <ChooserGroup
- *        attr="contact_type"
- *        initialChoice={contactType}
- *        initialChoiceList={contactTypes}
- *        disableSearch={true}
- *        width={200}
- *    />
- * ```
  *
  * ### Props
  *
- *  * *initialChoice* - Pass in the initial value as an id
- *
- *  * *initialChoiceList* - Pass in the available list of options as a list of
+ *  * *choiceList* - Pass in the available list of options as a list of
  *    objects. For example:
  *
  *    ```
@@ -67,23 +36,21 @@ import "./css/chooser.css";
  *  * *disableSearch* - If true the chooser becomes a simple pulldown menu
  *    rather than allowing the user to type into it.
  *
- *  * *width* - Customize the horizontal size of the Chooser.
+ *  * *width* - Customize the horizontal size of the Chooser
  *
- *  * *attr* - The identifier of the property being editted
+ *  * *field* - The identifier of the field being edited
  *
- *  * *onChange* - Callback for when value changes. Will be passed the attr and
- *    new value as a string.
+ *  * *onChange* - Callback for when value changes
  *
  *  * *allowSingleDeselect* - Add a [x] icon to the chooser allowing the user to
  *    clear the selected value
  *
  *  * *searchContains* - Can be "any" or "start", indicating how the search is
- *    matched within the items (anywhere, or starting with).
+ *    matched within the items (anywhere, or starting with)
  */
 class Chooser extends React.Component {
   constructor(props) {
     super(props);
-    console.log("Initializing chooser", props);
     this.state = {
       value: props.value,
       missing: false
@@ -95,14 +62,6 @@ class Chooser extends React.Component {
   }
 
   isMissing() {
-    console.log(
-      "chooser isMissing",
-      this.props.attr,
-      this.props.required,
-      this.props.disabled,
-      this.isEmpty(this.state.value),
-      this.state.value
-    );
     return this.props.required &&
       !this.props.disabled &&
       this.isEmpty(this.state.value);
@@ -132,7 +91,7 @@ class Chooser extends React.Component {
       const missingCount = missing ? 1 : 0;
 
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.attr, missingCount);
+        this.props.onMissingCountChange(this.props.name, missingCount);
       }
     }
   }
@@ -150,7 +109,7 @@ class Chooser extends React.Component {
     const missingCount = missing ? 1 : 0;
 
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missingCount);
+      this.props.onMissingCountChange(this.props.name, missingCount);
     }
 
     // The key needs to change if the choiceList changes, so we set
@@ -175,10 +134,10 @@ class Chooser extends React.Component {
 
     // Callbacks
     if (this.props.onChange) {
-      this.props.onChange(this.props.attr, value);
+      this.props.onChange(this.props.name, value);
     }
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 
@@ -215,12 +174,8 @@ class Chooser extends React.Component {
 
   getCurrentChoice() {
     const choiceItem = _.find(this.props.choiceList, item => {
-      console.log("  chooser -", item, item.id, this.state.value);
       return item.id === this.state.value;
     });
-
-    console.log("Current choice (chooser):", choiceItem);
-
     return choiceItem ? choiceItem.id : undefined;
   }
 
@@ -228,7 +183,6 @@ class Chooser extends React.Component {
     const choiceItem = _.find(this.props.choiceList, item => {
       return item.id === this.state.value;
     });
-
     return choiceItem ? choiceItem.label : "";
   }
 

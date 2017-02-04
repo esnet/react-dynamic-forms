@@ -81,38 +81,43 @@ export default class List extends React.Component {
       const itemMinusHide = item.props.hideMinus ? item.props.hideMinus : false;
 
       let listEditItemClass = "esnet-forms-listeditview-edit-item";
-      let minus;
 
       const isBeingEdited = item.props.edit === true;
 
       // Item remove [-] icon
-      if (addMinus && !itemMinusHide) {
-        minus = (
+      let minus;
+      let edit;
+
+      const isEditable = true;
+      if (isEditable) {
+        if (addMinus && !itemMinusHide) {
+          minus = (
+            <i
+              id={index}
+              key={minusActionKey}
+              className="glyphicon glyphicon-minus icon delete-action"
+              onClick={() => this.removeItem(index)}
+            />
+          );
+        } else {
+          listEditItemClass += " no-controls";
+          minus = <div className="icon delete-action" />;
+        }
+
+        // Edit item icon
+        edit = (
           <i
             id={index}
             key={minusActionKey}
-            className="glyphicon glyphicon-minus icon delete-action"
-            onClick={() => this.removeItem(index)}
+            className={
+              isBeingEdited
+                ? "glyphicon glyphicon-pencil icon edit-action active"
+                : "glyphicon glyphicon-pencil icon edit-action"
+            }
+            onClick={() => this.selectItem(index)}
           />
         );
-      } else {
-        listEditItemClass += " no-controls";
-        minus = <div className="icon delete-action" />;
       }
-
-      // Edit item icon
-      const edit = (
-        <i
-          id={index}
-          key={minusActionKey}
-          className={
-            isBeingEdited
-              ? "glyphicon glyphicon-pencil icon edit-action active"
-              : "glyphicon glyphicon-pencil icon edit-action"
-          }
-          onClick={() => this.selectItem(index)}
-        />
-      );
 
       // JSX for each row, includes: UI Item and [-] remove item button
       return (

@@ -62,7 +62,7 @@ class DateEdit extends React.Component {
 
       // Re-broadcast missing state up to the owner
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+        this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
       }
     }
   }
@@ -74,7 +74,7 @@ class DateEdit extends React.Component {
     this.setState({ value, missing });
 
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 
@@ -88,10 +88,10 @@ class DateEdit extends React.Component {
 
     // Callbacks
     if (this.props.onChange) {
-      this.props.onChange(this.props.attr, value);
+      this.props.onChange(this.props.name, value);
     }
     if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.attr, missing ? 1 : 0);
+      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 

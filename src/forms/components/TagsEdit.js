@@ -10,10 +10,10 @@
 
 import React from "react";
 import _ from "underscore";
-import Select from "react-select";
+import { Creatable } from "react-select";
 
 import formGroup from "../formGroup";
-import "./css/select.css";
+import "react-select/dist/react-select.css";
 
 /**
  * Form control to select tags from a pull down list.
@@ -22,44 +22,61 @@ import "./css/select.css";
 class TagsEdit extends React.Component {
   constructor(props) {
     super(props);
-    return {
-      tags: this.props.initialTags || [],
-      tagList: this.props.initialTagList || [],
+    this.state = {
+      tags: this.props.value || [],
+      tagList: this.props.tagList || [],
       showNewTagUI: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      tags: nextProps.initialTags || [],
-      tagList: nextProps.initialTagList || []
+      tags: nextProps.value || [],
+      tagList: nextProps.tagList || []
     });
   }
 
   handleChange(val, tagList) {
     const tags = _.unique(_.map(tagList, tag => tag.label));
 
-    let newAvailableTags = this.state.tagList;
+    let updatedTagList = this.state.tagList;
     _.each(tags, tag => {
-      if (_.indexOf(newAvailableTags, tag) === -1) {
-        newAvailableTags.push(tag);
+      if (_.indexOf(updatedTagList, tag) === -1) {
+        updatedTagList.push(tag);
       }
     });
 
-    this.setState({ tags, tagList: newAvailableTags });
+    this.setState({ tags, tagList: updatedTagList });
     if (this.props.onChange) {
-      this.props.onChange(this.props.attr, tags);
+      this.props.onChange(this.props.name, tags);
     }
+  }
+
+  isEmpty(value) {
+    if (_.isArray(value)) {
+      return value.length === 0;
+    }
+    return _.isNull(value) || _.isUndefined(value);
+  }
+
+  isMissing() {
+    console.log(
+      "chooser isMissing",
+      this.props.name,
+      this.props.required,
+      this.props.disabled,
+      this.isEmpty(this.state.value),
+      this.state.value
+    );
+    return this.props.required &&
+      !this.props.disabled &&
+      this.isEmpty(this.state.value);
   }
 
   render() {
     if (this.props.edit) {
+      console.log("Edit render", this.state.tags);
       let className = "";
-
-      const width = this.props.width ? this.props.width + "px" : "100%";
-      if (this.props.showRequired && this._isMissing()) {
-        className = "has-error";
-      }
 
       const options = _.map(this.state.tagList, (tag, index) => {
         let disabled = false;
@@ -69,8 +86,10 @@ class TagsEdit extends React.Component {
         return { value: index, label: tag, disabled };
       });
 
+      console.log("Tags", options);
+
       if (_.isUndefined(this.state.tags) || _.isUndefined(this.state.tagList)) {
-        let err = `Tags was supplied with bad state: attr is ${this.props.attr}`;
+        let err = `Tags was supplied with bad state: name is ${this.props.name}`;
         err += ` (tags are: ${this.state.tags} and tagList is: ${this.state.tagList})`;
         throw new Error(err);
       }
@@ -80,8 +99,8 @@ class TagsEdit extends React.Component {
       )}`;
 
       return (
-        <div className={className} style={{ width }}>
-          <Select
+        <div className={className}>
+          <Creatable
             key={key}
             multi={true}
             disabled={this.props.disabled}

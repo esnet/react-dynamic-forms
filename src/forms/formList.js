@@ -10,7 +10,7 @@
 
 import _ from "underscore";
 import React from "react";
-
+import Immutable from "immutable";
 import List from "./components/List";
 
 /**
@@ -35,13 +35,39 @@ export default function list(ItemComponent) {
 
     //Handle an item at i changing to a new value.
     handleChangeItem(i, value) {
-      let values = this.props.values;
-      values[i] = value;
+      let newValue = this.props.value.set(i, value);
+      if (this.props.onChange) {
+        this.props.onChange(this.props.fieldName, newValue);
+      }
+    }
+
+    handleMissingCountChange(i, missingCount) {
+      let totalMissingCount;
+      let missingList = this.state.missing;
+      missingList[i] = missingCount;
+      totalMissingCount = _.reduce(missingList, (memo, num) => memo + num, 0);
 
       // Callback
-      if (this.props.onChange) {
-        console.log("ON CHANGE", this.props.attr, values);
-        this.props.onChange(this.props.attr, values);
+      if (this.props.onMissingCountChange) {
+        this.props.onMissingCountChange(
+          this.props.fieldName,
+          totalMissingCount
+        );
+      }
+    }
+
+    /**
+     * Handler for if a child changes its error count
+     */
+    handleErrorCountChange(i, errorCount) {
+      let totalErrorCount;
+      let errorList = this.state.errors;
+      errorList[i] = errorCount;
+      totalErrorCount = _.reduce(errorList, (memo, num) => memo + num, 0);
+
+      // Callback
+      if (this.props.onErrorCountChange) {
+        this.props.onErrorCountChange(this.props.fieldName, totalErrorCount);
       }
     }
 
@@ -50,14 +76,10 @@ export default function list(ItemComponent) {
     //
     // Also updates the error and missing lists to match.
     handleRemovedItem(i) {
-      console.log("Removing item", i, this.props);
-      let values = this.props.values;
+      let value = this.props.value;
       let n = 1;
-      if (this.removeItemCount) {
-        n = this.removeItemCount(values[i], i);
-      }
 
-      values.splice(i - n + 1, n);
+      const newValue = value.splice(i - n + 1, n);
 
       let errors = this.state.errors;
       let missing = this.state.missing;
@@ -68,47 +90,44 @@ export default function list(ItemComponent) {
 
       // Callbacks
       if (this.props.onChange) {
-        console.log("ON CHANGE", this.props.attr, values);
-        this.props.onChange(this.props.attr, values);
+        this.props.onChange(this.props.fieldName, newValue);
       }
       if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.attr, this.numErrors());
+        this.props.onErrorCountChange(this.props.fieldName, this.numErrors());
       }
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.attr, this.numMissing());
+        this.props.onMissingCountChange(
+          this.props.fieldName,
+          this.numMissing()
+        );
       }
     }
 
     handleAddItem() {
-      let values = this.props.values;
+      let value = this.props.value;
       let errors = this.state.errors;
       let missing = this.state.missing;
-      let created = ItemComponent.defaultValues;
+      let created = Immutable.fromJS(ItemComponent.defaultValues);
 
-      if (!_.isArray(created)) {
-        values.push(created);
-        errors.push(0);
-        missing.push(0);
-      } else {
-        _.each(created, newItem => {
-          values.push(newItem);
-          errors.push(0);
-          missing.push(0);
-        });
-      }
+      const newValue = value.push(created);
+      errors.push(0);
+      missing.push(0);
 
       // Callbacks
       if (this.props.onChange) {
-        this.props.onChange(this.props.attr, values);
+        this.props.onChange(this.props.fieldName, newValue);
       }
       if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.attr, this.numErrors());
+        this.props.onErrorCountChange(this.props.fieldName, this.numErrors());
       }
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.attr, this.numMissing());
+        this.props.onMissingCountChange(
+          this.props.fieldName,
+          this.numMissing()
+        );
       }
 
-      this.setState({ selected: values.length - 1 });
+      this.setState({ selected: newValue.size - 1 });
     }
 
     //Determine the total count of missing fields in the entire list
@@ -132,23 +151,27 @@ export default function list(ItemComponent) {
     }
 
     render() {
-      const itemComponents = _.map(this.props.values, (item, index) => {
+      const itemComponents = [];
+      this.props.value.forEach((item, index) => {
         const { key = index } = item;
         const props = {
           key,
-          attr: index,
-          onErrorCountChange: (attr, errorCount) =>
-            this.handleErrorCountChange(attr, errorCount),
-          onMissingCountChange: (attr, missingCount) =>
-            this.handleMissingCountChange(attr, missingCount),
-          onChange: (attr, value) => {
-            this.handleChangeItem(attr, value);
+          name: index,
+          edit: this.props.edit,
+          innerForm: true,
+          onErrorCountChange: (fieldName, errorCount) =>
+            this.handleErrorCountChange(fieldName, errorCount),
+          onMissingCountChange: (fieldName, missingCount) =>
+            this.handleMissingCountChange(fieldName, missingCount),
+          onChange: (fieldName, value) => {
+            this.handleChangeItem(fieldName, value);
           }
         };
-        return (
+        itemComponents.push(
           <ItemComponent
             {...props}
-            values={item}
+            value={item}
+            editable={this.props.edit}
             edit={this.state.selected === index}
           />
         );
@@ -158,7 +181,6 @@ export default function list(ItemComponent) {
       const canRemoveItems = this.props.canRemoveItems || true;
       const plusElement = null;
 
-      //itemAddElement ? itemAddElement() : null;
       return (
         <List
           items={itemComponents}
@@ -174,230 +196,3 @@ export default function list(ItemComponent) {
     }
   };
 }
-/*
-export default function(params) {
-  const { initialItems, createItems, renderItem } = params;
-  return React.createClass({
-    getInitialState() {
-      const initialItems = initialItems();
-
-      let items = [];
-      _.each(initialItems, item => {
-        if (!_.has(item, "key")) {
-          item.key = "key-" + Math.random();
-        }
-        items.push(item);
-      });
-
-      return {
-        items,
-        // array of items
-        errors: [],
-        // number of errors
-        // required fields that are still not filled out
-        missing: []
-      };
-    },
-
-    //Returns the number of items in the list
-    itemCount() {
-      return this.state.items.length;
-    },
-
-    //Returns the item at the index supplied
-    getItem(index) {
-      if (index >= 0 && index < this.itemCount()) {
-        return this.state.items[index];
-      }
-    },
-
-    //Handle adding a new item.
-    handleAddItem(data) {
-      if (!this.createItem) {
-        throw new Error(
-          "ListEditorMixin requires method createItem() to be defined on the component."
-        );
-      }
-
-      let items = this.state.items;
-      let errors = this.state.errors;
-      let missing = this.state.missing;
-      let created = this.createItem(data);
-
-      if (!_.isArray(created)) {
-        if (!_.has(created, "key")) {
-          created.key = "key-" + Math.random();
-        }
-        items.push(created);
-        errors.push(0);
-        missing.push(0);
-      } else {
-        let n = 1;
-        _.each(created, newItem => {
-          if (!_.has(newItem, "key")) {
-            newItem.key = "key-" + Math.random();
-            newItem.multiPart = n;
-          }
-          items.push(newItem);
-          errors.push(0);
-          missing.push(0);
-          n++;
-        });
-      }
-
-      // Set state
-      this.setState({ items, errors, missing });
-
-      // Callbacks
-      if (this.props.onChange) {
-        this.props.onChange(this.props.attr, items);
-      }
-      if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.attr, this.numErrors());
-      }
-      if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(
-          this.props.attr,
-          this.numMissing()
-        );
-      }
-    },
-
-    // Handle removing an item. Here it splices out the item
-    // at the supplied index and updates the list of items on the state.
-    //
-    // Also updates the error and missing lists to match.
-    handleItemRemoved(i) {
-      let items = this.state.items;
-      let n = 1;
-      if (this.removeItemCount) {
-        n = this.removeItemCount(items[i], i);
-      }
-
-      items.splice(i - n + 1, n);
-
-      let errors = this.state.errors;
-      let missing = this.state.missing;
-      errors.splice(i - n + 1, n);
-      missing.splice(i - n + 1, n);
-
-      this.setState({ items, errors, missing });
-
-      // Callbacks
-      if (this.props.onChange) {
-        this.props.onChange(this.props.attr, items);
-      }
-      if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.attr, this.numErrors());
-      }
-      if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(
-          this.props.attr,
-          this.numMissing()
-        );
-      }
-    },
-
-    //Handle an item at i changing to a new value.
-    handleItemChanged(i, value) {
-      let items = this.state.items;
-      items[i] = value;
-
-      this.setState({ items });
-
-      // Callback
-      if (this.props.onChange) {
-        this.props.onChange(this.props.attr, items);
-      }
-    },
-
-    //Handler for if a child changes its missing count
-    handleMissingCountChange(i, missingCount) {
-      let totalMissingCount;
-      let missingList = this.state.missing;
-
-      missingList[i] = missingCount;
-
-      this.setState({ missing: missingList });
-
-      totalMissingCount = _.reduce(missingList, (memo, num) => memo + num, 0);
-
-      // Callback
-      if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.attr, totalMissingCount);
-      }
-    },
-    //Handler for if a child changes its error count
-    handleErrorCountChange(i, errorCount) {
-      let totalErrorCount;
-      let errorList = this.state.errors;
-      errorList[i] = errorCount;
-      totalErrorCount = _.reduce(errorList, (memo, num) => memo + num, 0);
-
-      // Callback
-      if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.attr, totalErrorCount);
-      }
-    },
-    render() {
-      let components = [];
-      _.each(this.state.items, (item, index) => {
-        const component = this.renderItem(item, index);
-        const key = item.key;
-        const id = item.id;
-        if (component) {
-          const props = {
-            key,
-            index,
-            id,
-            onErrorCountChange: this.handleErrorCountChange,
-            onMissingCountChange: this.handleMissingCountChange,
-            onChange: this.handleItemChanged
-          };
-          components.push(React.cloneElement(component, props));
-        }
-      });
-
-      const canAddItems = _.has(this.state, "canAddItems")
-        ? this.state.canAddItems
-        : true;
-      const canRemoveItems = _.has(this.state, "canRemoveItems")
-        ? this.state.canRemoveItems
-        : true;
-      const plusElement = _.has(this, "plusUI") ? this.plusUI() : null;
-
-      return (
-        <ListEditView
-          items={components}
-          canAddItems={canAddItems}
-          canRemoveItems={canRemoveItems}
-          plusWidth={400}
-          plusElement={plusElement}
-          onAddItem={this.handleAddItem}
-          onRemoveItem={this.handleItemRemoved}
-        />
-      );
-    },
-
-    //Determine the total count of missing fields in the entire list
-    numMissing() {
-      const counts = this.state.missingCounts;
-      let total = 0;
-      _.each(counts, c => {
-        total += c;
-      });
-      return total;
-    },
-  
-    //Determine the total count of error fields in the entire list
-    numErrors() {
-      const counts = this.state.errorCounts;
-      let total = 0;
-      _.each(counts, c => {
-        total += c;
-      });
-      return total;
-    }
-  });
-}
-*/

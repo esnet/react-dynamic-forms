@@ -11,25 +11,26 @@
 import _ from "underscore";
 import deepCopy from "deepcopy";
 import React from "react";
-import Attr from "./Attr";
+import Field from "./Field";
 import Schema from "./Schema";
 import { FormEditStates } from "../constants";
+import PropTypes from "react-immutable-proptypes";
 
-// Pass in the <Schema> element and will return all the <Attrs> under it.
-function getAttrsFromSchema(schema) {
+// Pass in the <Schema> element and will return all the <Fields> under it.
+function getFieldsFromSchema(schema) {
   if (!React.isValidElement(schema)) {
     return {};
   }
 
-  let attrs = {};
+  let fields = {};
   if (schema.type === Schema) {
     React.Children.forEach(schema.props.children, child => {
-      if (child.type === Attr) {
-        attrs[child.props.name] = deepCopy(child.props);
+      if (child.type === Field) {
+        fields[child.props.name] = deepCopy(child.props);
       }
     });
   }
-  return attrs;
+  return fields;
 }
 
 function getRulesFromSchema(schema) {
@@ -40,7 +41,7 @@ function getRulesFromSchema(schema) {
   let rules = {};
   if (schema.type === Schema) {
     React.Children.forEach(schema.props.children, child => {
-      if (child.type === Attr) {
+      if (child.type === Field) {
         const required = child.props.required || false;
         const validation = deepCopy(child.props.validation);
         rules[child.props.name] = { required, validation };
@@ -50,106 +51,44 @@ function getRulesFromSchema(schema) {
   return rules;
 }
 
-/**
- * Designed to be mixed into your top level forms.
- *
- *   The user of this form should pass as a prop the schema and values (if editing):
- *
- *   schema     - The attributes to be tracked by this form, specifying
- *                meta data associated with each of those attributes
- *
- * To set initial values for the form, use the setValues() method.
- * Internally the state formValues will contain the Initial and current value
- * as the form is edited by the user.
- *
- * Note: You can not currently pass values in as a prop.
- *
- * When building the initial state, the schema will be
- * converted to an internal state representation containing:
- *
- *   formAttrs  - General meta data about each attribute
- *   formRules  - Required state and validation rules
- *
- * The getAttrProps() call:
- *
- *   The getAttrProps() call is supplied with an attrName and collects
- *   together meta data, rules and values associated with that attr
- *   from formAttrs, formRules and formValues. It also attaches callbacks
- *   for missing count, error count, and attr value changes. The
- *   resulting structure can be passed to any of the Group wrapper components
- *   directly so that the display of the control has all the correct
- *   meta data and so that changes to the value and resulting errors
- *   etc, are bubbled up to the formMixin for counting.
- *
- * Missing and Error counts:
- *
- *   The state variables errorCounts and missingCounts hold the current counts
- *   of missing values or errors within the form, keyed by their attrName.
- *   These are maintained via the callbacks added to the form widgets with
- *   the use of the getAttrProps() helper function. Total errorCounts on the form
- *   can be found with the errorCount() function. Similarly, total missing
- *   counts can be found with the missingCount() function.
- *
- * Showing required values:
- *
- *   The current version of ESDB forms will only show an error outline around
- *   unfilled required fields when the user tries and fails to submit the form.
- *   Until then it shows the number of unfilled form items as a more gentle
- *   approach. We may revisit this in the future. To support this, the form
- *   uses the showRequired state value to specify if each widget in the form
- *   should actually show the error state if the field is required but not
- *   filled. You can use the two fuctions on the mixin: showRequiredOn() and
- *   showRequiredOff() to control this state, while showRequired() will return
- *   that state.
- *
- * Dynamic forms:
- *
- *   Sometimes a form will show and hide controls based on the value of another
- *   control. The way to control many fields coming and going from the form is to
- *   tag them (in the schema) and then use setVisible(tag) to update the mixin
- *   internal state to just take those into consideration.
- */
-class Form extends React.Component {
+export default class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = { missingCounts: {}, errorCounts: {}, selection: null };
   }
   /**
-     * Collect together props for the given attrName which can
-     * be applied to any of the Group wrapped form widgets. These
+     * Collect together props for the given fieldName which can
+     * be applied to any of the formGroup wrapped form widgets. These
      * props contain info extracted from our schema and current
      * values, namely from:
-     *   - formAttrs
+     *   - formFields
      *   - formRules
      *   - formValues
      *
      * In addition, the props contain callbacks for:
-     *   - valueChanged
-     *   - missingCountChanged
-     *   - errorCountChanged
+     *   - value changed
+     *   - missing count changed
+     *   - error counts changed
      *   - edit selection
      */
-  getAttrProps({ formAttrs, formRules, formValues, formHiddenList }, attrName) {
+  getFieldProps({ formFields, formRules, formHiddenList }, fieldName) {
     let props = {};
-
     props.labelWidth = this.props.labelWidth || 300;
 
-    if (_.has(formAttrs, attrName)) {
-      props.key = attrName;
-      props.attr = attrName;
-      props.name = formAttrs[attrName].label;
-      props.placeholder = formAttrs[attrName].placeholder;
-      props.help = formAttrs[attrName].help;
+    if (_.has(formFields, fieldName)) {
+      props.key = fieldName;
+      props.name = fieldName;
+      props.label = formFields[fieldName].label;
+      props.placeholder = formFields[fieldName].placeholder;
+      props.help = formFields[fieldName].help;
       props.hidden = false;
       props.disabled = false;
 
       props.edit = false;
-      props.allowEdit = false;
       props.showRequired = true;
 
       if (this.props.edit === FormEditStates.SELECTED) {
-        props.edit = this.state.selection === attrName;
-        //console.log("   -", attrName, props.edit);
+        props.edit = this.state.selection === fieldName;
         props.showRequired = props.edit;
         props.allowEdit = true;
       } else if (this.props.edit === FormEditStates.ALWAYS) {
@@ -158,40 +97,42 @@ class Form extends React.Component {
         props.showRequired = false;
       }
 
-      if (formAttrs[attrName].disabled) {
+      if (formFields[fieldName].disabled) {
         props.disabled = true;
       }
 
-      if (_.contains(formHiddenList, attrName)) {
+      if (_.contains(formHiddenList, fieldName)) {
         props.disabled = true;
         props.hidden = true;
       }
     } else {
-      throw new Error(`Attr '${attrName}' is not a part of the form schema`);
+      throw new Error(`Attr '${fieldName}' is not a part of the form schema`);
     }
 
-    if (_.has(formRules, attrName)) {
-      props.required = formRules[attrName].required;
-      props.validation = formRules[attrName].validation;
+    // If the field is required and validation rules
+    if (_.has(formRules, fieldName)) {
+      props.required = formRules[fieldName].required;
+      props.validation = formRules[fieldName].validation;
     }
 
-    if (_.has(formValues, attrName)) {
-      props.value = formValues[attrName];
+    // Field value
+    if (this.props.value.has(fieldName)) {
+      props.value = this.props.value.get(fieldName);
     }
 
     // Callbacks
-    props.onSelectItem = attr => this.handleSelectItem(attr);
-    props.onErrorCountChange = (attr, count) =>
-      this.handleErrorCountChange(attr, count);
-    props.onMissingCountChange = (attr, count) =>
-      this.handleMissingCountChange(attr, count);
-    props.onChange = (attr, d) => this.handleChange(attr, d);
+    props.onSelectItem = fieldName => this.handleSelectItem(fieldName);
+    props.onErrorCountChange = (fieldName, count) =>
+      this.handleErrorCountChange(fieldName, count);
+    props.onMissingCountChange = (fieldName, count) =>
+      this.handleMissingCountChange(fieldName, count);
+    props.onChange = (fieldName, d) => this.handleChange(fieldName, d);
 
     return props;
   }
 
   /**
-     * Queue state pushes pending values of state to our parent's callback. The important
+     * Queue state pushes pending value of state to our parent's callback. The important
      * thing here is that the action is deferred, meaning it will be called only
      * after the callstack is unwound. The deferred action also blocks other deferred
      * actions until it is run.
@@ -233,56 +174,68 @@ class Form extends React.Component {
 
         let missingCount = 0;
         let errorCount = 0;
+
+        const schema = this.props.schema;
+        const formFields = getFieldsFromSchema(schema);
+        const ignoreList = this.getHiddenFields(formFields);
+
+        // Missing count callback
         if (this._pendingMissing) {
-          _.each(this._pendingMissing, c => {
-            missingCount += c;
+          const missingFields = [];
+          _.each(this._pendingMissing, (c, fieldName) => {
+            if (!_.contains(ignoreList, fieldName)) {
+              missingCount += c;
+              missingFields.push(fieldName);
+            }
           });
           if (this.props.onMissingCountChange) {
-            if (_.isUndefined(this.props.index)) {
-              this.props.onMissingCountChange(this.props.attr, missingCount);
-            } else {
-              this.props.onMissingCountChange(this.props.index, missingCount);
-            }
+            this.props.onMissingCountChange(
+              this.props.name,
+              missingCount,
+              missingFields
+            );
           }
           this._pendingMissing = null;
         }
+
+        // Error callback
         if (this._pendingErrors) {
-          _.each(this._pendingErrors, c => {
+          const errorFields = [];
+          _.each(this._pendingErrors, (c, fieldName) => {
+            if (!_.contains(ignoreList, fieldName)) {
+              missingCount += c;
+              errorFields.push(fieldName);
+            }
             errorCount += c;
           });
           if (this.props.onErrorCountChange) {
-            if (_.isUndefined(this.props.index)) {
-              this.props.onErrorCountChange(this.props.attr, errorCount);
-            } else {
-              this.props.onErrorCountChange(this.props.index, errorCount);
-            }
+            this.props.onErrorCountChange(
+              this.props.name,
+              errorCount,
+              errorFields
+            );
           }
         }
 
-        // Handle registered onChange callback.
-        if (this._pendingFormValues) {
+        // On change callback
+        if (this._pendingValues) {
           if (this.props.onChange) {
-            if (_.isUndefined(this.props.index)) {
-              this.props.onChange(this.props.attr, this._pendingFormValues);
-            } else {
-              this.props.onChange(this.props.index, this._pendingFormValues);
-            }
-
+            this.props.onChange(this.props.name, this._pendingValues);
             if (this.state.selection) {
               this.setState({ selection: null });
             }
           }
-          this._pendingFormValues = null;
-        }
-
-        if (this._pendingHiddenList) {
-          this._pendingHiddenList = null;
+          this._pendingValues = null;
         }
       });
       this._deferSet = true;
     }
   }
 
+  /**
+   * If the form has a submit input and that fires then this will catch that
+   * and pass it up to the forms onSubmit callback.
+   */
   handleSubmit(e) {
     e.preventDefault();
     if (this.props.onSubmit) {
@@ -295,113 +248,95 @@ class Form extends React.Component {
      *
      * If a field is complex, such as another form or a list view, then errorCount
      * will be the telly all the errors within that form or list. If it is a simple
-     * field such as a textedit then the errorCount will be either 0 or 1.
+     * field control, such as a textedit then the errorCount will be either 0 or 1.
      *
-     * The mapping of field names (passed in as the key) and the count is updated
-     * in _pendingErrors until built up state is flushed.
+     * The mapping of field names (passed in as the fieldName) and the count is updated
+     * in _pendingErrors until built up state is flushed to the related callback.
      */
-  handleErrorCountChange(key, errorCount) {
-    console.log("handleErrorCountChange");
+  handleErrorCountChange(fieldName, errorCount) {
     this._pendingErrors = this._pendingErrors ||
       deepCopy(this.state.errorCounts) ||
       {};
-    this._pendingErrors[key] = errorCount;
-    this.queueChange(`error change ${key} ${errorCount}`);
+    this._pendingErrors[fieldName] = errorCount;
+    this.queueChange();
   }
 
   /**
-     * This is the handler for changes to the missing state of this form's fields.
+     * This is the handler for changes to the missing state of this form controls.
      *
      * If a field is complex, such as another form or a list view, then missingCount
      * will be the telly all the missing values (for required fields) within that
-     * form or list.
-     * If it is a simple field such as a textedit then the missingCount will be
-     * either 0 or 1.
+     * form or list. If it is a simple control such as a textedit then the
+     * missingCount will be either 0 or 1.
      *
-     * The mapping of field names (passed in as the key) and the missing count is
-     * updated in _pendingMissing until built up state is flushed.
+     * The mapping of field names (passed in as the fieldName) and the missing count is
+     * updated in _pendingMissing until built up state is flushed to the related callback.
      */
-  handleMissingCountChange(key, missingCount) {
-    console.log("handleMissingCountChange");
-
+  handleMissingCountChange(fieldName, missingCount) {
     this._pendingMissing = this._pendingMissing ||
       deepCopy(this.state.missingCounts) ||
       {};
-    this._pendingMissing[key] = missingCount;
-    this.queueChange(`missing change ${key} ${missingCount}`);
+    this._pendingMissing[fieldName] = missingCount;
+    this.queueChange();
   }
 
   /**
      * This is the main handler for value change notifications from
-     * this form's widgets.
+     * this form's controls.
      *
-     * As part of this handler we call this.props.willHandleChange()
-     * if it is supplied. This hook enables either the value to be modified.
+     * As part of this handler we call this.props.onPendingChange()
+     * if it is supplied. This hook enables either the value to be modified
+     * before it is included in the updated state.
      *
-     * Changes to the formValues are queued in _pendingFormValues
-     * until built up change is flushed.
+     * Changes to the formValues are queued in _pendingValues
+     * until built up change is flushed to the onChange callback.
      */
-  handleChange(attrName, newValue) {
-    console.log("handleChange");
+  handleChange(fieldName, newValue) {
     // Hook to allow the component to alter the value before it is set.
     // However, you should be careful with side effects to state here.
     let v = newValue;
     if (this.props.onPendingChange) {
-      v = this.props.onPendingChange(attrName, newValue) || v;
+      v = this.props.onPendingChange(fieldName, newValue) || v;
     }
 
-    console.log("^^^ HANDLECHANGE ON FORM", attrName, newValue);
+    // If we don't have pending values then we build initialize them
+    // out of the current values, then build on top of that with any
+    // change notifications we get. We deliver those batched together
+    // in queueChange after we've accumulated missing and error counts.
 
-    // If we don't have pending form values then we build a
-    // base set (from this.props.values and defaults) and then
-    // mix in our change
-    if (!this._pendingFormValues) {
-      this._pendingFormValues = this.getFormValues();
-    }
-    this._pendingFormValues[attrName] = v;
-
-    // Update the state with the current pendingFormValues
-    this.queueChange(`value change ${attrName}`);
+    this._pendingValues = this._pendingValues || this.props.value;
+    this._pendingValues = this._pendingValues.set(fieldName, v);
+    this.queueChange();
   }
 
-  handleSelectItem(attrName) {
-    console.log("SELECT", attrName);
-    if (this.state.selection !== attrName) {
-      this.setState({ selection: attrName });
+  /**
+   * Handle the selection change. This is when you have an inline form
+   * and the user clicks on the pencil icon to activate editing of
+   * that item. That item is the selection. Only one item can be selected
+   * at once. If the same item is selected again it is deselected.
+   */
+  handleSelectItem(fieldName) {
+    if (this.state.selection !== fieldName) {
+      this.setState({ selection: fieldName });
     } else {
       this.setState({ selection: null });
     }
   }
 
   /**
-   * Returns the current formValues, merging in the current set
-   * of values with the default values from the schema and expressing
-   * them as a map from attrName -> value || defaultValue
+   * @private
+   *
+   * Returns the current list of hidden form fields using the `visible` prop
+   * That prop is either a tag or list of tags. Those are compared to tags
+   * for each field within the schema to determine a visibility set of fields.
+   * This is called every render.
    */
-  getFormValues() {
-    let result = {};
-    const formAttrs = getAttrsFromSchema(this.props.schema);
-    _.each(formAttrs, (attr, attrName) => {
-      const { defaultValue } = attr;
-      const v = _.has(this.props.values, attrName)
-        ? this.props.values[attrName]
-        : defaultValue;
-      result[attrName] = _.isUndefined(v) ? null : v;
-    });
-    return result;
-  }
-
-  /**
-   * Returns the current list of hidden form attrs using the visible prop
-   * That prop is either a tag or list of tags, that is compared to tags
-   * within the schema to determine a visibility set.
-   */
-  getFormHiddenList(formAttrs) {
+  getHiddenFields(formFields) {
     let result = [];
     if (this.props.visible) {
-      _.each(formAttrs, (attr, attrName) => {
+      _.each(formFields, (field, fieldName) => {
         let makeHidden;
-        const tags = attr.tags || [];
+        const tags = field.tags || [];
         if (_.isArray(this.props.visible)) {
           makeHidden = !(_.intersection(tags, this.props.visible).length > 0 ||
             _.contains(tags, "all"));
@@ -410,7 +345,7 @@ class Form extends React.Component {
             _.contains(tags, "all"));
         }
         if (makeHidden) {
-          result.push(attrName);
+          result.push(fieldName);
         }
       });
     }
@@ -420,14 +355,13 @@ class Form extends React.Component {
   /**
    * @private
    *
-   * Traverses all the children and adds new props to each element.
-   * This is what takes the prop attr="someid", looks up someid on the schema
-   * and applies all the needed props from the schema, along with callbacks
-   * onto the widget itself.
+   * Traverses all the children and builds the set of props for each element.
+   * This is what takes the prop `field="field_id"`, looks up "field_id" on the schema
+   * then applies all the needed props from the schema, along with callbacks to
+   * track state.
    */
   renderChildren(formState, childList) {
     const childCount = React.Children.count(childList);
-
     let children = [];
     React.Children.forEach(childList, (child, i) => {
       if (child) {
@@ -435,10 +369,9 @@ class Form extends React.Component {
         const key = child.key || `key-${i}`;
         let props = { key };
         if (typeof child.props.children !== "string") {
-          if (_.has(child.props, "attr")) {
-            const attrName = child.props.attr;
-            props = { ...props, ...this.getAttrProps(formState, attrName) };
-            console.log("props of", attrName, props);
+          if (_.has(child.props, "field")) {
+            const fieldName = child.props.field;
+            props = { ...props, ...this.getFieldProps(formState, fieldName) };
           }
           if (React.Children.count(child.props.children) > 0) {
             props = {
@@ -460,24 +393,55 @@ class Form extends React.Component {
     return children;
   }
 
+  /**
+   * Restrict how often we render the form. It's likely that the container
+   * for the form is keeping track of other state such as missing counts, so
+   * here we make sure something we care about actually changed before doing
+   * the whole form render.
+   */
+  shouldComponentUpdate(nextProps, nextState) {
+    const update = nextProps.value !== this.props.value ||
+      nextProps.edit !== this.props.edit ||
+      nextProps.schema !== this.props.schema ||
+      nextProps.visibility !== this.props.visibility ||
+      nextState.selection !== this.state.selection;
+    return update;
+  }
+
+  /**
+   * Render the form and all its children.
+   */
   render() {
+    const inner = this.props.inner;
     const schema = this.props.schema;
-    const formAttrs = getAttrsFromSchema(schema);
+    const formFields = getFieldsFromSchema(schema);
     const formRules = getRulesFromSchema(schema);
-    const formValues = this.getFormValues();
-    const formHiddenList = this.getFormHiddenList(formAttrs);
-    const formState = { formAttrs, formRules, formValues, formHiddenList };
-    return (
-      <form
-        className={this.props.formClassName}
-        style={this.props.formStyle}
-        key={this.props.formKey}
-        onSubmit={e => this.handleSubmit(e)}
-        noValidate
-      >
-        {this.renderChildren(formState, this.props.children)}
-      </form>
-    );
+    const formHiddenList = this.getHiddenFields(formFields);
+    const formState = { formFields, formRules, formHiddenList };
+
+    if (inner) {
+      return (
+        <form
+          className={this.props.formClassName}
+          style={this.props.formStyle}
+          key={this.props.formKey}
+          onSubmit={e => this.handleSubmit(e)}
+          noValidate
+        >
+          {this.renderChildren(formState, this.props.children)}
+        </form>
+      );
+    } else {
+      return (
+        <div
+          className={this.props.formClassName}
+          style={this.props.formStyle}
+          key={this.props.formKey}
+        >
+          {this.renderChildren(formState, this.props.children)}
+        </div>
+      );
+    }
   }
 }
 
@@ -487,4 +451,6 @@ Form.defaultProps = {
   formKey: "form"
 };
 
-export default Form;
+Form.propTypes = {
+  value: PropTypes.map
+};

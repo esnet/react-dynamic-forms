@@ -11,14 +11,16 @@
 import React from "react";
 import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
+import Immutable from "immutable";
 
 import Form from "../../forms/components/Form";
 import Schema from "../../forms/components/Schema";
-import Attr from "../../forms/components/Attr";
+import Field from "../../forms/components/Field";
 
 import TextEdit from "../../forms/components/TextEdit";
 import DateEdit from "../../forms/components/DateEdit";
 import Chooser from "../../forms/components/Chooser";
+import TagsEdit from "../../forms/components/TagsEdit";
 
 import { FormEditStates } from "../../forms/constants";
 
@@ -32,23 +34,53 @@ at some future time, such as if they were read from a REST API.
 const text = `
 ### Forms example
 
-The forms library can, of course, help to build a complete form. This gives you automatic tracking of errors within the form, as the user edits it, as well as a telly of required fields that are not yet filled out. The form also keeps track of initial vs final values.
+The forms library is designed to help you build a complete form. In this example
+we create a simple contacts form. There are other examples too of forms which change
+their structure as the user interacts with tham, as well as demostrating the use
+of lists within the forms. But here we keep it relatively simple.
+
+What do we want from out form?
+
+Essentially we want to provide perhaps some initial
+data, defaults in the case of a new form, or maybe our current database state in
+the case of editing an existing entity. As the user edits the data, we'll want to
+track that. We may choose to save it on submit (if it's a new form, that's likely),
+or save it as the user edits it (perhaps if they are using inline editing we might
+want to save the data when any fields are changed). Either way, the forms library
+allows you to provide a callback function, which will be called whenever the values
+in the form change. How you want to respond to that is up to you, but this example
+demostrates one possible approach.
+
+In addition to knowing that the form values have changed, we also need to know if
+the form has any errors or missing fields. We do this via callbacks as well, where
+each callback will tell you the number of missing or empty fields that exist within
+the form. You can use that to control if the user can submit the form or not, as
+we do in this example.
+
+Okay, so we have initial values and we have some callbacks. How do we get a form
+up and running to use those?
+
+Forms have two concerns. Each form has a schema which we use to provide the meta
+data for fields within the form. This includes UI elements like the label for each
+fields, the placeholder text, etc, but also rules around the field itself. For
+example a field (called an Field in this library), 
 
 The form elements are defined by a **schema**. Schemas can be defined with JSX or manually. Here's the schema used in this page:
 
     var schema = (
         <Schema>
-            <Attr name="first_name" label="First name" placeholder="Enter first name"
+            <Field name="first_name" label="First name" placeholder="Enter first name"
                   required={true} validation={{"type": "string"}}/>
-            <Attr name="last_name" label="Last name" placeholder="Enter last name"
+            <Field name="last_name" label="Last name" placeholder="Enter last name"
                   required={true} validation={{"type": "string"}}/>
-            <Attr name="email" label="Email" placeholder="Enter valid email address"
+            <Field name="email" label="Email" placeholder="Enter valid email address"
                   validation={{"format": "email"}}/>
-            <Attr name="birthdate" label="Birthdate"  required={true} />
+            <Field name="birthdate" label="Birthdate"  required={true} />
+
         </Schema>
     );
 
-As you can see the schema is used to associate the Attr name ("first_name" for example) with some properties which define how it looks and what is a valid value for that Attr. Here we define a label ("First name"), a placeholder text, and some validation properties. Required can be set true to have the form track that this Attr field needs to be filled out before the form is submitted. More on errors and missing value counts below. In addition to being required or not, the Attr can have a validation prop set which will be passed to Revalidator for field validation while the user interacts with the form. It is most common to use it to specify the type ("string", "integer", or "number"), but you can also specify a format, such as in the example above where the email Attr is checked to make sure it is a valid email address. Maximum string lengths, or ranges of numeric values can also be specified. For full details see the [Revalidator website](https://github.com/flatiron/revalidator).
+As you can see the schema is used to associate the Field name ("first_name" for example) with some properties which define how it looks and what is a valid value for that Field. Here we define a label ("First name"), a placeholder text, and some validation properties. Required can be set true to have the form track that this Field field needs to be filled out before the form is submitted. More on errors and missing value counts below. In addition to being required or not, the Field can have a validation prop set which will be passed to Revalidator for field validation while the user interacts with the form. It is most common to use it to specify the type ("string", "integer", or "number"), but you can also specify a format, such as in the example above where the email Field is checked to make sure it is a valid email address. Maximum string lengths, or ranges of numeric values can also be specified. For full details see the [Revalidator website](https://github.com/flatiron/revalidator).
 
 Rendering is not automatic. Instead the form itself is a React component that you define. This React component will need to use the **FormMixin** to get the proper behavior, as well as implement a layout of the form widgets with special render method called \`renderForm()\`.
 
@@ -64,10 +96,10 @@ And then implement the form layout like this:
             var disableSubmit = this.hasErrors();
             return (
                 <Form>
-                    <TextEdit attr="first_name" width={300} />
-                    <TextEdit attr="last_name" width={300} />
-                    <TextEdit attr="email" width={500} />
-                    <DateEdit attr="birthdate" />
+                    <TextEdit field="first_name" width={300} />
+                    <TextEdit field="last_name" width={300} />
+                    <TextEdit field="email" width={500} />
+                    <DateEdit field="birthdate" />
                     <hr />
                     <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
                 </Form>
@@ -76,7 +108,7 @@ And then implement the form layout like this:
 
 As you can see, we return a \`<Form>\` element which contains further JSX, which is a convenience. In fact, you can define this with a \`<form>\` too. You can use any JSX in here to render the form however you like. This makes the layout of the form as flexible as any other React code.
 
-The special elements here are the \`TextEdit\`s. They specify an \`attr\` prop which references the schema (we'll see how to get the schema hooked up in a minute). Each TextEditGroup will generate a label and a form control (in this case a \`TextEdit\`). We use Bootstrap for the layout. In addition to TextEditGroups there's also: \`TextAreaGroup\`, \`ChooserGroup\`, \`OptionsGroup\` and \`TagsGroup\`. You can also wrap your own controls in the generic \`Group\`.
+The special elements here are the \`TextEdit\`s. They specify an \`field\` prop which references the schema (we'll see how to get the schema hooked up in a minute). Each TextEditGroup will generate a label and a form control (in this case a \`TextEdit\`). We use Bootstrap for the layout. In addition to TextEditGroups there's also: \`TextAreaGroup\`, \`ChooserGroup\`, \`OptionsGroup\` and \`TagsGroup\`. You can also wrap your own controls in the generic \`Group\`.
 
 Now that we have out form it's time to use it. Typically the form will be contained (rendered by) another React component which will hold the business logic of sourcing the schema and initial values, as well as handling the submit of the form in some way.
 
@@ -94,52 +126,63 @@ Note that the schema is required, so you cannot render the form until one is ava
 
 const birthday = new Date("1964-08-22");
 
+const availableTags = [
+  "ucberkeley",
+  "esnet",
+  "stanford",
+  "doe",
+  "industry",
+  "government"
+];
+
 const schema = (
   <Schema>
-    <Attr
+    <Field
       name="type"
       label="Type"
       placeholder="Enter contact type"
       required={true}
     />
-    <Attr
+    <Field
       name="first_name"
       label="First name"
       placeholder="Enter first name"
       required={true}
       validation={{ type: "string" }}
     />
-    <Attr
+    <Field
       name="last_name"
       label="Last name"
       placeholder="Enter last name"
       required={true}
       validation={{ type: "string" }}
     />
-    <Attr
+    <Field
       name="email"
       label="Email"
       placeholder="Enter valid email address"
       required={true}
       validation={{ format: "email" }}
     />
-    <Attr name="birthdate" label="Birthdate" required={true} />
+    <Field name="birthdate" label="Birthdate" required={true} />
+    <Field name="tags" label="Categories" />
   </Schema>
 );
 
-const initialValues = {
+const initialValue = {
   type: 0,
   first_name: "Bill",
   last_name: "Jones",
   email: "bill@gmail.com",
-  birthdate: birthday
+  birthdate: birthday,
+  tags: [1, 3]
 };
 
 export default React.createClass({
   mixins: [Highlighter],
   getInitialState() {
     return {
-      values: initialValues,
+      value: Immutable.fromJS(initialValue),
       loaded: false,
       editMode: FormEditStates.ALWAYS
     };
@@ -153,14 +196,13 @@ export default React.createClass({
       0
     );
   },
-  handleChange(attr, values) {
-    this.setState({ values });
+  handleChange(formName, value) {
+    this.setState({ value });
   },
-  handleErrorCountChange(attr, errors) {
+  handleErrorCountChange(field, errors) {
     console.log("Errors:", errors > 0);
   },
   handleSubmit(e) {
-    console.log("HANDLE SUBMIT", this.state.values);
     this.setState({
       editMode: FormEditStates.SELECTED
     });
@@ -212,28 +254,30 @@ export default React.createClass({
     if (this.state.loaded) {
       return (
         <Form
+          name="basic"
           style={style}
           schema={schema}
-          values={this.state.values}
+          value={this.state.value}
           edit={this.state.editMode}
           labelWidth={200}
           onSubmit={this.handleSubmit}
           onChange={this.handleChange}
-          onMissingCountChange={(attr, missing) =>
+          onMissingCountChange={(fieldName, missing) =>
             this.setState({ hasMissing: missing > 0 })}
-          onErrorCountChange={(attr, errors) =>
+          onErrorCountChange={(fieldName, errors) =>
             this.setState({ hasErrors: errors > 0 })}
         >
           <Chooser
-            attr="type"
+            field="type"
             width={150}
             choiceList={types}
             disableSearch={true}
           />
-          <TextEdit attr="first_name" width={300} />
-          <TextEdit attr="last_name" width={300} />
-          <TextEdit attr="email" width={400} />
-          <DateEdit attr="birthdate" width={100} />
+          <TextEdit field="first_name" width={300} />
+          <TextEdit field="last_name" width={300} />
+          <TextEdit field="email" width={400} />
+          <DateEdit field="birthdate" width={100} />
+          <TagsEdit field="tags" tagList={availableTags} width={400} />
           <hr />
           <div className="row">
             <div className="col-md-3" />
@@ -264,8 +308,8 @@ export default React.createClass({
           <div className="col-md-4">
             <b>STATE:</b>
             <pre style={{ borderLeftColor: "steelblue" }}>
-              values = {" "}
-              {JSON.stringify(this.state.values, null, 3)}
+              value = {" "}
+              {JSON.stringify(this.state.value.toJSON(), null, 3)}
             </pre>
             <pre style={{ borderLeftColor: "#b94a48" }}>
               {`hasErrors: ${this.state.hasErrors}`}
