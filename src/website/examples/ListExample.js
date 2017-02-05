@@ -54,6 +54,7 @@ class EmailForm extends React.Component {
   );
 
   handleChange(form, value) {
+    console.log("handleChange", form, value);
     if (this.props.onChange) {
       this.props.onChange(form, value);
     }
@@ -88,6 +89,7 @@ class EmailForm extends React.Component {
   render() {
     const value = this.props.value || EmailForm.defaultValues;
     //if (this.props.edit) {
+    //
     return (
       <Form
         name={this.props.name}

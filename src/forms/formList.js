@@ -37,7 +37,7 @@ export default function list(ItemComponent) {
     handleChangeItem(i, value) {
       let newValue = this.props.value.set(i, value);
       if (this.props.onChange) {
-        this.props.onChange(this.props.fieldName, newValue);
+        this.props.onChange(this.props.name, newValue);
       }
     }
 
@@ -49,10 +49,7 @@ export default function list(ItemComponent) {
 
       // Callback
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(
-          this.props.fieldName,
-          totalMissingCount
-        );
+        this.props.onMissingCountChange(this.props.name, totalMissingCount);
       }
     }
 
@@ -67,7 +64,7 @@ export default function list(ItemComponent) {
 
       // Callback
       if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.fieldName, totalErrorCount);
+        this.props.onErrorCountChange(this.props.name, totalErrorCount);
       }
     }
 
@@ -77,57 +74,47 @@ export default function list(ItemComponent) {
     // Also updates the error and missing lists to match.
     handleRemovedItem(i) {
       let value = this.props.value;
+
       let n = 1;
-
-      const newValue = value.splice(i - n + 1, n);
-
       let errors = this.state.errors;
       let missing = this.state.missing;
       errors.splice(i - n + 1, n);
       missing.splice(i - n + 1, n);
-
       this.setState({ errors, missing });
 
       // Callbacks
       if (this.props.onChange) {
-        this.props.onChange(this.props.fieldName, newValue);
+        this.props.onChange(this.props.name, value.splice(i - n + 1, n));
       }
       if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.fieldName, this.numErrors());
+        this.props.onErrorCountChange(this.props.name, this.numErrors());
       }
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(
-          this.props.fieldName,
-          this.numMissing()
-        );
+        this.props.onMissingCountChange(this.props.name, this.numMissing());
       }
     }
 
     handleAddItem() {
       let value = this.props.value;
+
       let errors = this.state.errors;
       let missing = this.state.missing;
       let created = Immutable.fromJS(ItemComponent.defaultValues);
-
-      const newValue = value.push(created);
       errors.push(0);
       missing.push(0);
 
       // Callbacks
       if (this.props.onChange) {
-        this.props.onChange(this.props.fieldName, newValue);
+        this.props.onChange(this.props.name, value.push(created));
       }
       if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(this.props.fieldName, this.numErrors());
+        this.props.onErrorCountChange(this.props.name, this.numErrors());
       }
       if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(
-          this.props.fieldName,
-          this.numMissing()
-        );
+        this.props.onMissingCountChange(this.props.name, this.numMissing());
       }
 
-      this.setState({ selected: newValue.size - 1 });
+      this.setState({ selected: this.props.value.size });
     }
 
     //Determine the total count of missing fields in the entire list
@@ -159,12 +146,12 @@ export default function list(ItemComponent) {
           name: index,
           edit: this.props.edit,
           innerForm: true,
-          onErrorCountChange: (fieldName, errorCount) =>
-            this.handleErrorCountChange(fieldName, errorCount),
-          onMissingCountChange: (fieldName, missingCount) =>
-            this.handleMissingCountChange(fieldName, missingCount),
-          onChange: (fieldName, value) => {
-            this.handleChangeItem(fieldName, value);
+          onErrorCountChange: (name, errorCount) =>
+            this.handleErrorCountChange(name, errorCount),
+          onMissingCountChange: (name, missingCount) =>
+            this.handleMissingCountChange(name, missingCount),
+          onChange: (name, value) => {
+            this.handleChangeItem(name, value);
           }
         };
         itemComponents.push(
@@ -177,9 +164,8 @@ export default function list(ItemComponent) {
         );
       });
 
-      const canAddItems = this.props.canAddItems || true;
-      const canRemoveItems = this.props.canRemoveItems || true;
       const plusElement = null;
+      const { canAddItems = true, canRemoveItems = true } = this.props;
 
       return (
         <List
