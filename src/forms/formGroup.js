@@ -86,10 +86,11 @@ export default function formGroup(Widget) {
       // Widget
       //
 
+      const widgetWidth = width ? `${width}px` : "100%";
       const widget = (
         <div
           style={{
-            width: width ? `${width}px` : "100%"
+            width: widgetWidth
           }}
         >
           <Widget {...props} />
@@ -152,26 +153,39 @@ export default function formGroup(Widget) {
       }
 
       // Group
-      return (
-        <Flexbox
-          flexDirection="row"
-          onMouseEnter={() => this.handleMouseEnter()}
-          onMouseLeave={() => this.handleMouseLeave()}
-        >
-          <Flexbox width={labelWidth}>
-            {fieldLabel}
-          </Flexbox>
-          <Flexbox width="25px">
-            {requiredMarker}
-          </Flexbox>
-          <Flexbox flexGrow={1} style={selectStyle}>
+      if (this.props.inline) {
+        return (
+          <Flexbox
+            flexDirection="column"
+            width={widgetWidth}
+            onMouseEnter={() => this.handleMouseEnter()}
+            onMouseLeave={() => this.handleMouseLeave()}
+          >
             {widget}
           </Flexbox>
-          <Flexbox width="28px" style={selectStyle}>
-            {editIcon}
+        );
+      } else {
+        return (
+          <Flexbox
+            flexDirection="row"
+            onMouseEnter={() => this.handleMouseEnter()}
+            onMouseLeave={() => this.handleMouseLeave()}
+          >
+            <Flexbox width={labelWidth}>
+              {fieldLabel}
+            </Flexbox>
+            <Flexbox width="25px">
+              {requiredMarker}
+            </Flexbox>
+            <Flexbox flexGrow={1} style={selectStyle}>
+              {widget}
+            </Flexbox>
+            <Flexbox width="28px" style={selectStyle}>
+              {editIcon}
+            </Flexbox>
           </Flexbox>
-        </Flexbox>
-      );
+        );
+      }
     }
   };
 }

@@ -33,7 +33,7 @@ fields should stay correct.
 `;
 
 const text = `
-### Dynamic form example
+### Description
 
 The forms library allows you to create forms that dynamically change
 depending on other filled out fields. An example of this is a form which
@@ -421,7 +421,7 @@ export default React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3>Dynamic endpoint form</h3>
+                        <h3>Dynamic form</h3>
                         <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>

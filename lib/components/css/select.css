@@ -15,7 +15,7 @@
   height: 28px;
   position: relative;
   overflow: hidden;
-  background-color: #ffffff;
+  background: #ffffff;
   border: 1px solid #cccccc;
   border-color: #d9d9d9 #cccccc #b3b3b3;
   border-radius: 4px;
@@ -25,6 +25,7 @@
   outline: none;
   padding: 4px 52px 4px 10px;
 }
+
 .Select-control:hover {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
@@ -281,7 +282,7 @@
 }
 
 .is-disabled > .Select-control {
-    border-color: #E2E2E2;
+  border-color: #E2E2E2;
 }
 
 /*

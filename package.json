@@ -13,10 +13,9 @@
     "url": "https://github.com/esnet/esnet-react-forms/issues"
   },
   "scripts": {
-    "docs": "echo \"*** Building API docs\n\" && react-docgen src/components -x js -o src/website/docs.json --pretty -e FormMixin.js -e ListEditorMixin.js",
     "lint": "eslint src/components/*.js",
     "test": "react-scripts test --env=jsdom",
-    "build": "echo \"*** Building lib\n\" && rm -rf lib && mkdir lib && babel src/components --optional runtime --stage 0 --ignore __tests__/* --out-dir lib/components && cp ./src/components/*.css ./lib/components && babel src/entry.js --optional runtime --stage 0 --out-file lib/entry.js",
+    "build": "echo \"*** Building lib\n\" && rm -rf lib && mkdir lib && mkdir lib/components && babel src/forms --optional runtime --stage 0 --ignore __tests__/* --out-dir lib/ && mkdir lib/components/css && cp ./src/forms/components/css/*.css ./lib/components/css/ && babel src/index.js --optional runtime --stage 0 --out-file lib/index.js",
     "start-website": "react-scripts start",
     "build-website": "echo \"*** Building website\n\" && rm -rf docs && react-scripts build && mv build docs"
   },

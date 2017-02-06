@@ -11,9 +11,11 @@
 import React from "react";
 import _ from "underscore";
 import { Creatable } from "react-select";
+import Immutable from "immutable";
 
 import formGroup from "../formGroup";
 import "react-select/dist/react-select.css";
+import "./css/tagsedit.css";
 
 /**
  * Form control to select tags from a pull down list.
@@ -36,19 +38,21 @@ class TagsEdit extends React.Component {
     });
   }
 
-  handleChange(val, tagList) {
-    const tags = _.unique(_.map(tagList, tag => tag.label));
-
+  handleChange(tags) {
+    const tagList = _.unique(_.map(tags, tag => tag.value));
+    console.log("XXX handleChange", tags, tagList);
+    //console.log("XXX", tags, tagList, this.state.value.toJS());
+    /*
     let updatedTagList = this.state.tagList;
     _.each(tags, tag => {
       if (_.indexOf(updatedTagList, tag) === -1) {
         updatedTagList.push(tag);
       }
     });
-
-    this.setState({ tags, tagList: updatedTagList });
+    */
+    //this.setState({ tags, tagList: updatedTagList });
     if (this.props.onChange) {
-      this.props.onChange(this.props.name, tags);
+      this.props.onChange(this.props.name, Immutable.fromJS(tagList));
     }
   }
 
@@ -61,7 +65,7 @@ class TagsEdit extends React.Component {
 
   isMissing() {
     console.log(
-      "chooser isMissing",
+      "tags isMissing",
       this.props.name,
       this.props.required,
       this.props.disabled,
@@ -78,15 +82,9 @@ class TagsEdit extends React.Component {
       console.log("Edit render", this.state.tags);
       let className = "";
 
-      const options = _.map(this.state.tagList, (tag, index) => {
-        let disabled = false;
-        if (_.has(this.state.tags, tag)) {
-          disabled = true;
-        }
-        return { value: index, label: tag, disabled };
-      });
-
-      console.log("Tags", options);
+      //const options = _.map(this.state.tagList, (tag, index) => {
+      //  return { value: tag.id, label: tag.label };
+      //});
 
       if (_.isUndefined(this.state.tags) || _.isUndefined(this.state.tagList)) {
         let err = `Tags was supplied with bad state: name is ${this.props.name}`;
@@ -98,6 +96,15 @@ class TagsEdit extends React.Component {
         "-"
       )}`;
 
+      console.log("**", this.state.tags.toJS(), options);
+
+      var options = [
+        { value: "one", label: "One" },
+        { value: "two", label: "Two", clearableValue: false }
+      ];
+
+      var values = options;
+
       return (
         <div className={className}>
           <Creatable
@@ -105,10 +112,10 @@ class TagsEdit extends React.Component {
             multi={true}
             disabled={this.props.disabled}
             placeholder="Select tags..."
-            value={this.state.tags}
             allowCreate={true}
+            value={values}
             options={options}
-            onChange={this.handleChange}
+            onChange={value => this.handleChange(value)}
           />
           <div className="help-block" />
         </div>

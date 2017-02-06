@@ -11,6 +11,7 @@
 input.datepicker__input.rdf {
     font-size: 12px;
     height: 30px;
+    margin-bottom: 10px;
     border-radius: 3px;
     padding-left: 6px;
     color: #555555;
@@ -36,3 +37,6 @@ input.datepicker__input.has-error {
     border-color: #B94A48;
 }
 
+input.datepicker__input.is-missing {
+    background-color: floralwhite;
+}

@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -125,16 +125,6 @@ Note that the schema is required, so you cannot render the form until one is ava
 `;
 
 const birthday = new Date("1964-08-22");
-
-const availableTags = [
-  "ucberkeley",
-  "esnet",
-  "stanford",
-  "doe",
-  "industry",
-  "government"
-];
-
 const schema = (
   <Schema>
     <Field
@@ -175,7 +165,7 @@ const initialValue = {
   last_name: "Jones",
   email: "bill@gmail.com",
   birthdate: birthday,
-  tags: [1, 3]
+  tags: [{ id: 2, label: "stanford" }]
 };
 
 export default React.createClass({
@@ -232,9 +222,18 @@ export default React.createClass({
     //const disableSubmit = false;
     //this.hasErrors();
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
-    const types = [
+
+    const availableTypes = [
       { id: 0, label: "Friend" },
       { id: 1, label: "Acquaintance" }
+    ];
+    const availableTags = [
+      { id: 0, label: "ucberkeley" },
+      { id: 1, label: "esnet" },
+      { id: 2, label: "stanford" },
+      { id: 3, label: "doe" },
+      { id: 4, label: "industry" },
+      { id: 5, label: "government" }
     ];
 
     let submit;
@@ -270,7 +269,7 @@ export default React.createClass({
           <Chooser
             field="type"
             width={150}
-            choiceList={types}
+            choiceList={availableTypes}
             disableSearch={true}
           />
           <TextEdit field="first_name" width={300} />
@@ -296,7 +295,7 @@ export default React.createClass({
       <div>
         <div className="row">
           <div className="col-md-12">
-            <h3>Contact form</h3>
+            <h3>Basic form</h3>
             <div style={{ marginBottom: 20 }}>{description}</div>
           </div>
         </div>

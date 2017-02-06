@@ -11,6 +11,8 @@
 import _ from "underscore";
 import deepCopy from "deepcopy";
 import React from "react";
+import Flexbox from "flexbox-react";
+
 import Field from "./Field";
 import Schema from "./Schema";
 import { FormEditStates } from "../constants";
@@ -95,6 +97,10 @@ export default class Form extends React.Component {
         props.edit = true;
       } else if (this.props.edit === FormEditStates.NEVER) {
         props.showRequired = false;
+      }
+
+      if (this.props.edit === FormEditStates.TABLE) {
+        props.inline = true;
       }
 
       if (formFields[fieldName].disabled) {
@@ -419,28 +425,64 @@ export default class Form extends React.Component {
     const formHiddenList = this.getHiddenFields(formFields);
     const formState = { formFields, formRules, formHiddenList };
 
-    if (inner) {
+    /*
+<form class="form-inline">
+  <div class="form-group">
+    <label class="sr-only" for="exampleInputEmail3">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
+  </div>
+  <div class="form-group">
+    <label class="sr-only" for="exampleInputPassword3">Password</label>
+    <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox"> Remember me
+    </label>
+  </div>
+  <button type="submit" class="btn btn-default">Sign in</button>
+</form>
+*/
+
+    let formClass = this.props.formClassName;
+    if (this.props.inline) {
+      formClass += "form-inline";
+    }
+
+    if (this.props.edit === FormEditStates.TABLE) {
       return (
-        <form
+        <Flexbox
+          flexDirection="row"
           className={this.props.formClassName}
-          style={this.props.formStyle}
           key={this.props.formKey}
-          onSubmit={e => this.handleSubmit(e)}
-          noValidate
         >
           {this.renderChildren(formState, this.props.children)}
-        </form>
+        </Flexbox>
       );
     } else {
-      return (
-        <div
-          className={this.props.formClassName}
-          style={this.props.formStyle}
-          key={this.props.formKey}
-        >
-          {this.renderChildren(formState, this.props.children)}
-        </div>
-      );
+      if (inner) {
+        return (
+          <form
+            className={formClass}
+            style={this.props.formStyle}
+            key={this.props.formKey}
+            onSubmit={e => this.handleSubmit(e)}
+            noValidate
+          >
+            {this.renderChildren(formState, this.props.children)}
+          </form>
+        );
+      } else {
+        return (
+          <div
+            className={this.props.formClassName}
+            style={this.props.formStyle}
+            key={this.props.formKey}
+          >
+            {this.renderChildren(formState, this.props.children)}
+          </div>
+        );
+      }
     }
   }
 }

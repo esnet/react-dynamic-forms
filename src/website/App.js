@@ -22,9 +22,9 @@ class App extends Component {
                 aria-controls="navbar"
               >
                 <span className="sr-only">Toggle navigation</span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
-                <span className="icon-bar"></span>
+                <span className="icon-bar" />
+                <span className="icon-bar" />
+                <span className="icon-bar" />
               </button>
               <a className="navbar-brand" href="#">
                 React Dynamic Forms
@@ -65,37 +65,14 @@ class App extends Component {
             </ul>
             <div className="sidebar-heading">Examples</div>
             <ul className="nav nav-sidebar">
-              <li><Link to="/example/contact">Basic Form</Link></li>
+              <li><Link to="/example/contact">Basic form</Link></li>
               <li>
-                <Link to="/example/dynamic">Dynamically changing Form</Link>
+                <Link to="/example/dynamic">Dynamic form</Link>
               </li>
               <li><Link to="/example/list">List example</Link></li>
-              <li><Link to="/example/keyvalue">Key value example</Link></li>
-              <li><Link to="/example/errors">Error handling example</Link></li>
+              <li><Link to="/example/keyvalue">Key values</Link></li>
             </ul>
-            <div className="sidebar-heading">API</div>
-            <ul className="nav nav-sidebar">
-              <li><Link to="api/Attr">Attr</Link></li>
-              <li><Link to="api/Chooser">Chooser</Link></li>
-              <li><Link to="api/DateEdit">DateEdit</Link></li>
-              <li><Link to="api/Form">Form</Link></li>
-              <li><Link to="api/FormErrors">FormErrors</Link></li>
-              <li><Link to="api/Group">Group</Link></li>
-              <li><Link to="api/KeyValueEditor">KeyValueEditor</Link></li>
-              <li><Link to="api/ListEditView">ListEditView</Link></li>
-              <li><Link to="api/OptionButtons">OptionButtons</Link></li>
-              <li><Link to="api/Schema">Schema</Link></li>
-              <li><Link to="api/TagsEdit">TagsEdit</Link></li>
-              <li><Link to="api/TextArea">TextArea</Link></li>
-              <li><Link to="api/TextEdit">TextEdit</Link></li>
-            </ul>
-            <div className="sidebar-heading">Tests</div>
-            <ul className="nav nav-sidebar">
-              <li>
-                <Link to="test/textedit">TextEdit</Link>
-                <Link to="test/chooser">Chooser</Link>
-              </li>
-            </ul>
+
             <div className="sidebar-heading">Links</div>
             <ul className="nav nav-sidebar">
               <li>
@@ -108,7 +85,12 @@ class App extends Component {
             </ul>
             <div className="sidebar-heading">Related Projects</div>
             <ul className="nav nav-sidebar">
-              <li><a href="http://software.es.net/pond/">pond.js</a></li>
+              <li>
+                <a href="http://software.es.net/react-timeseries-charts/">
+                  TimeSeries Charts
+                </a>
+              </li>
+              <li><a href="http://software.es.net/pond/">Pond</a></li>
               <li>
                 <a href="http://software.es.net/react-network-diagrams/">
                   Network Diagrams
@@ -128,4 +110,3 @@ class App extends Component {
 }
 
 export default App;
-

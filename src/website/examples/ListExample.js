@@ -53,25 +53,6 @@ class EmailForm extends React.Component {
     </Schema>
   );
 
-  handleChange(form, value) {
-    console.log("handleChange", form, value);
-    if (this.props.onChange) {
-      this.props.onChange(form, value);
-    }
-  }
-
-  handleMissingCountChange(form, count) {
-    if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(form, count);
-    }
-  }
-
-  handleErrorCountChange(form, count) {
-    if (this.props.onErrorCountChange) {
-      this.props.onErrorCountChange(form, count);
-    }
-  }
-
   emailTypes() {
     return [{ id: 1, label: "Work" }, { id: 2, label: "Home" }];
   }
@@ -87,45 +68,54 @@ class EmailForm extends React.Component {
   }
 
   render() {
-    const value = this.props.value || EmailForm.defaultValues;
-    //if (this.props.edit) {
-    //
-    return (
-      <Form
-        name={this.props.name}
-        schema={EmailForm.schema}
-        value={value}
-        edit={this.props.edit ? FormEditStates.ALWAYS : FormEditStates.NEVER}
-        labelWidth={50}
-        onChange={(fieldName, value) => this.handleChange(fieldName, value)}
-        onMissingCountChange={(fieldName, value) =>
-          this.handleMissingCountChange(fieldName, value)}
-        onErrorCountChange={(fieldName, value) =>
-          this.handleErrorCountChange(fieldName, value)}
-      >
-        <Chooser
-          field="email_type"
-          choiceList={this.emailTypes()}
-          disableSearch={true}
-          width={150}
-        />
-        <TextEdit field="email" width={300} />
-      </Form>
-    );
-    /*
+    const {
+      onChange,
+      onMissingCountChange,
+      onErrorCountChange,
+      value = EmailForm.defaultValues
+    } = this.props;
+    const callbacks = { onChange, onMissingCountChange, onErrorCountChange };
+
+    if (this.props.edit) {
+      return (
+        <Form
+          name={this.props.name}
+          schema={EmailForm.schema}
+          value={value}
+          edit={FormEditStates.ALWAYS}
+          labelWidth={50}
+          {...callbacks}
+        >
+          <Chooser
+            field="email_type"
+            choiceList={this.emailTypes()}
+            disableSearch={true}
+            width={150}
+          />
+          <TextEdit field="email" width={300} />
+        </Form>
+      );
     } else {
       return (
-        <div>
-          <span>
-            {this.props.value.get("email")}
-          </span>
-          <span style={{ padding: 5, color: "#AAA" }}>
-            ({this.emailTypeLabel()})
-          </span>
-        </div>
+        <Form
+          name={this.props.name}
+          schema={EmailForm.schema}
+          value={value}
+          edit={FormEditStates.TABLE}
+          labelWidth={50}
+          {...callbacks}
+        >
+          <TextEdit field="email" width={250} />
+          <Chooser
+            field="email_type"
+            choiceList={this.emailTypes()}
+            disableSearch={true}
+            width={250}
+          />
+
+        </Form>
       );
     }
-    */
   }
 }
 
