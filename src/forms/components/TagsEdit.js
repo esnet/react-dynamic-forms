@@ -22,98 +22,80 @@ import "./css/tagsedit.css";
  * You can also add a new tag with the Add tag button.
  */
 class TagsEdit extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tags: this.props.value || [],
-      tagList: this.props.tagList || [],
-      showNewTagUI: false
-    };
-  }
-
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      tags: nextProps.value || [],
-      tagList: nextProps.tagList || []
-    });
+    if (this.props.value !== nextProps.value) {
+      const missingCount = this.isMissing(nextProps.value) ? 1 : 0;
+      if (this.props.onMissingCountChange) {
+        this.props.onMissingCountChange(this.props.name, missingCount);
+      }
+    }
   }
 
   handleChange(tags) {
-    const tagList = _.unique(_.map(tags, tag => tag.value));
-    console.log("XXX handleChange", tags, tagList);
-    //console.log("XXX", tags, tagList, this.state.value.toJS());
-    /*
-    let updatedTagList = this.state.tagList;
+    const value = _.map(tags, tag => tag.label);
+
+    let updatedTagList;
     _.each(tags, tag => {
-      if (_.indexOf(updatedTagList, tag) === -1) {
-        updatedTagList.push(tag);
+      if (tag.className === "Select-create-option-placeholder") {
+        updatedTagList = this.props.tagList.push(tag.label);
       }
     });
-    */
-    //this.setState({ tags, tagList: updatedTagList });
+
+    if (updatedTagList && this.props.onTagListChange) {
+      this.props.onTagListChange(this.props.name, updatedTagList);
+    }
+
     if (this.props.onChange) {
-      this.props.onChange(this.props.name, Immutable.fromJS(tagList));
+      this.props.onChange(this.props.name, Immutable.fromJS(value));
     }
   }
 
   isEmpty(value) {
-    if (_.isArray(value)) {
-      return value.length === 0;
+    console.log("isEmpty", value);
+    if (Immutable.List.isList(value)) {
+      console.log("isEmpty: Empty list", value.size === 0);
+      return value.size === 0;
     }
     return _.isNull(value) || _.isUndefined(value);
   }
 
-  isMissing() {
-    console.log(
-      "tags isMissing",
-      this.props.name,
-      this.props.required,
-      this.props.disabled,
-      this.isEmpty(this.state.value),
-      this.state.value
-    );
-    return this.props.required &&
-      !this.props.disabled &&
-      this.isEmpty(this.state.value);
+  isMissing(value = this.props.value) {
+    return this.props.required && !this.props.disabled && this.isEmpty(value);
   }
 
   render() {
+    const isMissing = this.isMissing(this.props.value);
     if (this.props.edit) {
-      console.log("Edit render", this.state.tags);
-      let className = "";
+      //const key = `${this.props.value.join("-")}--${this.props.tagList.join(
+      //  "-"
+      //)}`;
 
-      //const options = _.map(this.state.tagList, (tag, index) => {
-      //  return { value: tag.id, label: tag.label };
-      //});
+      const options = [];
+      const value = [];
 
-      if (_.isUndefined(this.state.tags) || _.isUndefined(this.state.tagList)) {
-        let err = `Tags was supplied with bad state: name is ${this.props.name}`;
-        err += ` (tags are: ${this.state.tags} and tagList is: ${this.state.tagList})`;
-        throw new Error(err);
+      this.props.tagList.forEach((tag, i) => {
+        if (this.props.value.contains(tag)) {
+          value.push({ value: i, label: tag });
+        } else {
+          options.push({ value: i, label: tag });
+        }
+      });
+
+      let className;
+      if (isMissing) {
+        className = "missing";
       }
 
-      const key = `${this.state.tags.join("-")}--${this.state.tagList.join(
-        "-"
-      )}`;
-
-      console.log("**", this.state.tags.toJS(), options);
-
-      var options = [
-        { value: "one", label: "One" },
-        { value: "two", label: "Two", clearableValue: false }
-      ];
-
-      var values = options;
-
       return (
-        <div className={className}>
+        <div>
           <Creatable
-            key={key}
+            key="bob"
+            className={className}
             multi={true}
             disabled={this.props.disabled}
             placeholder="Select tags..."
             allowCreate={true}
-            value={values}
+            value={value}
             options={options}
             onChange={value => this.handleChange(value)}
           />
@@ -121,7 +103,24 @@ class TagsEdit extends React.Component {
         </div>
       );
     } else {
-      return <div>{this.state.tags.join(", ")}</div>;
+      const tagStyle = {
+        cursor: "default",
+        paddingTop: 2,
+        paddingBottom: 2,
+        paddingLeft: 5,
+        paddingRight: 5,
+        background: "#ddd",
+        borderRadius: 2,
+        marginLeft: 2,
+        marginRight: 2
+      };
+      return (
+        <div>
+          {this.props.value.map((tag, i) => (
+            <span key={i} style={tagStyle}>{tag}</span>
+          ))}
+        </div>
+      );
     }
   }
 }

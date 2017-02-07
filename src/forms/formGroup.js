@@ -15,6 +15,7 @@ import Immutable from "immutable";
 
 import "./components/css/group.css";
 import "./components/css/icon.css";
+import TagsEdit from "./components/TagsEdit";
 
 /**
  * Groups are intended to be used within the `Form` and provide a shorthand
@@ -38,7 +39,7 @@ import "./components/css/icon.css";
  * users code.
  */
 
-export default function formGroup(Widget) {
+export default function formGroup(Widget, hideEdit) {
   return class Group extends React.Component {
     constructor(props) {
       super(props);
@@ -69,7 +70,8 @@ export default function formGroup(Widget) {
         disabled,
         required,
         showRequired,
-        onSelectItem
+        onSelectItem,
+        hiddenEdit
       } = props;
 
       const selectStyle = {};
@@ -136,9 +138,9 @@ export default function formGroup(Widget) {
       //
       // Edit
       //
-      const isList = Immutable.List.isList(props.value);
+
       let editIcon = <span />;
-      if (allowEdit && this.state.over && !isList) {
+      if (this.state.over && allowEdit && !hideEdit) {
         const isBeingEdited = edit;
         editIcon = (
           <i

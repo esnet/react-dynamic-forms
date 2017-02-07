@@ -99,6 +99,15 @@ export default class Form extends React.Component {
         props.showRequired = false;
       }
 
+      console.log(
+        "**",
+        fieldName,
+        this.props.edit,
+        props.edit,
+        props.showRequired,
+        props.allowEdit
+      );
+
       if (this.props.edit === FormEditStates.TABLE) {
         props.inline = true;
       }
@@ -243,6 +252,7 @@ export default class Form extends React.Component {
    * and pass it up to the forms onSubmit callback.
    */
   handleSubmit(e) {
+    console.log("handleSubmit");
     e.preventDefault();
     if (this.props.onSubmit) {
       this.props.onSubmit();
@@ -466,7 +476,10 @@ export default class Form extends React.Component {
             className={formClass}
             style={this.props.formStyle}
             key={this.props.formKey}
-            onSubmit={e => this.handleSubmit(e)}
+            onSubmit={e => {
+              console.log("onSubmit");
+              this.handleSubmit(e);
+            }}
             noValidate
           >
             {this.renderChildren(formState, this.props.children)}

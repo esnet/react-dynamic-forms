@@ -39,13 +39,15 @@ we create a simple contacts form. There are other examples too of forms which ch
 their structure as the user interacts with tham, as well as demostrating the use
 of lists within the forms. But here we keep it relatively simple.
 
-What do we want from out form?
+What do we want from our form?
 
 Essentially we want to provide perhaps some initial
-data, defaults in the case of a new form, or maybe our current database state in
-the case of editing an existing entity. As the user edits the data, we'll want to
-track that. We may choose to save it on submit (if it's a new form, that's likely),
-or save it as the user edits it (perhaps if they are using inline editing we might
+data, our form "value", defaults in the case of a new form, or maybe our current
+database state in the case of editing an existing entity.
+
+As the user edits the data, we'll want to track that. We may choose to save
+it on submit (if it's a new form, that's likely), or save it as the user edits it
+(perhaps if they are using inline editing we might
 want to save the data when any fields are changed). Either way, the forms library
 allows you to provide a callback function, which will be called whenever the values
 in the form change. How you want to respond to that is up to you, but this example
@@ -155,7 +157,7 @@ const schema = (
       validation={{ format: "email" }}
     />
     <Field name="birthdate" label="Birthdate" required={true} />
-    <Field name="tags" label="Categories" />
+    <Field name="tags" label="Categories" required={true} />
   </Schema>
 );
 
@@ -165,14 +167,24 @@ const initialValue = {
   last_name: "Jones",
   email: "bill@gmail.com",
   birthdate: birthday,
-  tags: [{ id: 2, label: "stanford" }]
+  tags: ["stanford"]
 };
+
+const tagList = [
+  "ucberkeley",
+  "esnet",
+  "stanford",
+  "doe",
+  "industry",
+  "government"
+];
 
 export default React.createClass({
   mixins: [Highlighter],
   getInitialState() {
     return {
       value: Immutable.fromJS(initialValue),
+      tagList: Immutable.fromJS(tagList),
       loaded: false,
       editMode: FormEditStates.ALWAYS
     };
@@ -193,6 +205,7 @@ export default React.createClass({
     console.log("Errors:", errors > 0);
   },
   handleSubmit(e) {
+    console.log("handleSubmit");
     this.setState({
       editMode: FormEditStates.SELECTED
     });
@@ -227,27 +240,34 @@ export default React.createClass({
       { id: 0, label: "Friend" },
       { id: 1, label: "Acquaintance" }
     ];
-    const availableTags = [
-      { id: 0, label: "ucberkeley" },
-      { id: 1, label: "esnet" },
-      { id: 2, label: "stanford" },
-      { id: 3, label: "doe" },
-      { id: 4, label: "industry" },
-      { id: 5, label: "government" }
-    ];
 
     let submit;
     if (this.state.editMode === FormEditStates.ALWAYS) {
+      console.log(
+        "Submit:",
+        this.state.hasErrors,
+        this.state.hasMissing,
+        this.state.hasErrors || this.state.hasMissing
+      );
+      let disableSubmit = true;
+      if (this.state.hasErrors === false && this.state.hasMissing === false) {
+        disableSubmit = false;
+      }
+      console.log("XX", disableSubmit, true);
       submit = (
-        <input
-          className="btn btn-primary"
+        <button
           type="submit"
-          value="Submit"
-          disabled={this.state.hasErrors || this.state.hasMissing}
-        />
+          className="btn btn-default"
+          disabled={disableSubmit}
+          onClick={() => this.handleSubmit()}
+        >
+          Submit contact
+        </button>
       );
     } else {
-      submit = <div>Make changes to the form by clicking the pencil icons</div>;
+      submit = (
+        <div>* Make changes to the form by clicking the pencil icons</div>
+      );
     }
 
     if (this.state.loaded) {
@@ -276,7 +296,12 @@ export default React.createClass({
           <TextEdit field="last_name" width={300} />
           <TextEdit field="email" width={400} />
           <DateEdit field="birthdate" width={100} />
-          <TagsEdit field="tags" tagList={availableTags} width={400} />
+          <TagsEdit
+            field="tags"
+            tagList={this.state.tagList}
+            onTagListChange={(name, tagList) => this.setState({ tagList })}
+            width={400}
+          />
           <hr />
           <div className="row">
             <div className="col-md-3" />

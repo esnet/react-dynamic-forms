@@ -41,7 +41,6 @@ class DateEdit extends React.Component {
   }
 
   isMissing(v) {
-    console.log("date", v);
     return this.props.required && !this.props.disabled && this.isEmpty(v);
   }
 
@@ -145,7 +144,6 @@ class DateEdit extends React.Component {
               disabled={this.props.disabled}
               placeholderText={this.props.placeholder}
               selected={selected}
-              onBlur={() => this.handleOnBlur()}
               onChange={v => this.handleDateChange(v)}
             />
           </div>
