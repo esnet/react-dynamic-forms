@@ -70,7 +70,6 @@ class App extends Component {
                 <Link to="/example/dynamic">Dynamic form</Link>
               </li>
               <li><Link to="/example/list">List example</Link></li>
-              <li><Link to="/example/keyvalue">Key values</Link></li>
             </ul>
 
             <div className="sidebar-heading">Links</div>

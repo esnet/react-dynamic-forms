@@ -3,7 +3,7 @@
   "version": "0.16.1",
   "description": "Dynamic forms library for React",
   "license": "BSD-3-Clause-LBNL",
-  "main": "lib/entry.js",
+  "main": "lib/index.js",
   "author": "ESnet Tools Team <tools@es.net>",
   "repository": {
     "type": "git",
