@@ -19,4 +19,4 @@ export TextArea from "./components/TextArea";
 export Chooser from "./components/Chooser.js";
 export DateEdit from "./components/DateEdit";
 export TagsEdit from "./components/TagsEdit";
-export { FormEditStates } from "./constrants";
+export { FormEditStates } from "./constants";
