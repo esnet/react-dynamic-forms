@@ -8,17 +8,15 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-module.exports = {
-    Form: require("./components/Form"),
-    Schema: require("./components/Schema"),
-    Field: require("./components/Field"),
-    formGroup: require("./formGroup"),
-    formList: require("./formList"),
-    constants: require("./constants"),
-    List: require("./components/List"),
-    TextEdit: require("./components/TextEdit"),
-    TextArea: require("./components/TextArea"),
-    Chooser: require("./components/Chooser.js"),
-    DateEdit: require("./components/DateEdit"),
-    TagsEdit: require("./components/TagsEdit")
-};
+export Form from "./components/Form";
+export Schema from "./components/Schema";
+export Field from "./components/Field";
+export formGroup from "./formGroup";
+export formList from "./formList";
+export constants from "./constants";
+export List from "./components/List";
+export TextEdit from "./components/TextEdit";
+export TextArea from "./components/TextArea";
+export Chooser from "./components/Chooser.js";
+export DateEdit from "./components/DateEdit";
+export TagsEdit from "./components/TagsEdit";
