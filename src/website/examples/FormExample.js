@@ -126,7 +126,6 @@ Note that the schema is required, so you cannot render the form until one is ava
 
 `;
 
-const birthday = new Date("1964-08-22");
 const schema = (
   <Schema>
     <Field
@@ -160,6 +159,8 @@ const schema = (
     <Field name="tags" label="Categories" required={true} />
   </Schema>
 );
+
+const birthday = new Date("1975-05-15");
 
 const initialValue = {
   type: 0,
@@ -202,10 +203,10 @@ export default React.createClass({
     this.setState({ value });
   },
   handleErrorCountChange(field, errors) {
-    console.log("Errors:", errors > 0);
+    //console.log("Errors:", errors > 0);
   },
   handleSubmit(e) {
-    console.log("handleSubmit");
+    //console.log("handleSubmit");
     this.setState({
       editMode: FormEditStates.SELECTED
     });
@@ -243,17 +244,10 @@ export default React.createClass({
 
     let submit;
     if (this.state.editMode === FormEditStates.ALWAYS) {
-      console.log(
-        "Submit:",
-        this.state.hasErrors,
-        this.state.hasMissing,
-        this.state.hasErrors || this.state.hasMissing
-      );
       let disableSubmit = true;
       if (this.state.hasErrors === false && this.state.hasMissing === false) {
         disableSubmit = false;
       }
-      console.log("XX", disableSubmit, true);
       submit = (
         <button
           type="submit"

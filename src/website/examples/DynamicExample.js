@@ -416,7 +416,6 @@ export default React.createClass({
         }
     },
     render() {
-        console.log("@@ RENDER", this.state.value.toJSON());
         return (
             <div>
                 <div className="row">

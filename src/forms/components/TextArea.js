@@ -155,7 +155,6 @@ class TextArea extends React.Component {
             defaultValue={this.props.value}
             rows={this.props.rows}
             onBlur={() => this.onBlur}
-            onFocus={() => this.onFocus}
           />
           <div className={helpClassName}>{msg}</div>
         </div>

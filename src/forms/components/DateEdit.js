@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2015-2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -25,19 +25,8 @@ import "./css/dateedit.css";
  * value changed with 'onChange'.
  */
 class DateEdit extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      initialValue: props.initialValue,
-      value: props.initialValue,
-      missing: false,
-      showPicker: false
-    };
-  }
-
   isEmpty(value) {
-    return _.isNull(value) || _.isUndefined(value);
+    return _.isNull(value) || _.isUndefined(value) || value === "";
   }
 
   isMissing(v) {
@@ -45,33 +34,18 @@ class DateEdit extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const previousValue = this.state.initialValue
-      ? this.state.initialValue.getTime()
-      : null;
-    const nextValue = nextProps.initialValue
-      ? nextProps.initialValue.getTime()
-      : null;
-    if (previousValue !== nextValue) {
-      this.setState({
-        initialValue: nextProps.initialValue,
-        value: nextProps.initialValue
-      });
-
-      const missing = this.isMissing(nextProps.initialValue);
-
-      // Re-broadcast missing state up to the owner
-      if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+    if (this.props.value && nextProps.value) {
+      if (this.props.value.getTime() !== nextProps.value.getTime()) {
+        const missing = this.isMissing(nextProps.value);
+        if (this.props.onMissingCountChange) {
+          this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+        }
       }
     }
   }
 
   componentDidMount() {
-    const missing = this.isMissing(this.props.initialValue);
-    const value = this.props.initialValue;
-
-    this.setState({ value, missing });
-
+    const missing = this.isMissing(this.props.value);
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
@@ -79,11 +53,7 @@ class DateEdit extends React.Component {
 
   handleDateChange(v) {
     const value = v ? v.toDate() : null;
-    const missing = this.props.required && this.isEmpty(value);
-
-    console.log("handleDateChange", value);
-
-    this.setState({ value, missing });
+    const missing = this.isMissing(value);
 
     // Callbacks
     if (this.props.onChange) {
@@ -97,25 +67,15 @@ class DateEdit extends React.Component {
   inlineStyle(hasError, isMissing) {
     let color = "inherited";
     let background = "inherited";
-    let borderLeftStyle = "inherited";
-    let borderLeftColor = "inherited";
-    let borderLeftWidth = 2;
-    if (this.state.error) {
+    if (hasError) {
       color = "#b94a48";
       background = "#fff0f3";
-      borderLeftStyle = "solid";
-      borderLeftColor = "#b94a48";
     } else if (isMissing) {
       background = "floralwhite";
-      borderLeftStyle = "solid";
-      borderLeftColor = "orange";
     }
     return {
       color,
       background,
-      borderLeftStyle,
-      borderLeftColor,
-      borderLeftWidth,
       height: 23,
       width: "100%",
       paddingLeft: 3
@@ -123,12 +83,16 @@ class DateEdit extends React.Component {
   }
 
   render() {
-    const selected = this.state.value ? moment(this.state.value) : null;
+    // Control state
+    const isMissing = this.isMissing(this.props.value);
+
+    // Selected date
+    const selected = this.props.value ? moment(this.props.value) : null;
+
     let className = "datepicker__input rdf";
-    const isMissing = this.isMissing(this.state.value);
-    if (this.state.error) {
-      className = "datepicker__input rdf has-error";
-    }
+    //if (this.state.error) {
+    //  className = "datepicker__input rdf has-error";
+    //}
     if (isMissing) {
       className += " is-missing";
     }
@@ -150,8 +114,7 @@ class DateEdit extends React.Component {
         </div>
       );
     } else {
-      const isMissing = this.isMissing(this.state.value);
-      const hasError = this.state.error;
+      const hasError = false; //this.state.error;
       let text = selected ? selected.format("MM/DD/YYYY") : "";
       if (isMissing) {
         text = " ";

@@ -171,7 +171,6 @@ class TextEdit extends React.Component {
             placeholder={this.props.placeholder}
             defaultValue={this.props.value}
             onBlur={() => this.onBlur()}
-            onFocus={() => this.onFocus()}
           />
           <div className={helpClassName}>{msg}</div>
         </div>
