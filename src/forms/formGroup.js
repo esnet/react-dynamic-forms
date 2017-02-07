@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2015-2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -11,11 +11,9 @@
 import classNames from "classnames";
 import Flexbox from "flexbox-react";
 import React from "react";
-import Immutable from "immutable";
 
 import "./components/css/group.css";
 import "./components/css/icon.css";
-import TagsEdit from "./components/TagsEdit";
 
 /**
  * Groups are intended to be used within the `Form` and provide a shorthand
@@ -70,8 +68,7 @@ export default function formGroup(Widget, hideEdit) {
         disabled,
         required,
         showRequired,
-        onSelectItem,
-        hiddenEdit
+        onSelectItem
       } = props;
 
       const selectStyle = {};

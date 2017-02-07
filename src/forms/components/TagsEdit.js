@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2015-2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -51,9 +51,7 @@ class TagsEdit extends React.Component {
   }
 
   isEmpty(value) {
-    console.log("isEmpty", value);
     if (Immutable.List.isList(value)) {
-      console.log("isEmpty: Empty list", value.size === 0);
       return value.size === 0;
     }
     return _.isNull(value) || _.isUndefined(value);
@@ -109,7 +107,7 @@ class TagsEdit extends React.Component {
         paddingBottom: 2,
         paddingLeft: 5,
         paddingRight: 5,
-        background: "#ddd",
+        background: "#ececec",
         borderRadius: 2,
         marginLeft: 2,
         marginRight: 2

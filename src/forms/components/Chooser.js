@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2015-2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -11,7 +11,7 @@
 import React from "react";
 import VirtualizedSelect from "react-virtualized-select";
 import _ from "underscore";
-import hash from "string-hash";
+
 import formGroup from "../formGroup";
 import "react-select/dist/react-select.css";
 import "react-virtualized/styles.css";
@@ -49,38 +49,16 @@ import "./css/chooser.css";
  *    matched within the items (anywhere, or starting with)
  */
 class Chooser extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: props.value,
-      missing: false
-    };
-  }
-
   isEmpty(value) {
     return _.isNull(value) || _.isUndefined(value) || value === "";
   }
 
-  isMissing() {
-    return this.props.required &&
-      !this.props.disabled &&
-      this.isEmpty(this.state.value);
-  }
-
-  generateKey(choice, choiceList) {
-    let key = hash(_.map(choiceList, label => label).join("-"));
-    key += "-" + choice;
-    return key;
+  isMissing(value = this.props.value) {
+    return this.props.required && !this.props.disabled && this.isEmpty(value);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.value !== nextProps.value) {
-      const key = this.generateKey(nextProps.value, this.props.choiceList);
-      this.setState({
-        key,
-        value: nextProps.value
-      });
-
+    if (this.props.value !== nextProps.value) {
       // The value might have been missing and is now set explicitly
       // with a prop
       const missing = this.props.required &&
@@ -96,30 +74,6 @@ class Chooser extends React.Component {
     }
   }
 
-  /**
-     * If there's no initial value for the chooser and this field is required
-     * then report the missing count up to the parent.
-     */
-  componentDidMount() {
-    const missing = this.props.required &&
-      !this.props.disabled &&
-      (_.isNull(this.props.value) ||
-        _.isUndefined(this.props.value) ||
-        this.props.value === "");
-    const missingCount = missing ? 1 : 0;
-
-    if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.name, missingCount);
-    }
-
-    // The key needs to change if the choiceList changes, so we set
-    // the key to be the hash of the choice list
-    this.setState({
-      missing,
-      key: this.generateKey(this.props.value, this.props.choiceList)
-    });
-  }
-
   handleChange(v) {
     let { value } = v || {};
     const missing = this.props.required && this.isEmpty(v);
@@ -128,9 +82,6 @@ class Chooser extends React.Component {
     if (!this.isEmpty(v) && !_.isNaN(Number(v))) {
       value = +v;
     }
-
-    // State changes
-    this.setState({ value, missing });
 
     // Callbacks
     if (this.props.onChange) {
@@ -174,21 +125,21 @@ class Chooser extends React.Component {
 
   getCurrentChoice() {
     const choiceItem = _.find(this.props.choiceList, item => {
-      return item.id === this.state.value;
+      return item.id === this.props.value;
     });
     return choiceItem ? choiceItem.id : undefined;
   }
 
   getCurrentChoiceLabel() {
     const choiceItem = _.find(this.props.choiceList, item => {
-      return item.id === this.state.value;
+      return item.id === this.props.value;
     });
     return choiceItem ? choiceItem.label : "";
   }
 
   render() {
     const choice = this.getCurrentChoice();
-    const isMissing = this.isMissing(this.state.value);
+    const isMissing = this.isMissing(this.props.value);
 
     if (this.props.edit) {
       let className = "";
@@ -243,10 +194,7 @@ class Chooser extends React.Component {
       let text = this.getCurrentChoiceLabel();
       let color = "inherited";
       let background = "inherited";
-      if (this.state.error) {
-        color = "#b94a48";
-        background = "pink";
-      } else if (isMissing) {
+      if (isMissing) {
         text = " ";
         background = "floralwhite";
       }

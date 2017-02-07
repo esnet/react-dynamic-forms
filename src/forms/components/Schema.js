@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2015-2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -13,7 +13,7 @@ import invariant from "invariant";
 
 /**
  * A schema can be specified using JSX to define the rules for
- * each form field. As an example, here is a form that will take the
+ * each form field. As an example, here is a Form that will take the
  * first name, last name and email of a contact. We can define also
  * that the email should be of format `email` and that the first and
  * last names are `required`:
@@ -21,17 +21,17 @@ import invariant from "invariant";
  * ```
  *    const schema = (
  *        <Schema>
- *            <Attr name="first_name" label="First name" placeholder="Enter first name"
+ *            <Field name="first_name" label="First name" placeholder="Enter first name"
  *                  required={true} validation={{"type": "string"}}/>
- *            <Attr name="last_name" label="Last name" placeholder="Enter last name"
+ *            <Field name="last_name" label="Last name" placeholder="Enter last name"
  *                  required={true} validation={{"type": "string"}}/>
- *            <Attr name="email" label="Email" placeholder="Enter valid email address"
+ *            <Field name="email" label="Email" placeholder="Enter valid email address"
  *                  validation={{"format": "email"}}/>
  *        </Schema>
  *    );
  * ```
  *
- * See also `Attr`.
+ * See also `Field`.
  */
 export default class Schema {
     render() {

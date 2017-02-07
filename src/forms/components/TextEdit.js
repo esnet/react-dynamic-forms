@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2015, The Regents of the University of California,
+ *  Copyright (c) 2015-2017, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
  *  All rights reserved.
@@ -11,7 +11,6 @@
 import React from "react";
 import { validate } from "revalidator";
 import _ from "underscore";
-import hash from "string-hash";
 
 import formGroup from "../formGroup";
 import "./css/textedit.css";
@@ -22,17 +21,6 @@ import "./css/textedit.css";
  * value changed with 'onChange'.
  */
 class TextEdit extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: props.value,
-      error: null,
-      errorMsg: "",
-      missing: false,
-      type: "text"
-    };
-  }
-
   isEmpty(value) {
     return _.isNull(value) || _.isUndefined(value) || value === "";
   }
@@ -73,17 +61,13 @@ class TextEdit extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.value !== nextProps.value) {
-      this.setState({ value: nextProps.value });
+    if (this.props.value !== nextProps.value) {
       const missing = this.isMissing(nextProps.value);
-      const error = this.getError(nextProps.value);
+      const { validationError } = this.getError(nextProps.value);
 
-      // Re-broadcast error and missing states up to the owner
+      // Broadcast error and missing states up to the owner
       if (this.props.onErrorCountChange) {
-        this.props.onErrorCountChange(
-          this.props.name,
-          error.validationError ? 1 : 0
-        );
+        this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
       }
 
       if (this.props.onMissingCountChange) {
@@ -94,22 +78,11 @@ class TextEdit extends React.Component {
 
   componentDidMount() {
     const missing = this.isMissing(this.props.value);
-    const error = this.getError(this.props.value);
-    const value = this.props.value;
-
-    this.setState({
-      value,
-      missing,
-      error: error.validationError,
-      errorMsg: error.validationErrorMessage
-    });
+    const { validationError } = this.getError(this.props.value);
 
     // Initial error and missing states are fed up to the owner
     if (this.props.onErrorCountChange) {
-      this.props.onErrorCountChange(
-        this.props.name,
-        error.validationError ? 1 : 0
-      );
+      this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
     }
 
     if (this.props.onMissingCountChange) {
@@ -120,17 +93,8 @@ class TextEdit extends React.Component {
   onBlur() {
     const value = this.refs.input.value;
     const missing = this.props.required && this.isEmpty(value);
-    const error = this.getError(value);
-
+    const { validationError } = this.getError(value);
     let cast = value;
-
-    // State changes
-    this.setState({
-      value,
-      missing,
-      error: error.validationError,
-      errorMsg: error.validationErrorMessage
-    });
 
     // Callbacks
     if (this.props.onChange) {
@@ -149,42 +113,25 @@ class TextEdit extends React.Component {
       this.props.onChange(this.props.name, cast);
     }
     if (this.props.onErrorCountChange) {
-      this.props.onErrorCountChange(
-        this.props.name,
-        error.validationError ? 1 : 0
-      );
+      this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
     }
     if (this.props.onMissingCountChange) {
       this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
     }
   }
 
-  onFocus() {
-    this.setState({ error: false, errorMsg: "" });
-  }
-
   inlineStyle(hasError, isMissing) {
     let color = "inherited";
     let background = "inherited";
-    let borderLeftStyle = "inherited";
-    let borderLeftColor = "inherited";
-    let borderLeftWidth = 2;
     if (hasError) {
       color = "#b94a48";
       background = "#fff0f3";
-      borderLeftStyle = "solid";
-      borderLeftColor = "#b94a48";
     } else if (isMissing) {
       background = "floralwhite";
-      borderLeftStyle = "solid";
-      borderLeftColor = "orange";
     }
     return {
       color,
       background,
-      borderLeftStyle,
-      borderLeftColor,
-      borderLeftWidth,
       height: 23,
       width: "100%",
       paddingLeft: 3
@@ -192,30 +139,34 @@ class TextEdit extends React.Component {
   }
 
   render() {
+    // Control state
+    const isMissing = this.isMissing(this.props.value);
+    const { validationError, validationErrorMessage } = this.getError(
+      this.props.value
+    );
+
     if (this.props.edit) {
-      // Error text
-      const msg = this.state.error ? this.state.errorMsg : "";
+      // Error style/message
+      let className = "";
+      const msg = validationError ? validationErrorMessage : "";
       let helpClassName = "help-block";
-      if (this.state.error) {
+      if (validationError) {
         helpClassName += " has-error";
+        className = "has-error";
       }
 
       // Warning style
-      const style = this.isMissing(this.state.value)
-        ? { background: "floralwhite" }
-        : {};
+      const style = isMissing ? { background: "floralwhite" } : {};
 
-      const key = hash(this.props.value || "");
+      const type = this.props.type || "text";
 
       return (
-        <div>
+        <div className={className}>
           <input
-            required
-            key={key}
             ref="input"
             className="form-control input-sm"
             style={style}
-            type={this.props.type}
+            type={type}
             disabled={this.props.disabled}
             placeholder={this.props.placeholder}
             defaultValue={this.props.value}
@@ -226,13 +177,11 @@ class TextEdit extends React.Component {
         </div>
       );
     } else {
-      const isMissing = this.isMissing(this.state.value);
-      const hasError = this.state.error;
       let text = this.props.value;
       if (isMissing) {
         text = " ";
       }
-      const style = this.inlineStyle(hasError, isMissing);
+      const style = this.inlineStyle(validationError, isMissing);
       return <div style={style}>{text}</div>;
     }
   }
