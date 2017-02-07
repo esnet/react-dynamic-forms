@@ -15,7 +15,7 @@
   "scripts": {
     "lint": "eslint src/components/*.js",
     "test": "react-scripts test --env=jsdom",
-    "build": "echo \"*** Building lib\n\" && rm -rf lib && mkdir lib && mkdir lib/components && babel src/forms --optional runtime --stage 0 --ignore __tests__/* --out-dir lib/ && mkdir lib/components/css && cp ./src/forms/components/css/*.css ./lib/components/css/ && babel src/index.js --optional runtime --stage 0 --out-file lib/index.js",
+    "build": "echo \"*** Building lib\n\" && rm -rf lib && mkdir lib && mkdir lib/components && babel src/forms --optional runtime --stage 0 --ignore __tests__/* --out-dir lib/ && mkdir lib/components/css && cp ./src/forms/components/css/*.css ./lib/components/css/ && babel src/forms/index.js --optional runtime --stage 0 --out-file lib/index.js",
     "start-website": "react-scripts start",
     "build-website": "echo \"*** Building website\n\" && rm -rf docs && react-scripts build && mv build docs"
   },
