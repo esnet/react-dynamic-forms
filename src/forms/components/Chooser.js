@@ -115,7 +115,6 @@ class Chooser extends React.Component {
       label: item.get("label"),
       disabled: item.has("disabled") ? item.get("disabled") : false
     }));
-    console.log("res", result);
     return result;
   }
 
@@ -130,7 +129,6 @@ class Chooser extends React.Component {
     const choiceItem = this.props.choiceList.find(item => {
       return item.get("id") === this.props.value;
     });
-    console.log(" choice is", choiceItem);
     return choiceItem ? choiceItem.get("id") : undefined;
   }
 
@@ -156,7 +154,6 @@ class Chooser extends React.Component {
         const options = this.getFilteredOptionList(null);
         const labelList = _.map(options, item => item.label);
         const key = `${labelList}--${choice}`;
-        console.log("options", options);
         return (
           <div className={className} style={chooserStyle}>
             <VirtualizedSelect

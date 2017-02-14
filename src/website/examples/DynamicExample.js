@@ -344,7 +344,7 @@ export default React.createClass({
 
         // Bookmark list for chooser
         const bookmarkList = bookmarked.map(
-            (bookmark, id) => new Immutable.map({
+            (bookmark, id) => new Immutable.Map({
                 id,
                 label: bookmark.get("name")
             })
