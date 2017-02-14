@@ -54,7 +54,10 @@ class EmailForm extends React.Component {
   );
 
   emailTypes() {
-    return [{ id: 1, label: "Work" }, { id: 2, label: "Home" }];
+    return Immutable.fromJS([
+      { id: 1, label: "Work" },
+      { id: 2, label: "Home" }
+    ]);
   }
 
   emailTypeLabel() {

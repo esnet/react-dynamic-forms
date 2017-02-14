@@ -93,27 +93,30 @@ class Chooser extends React.Component {
   }
 
   getOptionList() {
-    return _.map(this.props.choiceList, c => {
+    return this.props.choiceList.map(item => {
       let disabled = false;
-      const isDisabled = _.has(c, "disabled") && c.disabled === true;
-      if (_.contains(this.props.disableList, c.id) || isDisabled) {
+      const isDisabled = item.has("disabled") && item.get("disabled") === true;
+      if (_.contains(this.props.disableList, item.get("id")) || isDisabled) {
         disabled = true;
       }
-      return { value: c.id, label: c.label, disabled };
-    });
+      return { value: item.get("id"), label: item.get("label"), disabled };
+    }).toJS();
   }
 
   getFilteredOptionList(input) {
     const items = this.props.choiceList;
-    const filteredItems = input ? _.filter(items, item => {
+    const filteredItems = input ? items.filter(item => {
           return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !==
             -1;
         }) : items;
-    return _.map(filteredItems, c => ({
-      value: `${c.id}`,
-      label: c.label,
-      disabled: _.has(c, "disabled") ? c.disabled : false
+    const result = [];
+    filteredItems.forEach(item => result.push({
+      value: `${item.get("id")}`,
+      label: item.get("label"),
+      disabled: item.has("disabled") ? item.get("disabled") : false
     }));
+    console.log("res", result);
+    return result;
   }
 
   getOptions(input, cb) {
@@ -124,17 +127,18 @@ class Chooser extends React.Component {
   }
 
   getCurrentChoice() {
-    const choiceItem = _.find(this.props.choiceList, item => {
-      return item.id === this.props.value;
+    const choiceItem = this.props.choiceList.find(item => {
+      return item.get("id") === this.props.value;
     });
-    return choiceItem ? choiceItem.id : undefined;
+    console.log(" choice is", choiceItem);
+    return choiceItem ? choiceItem.get("id") : undefined;
   }
 
   getCurrentChoiceLabel() {
-    const choiceItem = _.find(this.props.choiceList, item => {
-      return item.id === this.props.value;
+    const choiceItem = this.props.choiceList.find(item => {
+      return item.get("id") === this.props.value;
     });
-    return choiceItem ? choiceItem.label : "";
+    return choiceItem ? choiceItem.get("label") : "";
   }
 
   render() {
@@ -152,6 +156,7 @@ class Chooser extends React.Component {
         const options = this.getFilteredOptionList(null);
         const labelList = _.map(options, item => item.label);
         const key = `${labelList}--${choice}`;
+        console.log("options", options);
         return (
           <div className={className} style={chooserStyle}>
             <VirtualizedSelect

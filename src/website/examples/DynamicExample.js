@@ -243,13 +243,13 @@ const schema = (
 
 // Database
 
-const endpointTypes = [
+const endpointTypes = Immutable.fromJS([
     { id: "type-id-1", label: "Patch Panel" },
     { id: "type-id-2", label: "Equipment Port" },
     { id: "type-id-3", label: "Foreign" }
-];
+]);
 
-const bookmarked = {
+const bookmarked = Immutable.fromJS({
     "id-1": {
         name: "EQX-ASH-RT1:ge-0/0/2",
         description: "An equipment endpoint",
@@ -273,12 +273,12 @@ const bookmarked = {
         port_side: "BACK",
         port_location: "BOIS"
     }
-};
+});
 
 // Initial values
 const initialValues = {
     bookmarked: "id-3",
-    ...bookmarked["id-3"]
+    ...bookmarked.get("id-3").toJS()
 };
 
 export default React.createClass({
@@ -303,7 +303,7 @@ export default React.createClass({
         // If the bookmark changes then merge in the attr
         // values associated with that bookmark
         if (value.get("bookmarked") !== this.state.value.get("bookmarked")) {
-            const endpoint = bookmarked[value.get("bookmarked")];
+            const endpoint = bookmarked.get(value.get("bookmarked"));
             const updatedValue = value.merge(endpoint);
             this.setState({ value: updatedValue });
         } else {
@@ -343,10 +343,12 @@ export default React.createClass({
         const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
         // Bookmark list for chooser
-        const bookmarkList = _.map(bookmarked, (bookmark, id) => ({
-            id,
-            label: bookmark.name
-        }));
+        const bookmarkList = bookmarked.map(
+            (bookmark, id) => new Immutable.map({
+                id,
+                label: bookmark.get("name")
+            })
+        );
 
         // Visibility tag. Here we look at our endpointTypes and
         // find the one with id = the current value of "type" in our values.
@@ -354,10 +356,10 @@ export default React.createClass({
         // we need to set a visibility tag to show and hide widgets based
         // on that type.
         const currentType = value.get("type");
-        const object = _.findWhere(endpointTypes, {
-            id: currentType
+        const object = endpointTypes.find(item => {
+            return item.get("id") === currentType;
         });
-        const visiblityTag = object.label;
+        const visiblityTag = object.get("label");
 
         if (this.state.loaded) {
             return (

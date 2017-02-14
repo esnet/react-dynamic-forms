@@ -21,6 +21,8 @@ import TextEdit from "../../forms/components/TextEdit";
 import DateEdit from "../../forms/components/DateEdit";
 import Chooser from "../../forms/components/Chooser";
 import TagsEdit from "../../forms/components/TagsEdit";
+import CheckBoxes from "../../forms/components/CheckBoxes";
+import RadioButtons from "../../forms/components/RadioButtons";
 
 import { FormEditStates } from "../../forms/constants";
 
@@ -155,10 +157,30 @@ const schema = (
       required={true}
       validation={{ format: "email" }}
     />
+    <Field name="languages" label="Languages" />
+    <Field name="options" label="Email preferences" />
     <Field name="birthdate" label="Birthdate" required={true} />
     <Field name="tags" label="Categories" required={true} />
   </Schema>
 );
+
+const availableTypes = Immutable.fromJS([
+  { id: 0, label: "Friend" },
+  { id: 1, label: "Acquaintance" }
+]);
+
+const availableEmailOptions = Immutable.fromJS([
+  { id: 0, label: "Never" },
+  { id: 1, label: "As items arrive" },
+  { id: 2, label: "Daily summary" }
+]);
+
+const availableLanguages = Immutable.fromJS([
+  "English",
+  "French",
+  "Spanish",
+  "Japanese"
+]);
 
 const birthday = new Date("1975-05-15");
 
@@ -168,17 +190,19 @@ const initialValue = {
   last_name: "Jones",
   email: "bill@gmail.com",
   birthdate: birthday,
+  languages: ["English", "Spanish"],
+  options: 1,
   tags: ["stanford"]
 };
 
-const tagList = [
+const tagList = Immutable.fromJS([
   "ucberkeley",
   "esnet",
   "stanford",
   "doe",
   "industry",
   "government"
-];
+]);
 
 export default React.createClass({
   mixins: [Highlighter],
@@ -237,11 +261,6 @@ export default React.createClass({
     //this.hasErrors();
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
-    const availableTypes = [
-      { id: 0, label: "Friend" },
-      { id: 1, label: "Acquaintance" }
-    ];
-
     let submit;
     if (this.state.editMode === FormEditStates.ALWAYS) {
       let disableSubmit = true;
@@ -290,6 +309,8 @@ export default React.createClass({
           <TextEdit field="last_name" width={300} />
           <TextEdit field="email" width={400} />
           <DateEdit field="birthdate" width={100} />
+          <CheckBoxes field="languages" optionList={availableLanguages} />
+          <RadioButtons field="options" optionList={availableEmailOptions} />
           <TagsEdit
             field="tags"
             tagList={this.state.tagList}

@@ -1,18 +1,31 @@
-<img src="https://github.com/esnet/react-dynamic-forms/blob/react-15/src/website/img/forms.png" alt="logo" width="160px"/>
 
-**NOTE: v0.17.0 adds support for React 15, but since the way Mixins work in React 15, this is a fairly substantial rewrite to provide an API that doesn't use Mixins at all.**
+**NOTE: v1.0 adds support for React 15, but since the way Mixins work in React 15, this is a fairly substantial rewrite to provide an API that doesn't use Mixins at all.**
 
 This repository contains a set of React based forms components which are used within ESnet for our network database application (ESDB), but could be used by any React based project needing to build complex forms.
 
-Built on Immutable.js, it allows you to specify form schema while still allowing complete control over layout in the form render(). It makes it simple to track errors and missing values within a page, even within nested forms and lists. It also makes it easy to build forms which dynamically change values or structure based on the current state of the form.
+Our approach is to treat a form as a controlled input, essentially an input with many inputs (which may have many inputs, and so on...) You maintain your form's state however you want, you pass that state down into the form as its value prop. If the form is edited, a callback is called and you can update your form state. When it comes time to save the form, that's up to you, you always have your form's state. On top of this the form has a schema defining rules. Therefore, you can also listen to changes in the count of either missing values or errors. With this information it is simple to control if the user can submit the form as well.
+
+The library is built on Immutable.js, so form state should be passed into the form as an Immutable.Map. This allows efficient operations on your form data, minimizing copying while ensuring safety as the form state is mutated.
+
+While part of defining a form is to specify a schema for your form, you still maintain complete control over the layout in the form in your `render()` method, just like any other react app. The schema and presentation are entirely separate.  This React friendly approach makes it easy to build forms which dynamically change values or structure based on the current state of the form.
 
 This library contains:
 
- * Low level forms controls such as Textedit or Chooser (react-select)type controls that communicate errors and missing values to parent components and style themselves appropriately
- * A <Forms> component that acts as a top level controlled input to assemble controls together and track state change, errors and missing values and enabling dynamic forms with declarative schema
- * Higher Order Components for grouping of controls with their labels, required state and editing control and for building lists of forms
+ * Low level forms control wrappers that communicate errors and missing values to parent components and style themselves appropriately for errors and missing value state. You can write your own in the same way. Supplied standard form controls:
+    - Textedit
+    - TextArea
+    - Checkboxes
+    - RadioButtons
+    - Chooser (internally we use react-select)
+    - TagsEdit (again using react-select)
+    - DateEdit (react-datepicker)
+ * A <Schema> component that lets you define the rules for each field. Each field is specified in a <Field> component
+ * A <Forms> component that acts as a top level controlled input for all of the form state, to assemble controls together and track state change, errors and missing values and enabling dynamic forms with via a declarative schema
+ * Higher Order Components:
+    - for grouping of controls with their labels, required state and editing control
+    - building lists of forms
  * Inline editing
- * List and Key-Value editing
+ * List editing
 
 The library is build on several other open source libraries, especially:
  * react
@@ -20,6 +33,8 @@ The library is build on several other open source libraries, especially:
  * revalidator
  * react-bootstrap
  * react-select
+ * react-virtualized
+ * react-datepicker
 
 Please browse the examples for a feel for the library, or read on to get started.
 
@@ -34,17 +49,21 @@ Once installed, you can import the necessary components from the library:
 
     import {Form, Schema, Field, TextEdit, Chooser} from "react-dynamic-forms";
 
-A schema is specified using JSX to define the rules and meta data for each form fields. As an example, here is a form that will take the first name, last name and email of a contact. We can define also that the email should be of format `email` and that the first and last names are `required`:
 
-    const schema = (
-        <Schema>
-            <Field name="first_name" label="First name" required={true} validation={{"type": "string"}} />
-            <Field name="last_name" label="Last name" required={true} validation={{"type": "string"}} />
-            <Field name="email" label="Email" validation={{"format": "email"}} />
-        </Schema>
-    );
+Anatomy of a form
+-----------------
 
-We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's `render()` function, just like any other React component, but in a way that we refer to our schema attributes using an `field` prop. In ESDB, we actually derive the schema from information we get from our server. Here's an example:
+A form will contain:
+ 1. Your form's state
+ 2. A schema describing the form's fields
+ 3. Implementation of render() that specified controls for each form field
+ 4. Handling of form changes, missing values and errors
+ 5. Submit logic
+
+Form State
+----------
+
+As the creator of the form, you bring the form's state to the table, either in the form of an initial value or previous state you're loaded up to be edited. The form state will be passed into the form via the `value` prop, and should be an Immutable.Map. In the examples, we just keep this on this.state, but a flux store or redux would be other options.
 
     const initialValue = {
       first_name: "Bill",
@@ -59,6 +78,30 @@ We've found from experience that we want a separation between schema and present
                 value: Immutable.fromJS(initialValue),
             };
         },
+        ...
+    });
+
+Schema
+------
+
+A schema is specified using JSX to define the rules and meta data for each form field. As an example, here is a form that will take the first name, last name and email of a contact. The name here is the key for each value, so there would be corresponding keys in the form state (see initialValue above) and in the render of the form controls (see below). We can define also that the email should be of format `email` and that the first_name and last_name fields are `required`:
+
+    const schema = (
+        <Schema>
+            <Field name="first_name" label="First name" required={true} validation={{"type": "string"}} />
+            <Field name="last_name" label="Last name" required={true} validation={{"type": "string"}} />
+            <Field name="email" label="Email" validation={{"format": "email"}} />
+        </Schema>
+    );
+
+In ESDB, we actually derive the schema from information we get from our server.
+
+Implementation of render()
+--------------------------
+
+We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's `render()` function, just like any other React component, but in a way that we refer to our schema attributes using an `field` prop on each control.
+
+
         render() {
             ...
             return (
@@ -77,14 +120,23 @@ We've found from experience that we want a separation between schema and present
                     <TextEdit field="last_name" width={300} />
                     <TextEdit field="email" />
                     <hr />
-                    <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit}/>
+                    <Button className="btn btn-default" onClick={() => handleSubmit()} disabled={disableSubmit} />
                 </Form>
             );
         }
     });
 
-Things to note here: The schema is supplied to the Form, along with the current state of the form `value`. Value always holds the current state of the form. As you can see it is supplied to the Form with the `value` prop and updated by listening to the `onChange` callback. Value's state is potentially invalid, because it will at times likely reflect that the user has partially filled out a form (i.e. may contain missing values) or has filled out a field with an error. For this reason we listen to `onMissingCountChange` and `onErrorCountChange` to keep our form updated with respect to if the form can be saved.
+Things to note here:
 
+ * The schema is supplied to the Form with the `schema` prop
+ * The current state of the form is supplied with the `value` prop.
+ * The value is updated by listening to the `onChange` callback.
+ * Value's state is potentially invalid, because it will at times likely reflect that the user has partially filled out a form (i.e. may contain missing values) or has filled out a field with an error. For this reason we listen to `onMissingCountChange` and `onErrorCountChange` to keep our form updated with respect to form validity.
+
+Beyond this
+-----------
+
+Given what you know now, you should be ready to start building a form. Please also see the examples for how you can control the appearance of the form using tags specified in the schema as well as how to create lists.
 
 Developing
 ----------
@@ -103,7 +155,7 @@ Then, point your browser to:
 
 [http://localhost:8080/webpack-dev-server/](http://localhost:8080/webpack-dev-server/)
 
-Licence
+License
 -------
 
 This code is distributed under a BSD style license, see the LICENSE file for complete information.
