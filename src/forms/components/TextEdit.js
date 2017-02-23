@@ -163,6 +163,7 @@ class TextEdit extends React.Component {
       return (
         <div className={className}>
           <input
+            key={this.props.value}
             ref="input"
             className="form-control input-sm"
             style={style}

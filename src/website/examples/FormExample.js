@@ -12,6 +12,7 @@ import React from "react";
 import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
 import Immutable from "immutable";
+import Chance from "chance";
 
 import Form from "../../forms/components/Form";
 import Schema from "../../forms/components/Schema";
@@ -238,6 +239,31 @@ export default React.createClass({
   handleAlertDismiss() {
     this.setState({ data: undefined });
   },
+  random() {
+    const chance = new Chance();
+    const randomValue = {
+      type: chance.integer({min: 0, max: 1}),
+      first_name: chance.first(),
+      last_name: chance.last(),
+      email: chance.email(),
+      birthdate: chance.birthday(),
+      languages: chance.pickset([
+        "English",
+        "French",
+        "Spanish",
+        "Japanese"], chance.integer({min: 0, max: 4})),
+      options: chance.integer({min: 0, max: 2}),
+      tags:  chance.pickset([
+        "ucberkeley",
+        "esnet",
+        "stanford",
+        "doe",
+        "industry",
+        "government"], chance.integer({min: 0, max: 3}))
+    };
+
+    this.setState({value: new Immutable.fromJS(randomValue)});
+  },
   renderAlert() {
     if (this.state && this.state.data) {
       const firstName = this.state.data["first_name"];
@@ -356,6 +382,12 @@ export default React.createClass({
             <pre style={{ borderLeftColor: "orange" }}>
               {`hasMissing: ${this.state.hasMissing}`}
             </pre>
+            <button
+              className="btn btn-default btn-sm"
+              onClick={() => this.random()}
+            >
+              Random
+            </button>
           </div>
         </div>
         <div className="row">

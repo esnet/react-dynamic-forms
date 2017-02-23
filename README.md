@@ -65,17 +65,15 @@ Form State
 
 As the creator of the form, you bring the form's state to the table, either in the form of an initial value or previous state you're loaded up to be edited. The form state will be passed into the form via the `value` prop, and should be an Immutable.Map. In the examples, we just keep this on this.state, but a flux store or redux would be other options.
 
-    const initialValue = {
-      first_name: "Bill",
-      last_name: "Jones",
-      email: "bill@gmail.com",
-    };
-
     const ContactForm = React.createClass({
         ...
         getInitialState() {
             return {
-                value: Immutable.fromJS(initialValue),
+                value: Immutable.fromJS({
+                    first_name: "Bill",
+                    last_name: "Jones",
+                    email: "bill@mail.com",
+                }),
             };
         },
         ...
@@ -141,7 +139,7 @@ Given what you know now, you should be ready to start building a form. Please al
 Developing
 ----------
 
-The repository contains the examples website. This is very helpful in developing new functionality. Within a forked repo, you first need to run:
+Within a forked repo, you first need to run:
 
     npm install
 
@@ -154,6 +152,10 @@ You can then start up the test server, as well as automatic source building, by 
 Then, point your browser to:
 
 [http://localhost:8080/webpack-dev-server/](http://localhost:8080/webpack-dev-server/)
+
+To build the lib directory, use:
+
+    npm run build
 
 License
 -------

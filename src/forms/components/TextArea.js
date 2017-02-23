@@ -147,6 +147,7 @@ class TextArea extends React.Component {
         <div className={className}>
           <textarea
             ref="input"
+            key={this.props.value}
             className="form-control"
             style={style}
             type="text"
