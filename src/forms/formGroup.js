@@ -15,6 +15,8 @@ import React from "react";
 import "./components/css/group.css";
 import "./components/css/icon.css";
 
+import { FormGroupLayout } from "./constants";
+
 /**
  * Groups are intended to be used within the `Form` and provide a shorthand
  * method of adding a widget and its label to a form, including support for
@@ -115,12 +117,16 @@ export default function formGroup(Widget, hideEdit) {
         "group-label": true,
         required
       });
+      let marginLeft = "auto";
+      if (this.props.layout === FormGroupLayout.COLUMN) {
+        marginLeft = null;
+      }
       const fieldLabel = (
         <div
           className={labelClasses}
           style={{
             whiteSpace: "nowrap",
-            marginLeft: "auto",
+            marginLeft,
             paddingTop: 3,
             color: this.state.error ? "b94a48" : "inherit"
           }}
@@ -152,7 +158,7 @@ export default function formGroup(Widget, hideEdit) {
       }
 
       // Group
-      if (this.props.inline) {
+      if (this.props.layout === FormGroupLayout.INLINE) {
         return (
           <Flexbox
             flexDirection="column"
@@ -161,6 +167,39 @@ export default function formGroup(Widget, hideEdit) {
             onMouseLeave={() => this.handleMouseLeave()}
           >
             {widget}
+          </Flexbox>
+        );
+      } else if (this.props.layout === FormGroupLayout.COLUMN) {
+        return (
+          <Flexbox
+            flexDirection="column"
+            onMouseEnter={() => this.handleMouseEnter()}
+            onMouseLeave={() => this.handleMouseLeave()}
+          >
+            <Flexbox
+              flexDirection="row"
+              onMouseEnter={() => this.handleMouseEnter()}
+              onMouseLeave={() => this.handleMouseLeave()}
+            >
+              <Flexbox>
+                {fieldLabel}
+              </Flexbox>
+              <Flexbox width="25px">
+                {requiredMarker}
+              </Flexbox>
+            </Flexbox>
+            <Flexbox
+              flexDirection="row"
+              onMouseEnter={() => this.handleMouseEnter()}
+              onMouseLeave={() => this.handleMouseLeave()}
+            >
+              <Flexbox flexGrow={1} style={selectStyle}>
+                {widget}
+              </Flexbox>
+              <Flexbox width="28px" style={selectStyle}>
+                {editIcon}
+              </Flexbox>
+            </Flexbox>
           </Flexbox>
         );
       } else {
