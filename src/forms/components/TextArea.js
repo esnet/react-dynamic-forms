@@ -88,14 +88,14 @@ class TextArea extends React.Component {
     }
   }
 
-  onBlur(e) {
+  onBlur() {
     const value = this.refs.input.value;
     const missing = this.props.required && this.isEmpty(value);
     const { validationError } = this.getError(value);
 
     // Callbacks
     if (this.props.onChange) {
-      this.props.onChange(this.props.name, e.target.value);
+      this.props.onChange(this.props.name, value);
     }
     if (this.props.onErrorCountChange) {
       this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
@@ -155,7 +155,7 @@ class TextArea extends React.Component {
             placeholder={this.props.placeholder}
             defaultValue={this.props.value}
             rows={this.props.rows}
-            onBlur={() => this.onBlur}
+            onBlur={() => this.onBlur()}
           />
           <div className={helpClassName}>{msg}</div>
         </div>
