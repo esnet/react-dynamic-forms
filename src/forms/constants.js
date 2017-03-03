@@ -22,5 +22,11 @@ module.exports = {
         SELECTED: null,
         NEVER: null,
         TABLE: null
+    }),
+
+    FormGroupLayout: keymirror({
+        ROW: null,
+        COLUMN: null,
+        INLINE: null
     })
 };

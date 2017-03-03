@@ -15,7 +15,7 @@ import Flexbox from "flexbox-react";
 
 import Field from "./Field";
 import Schema from "./Schema";
-import { FormEditStates } from "../constants";
+import { FormEditStates, FormGroupLayout } from "../constants";
 import PropTypes from "react-immutable-proptypes";
 
 // Pass in the <Schema> element and will return all the <Fields> under it.
@@ -100,7 +100,9 @@ export default class Form extends React.Component {
       }
 
       if (this.props.edit === FormEditStates.TABLE) {
-        props.inline = true;
+        props.layout = FormGroupLayout.INLINE;
+      } else {
+        props.layout = this.props.groupLayout;
       }
 
       if (formFields[fieldName].disabled) {
@@ -492,7 +494,8 @@ export default class Form extends React.Component {
 Form.defaultProps = {
   formStyle: {},
   formClass: "form-horizontal",
-  formKey: "form"
+  formKey: "form",
+  groupLayout: FormGroupLayout.ROW
 };
 
 Form.propTypes = {
