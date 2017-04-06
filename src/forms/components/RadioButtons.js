@@ -16,72 +16,75 @@ import formGroup from "../formGroup";
 /**
  */
 class RadioButtons extends React.Component {
-  handleChange(v) {
-    // Callbacks
-    if (this.props.onChange) {
-      this.props.onChange(this.props.name, v);
+    handleChange(v) {
+        // Callbacks
+        if (this.props.onChange) {
+            this.props.onChange(this.props.name, v);
+        }
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
     }
-  }
 
-  getCurrentChoiceLabel() {
-    const choiceItem = this.props.optionList.find(item => {
-      return item.get("id") === this.props.value;
-    });
-    return choiceItem ? choiceItem.get("label") : "";
-  }
-
-  inlineStyle(hasError, isMissing) {
-    let color = "inherited";
-    let background = "inherited";
-    if (hasError) {
-      color = "#b94a48";
-      background = "#fff0f3";
-    } else if (isMissing) {
-      background = "floralwhite";
+    getCurrentChoiceLabel() {
+        const choiceItem = this.props.optionList.find(item => {
+            return item.get("id") === this.props.value;
+        });
+        return choiceItem ? choiceItem.get("label") : "";
     }
-    return {
-      color,
-      background,
-      width: "100%",
-      paddingLeft: 3
-    };
-  }
 
-  render() {
-    if (this.props.edit) {
-      const items = this.props.optionList.map((item, i) => {
-        const id = item.get("id");
-        const label = item.get("label");
-        return (
-          <div className="radio" key={i}>
-            <label>
-              <input
-                type="radio"
-                name={label}
-                id={id}
-                value={id}
-                checked={id === this.props.value}
-                onChange={() => this.handleChange(id)}
-              />
-              {label}
-            </label>
-          </div>
-        );
-      });
-      return (
-        <div style={this.inlineStyle(false, false)}>
-          {items}
-        </div>
-      );
-    } else {
-      let text = this.getCurrentChoiceLabel();
-      return <div>{text}</div>;
+    inlineStyle(hasError, isMissing) {
+        let color = "inherited";
+        let background = "inherited";
+        if (hasError) {
+            color = "#b94a48";
+            background = "#fff0f3";
+        } else if (isMissing) {
+            background = "floralwhite";
+        }
+        return {
+            color,
+            background,
+            width: "100%",
+            paddingLeft: 3
+        };
     }
-  }
+
+    render() {
+        if (this.props.edit) {
+            const items = this.props.optionList.map((item, i) => {
+                const id = item.get("id");
+                const label = item.get("label");
+                return (
+                    <div className="radio" key={i}>
+                        <label>
+                            <input
+                                type="radio"
+                                name={label}
+                                id={id}
+                                value={id}
+                                checked={id === this.props.value}
+                                onChange={() => this.handleChange(id)}
+                            />
+                            {label}
+                        </label>
+                    </div>
+                );
+            });
+            return (
+                <div style={this.inlineStyle(false, false)}>
+                    {items}
+                </div>
+            );
+        } else {
+            let text = this.getCurrentChoiceLabel();
+            return <div>{text}</div>;
+        }
+    }
 }
 
 RadioButtons.defaultProps = {
-  width: 300
+    width: 300
 };
 
 export default formGroup(RadioButtons);

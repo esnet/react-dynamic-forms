@@ -183,61 +183,21 @@ const schema = (
     <Schema>
         <Field name="bookmarked" label="" tags={["all"]} required={true} />
         <Field name="name" label="Name" tags={["all"]} required={true} />
-        <Field
-            name="description"
-            label="Description"
-            tags={["all"]}
-            required={true}
-        />
+        <Field name="description" label="Description" tags={["all"]} required={true} />
         <Field name="type" label="Type" tags={["all"]} required={true} />
-        <Field
-            name="device_name"
-            label="Device name"
-            tags={["Equipment Port"]}
-            required={true}
-        />
-        <Field
-            name="interface"
-            label="Interface"
-            tags={["Equipment Port"]}
-            required={true}
-        />
+        <Field name="device_name" label="Device name" tags={["Equipment Port"]} required={true} />
+        <Field name="interface" label="Interface" tags={["Equipment Port"]} required={true} />
         <Field
             name="foreign_description"
             label="Foreign description"
             tags={["Foreign"]}
             required={true}
         />
-        <Field
-            name="organization"
-            label="Organization"
-            tags={["Foreign"]}
-            required={true}
-        />
-        <Field
-            name="panel_name"
-            label="Panel name"
-            tags={["Patch Panel"]}
-            required={true}
-        />
-        <Field
-            name="port_id"
-            label="Port Id"
-            tags={["Patch Panel"]}
-            required={true}
-        />
-        <Field
-            name="port_side"
-            label="Port side"
-            tags={["Patch Panel"]}
-            required={true}
-        />
-        <Field
-            name="port_location"
-            label="Port location"
-            tags={["Patch Panel"]}
-            required={true}
-        />
+        <Field name="organization" label="Organization" tags={["Foreign"]} required={true} />
+        <Field name="panel_name" label="Panel name" tags={["Patch Panel"]} required={true} />
+        <Field name="port_id" label="Port Id" tags={["Patch Panel"]} required={true} />
+        <Field name="port_side" label="Port side" tags={["Patch Panel"]} required={true} />
+        <Field name="port_location" label="Port location" tags={["Patch Panel"]} required={true} />
     </Schema>
 );
 
@@ -321,11 +281,7 @@ export default React.createClass({
             const firstName = this.state.data["first_name"];
             const lastName = this.state.data["last_name"];
             return (
-                <Alert
-                    bsStyle="success"
-                    onDismiss={this.handleAlertDismiss}
-                    style={{ margin: 5 }}
-                >
+                <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{ margin: 5 }}>
                     <strong>Success!</strong>
                     {" "}
                     {firstName}
@@ -344,10 +300,11 @@ export default React.createClass({
 
         // Bookmark list for chooser
         const bookmarkList = bookmarked.map(
-            (bookmark, id) => new Immutable.Map({
-                id,
-                label: bookmark.get("name")
-            })
+            (bookmark, id) =>
+                new Immutable.Map({
+                    id,
+                    label: bookmark.get("name")
+                })
         );
 
         // Visibility tag. Here we look at our endpointTypes and

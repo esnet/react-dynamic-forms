@@ -10,28 +10,26 @@
 
 import React from "react";
 import {
-  TestBasic,
-// TextEditDisabled,
-// TextEditPlaceholder,
+    TestBasic // TextEditDisabled,
+} from // TextEditPlaceholder,
 // TextEditPassword,
 // TextEditRequired1,
 // TextEditRequired2,
 // TextEditRequired3,
 // TextEditValidate,
 // TextEditValidateInt
-} from "../../components_test/TextEditExamples";
+"../../components_test/TextEditExamples";
 
 export default React.createClass({
-  render() {
-    return (
-      <div>
-        <div className="row">
-          <div className="col-md-12">
-            <h3>TextEdit Tests</h3>
-            TextEdit initial value
-            <TestBasic />
-            {
-              /*}
+    render() {
+        return (
+            <div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <h3>TextEdit Tests</h3>
+                        TextEdit initial value
+                        <TestBasic />
+                        {/*}
             Diabled TextEdit
             <TextEditDisabled />
             With a placeholder
@@ -47,11 +45,10 @@ export default React.createClass({
             Validated field (email address)
             <TextEditValidate />
             Validated field (integer)
-            <TextEditValidateInt /> */
-            }
-          </div>
-        </div>
-      </div>
-    );
-  }
+            <TextEditValidateInt /> */}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 });

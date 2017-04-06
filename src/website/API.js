@@ -18,7 +18,7 @@ import APIDoc from "./APIDoc";
 import docsFile from "./docs.json";
 
 export default React.createClass({
-    mixins: [ Highlighter ],
+    mixins: [Highlighter],
     render() {
         const component = this.props.params.component;
         const path = `src/components/${component}.js`;
@@ -38,5 +38,4 @@ export default React.createClass({
             </div>
         );
     }
-})
-
+});

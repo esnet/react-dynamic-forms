@@ -40,190 +40,188 @@ import { FormGroupLayout } from "./constants";
  */
 
 export default function formGroup(Widget, hideEdit) {
-  return class Group extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { over: false };
-    }
+    return class Group extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = { over: false };
+        }
 
-    selectItem(attrName) {
-      if (this.props.onSelectItem) {
-        this.props.onSelectItem(attrName);
-      }
-    }
-
-    handleMouseEnter() {
-      this.setState({ over: true });
-    }
-
-    handleMouseLeave() {
-      this.setState({ over: false });
-    }
-
-    render() {
-      const { hidden = false, width, allowEdit, ...props } = this.props;
-      const {
-        name,
-        label,
-        key,
-        edit,
-        disabled,
-        required,
-        showRequired,
-        onSelectItem
-      } = props;
-
-      const selectStyle = {};
-      //background: this.state.over ? "#FAFAFA" : "inherit"
-
-      //
-      // Hidden
-      //
-      if (hidden) {
-        return <div />;
-      }
-
-      //
-      // Widget
-      //
-
-      const widgetWidth = width ? `${width}px` : "100%";
-      const widget = (
-        <div
-          style={{
-            width: widgetWidth
-          }}
-        >
-          <Widget {...props} />
-        </div>
-      );
-
-      //
-      // Required
-      //
-      let requiredMarker;
-      if (required && showRequired) {
-        requiredMarker = (
-          <span className="group-required" style={{ paddingLeft: 3 }}>*</span>
-        );
-      } else {
-        requiredMarker = <span />;
-      }
-
-      //
-      // Label
-      //
-      const labelClasses = classNames({
-        "group-label": true,
-        required
-      });
-      let marginLeft = "auto";
-      if (this.props.layout === FormGroupLayout.COLUMN) {
-        marginLeft = null;
-      }
-      const fieldLabel = (
-        <div
-          className={labelClasses}
-          style={{
-            whiteSpace: "nowrap",
-            marginLeft,
-            paddingTop: 3,
-            color: this.state.error ? "b94a48" : "inherit"
-          }}
-        >
-          <label muted={disabled} htmlFor={key}>{label}</label>
-        </div>
-      );
-      const labelWidth = this.props.labelWidth
-        ? `${this.props.labelWidth}px`
-        : "300px";
-
-      //
-      // Edit
-      //
-
-      let editIcon = <span />;
-      if (this.state.over && allowEdit && !hideEdit) {
-        const isBeingEdited = edit;
-        editIcon = (
-          <i
-            className={
-              isBeingEdited
-                ? "glyphicon glyphicon-pencil icon edit-action active"
-                : "glyphicon glyphicon-pencil icon edit-action"
+        selectItem(attrName) {
+            if (this.props.onSelectItem) {
+                this.props.onSelectItem(attrName);
             }
-            onClick={() => onSelectItem ? onSelectItem(name) : null}
-          />
-        );
-      }
+        }
 
-      // Group
-      if (this.props.layout === FormGroupLayout.INLINE) {
-        return (
-          <Flexbox
-            flexDirection="column"
-            width={widgetWidth}
-            onMouseEnter={() => this.handleMouseEnter()}
-            onMouseLeave={() => this.handleMouseLeave()}
-          >
-            {widget}
-          </Flexbox>
-        );
-      } else if (this.props.layout === FormGroupLayout.COLUMN) {
-        return (
-          <Flexbox
-            flexDirection="column"
-            onMouseEnter={() => this.handleMouseEnter()}
-            onMouseLeave={() => this.handleMouseLeave()}
-          >
-            <Flexbox
-              flexDirection="row"
-              onMouseEnter={() => this.handleMouseEnter()}
-              onMouseLeave={() => this.handleMouseLeave()}
-            >
-              <Flexbox>
-                {fieldLabel}
-              </Flexbox>
-              <Flexbox width="25px">
-                {requiredMarker}
-              </Flexbox>
-            </Flexbox>
-            <Flexbox
-              flexDirection="row"
-              onMouseEnter={() => this.handleMouseEnter()}
-              onMouseLeave={() => this.handleMouseLeave()}
-            >
-              <Flexbox flexGrow={1} style={selectStyle}>
-                {widget}
-              </Flexbox>
-              <Flexbox width="28px" style={selectStyle}>
-                {editIcon}
-              </Flexbox>
-            </Flexbox>
-          </Flexbox>
-        );
-      } else {
-        return (
-          <Flexbox
-            flexDirection="row"
-            onMouseEnter={() => this.handleMouseEnter()}
-            onMouseLeave={() => this.handleMouseLeave()}
-          >
-            <Flexbox width={labelWidth}>
-              {fieldLabel}
-            </Flexbox>
-            <Flexbox width="25px">
-              {requiredMarker}
-            </Flexbox>
-            <Flexbox flexGrow={1} style={selectStyle}>
-              {widget}
-            </Flexbox>
-            <Flexbox width="28px" style={selectStyle}>
-              {editIcon}
-            </Flexbox>
-          </Flexbox>
-        );
-      }
-    }
-  };
+        handleMouseEnter() {
+            this.setState({ over: true });
+        }
+
+        handleMouseLeave() {
+            this.setState({ over: false });
+        }
+
+        render() {
+            const { hidden = false, width, allowEdit, ...props } = this.props;
+            const {
+                name,
+                label,
+                key,
+                edit,
+                disabled,
+                required,
+                showRequired,
+                onSelectItem
+            } = props;
+
+            const selectStyle = {};
+            //background: this.state.over ? "#FAFAFA" : "inherit"
+
+            //
+            // Hidden
+            //
+            if (hidden) {
+                return <div />;
+            }
+
+            //
+            // Widget
+            //
+
+            const widgetWidth = width ? `${width}px` : "100%";
+            const widget = (
+                <div
+                    style={{
+                        width: widgetWidth
+                    }}
+                >
+                    <Widget {...props} />
+                </div>
+            );
+
+            //
+            // Required
+            //
+            let requiredMarker;
+            if (required && showRequired) {
+                requiredMarker = (
+                    <span className="group-required" style={{ paddingLeft: 3 }}>*</span>
+                );
+            } else {
+                requiredMarker = <span />;
+            }
+
+            //
+            // Label
+            //
+            const labelClasses = classNames({
+                "group-label": true,
+                required
+            });
+            let marginLeft = "auto";
+            if (this.props.layout === FormGroupLayout.COLUMN) {
+                marginLeft = null;
+            }
+            const fieldLabel = (
+                <div
+                    className={labelClasses}
+                    style={{
+                        whiteSpace: "nowrap",
+                        marginLeft,
+                        paddingTop: 3,
+                        color: this.state.error ? "b94a48" : "inherit"
+                    }}
+                >
+                    <label muted={disabled} htmlFor={key}>{label}</label>
+                </div>
+            );
+            const labelWidth = this.props.labelWidth ? `${this.props.labelWidth}px` : "300px";
+
+            //
+            // Edit
+            //
+
+            let editIcon = <span />;
+            if (this.state.over && allowEdit && !hideEdit) {
+                const isBeingEdited = edit;
+                editIcon = (
+                    <i
+                        className={
+                            isBeingEdited
+                                ? "glyphicon glyphicon-pencil icon edit-action active"
+                                : "glyphicon glyphicon-pencil icon edit-action"
+                        }
+                        onClick={() => onSelectItem ? onSelectItem(name) : null}
+                    />
+                );
+            }
+
+            // Group
+            if (this.props.layout === FormGroupLayout.INLINE) {
+                return (
+                    <Flexbox
+                        flexDirection="column"
+                        width={widgetWidth}
+                        onMouseEnter={() => this.handleMouseEnter()}
+                        onMouseLeave={() => this.handleMouseLeave()}
+                    >
+                        {widget}
+                    </Flexbox>
+                );
+            } else if (this.props.layout === FormGroupLayout.COLUMN) {
+                return (
+                    <Flexbox
+                        flexDirection="column"
+                        onMouseEnter={() => this.handleMouseEnter()}
+                        onMouseLeave={() => this.handleMouseLeave()}
+                    >
+                        <Flexbox
+                            flexDirection="row"
+                            onMouseEnter={() => this.handleMouseEnter()}
+                            onMouseLeave={() => this.handleMouseLeave()}
+                        >
+                            <Flexbox>
+                                {fieldLabel}
+                            </Flexbox>
+                            <Flexbox width="25px">
+                                {requiredMarker}
+                            </Flexbox>
+                        </Flexbox>
+                        <Flexbox
+                            flexDirection="row"
+                            onMouseEnter={() => this.handleMouseEnter()}
+                            onMouseLeave={() => this.handleMouseLeave()}
+                        >
+                            <Flexbox flexGrow={1} style={selectStyle}>
+                                {widget}
+                            </Flexbox>
+                            <Flexbox width="28px" style={selectStyle}>
+                                {editIcon}
+                            </Flexbox>
+                        </Flexbox>
+                    </Flexbox>
+                );
+            } else {
+                return (
+                    <Flexbox
+                        flexDirection="row"
+                        onMouseEnter={() => this.handleMouseEnter()}
+                        onMouseLeave={() => this.handleMouseLeave()}
+                    >
+                        <Flexbox width={labelWidth}>
+                            {fieldLabel}
+                        </Flexbox>
+                        <Flexbox width="25px">
+                            {requiredMarker}
+                        </Flexbox>
+                        <Flexbox flexGrow={1} style={selectStyle}>
+                            {widget}
+                        </Flexbox>
+                        <Flexbox width="28px" style={selectStyle}>
+                            {editIcon}
+                        </Flexbox>
+                    </Flexbox>
+                );
+            }
+        }
+    };
 }
