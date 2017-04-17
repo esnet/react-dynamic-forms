@@ -54,7 +54,7 @@ class EmailForm extends React.Component {
       <Field name="options" label="Email preferences" />
     </Schema>
   );
-/*
+
   emailTypeLabel() {
     let result;
     this.props.types.forEach(obj => {
@@ -64,7 +64,7 @@ class EmailForm extends React.Component {
     });
     return result;
   }
-*/
+
   render() {
     const {
       onChange,
