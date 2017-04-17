@@ -23,6 +23,7 @@ import TextEdit from "../../forms/components/TextEdit";
 
 import formGroup from "../../forms/formGroup";
 import formList from "../../forms/formList";
+import RadioButtons from "../../forms/components/RadioButtons";
 
 import { FormEditStates } from "../../forms/constants";
 
@@ -38,7 +39,7 @@ This shows an example form with a list of emails that can be added or removed.
  * Renders a form for entering an email address
  */
 class EmailForm extends React.Component {
-  static defaultValues = { email_type: 1, email: "" };
+  static defaultValues = { email_type: 1, email: "", options: 1 };
 
   static schema = (
     <Schema>
@@ -50,31 +51,27 @@ class EmailForm extends React.Component {
         validation={{ format: "email" }}
       />
       <Field name="email_type" defaultValue={1} label="Type" required={true} />
+      <Field name="options" label="Email preferences" />
     </Schema>
   );
-
-  emailTypes() {
-    return Immutable.fromJS([
-      { id: 1, label: "Work" },
-      { id: 2, label: "Home" }
-    ]);
-  }
-
+/*
   emailTypeLabel() {
     let result;
-    this.emailTypes().forEach(obj => {
+    this.props.types.forEach(obj => {
       if (obj.id === this.props.value.get("email_type")) {
         result = obj.label;
       }
     });
     return result;
   }
-
+*/
   render() {
     const {
       onChange,
       onMissingCountChange,
       onErrorCountChange,
+      types,
+      options,
       value = EmailForm.defaultValues
     } = this.props;
     const callbacks = { onChange, onMissingCountChange, onErrorCountChange };
@@ -86,16 +83,17 @@ class EmailForm extends React.Component {
           schema={EmailForm.schema}
           value={value}
           edit={FormEditStates.ALWAYS}
-          labelWidth={50}
+          labelWidth={125}
           {...callbacks}
         >
           <Chooser
             field="email_type"
-            choiceList={this.emailTypes()}
+            choiceList={types}
             disableSearch={true}
             width={150}
           />
           <TextEdit field="email" width={300} />
+          <RadioButtons field="options" optionList={options} />
         </Form>
       );
     } else {
@@ -105,17 +103,17 @@ class EmailForm extends React.Component {
           schema={EmailForm.schema}
           value={value}
           edit={FormEditStates.TABLE}
-          labelWidth={50}
+          labelWidth={125}
           {...callbacks}
         >
           <TextEdit field="email" width={250} />
           <Chooser
             field="email_type"
-            choiceList={this.emailTypes()}
+            choiceList={types}
             disableSearch={true}
             width={250}
           />
-
+          <RadioButtons field="options" optionList={options} />
         </Form>
       );
     }
@@ -182,7 +180,16 @@ const ContactForm = React.createClass({
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
     const { value } = this.props;
     const emails = value.get("emails");
-
+    const emailTypes = Immutable.fromJS([
+      { id: 1, label: "Work" },
+      { id: 2, label: "Home" },
+      { id: 3, label: "Noc"}
+    ]);
+    const availableEmailOptions = Immutable.fromJS([
+      { id: 1, label: "Never" },
+      { id: 2, label: "As items arrive" },
+      { id: 3, label: "Daily summary" }
+    ]);
     return (
       <Form
         field="contact-form"
@@ -200,7 +207,7 @@ const ContactForm = React.createClass({
       >
         <TextEdit field="first_name" width={300} />
         <TextEdit field="last_name" width={300} />
-        <Emails field="emails" value={emails} />
+        <Emails field="emails" types={emailTypes} options={availableEmailOptions} value={emails} />
         <hr />
         <input
           className="btn btn-default"
@@ -221,8 +228,8 @@ export default React.createClass({
       first_name: "Bill",
       last_name: "Jones",
       emails: [
-        { email: "b.jones@work.com", email_type: 1 },
-        { email: "bill@gmail.com", email_type: 2 }
+        { email: "b.jones@work.com", email_type: 1, options: 2 },
+        { email: "bill@gmail.com", email_type: 2, options: 1 }
       ]
     });
     return { value, loaded };

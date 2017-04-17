@@ -146,6 +146,8 @@ export default function list(ItemComponent) {
           name: index,
           edit: this.props.edit,
           innerForm: true,
+          types: this.props.types,
+          options: this.props.options,
           onErrorCountChange: (name, errorCount) =>
             this.handleErrorCountChange(name, errorCount),
           onMissingCountChange: (name, missingCount) =>

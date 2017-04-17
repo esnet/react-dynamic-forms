@@ -68,7 +68,7 @@ up and running to use those?
 Forms have two concerns. Each form has a schema which we use to provide the meta
 data for fields within the form. This includes UI elements like the label for each
 fields, the placeholder text, etc, but also rules around the field itself. For
-example a field (called an Field in this library), 
+example a field (called an Field in this library),
 
 The form elements are defined by a **schema**. Schemas can be defined with JSX or manually. Here's the schema used in this page:
 
