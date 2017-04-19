@@ -112,6 +112,7 @@ class EmailForm extends React.Component {
             choiceList={types}
             disableSearch={true}
             width={250}
+            view={(name, id) => <a href={`email/${id}`}>{name}</a>}
           />
           <RadioButtons field="options" optionList={options} />
         </Form>

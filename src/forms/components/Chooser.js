@@ -193,6 +193,7 @@ class Chooser extends React.Component {
         );
       }
     } else {
+      const view = this.props.view;
       let text = this.getCurrentChoiceLabel();
       let color = "inherited";
       let background = "inherited";
@@ -207,7 +208,11 @@ class Chooser extends React.Component {
         width: "100%",
         paddingLeft: 3
       };
-      return <div style={style}>{text}</div>;
+      if (!view) {
+        return <div style={style}>{text}</div>;
+      } else {
+        return view(text, choice)
+      }
     }
   }
 }
