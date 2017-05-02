@@ -24,6 +24,7 @@ import TextEdit from "../../forms/components/TextEdit";
 import formGroup from "../../forms/formGroup";
 import formList from "../../forms/formList";
 import RadioButtons from "../../forms/components/RadioButtons";
+import CheckBoxes from "../../forms/components/CheckBoxes";
 
 import { FormEditStates } from "../../forms/constants";
 
@@ -39,7 +40,7 @@ This shows an example form with a list of emails that can be added or removed.
  * Renders a form for entering an email address
  */
 class EmailForm extends React.Component {
-  static defaultValues = { email_type: 1, email: "", options: 1 };
+  static defaultValues = { email_type: 1, email: "", options: ["Never"], actions: 1 };
 
   static schema = (
     <Schema>
@@ -52,6 +53,7 @@ class EmailForm extends React.Component {
       />
       <Field name="email_type" defaultValue={1} label="Type" required={true} />
       <Field name="options" label="Email preferences" />
+      <Field name="actions" label="Email actions" />
     </Schema>
   );
 
@@ -72,6 +74,7 @@ class EmailForm extends React.Component {
       onErrorCountChange,
       types,
       options,
+      actions,
       value = EmailForm.defaultValues
     } = this.props;
     const callbacks = { onChange, onMissingCountChange, onErrorCountChange };
@@ -93,7 +96,8 @@ class EmailForm extends React.Component {
             width={150}
           />
           <TextEdit field="email" width={300} />
-          <RadioButtons field="options" optionList={options} />
+          <CheckBoxes field="options" optionList={options} />
+          <RadioButtons field="actions" optionList={actions} />
         </Form>
       );
     } else {
@@ -114,7 +118,8 @@ class EmailForm extends React.Component {
             width={250}
             view={(name, id) => <a href={`email/${id}`}>{name}</a>}
           />
-          <RadioButtons field="options" optionList={options} />
+          <CheckBoxes field="options" optionList={options} />
+          <RadioButtons field="actions" optionList={actions} />
         </Form>
       );
     }
@@ -187,9 +192,14 @@ const ContactForm = React.createClass({
       { id: 3, label: "Noc"}
     ]);
     const availableEmailOptions = Immutable.fromJS([
-      { id: 1, label: "Never" },
-      { id: 2, label: "As items arrive" },
-      { id: 3, label: "Daily summary" }
+      "Never" ,
+      "As items arrive",
+      "Daily summary"
+    ]);
+    const availableEmailActions = Immutable.fromJS([
+      { id: 1, label: "Add" },
+      { id: 2, label: "Edit" },
+      { id: 3, label: "Delete" }
     ]);
     return (
       <Form
@@ -208,7 +218,12 @@ const ContactForm = React.createClass({
       >
         <TextEdit field="first_name" width={300} />
         <TextEdit field="last_name" width={300} />
-        <Emails field="emails" types={emailTypes} options={availableEmailOptions} value={emails} />
+        <Emails
+          field="emails"
+          types={emailTypes}
+          options={availableEmailOptions}
+          actions={availableEmailActions}
+          value={emails} />
         <hr />
         <input
           className="btn btn-default"
@@ -229,8 +244,8 @@ export default React.createClass({
       first_name: "Bill",
       last_name: "Jones",
       emails: [
-        { email: "b.jones@work.com", email_type: 1, options: 2 },
-        { email: "bill@gmail.com", email_type: 2, options: 1 }
+        { email: "b.jones@work.com", email_type: 1, options: ["Never"], actions: 1},
+        { email: "bill@gmail.com", email_type: 2, options: ["As items arrive"], actions: 1}
       ]
     });
     return { value, loaded };
