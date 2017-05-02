@@ -19,4 +19,6 @@ export TextArea from "./components/TextArea";
 export Chooser from "./components/Chooser.js";
 export DateEdit from "./components/DateEdit";
 export TagsEdit from "./components/TagsEdit";
+export RadioButtons from "./components/RadioButtons";
+export CheckBoxes from "./components/CheckBoxes";
 export { FormEditStates, FormGroupLayout } from "./constants";
