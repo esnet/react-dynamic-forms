@@ -24,6 +24,7 @@ import Chooser from "../../forms/components/Chooser";
 import TagsEdit from "../../forms/components/TagsEdit";
 import CheckBoxes from "../../forms/components/CheckBoxes";
 import RadioButtons from "../../forms/components/RadioButtons";
+import View from "../../forms/components/View";
 
 import { FormEditStates } from "../../forms/constants";
 
@@ -162,6 +163,7 @@ const schema = (
     <Field name="options" label="Email preferences" />
     <Field name="birthdate" label="Birthdate" required={true} />
     <Field name="tags" label="Categories" required={true} />
+    <Field name="city" label="City" />
   </Schema>
 );
 
@@ -193,7 +195,8 @@ const initialValue = {
   birthdate: birthday,
   languages: ["English", "Spanish"],
   options: 1,
-  tags: ["stanford"]
+  tags: ["stanford"],
+  city: "Berkeley"
 };
 
 const tagList = Immutable.fromJS([
@@ -212,7 +215,7 @@ export default React.createClass({
       value: Immutable.fromJS(initialValue),
       tagList: Immutable.fromJS(tagList),
       loaded: false,
-      editMode: FormEditStates.ALWAYS
+      editMode: FormEditStates.SELECTED
     };
   },
   componentDidMount() {
@@ -259,7 +262,8 @@ export default React.createClass({
         "stanford",
         "doe",
         "industry",
-        "government"], chance.integer({min: 0, max: 3}))
+        "government"], chance.integer({min: 0, max: 3})),
+      city: chance.city()
     };
 
     this.setState({value: new Immutable.fromJS(randomValue)});
@@ -293,6 +297,7 @@ export default React.createClass({
       if (this.state.hasErrors === false && this.state.hasMissing === false) {
         disableSubmit = false;
       }
+      console.log(disableSubmit)
       submit = (
         <button
           type="submit"
@@ -343,6 +348,12 @@ export default React.createClass({
             onTagListChange={(name, tagList) => this.setState({ tagList })}
             width={400}
           />
+          <View
+            field="city"
+            width={400}
+            view={(value) => {
+              return <b>{value}</b>
+            }} />
           <hr />
           <div className="row">
             <div className="col-md-3" />
