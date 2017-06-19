@@ -19,6 +19,7 @@ import Schema from "../../forms/components/Schema";
 import Field from "../../forms/components/Field";
 
 import TextEdit from "../../forms/components/TextEdit";
+import TextArea from "../../forms/components/TextArea";
 import DateEdit from "../../forms/components/DateEdit";
 import Chooser from "../../forms/components/Chooser";
 import TagsEdit from "../../forms/components/TagsEdit";
@@ -164,6 +165,7 @@ const schema = (
     <Field name="birthdate" label="Birthdate" required={true} />
     <Field name="tags" label="Categories" required={true} />
     <Field name="city" label="City" />
+    <Field name="notes" label="Notes" />
   </Schema>
 );
 
@@ -196,7 +198,12 @@ const initialValue = {
   languages: ["English", "Spanish"],
   options: 1,
   tags: ["stanford"],
-  city: "Berkeley"
+  city: "Berkeley",
+  notes: `Here are some notes in Markdown
+#### Title
+A text field with information that would otherwise overun the line.
+This is here to test how the textarea functions when presented with a blob of data
+* We also have a bullet here to show Markdown`
 };
 
 const tagList = Immutable.fromJS([
@@ -338,7 +345,13 @@ export default React.createClass({
           />
           <TextEdit field="first_name" width={300} />
           <TextEdit field="last_name" width={300} />
-          <TextEdit field="email" width={400} />
+          <TextEdit
+            field="email"
+            width={400}
+            view={(value) => {
+              return <a>{value}</a>
+            }}
+          />
           <DateEdit field="birthdate" width={100} />
           <CheckBoxes field="languages" optionList={availableLanguages} />
           <RadioButtons field="options" optionList={availableEmailOptions} />
@@ -346,8 +359,13 @@ export default React.createClass({
             field="tags"
             tagList={this.state.tagList}
             onTagListChange={(name, tagList) => this.setState({ tagList })}
-            width={400}
-          />
+            width={400} />
+          <TextArea
+            field="notes"
+            width={800}
+            view={(value) => {
+              return <Markdown source={value}/>
+            }} />
           <View
             field="city"
             width={400}

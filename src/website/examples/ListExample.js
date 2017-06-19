@@ -20,6 +20,7 @@ import Field from "../../forms/components/Field";
 
 import Chooser from "../../forms/components/Chooser";
 import TextEdit from "../../forms/components/TextEdit";
+import TextArea from "../../forms/components/TextArea";
 
 import formGroup from "../../forms/formGroup";
 import formList from "../../forms/formList";
@@ -40,7 +41,7 @@ This shows an example form with a list of emails that can be added or removed.
  * Renders a form for entering an email address
  */
 class EmailForm extends React.Component {
-  static defaultValues = { email_type: 1, email: "", options: ["Never"], actions: 1 };
+  static defaultValues = { email_type: 1, email: "", options: ["Never"], actions: 1, notes: "" };
 
   static schema = (
     <Schema>
@@ -54,6 +55,7 @@ class EmailForm extends React.Component {
       <Field name="email_type" defaultValue={1} label="Type" required={true} />
       <Field name="options" label="Email preferences" />
       <Field name="actions" label="Email actions" />
+      <Field name="notes" label="Notes" />
     </Schema>
   );
 
@@ -96,6 +98,7 @@ class EmailForm extends React.Component {
             width={150}
           />
           <TextEdit field="email" width={300} />
+          <TextArea field="notes" />
           <CheckBoxes field="options" optionList={options} />
           <RadioButtons field="actions" optionList={actions} />
         </Form>
@@ -111,6 +114,7 @@ class EmailForm extends React.Component {
           {...callbacks}
         >
           <TextEdit field="email" width={250} />
+          <TextArea field="notes" />
           <Chooser
             field="email_type"
             choiceList={types}
@@ -244,8 +248,9 @@ export default React.createClass({
       first_name: "Bill",
       last_name: "Jones",
       emails: [
-        { email: "b.jones@work.com", email_type: 1, options: ["Never"], actions: 1},
-        { email: "bill@gmail.com", email_type: 2, options: ["As items arrive"], actions: 1}
+        { email: "b.jones@work.com", email_type: 1, options: ["Never"], notes: "My work email", actions: 1},
+        { email: "bill@gmail.com", email_type: 2, options: ["As items arrive"],
+          notes: "My home email.  Please do not call unless absolutely necessary", actions: 1}
       ]
     });
     return { value, loaded };

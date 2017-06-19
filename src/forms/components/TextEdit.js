@@ -177,12 +177,17 @@ class TextEdit extends React.Component {
         </div>
       );
     } else {
+      const view = this.props.view;
       let text = this.props.value;
       if (isMissing) {
         text = " ";
       }
       const style = this.inlineStyle(validationError, isMissing);
-      return <div style={style}>{text}</div>;
+      if (!view) {
+        return <div style={style}>{text}</div>;
+      } else {
+        return view(text)
+      }
     }
   }
 }
