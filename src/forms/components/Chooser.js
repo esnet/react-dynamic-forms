@@ -201,6 +201,14 @@ class Chooser extends React.Component {
         text = " ";
         background = "floralwhite";
       }
+
+      const viewStyle = {
+        color,
+        background,
+        width: "100%",
+        paddingLeft: 3
+      };
+
       const style = {
         color,
         background,
@@ -208,10 +216,11 @@ class Chooser extends React.Component {
         width: "100%",
         paddingLeft: 3
       };
+
       if (!view) {
         return <div style={style}>{text}</div>;
       } else {
-        return <div style={style}>{view(text, choice)}</div>
+        return <div style={viewStyle}>{view(text, choice)}</div>
       }
     }
   }
