@@ -186,7 +186,7 @@ class TextEdit extends React.Component {
       if (!view) {
         return <div style={style}>{text}</div>;
       } else {
-        return view(text)
+        return <div style={style}>{view(text)}</div>;
       }
     }
   }

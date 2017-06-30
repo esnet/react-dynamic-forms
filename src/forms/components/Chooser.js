@@ -211,7 +211,7 @@ class Chooser extends React.Component {
       if (!view) {
         return <div style={style}>{text}</div>;
       } else {
-        return view(text, choice)
+        return <div style={style}>{view(text, choice)}</div>
       }
     }
   }
