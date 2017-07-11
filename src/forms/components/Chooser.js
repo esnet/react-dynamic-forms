@@ -195,8 +195,8 @@ class Chooser extends React.Component {
     } else {
       const view = this.props.view;
       let text = this.getCurrentChoiceLabel();
-      let color = "inherited";
-      let background = "inherited";
+      let color = "";
+      let background = "";
       if (isMissing) {
         text = " ";
         background = "floralwhite";

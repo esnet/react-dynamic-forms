@@ -121,8 +121,8 @@ class TextEdit extends React.Component {
   }
 
   inlineStyle(hasError, isMissing) {
-    let color = "inherited";
-    let background = "inherited";
+    let color = "";
+    let background = "";
     if (hasError) {
       color = "#b94a48";
       background = "#fff0f3";
