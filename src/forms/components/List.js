@@ -87,8 +87,13 @@ export default class List extends React.Component {
       // Item remove [-] icon
       let minus;
       let edit;
+      let isEditable;
 
-      const isEditable = true;
+      if (this.props.hideEditRemove) {
+        isEditable = this.props.hideEditRemove && index === this.props.items.length - 1;
+      } else {
+        isEditable = true;
+      }
       if (isEditable) {
         if (addMinus && !itemMinusHide) {
           minus = (

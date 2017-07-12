@@ -18,7 +18,7 @@ import List from "./components/List";
  * Component class and returns a new Component that manages a
  * list of that class.
  */
-export default function list(ItemComponent) {
+export default function list(ItemComponent, hideEditRemove) {
   return class HOC extends React.Component {
     constructor(props) {
       super(props);
@@ -139,6 +139,10 @@ export default function list(ItemComponent) {
 
     render() {
       const itemComponents = [];
+
+      //console.log(this.props.value)
+      //const edit = !hideEdit ? this.props.edit :
+
       this.props.value.forEach((item, index) => {
         const { key = index } = item;
         const props = {
@@ -146,6 +150,7 @@ export default function list(ItemComponent) {
           name: index,
           edit: this.props.edit,
           innerForm: true,
+          hideMinus: hideEditRemove && (index < this.props.value.size - 1),
           types: this.props.types,
           options: this.props.options,
           actions: this.props.actions,
@@ -167,7 +172,14 @@ export default function list(ItemComponent) {
         );
       });
 
-      const plusElement = null;
+      const errors = _.find(this.state.errors, item => {
+        return item === 1
+      })
+      const missing = _.find(this.state.missing, item => {
+        return item === 1
+      })
+
+      const plusElement = errors || missing ? <div /> : null;
       const { canAddItems = true, canRemoveItems = true } = this.props;
 
       return (
@@ -175,6 +187,7 @@ export default function list(ItemComponent) {
           items={itemComponents}
           canAddItems={canAddItems}
           canRemoveItems={canRemoveItems}
+          hideEditRemove={hideEditRemove}
           plusWidth={400}
           plusElement={plusElement}
           onAddItem={() => this.handleAddItem()}
