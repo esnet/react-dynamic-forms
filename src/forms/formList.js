@@ -179,7 +179,7 @@ export default function list(ItemComponent, hideEditRemove) {
         return item === 1
       })
 
-      const plusElement = errors || missing ? <div /> : null;
+      const plusElement = (errors || missing) && hideEditRemove ? <div /> : null;
       const { canAddItems = true, canRemoveItems = true } = this.props;
 
       return (
