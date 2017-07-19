@@ -58,7 +58,7 @@ class Chooser extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
+    if (this.props.value !== nextProps.value || !this.props.value || !nextProps.value) {
       // The value might have been missing and is now set explicitly
       // with a prop
       const missing = this.props.required &&
