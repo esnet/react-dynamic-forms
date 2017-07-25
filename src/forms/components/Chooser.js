@@ -49,190 +49,218 @@ import "./css/chooser.css";
  *    matched within the items (anywhere, or starting with)
  */
 class Chooser extends React.Component {
-  isEmpty(value) {
-    return _.isNull(value) || _.isUndefined(value) || value === "";
-  }
-
-  isMissing(value = this.props.value) {
-    return this.props.required && !this.props.disabled && this.isEmpty(value);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value || !this.props.value || !nextProps.value) {
-      // The value might have been missing and is now set explicitly
-      // with a prop
-      const missing = this.props.required &&
-        !this.props.disabled &&
-        (_.isNull(nextProps.value) ||
-          _.isUndefined(nextProps.value) ||
-          nextProps.value === "");
-      const missingCount = missing ? 1 : 0;
-
-      if (this.props.onMissingCountChange) {
-        this.props.onMissingCountChange(this.props.name, missingCount);
-      }
-    }
-  }
-
-  handleChange(v) {
-    let { value } = v || {};
-    const missing = this.props.required && this.isEmpty(v);
-
-    // If the chosen id is a number, cast it to a number
-    if (!this.isEmpty(v) && !_.isNaN(Number(v))) {
-      value = +v;
+    isEmpty(value) {
+        return _.isNull(value) || _.isUndefined(value) || value === "";
     }
 
-    // Callbacks
-    if (this.props.onChange) {
-      this.props.onChange(this.props.name, value);
+    isMissing(value = this.props.value) {
+        return this.props.required && !this.props.disabled && this.isEmpty(value);
     }
-    if (this.props.onMissingCountChange) {
-      this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+
+    componentDidMount() {
+        const missing =
+            this.props.required &&
+            !this.props.disabled &&
+            (_.isNull(this.props.value) ||
+                _.isUndefined(this.props.value) ||
+                this.props.value === "");
+        const missingCount = missing ? 1 : 0;
+
+        if (this.props.onMissingCountChange) {
+            this.props.onMissingCountChange(this.props.name, missingCount);
+        }
     }
-  }
 
-  getOptionList() {
-    return this.props.choiceList.map(item => {
-      let disabled = false;
-      const isDisabled = item.has("disabled") && item.get("disabled") === true;
-      if (_.contains(this.props.disableList, item.get("id")) || isDisabled) {
-        disabled = true;
-      }
-      return { value: item.get("id"), label: item.get("label"), disabled };
-    }).toJS();
-  }
+    componentWillReceiveProps(nextProps) {
+        if (this.props.value !== nextProps.value || !this.props.value || !nextProps.value) {
+            // The value might have been missing and is now set explicitly
+            // with a prop
+            const missing =
+                this.props.required &&
+                !this.props.disabled &&
+                (_.isNull(nextProps.value) ||
+                    _.isUndefined(nextProps.value) ||
+                    nextProps.value === "");
+            const missingCount = missing ? 1 : 0;
 
-  getFilteredOptionList(input) {
-    const items = this.props.choiceList;
-    const filteredItems = input ? items.filter(item => {
-          return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !==
-            -1;
-        }) : items;
-    const result = [];
-    filteredItems.forEach(item => result.push({
-      value: `${item.get("id")}`,
-      label: item.get("label"),
-      disabled: item.has("disabled") ? item.get("disabled") : false
-    }));
-    return result;
-  }
-
-  getOptions(input, cb) {
-    const options = this.getFilteredOptionList(input);
-    if (options) {
-      cb(null, { options, complete: true });
+            if (this.props.onMissingCountChange) {
+                this.props.onMissingCountChange(this.props.name, missingCount);
+            }
+        }
     }
-  }
 
-  getCurrentChoice() {
-    const choiceItem = this.props.choiceList.find(item => {
-      return item.get("id") === this.props.value;
-    });
-    return choiceItem ? choiceItem.get("id") : undefined;
-  }
+    handleChange(v) {
+        let { value } = v || {};
+        const missing = this.props.required && this.isEmpty(v);
 
-  getCurrentChoiceLabel() {
-    const choiceItem = this.props.choiceList.find(item => {
-      return item.get("id") === this.props.value;
-    });
-    return choiceItem ? choiceItem.get("label") : "";
-  }
+        // If the chosen id is a number, cast it to a number
+        if (!this.isEmpty(v) && !_.isNaN(Number(v))) {
+            value = +v;
+        }
 
-  render() {
-    const choice = this.getCurrentChoice();
-    const isMissing = this.isMissing(this.props.value);
+        // Callbacks
+        if (this.props.onChange) {
+            this.props.onChange(this.props.name, value);
+        }
+        if (this.props.onMissingCountChange) {
+            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+        }
+    }
 
-    if (this.props.edit) {
-      let className = "";
-      const chooserStyle = { marginBottom: 10 };
-      const clearable = this.props.allowSingleDeselect;
-      const searchable = !this.props.disableSearch;
-      const matchPos = this.props.searchContains ? "any" : "start";
+    getOptionList() {
+        return this.props.choiceList
+            .map(item => {
+                let disabled = false;
+                const isDisabled = item.has("disabled") && item.get("disabled") === true;
+                if (_.contains(this.props.disableList, item.get("id")) || isDisabled) {
+                    disabled = true;
+                }
+                return { value: item.get("id"), label: item.get("label"), disabled };
+            })
+            .toJS();
+    }
 
-      if (searchable) {
-        const options = this.getFilteredOptionList(null);
-        const labelList = _.map(options, item => item.label);
-        const key = `${labelList}--${choice}`;
-        return (
-          <div className={className} style={chooserStyle}>
-            <VirtualizedSelect
-              className={isMissing ? "is-missing" : ""}
-              key={key}
-              name="form-field-name"
-              value={choice}
-              options={options}
-              disabled={this.props.disabled}
-              searchable={true}
-              matchPos={matchPos}
-              placeholder={this.props.placeholder}
-              onChange={v => this.handleChange(v)}
-            />
-          </div>
+    getFilteredOptionList(input) {
+        const items = this.props.choiceList;
+        const filteredItems = input
+            ? items.filter(item => {
+                  return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !== -1;
+              })
+            : items;
+        const result = [];
+        filteredItems.forEach(item =>
+            result.push({
+                value: `${item.get("id")}`,
+                label: item.get("label"),
+                disabled: item.has("disabled") ? item.get("disabled") : false
+            })
         );
-      } else {
-        const options = this.getOptionList();
-        const labelList = _.map(options, item => item.label);
-        const key = `${labelList}--${choice}`;
-        return (
-          <div className={className} style={chooserStyle}>
-            <VirtualizedSelect
-              className={isMissing ? "is-missing" : ""}
-              key={key}
-              name="form-field-name"
-              value={choice}
-              options={options}
-              disabled={this.props.disabled}
-              searchable={false}
-              clearable={clearable}
-              matchPos={matchPos}
-              placeholder={this.props.placeholder}
-              onChange={v => this.handleChange(v)}
-            />
-          </div>
-        );
-      }
-    } else {
-      const view = this.props.view;
-      let text = this.getCurrentChoiceLabel();
-      let color = "";
-      let background = "";
-      if (isMissing) {
-        text = " ";
-        background = "floralwhite";
-      }
-
-      const viewStyle = {
-        color,
-        background,
-        minHeight: 23,
-        width: "100%",
-        paddingLeft: 3
-      };
-
-      const style = {
-        color,
-        background,
-        height: 23,
-        width: "100%",
-        paddingLeft: 3
-      };
-
-      if (!view) {
-        return <div style={style}>{text}</div>;
-      } else {
-        return <div style={viewStyle}>{view(text, choice)}</div>
-      }
+        return result;
     }
-  }
+
+    getOptions(input, cb) {
+        const options = this.getFilteredOptionList(input);
+        if (options) {
+            cb(null, { options, complete: true });
+        }
+    }
+
+    getCurrentChoice() {
+        const choiceItem = this.props.choiceList.find(item => {
+            return item.get("id") === this.props.value;
+        });
+        return choiceItem ? choiceItem.get("id") : undefined;
+    }
+
+    getCurrentChoiceLabel() {
+        const choiceItem = this.props.choiceList.find(item => {
+            return item.get("id") === this.props.value;
+        });
+        return choiceItem ? choiceItem.get("label") : "";
+    }
+
+    render() {
+        const choice = this.getCurrentChoice();
+        const isMissing = this.isMissing(this.props.value);
+
+        if (this.props.edit) {
+            let className = "";
+            const chooserStyle = { marginBottom: 10 };
+            const clearable = this.props.allowSingleDeselect;
+            const searchable = !this.props.disableSearch;
+            const matchPos = this.props.searchContains ? "any" : "start";
+
+            if (searchable) {
+                const options = this.getFilteredOptionList(null);
+                const labelList = _.map(options, item => item.label);
+                const key = `${labelList}--${choice}`;
+                return (
+                    <div className={className} style={chooserStyle}>
+                        <VirtualizedSelect
+                            className={isMissing ? "is-missing" : ""}
+                            key={key}
+                            name="form-field-name"
+                            value={choice}
+                            options={options}
+                            disabled={this.props.disabled}
+                            searchable={true}
+                            matchPos={matchPos}
+                            placeholder={this.props.placeholder}
+                            onChange={v => this.handleChange(v)}
+                        />
+                    </div>
+                );
+            } else {
+                const options = this.getOptionList();
+                const labelList = _.map(options, item => item.label);
+                const key = `${labelList}--${choice}`;
+                return (
+                    <div className={className} style={chooserStyle}>
+                        <VirtualizedSelect
+                            className={isMissing ? "is-missing" : ""}
+                            key={key}
+                            name="form-field-name"
+                            value={choice}
+                            options={options}
+                            disabled={this.props.disabled}
+                            searchable={false}
+                            clearable={clearable}
+                            matchPos={matchPos}
+                            placeholder={this.props.placeholder}
+                            onChange={v => this.handleChange(v)}
+                        />
+                    </div>
+                );
+            }
+        } else {
+            const view = this.props.view;
+            let text = this.getCurrentChoiceLabel();
+            let color = "";
+            let background = "";
+            if (isMissing) {
+                text = " ";
+                background = "floralwhite";
+            }
+
+            const viewStyle = {
+                color,
+                background,
+                minHeight: 23,
+                width: "100%",
+                paddingLeft: 3
+            };
+
+            const style = {
+                color,
+                background,
+                height: 23,
+                width: "100%",
+                paddingLeft: 3
+            };
+
+            if (!view) {
+                return (
+                    <div style={style}>
+                        {text}
+                    </div>
+                );
+            } else {
+                return (
+                    <div style={viewStyle}>
+                        {view(text, choice)}
+                    </div>
+                );
+            }
+        }
+    }
 }
 
 Chooser.defaultProps = {
-  disabled: false,
-  disableSearch: false,
-  searchContains: true,
-  allowSingleDeselect: false,
-  width: 300
+    disabled: false,
+    disableSearch: false,
+    searchContains: true,
+    allowSingleDeselect: false,
+    width: 300
 };
 
 export default formGroup(Chooser);
