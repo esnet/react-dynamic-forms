@@ -18,7 +18,7 @@ import APIDoc from "./APIDoc";
 import docsFile from "./docs.json";
 
 export default React.createClass({
-    mixins: [ Highlighter ],
+    mixins: [Highlighter],
     render() {
         const component = this.props.params.component;
         const path = `src/components/${component}.js`;
@@ -29,7 +29,9 @@ export default React.createClass({
         const title = component;
         return (
             <div>
-                <h2>{title}</h2>
+                <h2>
+                    {title}
+                </h2>
                 <div className="row">
                     <div className="col-md-12">
                         <APIDoc file={path} />
@@ -38,5 +40,4 @@ export default React.createClass({
             </div>
         );
     }
-})
-
+});

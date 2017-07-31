@@ -76,13 +76,7 @@ test("TextEdit onChange callback", () => {
     const handleChange = jest.fn();
 
     const wrapper = mount(
-        (
-            <TextEdit
-                attr="mytextedit"
-                initialValue="bob"
-                onChange={handleChange}
-            />
-        )
+        <TextEdit attr="mytextedit" initialValue="bob" onChange={handleChange} />
     );
 
     // Simulate user typing
@@ -91,7 +85,7 @@ test("TextEdit onChange callback", () => {
     input.simulate("blur");
 
     // Get the result of the handleChange callback
-    const [ attr, value ] = handleChange.mock.calls[0];
+    const [attr, value] = handleChange.mock.calls[0];
     expect(handleChange).toHaveBeenCalled();
     expect(attr).toBe("mytextedit");
     expect(value).toBe("fred");
@@ -101,21 +95,19 @@ test("TextEdit isRequired callback", () => {
     const handleMissingCountChange = jest.fn();
 
     const wrapper = mount(
-        (
-            <TextEdit
-                attr="mytextedit"
-                initialValue="bob"
-                required={true}
-                onMissingCountChange={handleMissingCountChange}
-            />
-        )
+        <TextEdit
+            attr="mytextedit"
+            initialValue="bob"
+            required={true}
+            onMissingCountChange={handleMissingCountChange}
+        />
     );
 
     // The TextEdit will evoke onMissingCountChange initially to report
     // up initial missing value counts, so handleMissingCountChange
     // should have been called once at this point, and since we provided
     // an initialValue the missing count should be 0
-    const [ attr, missingBefore ] = handleMissingCountChange.mock.calls[0];
+    const [attr, missingBefore] = handleMissingCountChange.mock.calls[0];
     expect(handleMissingCountChange.mock.calls.length).toBe(1);
     expect(attr).toBe("mytextedit");
     expect(missingBefore).toBe(0);
@@ -127,7 +119,7 @@ test("TextEdit isRequired callback", () => {
 
     // Get the result of the handleChange callback
     expect(handleMissingCountChange.mock.calls.length).toBe(2);
-    const [ _, missingAfter ] = handleMissingCountChange.mock.calls[1];
+    const [_, missingAfter] = handleMissingCountChange.mock.calls[1];
     expect(missingAfter).toBe(1);
 });
 
@@ -135,15 +127,13 @@ test("TextEdit isRequired snapshot test", () => {
     const handleMissingCountChange = jest.fn();
 
     const wrapper = mount(
-        (
-            <TextEdit
-                attr="mytextedit"
-                initialValue="bob"
-                required={true}
-                showRequired={true}
-                onMissingCountChange={handleMissingCountChange}
-            />
-        )
+        <TextEdit
+            attr="mytextedit"
+            initialValue="bob"
+            required={true}
+            showRequired={true}
+            onMissingCountChange={handleMissingCountChange}
+        />
     );
     const input = wrapper.find("input");
     const div = wrapper.find("div");
@@ -169,13 +159,11 @@ test("TextEdit email address validate", () => {
     const handleErrorCountChange = jest.fn();
 
     const wrapper = mount(
-        (
-            <TextEdit
-                initialValue="bob.at.gmail.com"
-                onErrorCountChange={handleErrorCountChange}
-                rules={{ format: "email" }}
-            />
-        )
+        <TextEdit
+            initialValue="bob.at.gmail.com"
+            onErrorCountChange={handleErrorCountChange}
+            rules={{ format: "email" }}
+        />
     );
     const input = wrapper.find("input");
     const div = wrapper.find("div");
@@ -191,7 +179,7 @@ test("TextEdit email address validate", () => {
 
     // Get the result of the initial call to the error count callback
     expect(handleErrorCountChange.mock.calls.length).toBe(1);
-    const [ , errorBefore ] = handleErrorCountChange.mock.calls[0];
+    const [, errorBefore] = handleErrorCountChange.mock.calls[0];
     expect(errorBefore).toBe(1);
 
     // Simulate the user clearing the input field
@@ -206,7 +194,6 @@ test("TextEdit email address validate", () => {
 
     // Get the result of the error change callback
     expect(handleErrorCountChange.mock.calls.length).toBe(2);
-    const [ , errorAfter ] = handleErrorCountChange.mock.calls[1];
+    const [, errorAfter] = handleErrorCountChange.mock.calls[1];
     expect(errorAfter).toBe(0);
 });
-

@@ -37,7 +37,8 @@ export default class Schema {
     render() {
         invariant(
             false,
-            `${this.constructor.name} elements are for schema configuration only and should not be rendered`
+            `${this.constructor
+                .name} elements are for schema configuration only and should not be rendered`
         );
         return;
     }
