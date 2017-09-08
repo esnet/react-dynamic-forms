@@ -79,6 +79,7 @@ export default function formGroup(Widget, hideEdit) {
             //
             // Hidden
             //
+
             if (hidden) {
                 return <div />;
             }
@@ -140,11 +141,17 @@ export default function formGroup(Widget, hideEdit) {
             // Edit
             //
 
+            const flip = {
+                transform: "scaleX(-1)",
+                fontSize: 10
+            };
+
             let editIcon = <span />;
             if (this.state.over && allowEdit && !hideEdit) {
                 const isBeingEdited = edit;
                 editIcon = (
                     <i
+                        style={flip}
                         className={
                             isBeingEdited
                                 ? "glyphicon glyphicon-pencil icon edit-action active"
@@ -182,7 +189,7 @@ export default function formGroup(Widget, hideEdit) {
                             <Flexbox>
                                 {fieldLabel}
                             </Flexbox>
-                            <Flexbox width="25px">
+                            <Flexbox minWidth="16px" width="16px">
                                 {requiredMarker}
                             </Flexbox>
                         </Flexbox>
@@ -207,18 +214,23 @@ export default function formGroup(Widget, hideEdit) {
                         onMouseEnter={() => this.handleMouseEnter()}
                         onMouseLeave={() => this.handleMouseLeave()}
                     >
-                        <Flexbox width={labelWidth}>
+                        <Flexbox minWidth={labelWidth} width={labelWidth}>
                             {fieldLabel}
                         </Flexbox>
-                        <Flexbox width="25px">
+                        <Flexbox minWidth="14px" width="14px">
                             {requiredMarker}
                         </Flexbox>
-                        <Flexbox flexGrow={1} style={selectStyle}>
-                            {widget}
-                        </Flexbox>
-                        <Flexbox width="28px" style={selectStyle}>
+                        <Flexbox minWidth="18px" width="18px" style={selectStyle}>
                             {editIcon}
                         </Flexbox>
+                        <Flexbox
+                            width={widgetWidth}
+                            style={selectStyle}
+                            onDoubleClick={() => onSelectItem ? onSelectItem(name) : null}
+                        >
+                            {widget}
+                        </Flexbox>
+                        <Flexbox flexGrow={1} />
                     </Flexbox>
                 );
             }

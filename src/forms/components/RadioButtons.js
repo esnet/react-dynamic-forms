@@ -72,13 +72,17 @@ class RadioButtons extends React.Component {
                 );
             });
             return (
-                <div style={this.inlineStyle(false, false)}>
+                <div>
                     {items}
                 </div>
             );
         } else {
             let text = this.getCurrentChoiceLabel();
-            return <div>{text}</div>;
+            return (
+                <div style={this.inlineStyle(false, false)}>
+                    {text}
+                </div>
+            );
         }
     }
 }

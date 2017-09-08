@@ -54,8 +54,8 @@ export default function list(ItemComponent) {
         }
 
         /**
-     * Handler for if a child changes its error count
-     */
+         * Handler for if a child changes its error count
+         */
         handleErrorCountChange(i, errorCount) {
             let totalErrorCount;
             let errorList = this.state.errors;
