@@ -76,6 +76,9 @@ class App extends Component {
                             <li>
                                 <Link to="/example/list">List example</Link>
                             </li>
+                            <li>
+                                <Link to="/example/schema">Schema example</Link>
+                            </li>
                         </ul>
 
                         <div className="sidebar-heading">Links</div>

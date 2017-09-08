@@ -12,6 +12,7 @@ import Intro from "./website/intro/Intro";
 import FormExample from "./website/examples/FormExample";
 import DynamicExample from "./website/examples/DynamicExample";
 import ListExample from "./website/examples/ListExample";
+import SchemaExample from "./website/examples/SchemaExample";
 
 ReactDOM.render(
     <Router history={hashHistory}>
@@ -20,6 +21,7 @@ ReactDOM.render(
             <Route path="example/contact" component={FormExample} />
             <Route path="example/list" component={ListExample} />
             <Route path="example/dynamic" component={DynamicExample} />
+            <Route path="example/schema" component={SchemaExample} />
         </Route>
     </Router>,
     document.getElementById("root")
