@@ -36,7 +36,7 @@
 .esnet-forms-listeditview-edit-item {
     width: 95%;
     margin-bottom: 10px;
-    padding: 5px;
+    padding-top: 2px;
 }
 
 .esnet-forms-listeditview-edit-item.no-controls {
@@ -59,11 +59,10 @@
     border-radius: 2px;
 }*/
 
-
 .esnet-forms-plus-action-box-dialog {
     clear: both;
     border-width: 1px;
-    border-color: #CEF4D2;
+    border-color: #cef4d2;
     border-style: solid;
     border-radius: 4px;
     padding: 10px;

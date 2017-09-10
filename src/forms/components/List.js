@@ -12,7 +12,7 @@ import _ from "underscore";
 import Flexbox from "flexbox-react";
 import React from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
-
+import onClickOutside from "react-onclickoutside";
 import "./css/list.css";
 import "./css/icon.css";
 
@@ -56,6 +56,9 @@ export default class List extends React.Component {
     render() {
         const addPlus = this.props.canAddItems;
         const addMinus = this.props.canRemoveItems;
+        const addEdit = this.props.canEditItems;
+
+        console.log(this.props);
 
         // Plus [+] icon
         let plus;
@@ -95,7 +98,7 @@ export default class List extends React.Component {
                         <i
                             id={index}
                             key={minusActionKey}
-                            className="glyphicon glyphicon-minus icon delete-action"
+                            className="glyphicon glyphicon-remove hostile_icon delete-action"
                             onClick={() => this.removeItem(index)}
                         />
                     );
@@ -104,20 +107,48 @@ export default class List extends React.Component {
                     minus = <div className="icon delete-action" />;
                 }
 
+                const flip = {
+                    transform: "scaleX(-1)",
+                    fontSize: 10
+                };
+
                 // Edit item icon
-                edit = (
-                    <i
-                        id={index}
-                        key={minusActionKey}
-                        className={
-                            isBeingEdited
-                                ? "glyphicon glyphicon-pencil icon edit-action active"
-                                : "glyphicon glyphicon-pencil icon edit-action"
-                        }
-                        onClick={() => this.selectItem(index)}
-                    />
-                );
+                if (addEdit) {
+                    edit = (
+                        <i
+                            id={index}
+                            key={minusActionKey}
+                            style={flip}
+                            className={
+                                isBeingEdited
+                                    ? "glyphicon glyphicon-pencil icon edit-action active"
+                                    : "glyphicon glyphicon-pencil icon edit-action"
+                            }
+                            onClick={() => this.selectItem(index)}
+                        />
+                    );
+                }
             }
+
+            const minusAction = addMinus
+                ? <Flexbox width="28px">
+                      <span key={actionSpanKey} className="icon" style={{ background: "white" }}>
+                          {minus}
+                      </span>
+                  </Flexbox>
+                : <div />;
+
+            const editAction = addEdit
+                ? <Flexbox width="28px">
+                      <span
+                          key={actionSpanKey}
+                          className="icon"
+                          style={{ background: "white", verticalAlign: "top" }}
+                      >
+                          {edit}
+                      </span>
+                  </Flexbox>
+                : <div />;
 
             // JSX for each row, includes: UI Item and [-] remove item button
             return (
@@ -132,29 +163,14 @@ export default class List extends React.Component {
                     }}
                 >
                     <Flexbox flexDirection="row">
+                        {minusAction}
+                        {editAction}
                         <Flexbox flexGrow={1}>
                             <span key={itemSpanKey} className={listEditItemClass}>
                                 {item}
                             </span>
                         </Flexbox>
-                        <Flexbox width="28px">
-                            <span
-                                key={actionSpanKey}
-                                className="icon"
-                                style={{ background: "white" }}
-                            >
-                                {minus}
-                            </span>
-                        </Flexbox>
-                        <Flexbox width="28px">
-                            <span
-                                key={actionSpanKey}
-                                className="icon"
-                                style={{ background: "white", verticalAlign: "top" }}
-                            >
-                                {edit}
-                            </span>
-                        </Flexbox>
+
                     </Flexbox>
                 </li>
             );
@@ -167,12 +183,11 @@ export default class List extends React.Component {
             } else {
                 plus = (
                     <Flexbox flexDirection="row">
-                        <Flexbox flexGrow={1} />
                         <Flexbox width="28px">
                             <span
                                 key="plus"
                                 className="icon"
-                                style={{ background: "white", verticalAlign: "top" }}
+                                style={{ background: "white", verticalAlign: "top", fontSize: 10 }}
                             >
                                 {plus}
                             </span>

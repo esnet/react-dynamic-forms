@@ -5154,6 +5154,10 @@ react-onclickoutside@^5.7.1:
   dependencies:
     object-assign "^4.0.1"
 
+react-onclickoutside@^6.5.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.5.0.tgz#c45b39fe0d7f087817a9f5edab8c12349856b640"
+
 react-overlays@^0.6.10:
   version "0.6.10"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.6.10.tgz#e7e52dad47f00a0fc784eb044428c3a9e874bfa3"

@@ -138,6 +138,7 @@ export default function list(ItemComponent) {
         }
 
         render() {
+            console.log("LIST", this.props.edit);
             const itemComponents = [];
             this.props.value.forEach((item, index) => {
                 const { key = index } = item;
@@ -170,8 +171,9 @@ export default function list(ItemComponent) {
             return (
                 <List
                     items={itemComponents}
-                    canAddItems={canAddItems}
-                    canRemoveItems={canRemoveItems}
+                    canAddItems={canAddItems && this.props.edit}
+                    canRemoveItems={canRemoveItems && this.props.edit}
+                    canEditItems={this.props.edit}
                     plusWidth={400}
                     plusElement={plusElement}
                     onAddItem={() => this.handleAddItem()}

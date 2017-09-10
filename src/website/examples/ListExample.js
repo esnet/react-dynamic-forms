@@ -120,7 +120,7 @@ class EmailForm extends React.Component {
 }
 
 const EmailList = formList(EmailForm);
-const Emails = formGroup(EmailList, true);
+const Emails = formGroup(EmailList);
 
 /**
  * Edit a contact
