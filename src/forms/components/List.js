@@ -11,6 +11,7 @@
 import _ from "underscore";
 import Flexbox from "flexbox-react";
 import React from "react";
+import ReactDom from "react-dom";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import onClickOutside from "react-onclickoutside";
 import "./css/list.css";
@@ -51,6 +52,11 @@ export default class List extends React.Component {
         if (this.props.onSelectItem) {
             this.props.onSelectItem(index);
         }
+    }
+
+    handleDeselect() {
+        console.log("Handle deselect");
+        this.selectItem(null);
     }
 
     render() {
@@ -114,19 +120,26 @@ export default class List extends React.Component {
 
                 // Edit item icon
                 if (addEdit) {
-                    edit = (
-                        <i
-                            id={index}
-                            key={minusActionKey}
-                            style={flip}
-                            className={
-                                isBeingEdited
-                                    ? "glyphicon glyphicon-pencil icon edit-action active"
-                                    : "glyphicon glyphicon-pencil icon edit-action"
-                            }
-                            onClick={() => this.selectItem(index)}
-                        />
-                    );
+                    if (isBeingEdited) {
+                        edit = (
+                            <i
+                                id={index}
+                                key={minusActionKey}
+                                className="glyphicon glyphicon-chevron-down icon edit-action active"
+                                onClick={() => this.selectItem(index)}
+                            />
+                        );
+                    } else {
+                        edit = (
+                            <i
+                                id={index}
+                                key={minusActionKey}
+                                style={flip}
+                                className="glyphicon glyphicon-chevron-left icon edit-action"
+                                onClick={() => this.selectItem(index)}
+                            />
+                        );
+                    }
                 }
             }
 
@@ -150,7 +163,7 @@ export default class List extends React.Component {
                   </Flexbox>
                 : <div />;
 
-            // JSX for each row, includes: UI Item and [-] remove item button
+            // JSX for each row, includes: UI Item and [x] remove item button
             return (
                 <li
                     height="80px"
@@ -200,14 +213,16 @@ export default class List extends React.Component {
             plus = <div />;
         }
 
-        // Build the table of item rows, with the [+] at the bottom if required. If there's
-        // no items to show then special UI is shown for that.
+        //
+        // Build the table of item rows, with the [+] at the bottom if required
+        //
+
         return (
             <div
                 style={{
                     borderTopStyle: "solid",
                     borderTopWidth: 1,
-                    borderTopColor: "#e4e4e4"
+                    borderTopColor: "#DDD"
                 }}
             >
                 <ul className="esnet-forms-listeditview-container">

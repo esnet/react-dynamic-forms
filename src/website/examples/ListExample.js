@@ -186,7 +186,7 @@ const ContactForm = React.createClass({
                 style={style}
                 schema={this.schema()}
                 value={value}
-                edit={FormEditStates.SELECTED}
+                edit={FormEditStates.ALWAYS}
                 labelWidth={100}
                 onSubmit={() => this.handleSubmit()}
                 onChange={(fieldName, value) => this.handleChange(fieldName, value)}

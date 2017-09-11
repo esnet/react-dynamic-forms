@@ -137,6 +137,12 @@ export default function list(ItemComponent) {
             return total;
         }
 
+        componentWillReceiveProps(nextProps) {
+            if (nextProps.edit === false) {
+                this.setState({ selected: null });
+            }
+        }
+
         render() {
             console.log("LIST", this.props.edit);
             const itemComponents = [];
@@ -160,7 +166,7 @@ export default function list(ItemComponent) {
                         {...props}
                         value={item}
                         editable={this.props.edit}
-                        edit={this.state.selected === index}
+                        edit={this.state.selected === index && this.props.edit}
                     />
                 );
             });
