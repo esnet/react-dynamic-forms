@@ -25,46 +25,97 @@ import formGroup from "../../forms/formGroup";
 import formList from "../../forms/formList";
 
 import { FormEditStates } from "../../forms/constants";
+import _ from "underscore";
 
 const text = `
-### List example
+### Schema example
 `;
 
 const description = `
-This shows an example form with a list of emails that can be added or removed.
+This shows an example form with a schema generated dynamically from a list of choices with
+different validation requirements
 `;
 
 /**
  * Renders a form for entering an email address
  */
-class EmailForm extends React.Component {
-    static defaultValues = { email_type: 1, email: "" };
 
-    static schema = (
-        <Schema>
-            <Field
-                name="email"
-                defaultValue=""
-                label="Email"
-                required={true}
-                validation={{ format: "email" }}
-            />
-            <Field name="email_type" defaultValue={1} label="Type" required={true} />
-        </Schema>
-    );
+function limitedHstoreChooserList(currentChoice, attributes, usedAttributes) {
+    const usedAttrs = [];
+    _.each(usedAttributes, attr => {
+        usedAttrs.push(attr.key);
+    });
+    const newChooserList = [];
 
-    emailTypes() {
-        return Immutable.fromJS([{ id: 1, label: "Work" }, { id: 2, label: "Home" }]);
+    _.each(attributes, attr => {
+        if (!_.contains(usedAttrs, attr.keyname)) {
+            newChooserList.push(attr);
+        }
+    });
+    //console.log(currentChoice, attributes, usedAttributes)
+
+    const existingValue = _.findWhere(attributes, { keyname: currentChoice });
+    if (existingValue) {
+        newChooserList.push(existingValue);
     }
 
-    emailTypeLabel() {
-        let result;
-        this.emailTypes().forEach(obj => {
-            if (obj.id === this.props.value.get("email_type")) {
-                result = obj.label;
-            }
-        });
-        return result;
+    const chooser = Immutable.fromJS(
+        _.map(newChooserList, attr => {
+            return {
+                id: attr.keyname,
+                label: attr.keyname
+            };
+        })
+    );
+    return chooser;
+}
+
+class HstoreForm extends React.Component {
+    static defaultValues = { key: "", value: "" };
+
+    buildSchema(value) {
+        const keyObject = _.findWhere(this.props.types, { keyname: value.get("key") });
+        let dataType = "";
+        let description = "";
+        if (keyObject) {
+            dataType = keyObject.datatype;
+            description = keyObject.description;
+        }
+        let validation = null;
+
+        switch (dataType) {
+            case "string":
+                validation = {
+                    type: "string"
+                };
+                break;
+            case "integer":
+                validation = {
+                    type: "number"
+                };
+                break;
+            case "url":
+                validation = {
+                    type: "string",
+                    format: "url"
+                };
+                break;
+            default:
+                break;
+        }
+
+        return (
+            <Schema>
+                <Field name="key" label="Key Name" required={true} />
+                <Field
+                    name="value"
+                    label="Value"
+                    required={true}
+                    placeholder={description}
+                    validation={validation}
+                />
+            </Schema>
+        );
     }
 
     render() {
@@ -72,78 +123,77 @@ class EmailForm extends React.Component {
             onChange,
             onMissingCountChange,
             onErrorCountChange,
-            value = EmailForm.defaultValues
+            types, // Available HstoreAttributes brought in as an Array
+            options, // Immutable list of maps of existing Choices brought in with [{key: "" value: ""}]
+            value = HstoreForm.defaultValues
         } = this.props;
         const callbacks = { onChange, onMissingCountChange, onErrorCountChange };
+
+        const choiceList = limitedHstoreChooserList(value.get("key"), types, options.toJS());
+        const schema = this.buildSchema(value);
 
         if (this.props.edit) {
             return (
                 <Form
                     name={this.props.name}
-                    schema={EmailForm.schema}
+                    schema={schema}
                     value={value}
                     edit={FormEditStates.ALWAYS}
-                    labelWidth={50}
+                    labelWidth={150}
                     {...callbacks}
                 >
-                    <Chooser
-                        field="email_type"
-                        choiceList={this.emailTypes()}
-                        disableSearch={true}
-                        width={150}
-                    />
-                    <TextEdit field="email" width={300} />
+                    <Chooser field="key" choiceList={choiceList} width={350} disableSearch={true} />
+                    <TextEdit field="value" width={350} />
                 </Form>
             );
         } else {
+            const a = value.get("key");
+            const attr = _.findWhere(types, { keyname: a });
+            const datatype = attr ? attr.datatype : "";
+            const val = value.get("value");
+            let display = <TextEdit field="value" width={300} />;
+            if (datatype === "url") {
+                display = (
+                    <div>
+                        <a href={val}>{val}</a>
+                    </div>
+                );
+            }
             return (
                 <Form
                     name={this.props.name}
-                    schema={EmailForm.schema}
+                    schema={schema}
                     value={value}
                     edit={FormEditStates.TABLE}
-                    labelWidth={50}
+                    labelWidth={150}
                     {...callbacks}
                 >
-                    <TextEdit field="email" width={250} />
-                    <Chooser
-                        field="email_type"
-                        choiceList={this.emailTypes()}
-                        disableSearch={true}
-                        width={250}
-                    />
+                    <Chooser field="key" choiceList={choiceList} width={100} disableSearch={true} />
+                    {display}
                 </Form>
             );
         }
     }
 }
 
-const EmailList = formList(EmailForm);
-const Emails = formGroup(EmailList, true);
+const HstoreEditor = formGroup(formList(HstoreForm, true), true);
 
 /**
- * Edit a contact
+ * Edit a Location
  */
-const ContactForm = React.createClass({
-    displayName: "ContactForm",
+const LocationForm = React.createClass({
+    displayName: "LocationForm",
     schema() {
         return (
             <Schema>
                 <Field
-                    name="first_name"
-                    label="First name"
-                    placeholder="Enter first name"
+                    name="location"
+                    label="Location"
+                    placeholder="Enter Location Name"
                     required={true}
                     validation={{ type: "string" }}
                 />
-                <Field
-                    name="last_name"
-                    label="Last name"
-                    placeholder="Enter last name"
-                    required={true}
-                    validation={{ type: "string" }}
-                />
-                <Field name="emails" label="Emails" />
+                <Field name="details" label="Details" />
             </Schema>
         );
     },
@@ -177,11 +227,11 @@ const ContactForm = React.createClass({
         const disableSubmit = false;
         const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
         const { value } = this.props;
-        const emails = value.get("emails");
+        const details = value.get("details");
 
         return (
             <Form
-                field="contact-form"
+                field="location-form"
                 style={style}
                 schema={this.schema()}
                 value={value}
@@ -193,9 +243,13 @@ const ContactForm = React.createClass({
                     this.handleMissingCountChange(form, missing)}
                 onErrorCountChange={(form, errors) => this.handleErrorCountChange(form, errors)}
             >
-                <TextEdit field="first_name" width={300} />
-                <TextEdit field="last_name" width={300} />
-                <Emails field="emails" value={emails} />
+                <TextEdit field="location" width={300} />
+                <HstoreEditor
+                    field="details"
+                    value={details}
+                    options={details}
+                    types={this.props.detailsAttributes}
+                />
                 <hr />
                 <input
                     className="btn btn-default"
@@ -208,16 +262,44 @@ const ContactForm = React.createClass({
     }
 });
 
+const detailsAttributes = [
+    {
+        keyname: "Website",
+        description: "A favorite website for this location",
+        datatype: "url"
+    },
+    {
+        keyname: "Address",
+        description: "Street Address for this location",
+        datatype: "string"
+    },
+    {
+        keyname: "Residents",
+        description: "The total number of residents",
+        datatype: "integer"
+    },
+    {
+        keyname: "Other Name",
+        description: "Another name for this Location",
+        datatype: "string"
+    },
+    {
+        keyname: "Total Pets",
+        description: "The number of pets at this location",
+        datatype: "integer"
+    }
+];
+
 export default React.createClass({
     mixins: [Highlighter],
+
     getInitialState() {
         const loaded = false;
         const value = new Immutable.fromJS({
-            first_name: "Bill",
-            last_name: "Jones",
-            emails: [
-                { email: "b.jones@work.com", email_type: 1 },
-                { email: "bill@gmail.com", email_type: 2 }
+            location: "Office",
+            details: [
+                { key: "Website", value: "https://home.com" },
+                { key: "Address", value: "123 Anystreet" }
             ]
         });
         return { value, loaded };
@@ -245,26 +327,24 @@ export default React.createClass({
     },
     renderAlert() {
         if (this.state && this.state.data) {
-            const firstName = this.state.data["first_name"];
-            const lastName = this.state.data["last_name"];
-            const emailList = this.state.data["emails"];
+            const location = this.state.data["location"];
+            const details = this.state.data["details"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{ margin: 5 }}>
                     <strong>Success!</strong>
-                    {firstName}
-                    {lastName} was submitted with {emailList.length}
-                    email(s).
+                    {location}} was submitted with {details.length}.
                 </Alert>
             );
         } else {
             return null;
         }
     },
-    renderContactForm() {
+    renderLocationForm() {
         if (this.state.loaded) {
             return (
-                <ContactForm
+                <LocationForm
                     value={this.state.value}
+                    detailsAttributes={detailsAttributes}
                     onChange={this.handleChange}
                     onMissingCountChange={this.handleMissingCountChange}
                     onErrorCountChange={this.handleErrorCountChange}
@@ -285,16 +365,12 @@ export default React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <h3>List example</h3>
-                        <div style={{ marginBottom: 20 }}>
-                            {description}
-                        </div>
+                        <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>
                 <hr />
                 <div className="row">
-                    <div className="col-md-8">
-                        {this.renderContactForm()}
-                    </div>
+                    <div className="col-md-8">{this.renderLocationForm()}</div>
                     <div className="col-md-4">
                         <b>STATE:</b>
                         <pre style={{ borderLeftColor: "steelblue" }}>
@@ -309,9 +385,7 @@ export default React.createClass({
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-9">
-                        {this.renderAlert()}
-                    </div>
+                    <div className="col-md-9">{this.renderAlert()}</div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">

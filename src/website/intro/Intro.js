@@ -17,7 +17,7 @@ import logo from "../img/forms.png";
 import text from "./intro.md.js";
 
 export default React.createClass({
-    mixins: [ Highlighter ],
+    mixins: [Highlighter],
     render() {
         return (
             <div>
@@ -32,5 +32,4 @@ export default React.createClass({
             </div>
         );
     }
-})
-
+});

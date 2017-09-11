@@ -9,9 +9,13 @@ import docsFile from "./docs.json";
 export default React.createClass({
     renderArrayOf(value) {
         if (value.name === "shape") {
-            return "shape {" + _.map(value.value, (value, key) => {
+            return (
+                "shape {" +
+                _.map(value.value, (value, key) => {
                     return key;
-                }).join(", ") + "}";
+                }).join(", ") +
+                "}"
+            );
         } else {
             return `array of ${value.name}s`;
         }
@@ -21,14 +25,22 @@ export default React.createClass({
             return "unknown type";
         }
         if (type.name === "enum") {
-            return "enum (" + _.map(type.value, value => {
+            return (
+                "enum (" +
+                _.map(type.value, value => {
                     return value.value;
-                }).join(", ") + ")";
+                }).join(", ") +
+                ")"
+            );
         }
         if (type.name === "union") {
-            return "one of (" + _.map(type.value, value => {
+            return (
+                "one of (" +
+                _.map(type.value, value => {
                     return this.renderPropType(value);
-                }).join(", ") + ")";
+                }).join(", ") +
+                ")"
+            );
         }
         if (type.name === "instanceOf") {
             return `instance of a ${type.value}`;
@@ -37,9 +49,13 @@ export default React.createClass({
             return `array of ${this.renderArrayOf(type.value)}`;
         }
         if (type.name === "shapes") {
-            return `shape of {` + _.map(type.value, (value, key) => {
+            return (
+                `shape of {` +
+                _.map(type.value, (value, key) => {
                     return key;
-                }).join(", ") + "}";
+                }).join(", ") +
+                "}"
+            );
         } else {
             return `${type.name}`;
         }
@@ -52,7 +68,7 @@ export default React.createClass({
             fontFamily: "'Fira Mono',Menlo,monospace",
             color: "#c7254e",
             background: "#f9f2f4",
-            letterSpacing: -.015
+            letterSpacing: -0.015
         };
 
         const infoStyle = {
@@ -70,9 +86,11 @@ export default React.createClass({
             lineHeight: 1.625
         };
 
-        const propElements = _.map(props, (prop, propName) => (
+        const propElements = _.map(props, (prop, propName) =>
             <div key={propName}>
-                <span style={propNameStyle}>{propName}</span>
+                <span style={propNameStyle}>
+                    {propName}
+                </span>
                 <span>
                     {prop.defaultValue ? ` = ${prop.defaultValue.value}` : ""}
                 </span>
@@ -80,16 +98,14 @@ export default React.createClass({
                     {prop.required ? "Required" : ""}
                 </span>
                 <div style={infoStyle}>
-                    <Markdown
-                        source={prop.description ? prop.description : ""}
-                    />
+                    <Markdown source={prop.description ? prop.description : ""} />
                 </div>
                 <span style={typeStyle}>
-                     Type: {this.renderPropType(prop.type)}
+                    Type: {this.renderPropType(prop.type)}
                 </span>
                 <hr />
             </div>
-        ));
+        );
 
         return (
             <div>
@@ -112,5 +128,4 @@ export default React.createClass({
             </div>
         );
     }
-})
-
+});
