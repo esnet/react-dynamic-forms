@@ -92,25 +92,7 @@ class Chooser extends React.Component {
             }
         }
     }
-    /*
-    componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value || !this.props.value || !nextProps.value) {
-            // The value might have been missing and is now set explicitly
-            // with a prop
-            const missing =
-                this.props.required &&
-                !this.props.disabled &&
-                (_.isNull(nextProps.value) ||
-                    _.isUndefined(nextProps.value) ||
-                    nextProps.value === "");
-            const missingCount = missing ? 1 : 0;
 
-            if (this.props.onMissingCountChange) {
-                this.props.onMissingCountChange(this.props.name, missingCount);
-            }
-        }
-    }
-    */
     handleChange(v) {
         let { value } = v || {};
         const missing = this.props.required && this.isEmpty(v);
