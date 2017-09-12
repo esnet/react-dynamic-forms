@@ -11,9 +11,9 @@
 import _ from "underscore";
 import Flexbox from "flexbox-react";
 import React from "react";
-import ReactDom from "react-dom";
+//import ReactDom from "react-dom";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
-import onClickOutside from "react-onclickoutside";
+//import onClickOutside from "react-onclickoutside";
 import "./css/list.css";
 import "./css/icon.css";
 
@@ -55,7 +55,7 @@ export default class List extends React.Component {
     }
 
     handleDeselect() {
-        console.log("Handle deselect");
+        //console.log("Handle deselect");
         this.selectItem(null);
     }
 
@@ -64,7 +64,7 @@ export default class List extends React.Component {
         const addMinus = this.props.canRemoveItems;
         const addEdit = this.props.canEditItems;
 
-        console.log(this.props);
+        //console.log(this.props);
 
         // Plus [+] icon
         let plus;

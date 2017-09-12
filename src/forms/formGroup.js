@@ -163,7 +163,7 @@ export default function formGroup(Widget, hideEdit) {
 
             // Group
             if (this.props.layout === FormGroupLayout.INLINE) {
-                console.log("Inline", label);
+                //console.log("Inline", label);
                 return (
                     <Flexbox
                         flexDirection="column"
@@ -175,7 +175,7 @@ export default function formGroup(Widget, hideEdit) {
                     </Flexbox>
                 );
             } else if (this.props.layout === FormGroupLayout.COLUMN) {
-                console.log("Column layout");
+                //console.log("Column layout");
                 return (
                     <Flexbox
                         flexDirection="column"
@@ -209,7 +209,7 @@ export default function formGroup(Widget, hideEdit) {
                     </Flexbox>
                 );
             } else {
-                console.log("Layout", label, allowEdit, hideEdit);
+                //console.log("Layout", label, allowEdit, hideEdit);
                 return (
                     <Flexbox
                         flexDirection="row"

@@ -87,10 +87,10 @@ export default function list(ItemComponent, hideEditRemove) {
                 this.props.onChange(this.props.name, value.splice(i - n + 1, n));
             }
             if (this.props.onErrorCountChange) {
-                this.props.onErrorCountChange(this.props.name, this.numErrors());
+                this.props.onErrorCountChange(this.props.name, this.numErrors(errors));
             }
             if (this.props.onMissingCountChange) {
-                this.props.onMissingCountChange(this.props.name, this.numMissing());
+                this.props.onMissingCountChange(this.props.name, this.numMissing(missing));
             }
         }
 
@@ -108,30 +108,28 @@ export default function list(ItemComponent, hideEditRemove) {
                 this.props.onChange(this.props.name, value.push(created));
             }
             if (this.props.onErrorCountChange) {
-                this.props.onErrorCountChange(this.props.name, this.numErrors());
+                this.props.onErrorCountChange(this.props.name, this.numErrors(errors));
             }
             if (this.props.onMissingCountChange) {
-                this.props.onMissingCountChange(this.props.name, this.numMissing());
+                this.props.onMissingCountChange(this.props.name, this.numMissing(missing));
             }
 
             this.setState({ selected: this.props.value.size });
         }
 
         //Determine the total count of missing fields in the entire list
-        numMissing() {
-            const counts = this.state.missingCounts;
+        numMissing(missing) {
             let total = 0;
-            _.each(counts, c => {
+            _.each(missing, c => {
                 total += c;
             });
             return total;
         }
 
         //Determine the total count of error fields in the entire list
-        numErrors() {
-            const counts = this.state.errorCounts;
+        numErrors(errors) {
             let total = 0;
-            _.each(counts, c => {
+            _.each(errors, c => {
                 total += c;
             });
             return total;
@@ -144,7 +142,7 @@ export default function list(ItemComponent, hideEditRemove) {
         }
 
         render() {
-            console.log("LIST", this.props.edit);
+            //console.log("LIST", this.props.edit);
             const itemComponents = [];
             this.props.value.forEach((item, index) => {
                 const { key = index } = item;
@@ -176,10 +174,10 @@ export default function list(ItemComponent, hideEditRemove) {
             });
 
             const errors = _.find(this.state.errors, item => {
-                return item === 1;
+                return item >= 1;
             });
             const missing = _.find(this.state.missing, item => {
-                return item === 1;
+                return item >= 1;
             });
 
             const plusElement = (errors || missing) && hideEditRemove ? <div /> : null;

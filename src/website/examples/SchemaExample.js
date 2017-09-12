@@ -176,7 +176,7 @@ class HstoreForm extends React.Component {
     }
 }
 
-const HstoreEditor = formGroup(formList(HstoreForm));
+const HstoreEditor = formGroup(formList(HstoreForm, true));
 
 /**
  * Edit a Location
