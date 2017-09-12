@@ -9,13 +9,11 @@ import docsFile from "./docs.json";
 export default React.createClass({
     renderArrayOf(value) {
         if (value.name === "shape") {
-            return (
-                "shape {" +
+            return "shape {" +
                 _.map(value.value, (value, key) => {
                     return key;
                 }).join(", ") +
-                "}"
-            );
+                "}";
         } else {
             return `array of ${value.name}s`;
         }
@@ -25,22 +23,18 @@ export default React.createClass({
             return "unknown type";
         }
         if (type.name === "enum") {
-            return (
-                "enum (" +
+            return "enum (" +
                 _.map(type.value, value => {
                     return value.value;
                 }).join(", ") +
-                ")"
-            );
+                ")";
         }
         if (type.name === "union") {
-            return (
-                "one of (" +
+            return "one of (" +
                 _.map(type.value, value => {
                     return this.renderPropType(value);
                 }).join(", ") +
-                ")"
-            );
+                ")";
         }
         if (type.name === "instanceOf") {
             return `instance of a ${type.value}`;
@@ -49,13 +43,11 @@ export default React.createClass({
             return `array of ${this.renderArrayOf(type.value)}`;
         }
         if (type.name === "shapes") {
-            return (
-                `shape of {` +
+            return `shape of {` +
                 _.map(type.value, (value, key) => {
                     return key;
                 }).join(", ") +
-                "}"
-            );
+                "}";
         } else {
             return `${type.name}`;
         }
@@ -86,7 +78,7 @@ export default React.createClass({
             lineHeight: 1.625
         };
 
-        const propElements = _.map(props, (prop, propName) =>
+        const propElements = _.map(props, (prop, propName) => (
             <div key={propName}>
                 <span style={propNameStyle}>
                     {propName}
@@ -105,7 +97,7 @@ export default React.createClass({
                 </span>
                 <hr />
             </div>
-        );
+        ));
 
         return (
             <div>

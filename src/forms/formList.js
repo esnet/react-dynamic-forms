@@ -42,32 +42,30 @@ export default function list(ItemComponent, hideEditRemove) {
         }
 
         handleMissingCountChange(i, missingCount) {
-            let { missing } = this.state;
-            missing[i] = missingCount;
-            const totalMissingCount = _.reduce(missing, (memo, num) => memo + num, 0);
+            let totalMissingCount;
+            let missingList = this.state.missing;
+            missingList[i] = missingCount;
+            totalMissingCount = _.reduce(missingList, (memo, num) => memo + num, 0);
 
             // Callback
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, totalMissingCount);
             }
-
-            this.setState({ missing });
         }
 
         /**
-     * Handler for if a child changes its error count
-     */
+         * Handler for if a child changes its error count
+         */
         handleErrorCountChange(i, errorCount) {
-            let { errors } = this.state;
-            errors[i] = errorCount;
-            const totalErrorCount = _.reduce(errors, (memo, num) => memo + num, 0);
+            let totalErrorCount;
+            let errorList = this.state.errors;
+            errorList[i] = errorCount;
+            totalErrorCount = _.reduce(errorList, (memo, num) => memo + num, 0);
 
             // Callback
             if (this.props.onErrorCountChange) {
                 this.props.onErrorCountChange(this.props.name, totalErrorCount);
             }
-
-            this.setState({ errors });
         }
 
         // Handle removing an item. Here it splices out the item
@@ -139,12 +137,15 @@ export default function list(ItemComponent, hideEditRemove) {
             return total;
         }
 
+        componentWillReceiveProps(nextProps) {
+            if (nextProps.edit === false) {
+                this.setState({ selected: null });
+            }
+        }
+
         render() {
+            console.log("LIST", this.props.edit);
             const itemComponents = [];
-
-            //console.log(this.props.value)
-            //const edit = !hideEdit ? this.props.edit :
-
             this.props.value.forEach((item, index) => {
                 const { key = index } = item;
                 const props = {
@@ -169,7 +170,7 @@ export default function list(ItemComponent, hideEditRemove) {
                         {...props}
                         value={item}
                         editable={this.props.edit}
-                        edit={this.state.selected === index}
+                        edit={this.state.selected === index && this.props.edit}
                     />
                 );
             });
@@ -187,8 +188,9 @@ export default function list(ItemComponent, hideEditRemove) {
             return (
                 <List
                     items={itemComponents}
-                    canAddItems={canAddItems}
-                    canRemoveItems={canRemoveItems}
+                    canAddItems={canAddItems && this.props.edit}
+                    canRemoveItems={canRemoveItems && this.props.edit}
+                    canEditItems={this.props.edit}
                     hideEditRemove={hideEditRemove}
                     plusWidth={400}
                     plusElement={plusElement}

@@ -21,6 +21,10 @@ import "./css/textedit.css";
  * value changed with 'onChange'.
  */
 class TextEdit extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { touched: false };
+    }
     isEmpty(value) {
         return _.isNull(value) || _.isUndefined(value) || value === "";
     }
@@ -90,13 +94,23 @@ class TextEdit extends React.Component {
         }
     }
 
-    onBlur() {
+    handleChange() {
         const value = this.refs.input.value;
         const missing = this.props.required && this.isEmpty(value);
         const { validationError } = this.getError(value);
         let cast = value;
 
         // Callbacks
+
+        if (this.props.onErrorCountChange) {
+            this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+        }
+
+        console.log("Missing count changed");
+        if (this.props.onMissingCountChange) {
+            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+        }
+
         if (this.props.onChange) {
             if (_.has(this.props.rules, "type")) {
                 switch (this.props.rules.type) {
@@ -112,12 +126,15 @@ class TextEdit extends React.Component {
             }
             this.props.onChange(this.props.name, cast);
         }
-        if (this.props.onErrorCountChange) {
-            this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+    }
+
+    handleBlur() {
+        console.log("Missing count changed");
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
         }
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
-        }
+
+        this.setState({ touched: true });
     }
 
     inlineStyle(hasError, isMissing) {
@@ -146,9 +163,9 @@ class TextEdit extends React.Component {
         if (this.props.edit) {
             // Error style/message
             let className = "";
-            const msg = validationError ? validationErrorMessage : "";
+            const msg = validationError && this.state.touched ? validationErrorMessage : "";
             let helpClassName = "help-block";
-            if (validationError) {
+            if (validationError && this.state.touched) {
                 helpClassName += " has-error";
                 className = "has-error";
             }
@@ -161,7 +178,6 @@ class TextEdit extends React.Component {
             return (
                 <div className={className}>
                     <input
-                        key={this.props.value}
                         ref="input"
                         className="form-control input-sm"
                         style={style}
@@ -169,11 +185,10 @@ class TextEdit extends React.Component {
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
                         defaultValue={this.props.value}
-                        onBlur={() => this.onBlur()}
+                        onChange={() => this.handleChange()}
+                        onBlur={() => this.handleBlur()}
                     />
-                    <div className={helpClassName}>
-                        {msg}
-                    </div>
+                    <div className={helpClassName}>{msg}</div>
                 </div>
             );
         } else {
@@ -184,17 +199,9 @@ class TextEdit extends React.Component {
             }
             const style = this.inlineStyle(validationError, isMissing);
             if (!view) {
-                return (
-                    <div style={style}>
-                        {text}
-                    </div>
-                );
+                return <div style={style}>{text}</div>;
             } else {
-                return (
-                    <div style={style}>
-                        {view(text)}
-                    </div>
-                );
+                return <div style={style}>{view(text)}</div>;
             }
         }
     }

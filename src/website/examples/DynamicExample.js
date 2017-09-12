@@ -252,9 +252,12 @@ export default React.createClass({
     },
     componentDidMount() {
         //Simulate ASYNC state update (not necessary)
-        setTimeout(() => {
-            this.setState({ loaded: true });
-        }, 0);
+        setTimeout(
+            () => {
+                this.setState({ loaded: true });
+            },
+            0
+        );
     },
     handleChange(formName, value) {
         // If the bookmark changes then merge in the attr
@@ -279,7 +282,12 @@ export default React.createClass({
             const lastName = this.state.data["last_name"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{ margin: 5 }}>
-                    <strong>Success!</strong> {firstName} {lastName} was submitted.
+                    <strong>Success!</strong>
+                    {" "}
+                    {firstName}
+                    {" "}
+                    {lastName}
+                    {" "}was submitted.
                 </Alert>
             );
         } else {

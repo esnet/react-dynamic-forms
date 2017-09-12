@@ -11,8 +11,9 @@
 import _ from "underscore";
 import Flexbox from "flexbox-react";
 import React from "react";
+import ReactDom from "react-dom";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
-
+import onClickOutside from "react-onclickoutside";
 import "./css/list.css";
 import "./css/icon.css";
 
@@ -53,9 +54,17 @@ export default class List extends React.Component {
         }
     }
 
+    handleDeselect() {
+        console.log("Handle deselect");
+        this.selectItem(null);
+    }
+
     render() {
         const addPlus = this.props.canAddItems;
         const addMinus = this.props.canRemoveItems;
+        const addEdit = this.props.canEditItems;
+
+        console.log(this.props);
 
         // Plus [+] icon
         let plus;
@@ -87,8 +96,8 @@ export default class List extends React.Component {
             // Item remove [-] icon
             let minus;
             let edit;
-            let isEditable;
 
+            let isEditable;
             if (this.props.hideEditRemove) {
                 isEditable = this.props.hideEditRemove && index === this.props.items.length - 1;
             } else {
@@ -100,7 +109,7 @@ export default class List extends React.Component {
                         <i
                             id={index}
                             key={minusActionKey}
-                            className="glyphicon glyphicon-minus icon delete-action"
+                            className="glyphicon glyphicon-remove hostile_icon delete-action"
                             onClick={() => this.removeItem(index)}
                         />
                     );
@@ -109,22 +118,57 @@ export default class List extends React.Component {
                     minus = <div className="icon delete-action" />;
                 }
 
+                const flip = {
+                    transform: "scaleX(-1)",
+                    fontSize: 10
+                };
+
                 // Edit item icon
-                edit = (
-                    <i
-                        id={index}
-                        key={minusActionKey}
-                        className={
-                            isBeingEdited
-                                ? "glyphicon glyphicon-pencil icon edit-action active"
-                                : "glyphicon glyphicon-pencil icon edit-action"
-                        }
-                        onClick={() => this.selectItem(index)}
-                    />
-                );
+                if (addEdit) {
+                    if (isBeingEdited) {
+                        edit = (
+                            <i
+                                id={index}
+                                key={minusActionKey}
+                                className="glyphicon glyphicon-chevron-down icon edit-action active"
+                                onClick={() => this.selectItem(index)}
+                            />
+                        );
+                    } else {
+                        edit = (
+                            <i
+                                id={index}
+                                key={minusActionKey}
+                                style={flip}
+                                className="glyphicon glyphicon-chevron-left icon edit-action"
+                                onClick={() => this.selectItem(index)}
+                            />
+                        );
+                    }
+                }
             }
 
-            // JSX for each row, includes: UI Item and [-] remove item button
+            const minusAction = addMinus
+                ? <Flexbox width="28px">
+                      <span key={actionSpanKey} className="icon" style={{ background: "white" }}>
+                          {minus}
+                      </span>
+                  </Flexbox>
+                : <div />;
+
+            const editAction = addEdit
+                ? <Flexbox width="28px">
+                      <span
+                          key={actionSpanKey}
+                          className="icon"
+                          style={{ background: "white", verticalAlign: "top" }}
+                      >
+                          {edit}
+                      </span>
+                  </Flexbox>
+                : <div />;
+
+            // JSX for each row, includes: UI Item and [x] remove item button
             return (
                 <li
                     height="80px"
@@ -137,27 +181,11 @@ export default class List extends React.Component {
                     }}
                 >
                     <Flexbox flexDirection="row">
+                        {minusAction}
+                        {editAction}
                         <Flexbox flexGrow={1}>
                             <span key={itemSpanKey} className={listEditItemClass}>
                                 {item}
-                            </span>
-                        </Flexbox>
-                        <Flexbox width="28px">
-                            <span
-                                key={actionSpanKey}
-                                className="icon"
-                                style={{ background: "white" }}
-                            >
-                                {minus}
-                            </span>
-                        </Flexbox>
-                        <Flexbox width="28px">
-                            <span
-                                key={actionSpanKey}
-                                className="icon"
-                                style={{ background: "white", verticalAlign: "top" }}
-                            >
-                                {edit}
                             </span>
                         </Flexbox>
                     </Flexbox>
@@ -172,12 +200,11 @@ export default class List extends React.Component {
             } else {
                 plus = (
                     <Flexbox flexDirection="row">
-                        <Flexbox flexGrow={1} />
                         <Flexbox width="28px">
                             <span
                                 key="plus"
                                 className="icon"
-                                style={{ background: "white", verticalAlign: "top" }}
+                                style={{ background: "white", verticalAlign: "top", fontSize: 10 }}
                             >
                                 {plus}
                             </span>
@@ -190,14 +217,16 @@ export default class List extends React.Component {
             plus = <div />;
         }
 
-        // Build the table of item rows, with the [+] at the bottom if required. If there's
-        // no items to show then special UI is shown for that.
+        //
+        // Build the table of item rows, with the [+] at the bottom if required
+        //
+
         return (
             <div
                 style={{
                     borderTopStyle: "solid",
                     borderTopWidth: 1,
-                    borderTopColor: "#e4e4e4"
+                    borderTopColor: "#DDD"
                 }}
             >
                 <ul className="esnet-forms-listeditview-container">

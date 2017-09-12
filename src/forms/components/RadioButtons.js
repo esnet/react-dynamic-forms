@@ -21,6 +21,9 @@ class RadioButtons extends React.Component {
         if (this.props.onChange) {
             this.props.onChange(this.props.name, v);
         }
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
     }
 
     getCurrentChoiceLabel() {
@@ -69,14 +72,14 @@ class RadioButtons extends React.Component {
                 );
             });
             return (
-                <div style={this.inlineStyle(false, false)}>
+                <div>
                     {items}
                 </div>
             );
         } else {
             let text = this.getCurrentChoiceLabel();
             return (
-                <div>
+                <div style={this.inlineStyle(false, false)}>
                     {text}
                 </div>
             );

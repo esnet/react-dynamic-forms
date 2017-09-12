@@ -61,21 +61,15 @@ class App extends Component {
                         <p />
                         <div className="sidebar-heading">GUIDES</div>
                         <ul className="nav nav-sidebar">
-                            <li>
-                                <Link to="/">Introduction</Link>
-                            </li>
+                            <li><Link to="/">Introduction</Link></li>
                         </ul>
                         <div className="sidebar-heading">Examples</div>
                         <ul className="nav nav-sidebar">
-                            <li>
-                                <Link to="/example/contact">Basic form</Link>
-                            </li>
+                            <li><Link to="/example/contact">Basic form</Link></li>
                             <li>
                                 <Link to="/example/dynamic">Dynamic form</Link>
                             </li>
-                            <li>
-                                <Link to="/example/list">List example</Link>
-                            </li>
+                            <li><Link to="/example/list">List example</Link></li>
                             <li>
                                 <Link to="/example/schema">Schema example</Link>
                             </li>
@@ -88,12 +82,8 @@ class App extends Component {
                                     GitHub
                                 </a>
                             </li>
-                            <li>
-                                <a href="https://www.es.net/">ESnet</a>
-                            </li>
-                            <li>
-                                <a href="http://software.es.net/">Open Source</a>
-                            </li>
+                            <li><a href="https://www.es.net/">ESnet</a></li>
+                            <li><a href="http://software.es.net/">Open Source</a></li>
                         </ul>
                         <div className="sidebar-heading">Related Projects</div>
                         <ul className="nav nav-sidebar">
@@ -102,9 +92,7 @@ class App extends Component {
                                     TimeSeries Charts
                                 </a>
                             </li>
-                            <li>
-                                <a href="http://software.es.net/pond/">Pond</a>
-                            </li>
+                            <li><a href="http://software.es.net/pond/">Pond</a></li>
                             <li>
                                 <a href="http://software.es.net/react-network-diagrams/">
                                     Network Diagrams

@@ -212,14 +212,17 @@ export default React.createClass({
             value: Immutable.fromJS(initialValue),
             tagList: Immutable.fromJS(tagList),
             loaded: false,
-            editMode: FormEditStates.SELECTED
+            editMode: FormEditStates.ALWAYS
         };
     },
     componentDidMount() {
         //Simulate ASYNC state update (not required)
-        setTimeout(() => {
-            this.setState({ loaded: true });
-        }, 0);
+        setTimeout(
+            () => {
+                this.setState({ loaded: true });
+            },
+            0
+        );
     },
     handleChange(formName, value) {
         this.setState({ value });
@@ -228,7 +231,7 @@ export default React.createClass({
         //console.log("Errors:", errors > 0);
     },
     handleSubmit(e) {
-        //console.log("handleSubmit");
+        console.log("handleSubmit");
         this.setState({
             editMode: FormEditStates.SELECTED
         });
@@ -283,7 +286,7 @@ export default React.createClass({
             if (this.state.hasErrors === false && this.state.hasMissing === false) {
                 disableSubmit = false;
             }
-            console.log(disableSubmit);
+            console.log("Render submit button, disabled=", disableSubmit);
             submit = (
                 <button
                     type="submit"
@@ -297,6 +300,8 @@ export default React.createClass({
         } else {
             submit = <div>* Make changes to the form by clicking the pencil icons</div>;
         }
+
+        console.log("Render form");
 
         if (this.state.loaded) {
             return (
@@ -370,11 +375,7 @@ export default React.createClass({
                 </Form>
             );
         } else {
-            return (
-                <div style={{ marginTop: 50 }}>
-                    <b>Loading...</b>
-                </div>
-            );
+            return <div style={{ marginTop: 50 }}><b>Loading...</b></div>;
         }
     },
     render() {
@@ -383,9 +384,7 @@ export default React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <h3>Basic form</h3>
-                        <div style={{ marginBottom: 20 }}>
-                            {description}
-                        </div>
+                        <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>
                 <hr />
@@ -396,7 +395,8 @@ export default React.createClass({
                     <div className="col-md-4">
                         <b>STATE:</b>
                         <pre style={{ borderLeftColor: "steelblue" }}>
-                            value = {JSON.stringify(this.state.value.toJSON(), null, 3)}
+                            value = {" "}
+                            {JSON.stringify(this.state.value.toJSON(), null, 3)}
                         </pre>
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}

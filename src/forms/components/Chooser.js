@@ -58,8 +58,7 @@ class Chooser extends React.Component {
     }
 
     componentDidMount() {
-        const missing =
-            this.props.required &&
+        const missing = this.props.required &&
             !this.props.disabled &&
             (_.isNull(this.props.value) ||
                 _.isUndefined(this.props.value) ||
@@ -79,8 +78,7 @@ class Chooser extends React.Component {
         ) {
             // The value might have been missing and is now set explicitly
             // with a prop
-            const missing =
-                this.props.required &&
+            const missing = this.props.required &&
                 !this.props.disabled &&
                 (_.isNull(nextProps.value) ||
                     _.isUndefined(nextProps.value) ||
@@ -108,6 +106,9 @@ class Chooser extends React.Component {
         }
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+        }
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
         }
     }
 
@@ -137,8 +138,7 @@ class Chooser extends React.Component {
                 value: `${item.get("id")}`,
                 label: item.get("label"),
                 disabled: item.has("disabled") ? item.get("disabled") : false
-            })
-        );
+            }));
         return result;
     }
 

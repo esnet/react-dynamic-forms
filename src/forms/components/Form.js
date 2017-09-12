@@ -135,6 +135,7 @@ export default class Form extends React.Component {
         props.onMissingCountChange = (fieldName, count) =>
             this.handleMissingCountChange(fieldName, count);
         props.onChange = (fieldName, d) => this.handleChange(fieldName, d);
+        props.onBlur = fieldName => this.handleBlur(fieldName);
 
         return props;
     }
@@ -225,9 +226,6 @@ export default class Form extends React.Component {
                 if (this._pendingValues) {
                     if (this.props.onChange) {
                         this.props.onChange(this.props.name, this._pendingValues);
-                        if (this.state.selection) {
-                            this.setState({ selection: null });
-                        }
                     }
                     this._pendingValues = null;
                 }
@@ -242,9 +240,6 @@ export default class Form extends React.Component {
    */
     handleSubmit(e) {
         e.preventDefault();
-        if (this.props.onSubmit) {
-            this.props.onSubmit();
-        }
     }
 
     /**
@@ -309,6 +304,12 @@ export default class Form extends React.Component {
         this.queueChange();
     }
 
+    handleBlur(fieldName) {
+        if (this.state.selection) {
+            this.setState({ selection: null });
+        }
+    }
+
     /**
    * Handle the selection change. This is when you have an inline form
    * and the user clicks on the pencil icon to activate editing of
@@ -338,10 +339,8 @@ export default class Form extends React.Component {
                 let makeHidden;
                 const tags = field.tags || [];
                 if (_.isArray(this.props.visible)) {
-                    makeHidden = !(
-                        _.intersection(tags, this.props.visible).length > 0 ||
-                        _.contains(tags, "all")
-                    );
+                    makeHidden = !(_.intersection(tags, this.props.visible).length > 0 ||
+                        _.contains(tags, "all"));
                 } else {
                     makeHidden = !(_.contains(tags, this.props.visible) || _.contains(tags, "all"));
                 }
@@ -401,8 +400,7 @@ export default class Form extends React.Component {
    * the whole form render.
    */
     shouldComponentUpdate(nextProps, nextState) {
-        const update =
-            nextProps.value !== this.props.value ||
+        const update = nextProps.value !== this.props.value ||
             nextProps.edit !== this.props.edit ||
             nextProps.schema !== this.props.schema ||
             nextProps.visibility !== this.props.visibility ||

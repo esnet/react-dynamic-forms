@@ -62,6 +62,9 @@ class DateEdit extends React.Component {
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
         }
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
     }
 
     inlineStyle(hasError, isMissing) {
@@ -120,11 +123,7 @@ class DateEdit extends React.Component {
                 text = " ";
             }
             const style = this.inlineStyle(hasError, isMissing);
-            return (
-                <div style={style}>
-                    {text}
-                </div>
-            );
+            return <div style={style}>{text}</div>;
         }
     }
 }

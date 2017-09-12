@@ -1,10 +1,17 @@
-
 .icon {
     cursor: pointer;
-    font-size: 14px;
+    font-size: 9px;
     padding-bottom: 10px;
-    color: #AAA;
-    padding: 5px;
+    color: steelblue;
+    padding-top: 3px;
+}
+
+.hostile_icon {
+    cursor: pointer;
+    font-size: 9px;
+    padding-bottom: 10px;
+    color: #b94a48;
+    padding-top: 3px;
 }
 
 .delete-action:hover {

@@ -10,16 +10,14 @@
 
 import React from "react";
 import {
-    TestBasic
-    // TextEditDisabled,
-    // TextEditPlaceholder,
-    // TextEditPassword,
-    // TextEditRequired1,
-    // TextEditRequired2,
-    // TextEditRequired3,
-    // TextEditValidate,
-    // TextEditValidateInt
-} from "../../components_test/TextEditExamples";
+    TestBasic // TextEditDisabled, // TextEditPlaceholder,
+} from // TextEditPassword,
+// TextEditRequired1,
+// TextEditRequired2,
+// TextEditRequired3,
+// TextEditValidate,
+// TextEditValidateInt
+"../../components_test/TextEditExamples";
 
 export default React.createClass({
     render() {

@@ -19,6 +19,10 @@ import "./css/textarea.css";
  * Form control to edit a Text Area field
  */
 class TextArea extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { touched: false };
+    }
     isEmpty(value) {
         return _.isNull(value) || _.isUndefined(value) || value === "";
     }
@@ -103,6 +107,8 @@ class TextArea extends React.Component {
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
         }
+
+        this.setState({ touched: true });
     }
 
     inlineStyle(hasError, isMissing) {
@@ -124,6 +130,7 @@ class TextArea extends React.Component {
     }
 
     render() {
+        console.log("Touched", this.state.touched);
         // Control state
         const isMissing = this.isMissing(this.props.value);
         const { validationError, validationErrorMessage } = this.getError(this.props.value);
@@ -133,7 +140,7 @@ class TextArea extends React.Component {
             let className = "";
             const msg = validationError ? validationErrorMessage : "";
             let helpClassName = "help-block";
-            if (validationError) {
+            if (validationError && this.state.touched) {
                 helpClassName += " has-error";
                 className = "has-error";
             }
@@ -155,9 +162,7 @@ class TextArea extends React.Component {
                         rows={this.props.rows}
                         onBlur={() => this.onBlur()}
                     />
-                    <div className={helpClassName}>
-                        {msg}
-                    </div>
+                    <div className={helpClassName}>{msg}</div>
                 </div>
             );
         } else {
@@ -167,20 +172,13 @@ class TextArea extends React.Component {
                 text = " ";
             }
             const style = {
+                height: 100,
                 ...this.inlineStyle(validationError, isMissing)
             };
             if (!view) {
-                return (
-                    <div style={style}>
-                        {text}
-                    </div>
-                );
+                return <div style={style}>{text}</div>;
             } else {
-                return (
-                    <div style={style}>
-                        {view(text)}
-                    </div>
-                );
+                return <div style={style}>{view(text)}</div>;
             }
         }
     }

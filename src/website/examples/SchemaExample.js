@@ -176,7 +176,7 @@ class HstoreForm extends React.Component {
     }
 }
 
-const HstoreEditor = formGroup(formList(HstoreForm, true), true);
+const HstoreEditor = formGroup(formList(HstoreForm));
 
 /**
  * Edit a Location
@@ -306,9 +306,12 @@ export default React.createClass({
     },
     componentDidMount() {
         // Simulate ASYNC state update
-        setTimeout(() => {
-            this.setState({ loaded: true });
-        }, 0);
+        setTimeout(
+            () => {
+                this.setState({ loaded: true });
+            },
+            0
+        );
     },
     handleSubmit(value) {
         this.setState({ data: value });

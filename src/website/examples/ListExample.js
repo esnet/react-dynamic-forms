@@ -112,6 +112,7 @@ class EmailForm extends React.Component {
                         disableSearch={true}
                         width={250}
                     />
+
                 </Form>
             );
         }
@@ -119,7 +120,7 @@ class EmailForm extends React.Component {
 }
 
 const EmailList = formList(EmailForm);
-const Emails = formGroup(EmailList, true);
+const Emails = formGroup(EmailList);
 
 /**
  * Edit a contact
@@ -185,7 +186,7 @@ const ContactForm = React.createClass({
                 style={style}
                 schema={this.schema()}
                 value={value}
-                edit={FormEditStates.SELECTED}
+                edit={FormEditStates.ALWAYS}
                 labelWidth={100}
                 onSubmit={() => this.handleSubmit()}
                 onChange={(fieldName, value) => this.handleChange(fieldName, value)}
@@ -224,9 +225,12 @@ export default React.createClass({
     },
     componentDidMount() {
         // Simulate ASYNC state update
-        setTimeout(() => {
-            this.setState({ loaded: true });
-        }, 0);
+        setTimeout(
+            () => {
+                this.setState({ loaded: true });
+            },
+            0
+        );
     },
     handleSubmit(value) {
         this.setState({ data: value });
@@ -252,7 +256,9 @@ export default React.createClass({
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{ margin: 5 }}>
                     <strong>Success!</strong>
                     {firstName}
-                    {lastName} was submitted with {emailList.length}
+                    {lastName}
+                    {" "}was submitted with{" "}
+                    {emailList.length}
                     email(s).
                 </Alert>
             );
@@ -272,11 +278,7 @@ export default React.createClass({
                 />
             );
         } else {
-            return (
-                <div style={{ marginTop: 50 }}>
-                    <b>Loading...</b>
-                </div>
-            );
+            return <div style={{ marginTop: 50 }}><b>Loading...</b></div>;
         }
     },
     render() {
@@ -285,9 +287,7 @@ export default React.createClass({
                 <div className="row">
                     <div className="col-md-12">
                         <h3>List example</h3>
-                        <div style={{ marginBottom: 20 }}>
-                            {description}
-                        </div>
+                        <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>
                 <hr />
@@ -298,7 +298,8 @@ export default React.createClass({
                     <div className="col-md-4">
                         <b>STATE:</b>
                         <pre style={{ borderLeftColor: "steelblue" }}>
-                            value = {JSON.stringify(this.state.value, null, 3)}
+                            value = {" "}
+                            {JSON.stringify(this.state.value, null, 3)}
                         </pre>
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}

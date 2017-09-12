@@ -22,6 +22,10 @@ import "./css/tagsedit.css";
  * You can also add a new tag with the Add tag button.
  */
 class TagsEdit extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { touched: false };
+    }
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
             const missingCount = this.isMissing(nextProps.value) ? 1 : 0;
@@ -114,11 +118,7 @@ class TagsEdit extends React.Component {
             };
             return (
                 <div>
-                    {this.props.value.map((tag, i) =>
-                        <span key={i} style={tagStyle}>
-                            {tag}
-                        </span>
-                    )}
+                    {this.props.value.map((tag, i) => <span key={i} style={tagStyle}>{tag}</span>)}
                 </div>
             );
         }

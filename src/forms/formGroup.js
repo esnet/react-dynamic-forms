@@ -74,7 +74,6 @@ export default function formGroup(Widget, hideEdit) {
             } = props;
 
             const selectStyle = {};
-            //background: this.state.over ? "#FAFAFA" : "inherit"
 
             //
             // Hidden
@@ -104,9 +103,7 @@ export default function formGroup(Widget, hideEdit) {
             let requiredMarker;
             if (required && showRequired) {
                 requiredMarker = (
-                    <span className="group-required" style={{ paddingLeft: 3 }}>
-                        *
-                    </span>
+                    <span className="group-required" style={{ paddingLeft: 3 }}>*</span>
                 );
             } else {
                 requiredMarker = <span />;
@@ -133,9 +130,7 @@ export default function formGroup(Widget, hideEdit) {
                         color: this.state.error ? "b94a48" : "inherit"
                     }}
                 >
-                    <label muted={disabled} htmlFor={key}>
-                        {label}
-                    </label>
+                    <label muted={disabled} htmlFor={key}>{label}</label>
                 </div>
             );
             const labelWidth = this.props.labelWidth ? `${this.props.labelWidth}px` : "300px";
@@ -144,23 +139,31 @@ export default function formGroup(Widget, hideEdit) {
             // Edit
             //
 
+            const isBeingEdited = edit;
+
+            const flip = {
+                transform: "scaleX(-1)",
+                fontSize: 11
+            };
+
             let editIcon = <span />;
             if (this.state.over && allowEdit && !hideEdit) {
-                const isBeingEdited = edit;
                 editIcon = (
                     <i
+                        style={flip}
                         className={
                             isBeingEdited
                                 ? "glyphicon glyphicon-pencil icon edit-action active"
                                 : "glyphicon glyphicon-pencil icon edit-action"
                         }
-                        onClick={() => (onSelectItem ? onSelectItem(name) : null)}
+                        onClick={() => onSelectItem ? onSelectItem(name) : null}
                     />
                 );
             }
 
             // Group
             if (this.props.layout === FormGroupLayout.INLINE) {
+                console.log("Inline", label);
                 return (
                     <Flexbox
                         flexDirection="column"
@@ -172,6 +175,7 @@ export default function formGroup(Widget, hideEdit) {
                     </Flexbox>
                 );
             } else if (this.props.layout === FormGroupLayout.COLUMN) {
+                console.log("Column layout");
                 return (
                     <Flexbox
                         flexDirection="column"
@@ -186,8 +190,11 @@ export default function formGroup(Widget, hideEdit) {
                             <Flexbox>
                                 {fieldLabel}
                             </Flexbox>
-                            <Flexbox width="25px">
+                            <Flexbox minWidth="14px" width="14px">
                                 {requiredMarker}
+                            </Flexbox>
+                            <Flexbox minWidth="18px" width="18px" style={selectStyle}>
+                                {editIcon}
                             </Flexbox>
                         </Flexbox>
                         <Flexbox
@@ -198,31 +205,35 @@ export default function formGroup(Widget, hideEdit) {
                             <Flexbox flexGrow={1} style={selectStyle}>
                                 {widget}
                             </Flexbox>
-                            <Flexbox width="28px" style={selectStyle}>
-                                {editIcon}
-                            </Flexbox>
                         </Flexbox>
                     </Flexbox>
                 );
             } else {
+                console.log("Layout", label, allowEdit, hideEdit);
                 return (
                     <Flexbox
                         flexDirection="row"
                         onMouseEnter={() => this.handleMouseEnter()}
                         onMouseLeave={() => this.handleMouseLeave()}
                     >
-                        <Flexbox width={labelWidth}>
+                        <Flexbox minWidth={labelWidth} width={labelWidth}>
                             {fieldLabel}
                         </Flexbox>
-                        <Flexbox width="25px">
+                        <Flexbox minWidth="14px" width="14px">
                             {requiredMarker}
                         </Flexbox>
-                        <Flexbox flexGrow={1} style={selectStyle}>
-                            {widget}
-                        </Flexbox>
-                        <Flexbox width="28px" style={selectStyle}>
+                        <Flexbox minWidth="18px" width="18px" style={selectStyle}>
                             {editIcon}
                         </Flexbox>
+                        <Flexbox
+                            width={widgetWidth}
+                            style={selectStyle}
+                            onDoubleClick={() =>
+                                onSelectItem && !isBeingEdited ? onSelectItem(name) : null}
+                        >
+                            {widget}
+                        </Flexbox>
+                        <Flexbox flexGrow={1} />
                     </Flexbox>
                 );
             }
