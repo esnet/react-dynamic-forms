@@ -229,7 +229,8 @@ class Chooser extends React.Component {
             const viewStyle = {
                 color,
                 background,
-                minHeight: 23,
+                //minHeight: 23,
+                height: "100%",
                 width: "100%",
                 paddingLeft: 3
             };
@@ -237,7 +238,8 @@ class Chooser extends React.Component {
             const style = {
                 color,
                 background,
-                height: 23,
+                //height: 23,
+                height: "100%",
                 width: "100%",
                 paddingLeft: 3
             };

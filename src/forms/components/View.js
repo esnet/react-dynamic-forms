@@ -10,7 +10,8 @@ class View extends React.Component {
         const style = {
             color,
             background,
-            height: 23,
+            height: "100%",
+            //height: 23,
             width: "100%",
             paddingLeft: 3
         };
