@@ -149,7 +149,8 @@ class TextEdit extends React.Component {
         return {
             color,
             background,
-            height: 23,
+            //height: 23,
+            height: "100%",
             width: "100%",
             paddingLeft: 3
         };
