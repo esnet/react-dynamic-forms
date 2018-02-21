@@ -1,0 +1,273 @@
+exports[`test Required field (with showRequired turned ON and initial value 1`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue="Bob"
+    disabled={undefined}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder={undefined}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block">
+    
+  </div>
+</div>
+`;
+
+exports[`test TextEdit email address validate 1`] = `
+<div
+  className="has-error">
+  <input
+    className="form-control input-sm"
+    defaultValue="bob.at.gmail.com"
+    onBlur={[Function]}
+    onFocus={[Function]}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block has-error">
+    Value is not a valid email
+  </div>
+</div>
+`;
+
+exports[`test TextEdit email address validate 2`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue="bob@gmail.com"
+    onBlur={[Function]}
+    onFocus={[Function]}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block" />
+</div>
+`;
+
+exports[`test TextEdit isRequired snapshot test 1`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue="bob"
+    onBlur={[Function]}
+    onFocus={[Function]}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block" />
+</div>
+`;
+
+exports[`test TextEdit isRequired snapshot test 2`] = `
+<div
+  className="has-error">
+  <input
+    className="form-control input-sm"
+    defaultValue=""
+    onBlur={[Function]}
+    onFocus={[Function]}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block" />
+</div>
+`;
+
+exports[`test TextEdit that is disabled 1`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue="Bob"
+    disabled={true}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder={undefined}
+    required={true}
+    style={
+      Object {
+        "width": 300,
+      }
+    }
+    type="text" />
+  <div
+    className="help-block">
+    
+  </div>
+</div>
+`;
+
+exports[`test TextEdit with a placeholder 1`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue={undefined}
+    disabled={undefined}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder="Enter first name"
+    required={true}
+    style={
+      Object {
+        "width": 300,
+      }
+    }
+    type="text" />
+  <div
+    className="help-block">
+    
+  </div>
+</div>
+`;
+
+exports[`test TextEdit with an initial value and width 1`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue="Bob"
+    disabled={undefined}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder={undefined}
+    required={true}
+    style={
+      Object {
+        "width": 300,
+      }
+    }
+    type="text" />
+  <div
+    className="help-block">
+    
+  </div>
+</div>
+`;
+
+exports[`test TextEdit with required field (with showRequired turned OFF) 1`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue={undefined}
+    disabled={undefined}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder={undefined}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block">
+    
+  </div>
+</div>
+`;
+
+exports[`test TextEdit with required field (with showRequired turned ON) 1`] = `
+<div
+  className="has-error">
+  <input
+    className="form-control input-sm"
+    defaultValue={undefined}
+    disabled={undefined}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder={undefined}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block">
+    
+  </div>
+</div>
+`;
+
+exports[`test Validated field (email address) 1`] = `
+<div
+  className="has-error">
+  <input
+    className="form-control input-sm"
+    defaultValue="bob.at.gmail.com"
+    disabled={undefined}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder={undefined}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block has-error">
+    Value is not a valid email
+  </div>
+</div>
+`;
+
+exports[`test Validated field (integer) 1`] = `
+<div
+  className="">
+  <input
+    className="form-control input-sm"
+    defaultValue="42"
+    disabled={undefined}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    placeholder={undefined}
+    required={true}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+    type="text" />
+  <div
+    className="help-block">
+    
+  </div>
+</div>
+`;

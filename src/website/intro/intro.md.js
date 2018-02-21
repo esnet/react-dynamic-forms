@@ -1,3 +1,10 @@
+export default `
+
+React Dynamic Forms
+-------------------
+
+---
+
 
 **NOTE: v1.0 adds support for React 15, but since the way Mixins work in React 15, this is a fairly substantial rewrite to provide an API that doesn't use Mixins at all.**
 
@@ -7,7 +14,7 @@ Our approach is to treat a form as a controlled input, essentially an input with
 
 The library is built on Immutable.js, so form state should be passed into the form as an Immutable.Map. This allows efficient operations on your form data, minimizing copying while ensuring safety as the form state is mutated.
 
-While part of defining a form is to specify a schema for your form, you still maintain complete control over the layout in the form in your `render()` method, just like any other react app. The schema and presentation are entirely separate.  This React friendly approach makes it easy to build forms which dynamically change values or structure based on the current state of the form.
+While part of defining a form is to specify a schema for your form, you still maintain complete control over the layout in the form in your \`render()\` method, just like any other react app. The schema and presentation are entirely separate.  This React friendly approach makes it easy to build forms which dynamically change values or structure based on the current state of the form.
 
 This library contains:
 
@@ -63,7 +70,7 @@ A form will contain:
 Form State
 ----------
 
-As the creator of the form, you bring the form's state to the table, either in the form of an initial value or previous state you're loaded up to be edited. The form state will be passed into the form via the `value` prop, and should be an Immutable.Map. In the examples, we just keep this on this.state, but a flux store or redux would be other options.
+As the creator of the form, you bring the form's state to the table, either in the form of an initial value or previous state you're loaded up to be edited. The form state will be passed into the form via the \`value\` prop, and should be an Immutable.Map. In the examples, we just keep this on this.state, but a flux store or redux would be other options.
 
     const ContactForm = React.createClass({
         ...
@@ -82,7 +89,7 @@ As the creator of the form, you bring the form's state to the table, either in t
 Schema
 ------
 
-A schema is specified using JSX to define the rules and meta data for each form field. As an example, here is a form that will take the first name, last name and email of a contact. The name here is the key for each value, so there would be corresponding keys in the form state (see initialValue above) and in the render of the form controls (see below). We can define also that the email should be of format `email` and that the first_name and last_name fields are `required`:
+A schema is specified using JSX to define the rules and meta data for each form field. As an example, here is a form that will take the first name, last name and email of a contact. The name here is the key for each value, so there would be corresponding keys in the form state (see initialValue above) and in the render of the form controls (see below). We can define also that the email should be of format \`email\` and that the first_name and last_name fields are \`required\`:
 
     const schema = (
         <Schema>
@@ -97,7 +104,7 @@ In ESDB, we actually derive the schema from information we get from our server.
 Implementation of render()
 --------------------------
 
-We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's `render()` function, just like any other React component, but in a way that we refer to our schema attributes using an `field` prop on each control.
+We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's \`render()\` function, just like any other React component, but in a way that we refer to our schema attributes using an \`field\` prop on each control.
 
 
         render() {
@@ -126,10 +133,10 @@ We've found from experience that we want a separation between schema and present
 
 Things to note here:
 
- * The schema is supplied to the Form with the `schema` prop
- * The current state of the form is supplied with the `value` prop.
- * The value is updated by listening to the `onChange` callback.
- * Value's state is potentially invalid, because it will at times likely reflect that the user has partially filled out a form (i.e. may contain missing values) or has filled out a field with an error. For this reason we listen to `onMissingCountChange` and `onErrorCountChange` to keep our form updated with respect to form validity.
+ * The schema is supplied to the Form with the \`schema\` prop
+ * The current state of the form is supplied with the \`value\` prop.
+ * The value is updated by listening to the \`onChange\` callback.
+ * Value's state is potentially invalid, because it will at times likely reflect that the user has partially filled out a form (i.e. may contain missing values) or has filled out a field with an error. For this reason we listen to \`onMissingCountChange\` and \`onErrorCountChange\` to keep our form updated with respect to form validity.
 
 Beyond this
 -----------
@@ -170,3 +177,5 @@ ESnet's React Dynamic Forms Library, Copyright (c) 2015-2017, The Regents of the
 If you have questions about your rights to use or distribute this software, please contact Berkeley Lab's Technology Transfer Department at TTD@lbl.gov.
 
 NOTICE. This software is owned by the U.S. Department of Energy. As such, the U.S. Government has been granted for itself and others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the Software to reproduce, prepare derivative works, and perform publicly and display publicly. Beginning five (5) years after the date permission to assert copyright is obtained from the U.S. Department of Energy, and subject to any subsequent five (5) year renewals, the U.S. Government is granted for itself and others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the Software to reproduce, prepare derivative works, distribute copies to the public, perform publicly and display publicly, and to permit others to do so.
+
+`;
