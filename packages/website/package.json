@@ -1,0 +1,25 @@
+{
+  "name": "test-website",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.1",
+    "chance": "^1.0.6",
+    "react-markdown": "^3.1.4",
+    "react-bootstrap": "^0.32.1",
+    "immutable": "^3.8.2",
+    "react-dynamic-forms": "^1.0.0",
+    "flexbox-react": "^4.4.0",
+    "prismjs": "^1.12.0",
+    "react-router-dom": "^4.2.2",
+    "underscore": "^1.8.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

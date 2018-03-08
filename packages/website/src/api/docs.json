@@ -1,0 +1,797 @@
+{
+  "src/components/CheckBoxes.js": {
+    "description": "Form control to select multiple items from a list,\nuses checkboxes next to each item.",
+    "displayName": "CheckBoxes",
+    "methods": [
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "i",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "inlineStyle",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "hasError",
+            "type": null
+          },
+          {
+            "name": "isMissing",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/Chooser.js": {
+    "description": "React Form control to select an item from a list.",
+    "displayName": "Chooser",
+    "methods": [
+      {
+        "name": "isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getOptionList",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "getFilteredOptionList",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "input",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getOptions",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "input",
+            "type": null
+          },
+          {
+            "name": "cb",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getCurrentChoice",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "getCurrentChoiceLabel",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      }
+    ],
+    "props": {
+      "choiceList": {
+        "type": {
+          "name": "object"
+        },
+        "required": false,
+        "description": "choiceList* - Pass in the available list of options as a list of\nobjects. For example:\n```js\n[\n {id: 1: label: \"cat\"},\n {id: 2: label: \"dog\"},\n ... \n]\n```"
+      },
+      "disabled": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "",
+        "defaultValue": {
+          "value": "false",
+          "computed": false
+        }
+      },
+      "disableSearch": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "disableSearch* - If true the chooser becomes a simple pulldown menu \nrather than allowing the user to type into it.",
+        "defaultValue": {
+          "value": "false",
+          "computed": false
+        }
+      },
+      "width": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "width - Customize the horizontal size of the Chooser",
+        "defaultValue": {
+          "value": "300",
+          "computed": false
+        }
+      },
+      "field": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "field - The identifier of the field being edited"
+      },
+      "allowSingleDeselect": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "allowSingleDeselect - Add a [x] icon to the chooser allowing the user to clear the selected value",
+        "defaultValue": {
+          "value": "false",
+          "computed": false
+        }
+      },
+      "searchContains": {
+        "type": {
+          "name": "enum",
+          "value": [
+            {
+              "value": "\"any\"",
+              "computed": false
+            },
+            {
+              "value": "\"start\"",
+              "computed": false
+            }
+          ]
+        },
+        "required": false,
+        "description": "searchContains - Can be \"any\" or \"start\", indicating how the search is matched within the items (anywhere, or starting with)",
+        "defaultValue": {
+          "value": "\"any\"",
+          "computed": false
+        }
+      }
+    }
+  },
+  "src/components/DateEdit.js": {
+    "description": "Form control to edit a date text field.\n\nSet the initial value with 'initialValue' and set a callback for\nvalue changed with 'onChange'.",
+    "displayName": "DateEdit",
+    "methods": [
+      {
+        "name": "isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleDateChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "inlineStyle",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "hasError",
+            "type": null
+          },
+          {
+            "name": "isMissing",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ],
+    "props": {
+      "width": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "width - Customize the horizontal size of the Chooser",
+        "defaultValue": {
+          "value": "100",
+          "computed": false
+        }
+      },
+      "field": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "field - The identifier of the field being edited"
+      }
+    }
+  },
+  "src/components/Field.js": {
+    "description": "A `Field` is a part of the JSX definition of a `Schema`. Each `Field` describes\nthe rules and meta data associated with a field on the `Form`.\n\nFor example, here is an `Field` which will input the users email address, defining\na user friendly label \"Email\", a placeholder and a validation rule that expects\nthe field to be a valid email address. The field is also required to be filled in.\n\n```js\n<Schema>\n    ...\n     <Field\n        required\n        name=\"email\"\n        label=\"Email\"\n        placeholder=\"Enter valid email address\"\n        validation={{\"format\": \"email\"}}/>\n    ...\n</Schema>\n```",
+    "displayName": "Field",
+    "methods": [],
+    "props": {
+      "name": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "name - The name of the field, or basically how it is referenced when rendering the field"
+      },
+      "label": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "label - The UI fieldly name of the field, used when constructing a `Group`."
+      },
+      "placeholder": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "placeholder - If appropiate to the widget, displays placeholder text."
+      },
+      "validation": {
+        "type": {
+          "name": "object"
+        },
+        "required": false,
+        "description": "validation* - See [Revalidator](https://github.com/flatiron/revalidator) for possible formats\nfor the validation property."
+      }
+    }
+  },
+  "src/components/Form.js": {
+    "description": "",
+    "displayName": "Form",
+    "methods": [
+      {
+        "name": "getFieldProps",
+        "docblock": "Collect together props for the given fieldName which can\nbe applied to any of the formGroup wrapped form widgets. These\nprops contain info extracted from our schema and current\nvalues, namely from:\n  - formFields\n  - formRules\n  - formValues\n\nIn addition, the props contain callbacks for:\n  - value changed\n  - missing count changed\n  - error counts changed\n  - edit selection",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "{ formFields, formRules, formHiddenList }"
+          },
+          {
+            "name": "fieldName"
+          }
+        ],
+        "returns": null,
+        "description": "Collect together props for the given fieldName which can\nbe applied to any of the formGroup wrapped form widgets. These\nprops contain info extracted from our schema and current\nvalues, namely from:\n  - formFields\n  - formRules\n  - formValues\n\nIn addition, the props contain callbacks for:\n  - value changed\n  - missing count changed\n  - error counts changed\n  - edit selection"
+      },
+      {
+        "name": "queueChange",
+        "docblock": "Queue state pushes pending value of state to our parent's callback. The important\nthing here is that the action is deferred, meaning it will be called only\nafter the callstack is unwound. The deferred action also blocks other deferred\nactions until it is run.\n\nWhen the deferred action takes place, the following happens:\n\n    1 A user action occurs\n    2 queueChange is called one or many times\n    3 stack unwinds...\n    --\n    4 A state structure is constructed out of the pending structures\n    5 setState is actually called, which will cause React to re-render\n        5a rendering may mount new form elements, which may themselves\n           result in calls to queueChange() (for example: mounted components\n           will report their missing/error states via supplied callbacks)\n        5b those changes will also be added to the pending structures, but will\n           not be flushed until the outer queueChange deferred action is complete\n    6 callbacks registered with us are called with updated values, missing counts\n      and error counts\n    7 stack unwinds...\n    --\n    8 stack unwinds again and the deferred action will be called again if another was created\n      as a side effect of step (5) above",
+        "modifiers": [],
+        "params": [],
+        "returns": null,
+        "description": "Queue state pushes pending value of state to our parent's callback. The important\nthing here is that the action is deferred, meaning it will be called only\nafter the callstack is unwound. The deferred action also blocks other deferred\nactions until it is run.\n\nWhen the deferred action takes place, the following happens:\n\n    1 A user action occurs\n    2 queueChange is called one or many times\n    3 stack unwinds...\n    --\n    4 A state structure is constructed out of the pending structures\n    5 setState is actually called, which will cause React to re-render\n        5a rendering may mount new form elements, which may themselves\n           result in calls to queueChange() (for example: mounted components\n           will report their missing/error states via supplied callbacks)\n        5b those changes will also be added to the pending structures, but will\n           not be flushed until the outer queueChange deferred action is complete\n    6 callbacks registered with us are called with updated values, missing counts\n      and error counts\n    7 stack unwinds...\n    --\n    8 stack unwinds again and the deferred action will be called again if another was created\n      as a side effect of step (5) above"
+      },
+      {
+        "name": "handleSubmit",
+        "docblock": "If the form has a submit input and that fires then this will catch that\nand pass it up to the forms onSubmit callback.",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "e"
+          }
+        ],
+        "returns": null,
+        "description": "If the form has a submit input and that fires then this will catch that\nand pass it up to the forms onSubmit callback."
+      },
+      {
+        "name": "handleErrorCountChange",
+        "docblock": "This is the handler for changes to the error state of this form's fields.\n\nIf a field is complex, such as another form or a list view, then errorCount\nwill be the telly all the errors within that form or list. If it is a simple\nfield control, such as a textedit then the errorCount will be either 0 or 1.\n\nThe mapping of field names (passed in as the fieldName) and the count is updated\nin _pendingErrors until built up state is flushed to the related callback.",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "fieldName"
+          },
+          {
+            "name": "errorCount"
+          }
+        ],
+        "returns": null,
+        "description": "This is the handler for changes to the error state of this form's fields.\n\nIf a field is complex, such as another form or a list view, then errorCount\nwill be the telly all the errors within that form or list. If it is a simple\nfield control, such as a textedit then the errorCount will be either 0 or 1.\n\nThe mapping of field names (passed in as the fieldName) and the count is updated\nin _pendingErrors until built up state is flushed to the related callback."
+      },
+      {
+        "name": "handleMissingCountChange",
+        "docblock": "This is the handler for changes to the missing state of this form controls.\n\nIf a field is complex, such as another form or a list view, then missingCount\nwill be the telly all the missing values (for required fields) within that\nform or list. If it is a simple control such as a textedit then the\nmissingCount will be either 0 or 1.\n\nThe mapping of field names (passed in as the fieldName) and the missing count is\nupdated in _pendingMissing until built up state is flushed to the related callback.",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "fieldName"
+          },
+          {
+            "name": "missingCount"
+          }
+        ],
+        "returns": null,
+        "description": "This is the handler for changes to the missing state of this form controls.\n\nIf a field is complex, such as another form or a list view, then missingCount\nwill be the telly all the missing values (for required fields) within that\nform or list. If it is a simple control such as a textedit then the\nmissingCount will be either 0 or 1.\n\nThe mapping of field names (passed in as the fieldName) and the missing count is\nupdated in _pendingMissing until built up state is flushed to the related callback."
+      },
+      {
+        "name": "handleChange",
+        "docblock": "This is the main handler for value change notifications from\nthis form's controls.\n\nAs part of this handler we call this.props.onPendingChange()\nif it is supplied. This hook enables either the value to be modified\nbefore it is included in the updated state.\n\nChanges to the formValues are queued in _pendingValues\nuntil built up change is flushed to the onChange callback.",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "fieldName"
+          },
+          {
+            "name": "newValue"
+          }
+        ],
+        "returns": null,
+        "description": "This is the main handler for value change notifications from\nthis form's controls.\n\nAs part of this handler we call this.props.onPendingChange()\nif it is supplied. This hook enables either the value to be modified\nbefore it is included in the updated state.\n\nChanges to the formValues are queued in _pendingValues\nuntil built up change is flushed to the onChange callback."
+      },
+      {
+        "name": "handleBlur",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "fieldName",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleSelectItem",
+        "docblock": "Handle the selection change. This is when you have an inline form\nand the user clicks on the pencil icon to activate editing of\nthat item. That item is the selection. Only one item can be selected\nat once. If the same item is selected again it is deselected.",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "fieldName"
+          }
+        ],
+        "returns": null,
+        "description": "Handle the selection change. This is when you have an inline form\nand the user clicks on the pencil icon to activate editing of\nthat item. That item is the selection. Only one item can be selected\nat once. If the same item is selected again it is deselected."
+      },
+      {
+        "name": "getHiddenFields",
+        "docblock": "@private\n\nReturns the current list of hidden form fields using the `visible` prop\nThat prop is either a tag or list of tags. Those are compared to tags\nfor each field within the schema to determine a visibility set of fields.\nThis is called every render.",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "formFields"
+          }
+        ],
+        "returns": null,
+        "description": null
+      },
+      {
+        "name": "renderChildren",
+        "docblock": "@private\n\nTraverses all the children and builds the set of props for each element.\nThis is what takes the prop `field=\"field_id\"`, looks up \"field_id\" on the schema\nthen applies all the needed props from the schema, along with callbacks to\ntrack state.",
+        "modifiers": [],
+        "params": [
+          {
+            "name": "formState"
+          },
+          {
+            "name": "childList"
+          }
+        ],
+        "returns": null,
+        "description": null
+      }
+    ],
+    "props": {
+      "value": {
+        "type": {
+          "name": "object"
+        },
+        "required": false,
+        "description": ""
+      },
+      "formStyle": {
+        "defaultValue": {
+          "value": "{}",
+          "computed": false
+        },
+        "required": false
+      },
+      "formClass": {
+        "defaultValue": {
+          "value": "\"form-horizontal\"",
+          "computed": false
+        },
+        "required": false
+      },
+      "formKey": {
+        "defaultValue": {
+          "value": "\"form\"",
+          "computed": false
+        },
+        "required": false
+      },
+      "groupLayout": {
+        "defaultValue": {
+          "value": "FormGroupLayout.ROW",
+          "computed": true
+        },
+        "required": false
+      }
+    }
+  },
+  "src/components/List.js": {
+    "description": "Editing of a list of widgets. This widgets themselves are passed in as 'items'.\n\nA ListEditView is created within the ListEditorMixin, so you do not generally need\nto use this component directly.\n\nThe user of this component should supply event handlers to manage the list\nwhen items are added or removed:\n  * `onAddItem()`\n  * `onRemoveItem()`\n\nEach item passed in should have an id set (item.props.id). This is used to\nuniquely identify each row so that removing a row happens correctly.\n\nFinally\n  * `canAddItems()` - lets you hide the [+] icon for instance if there's no\n                      possible items that can be added from a list).",
+    "displayName": "List",
+    "methods": [
+      {
+        "name": "addItem",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "removeItem",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "index",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "selectItem",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "index",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleDeselect",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/RadioButtons.js": {
+    "description": "",
+    "displayName": "RadioButtons",
+    "methods": [
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getCurrentChoiceLabel",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "inlineStyle",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "hasError",
+            "type": null
+          },
+          {
+            "name": "isMissing",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ],
+    "props": {
+      "width": {
+        "defaultValue": {
+          "value": "300",
+          "computed": false
+        },
+        "required": false
+      }
+    }
+  },
+  "src/components/Schema.js": {
+    "description": "A schema can be specified using JSX to define the rules for\neach form field. As an example, here is a Form that will take the\nfirst name, last name and email of a contact. We can define also\nthat the email should be of format `email` and that the first and\nlast names are `required`:\n\n```js\nconst schema = (\n    <Schema>\n        <Field name=\"first_name\" label=\"First name\" placeholder=\"Enter first name\"\n               required={true} validation={{\"type\": \"string\"}} />\n        <Field name=\"last_name\" label=\"Last name\" placeholder=\"Enter last name\"\n               required={true} validation={{\"type\": \"string\"}} />\n        <Field name=\"email\" label=\"Email\" placeholder=\"Enter valid email address\"\n               validation={{\"format\": \"email\"}} />\n    </Schema>\n);\n```\n\nSee also `Field`.",
+    "displayName": "Schema",
+    "methods": []
+  },
+  "src/components/TagsEdit.js": {
+    "description": "Form control to select tags from a pull down list.\nYou can also add a new tag with the Add tag button.",
+    "displayName": "TagsEdit",
+    "methods": [
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "tags",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/TextArea.js": {
+    "description": "Form control to edit a Text Area field",
+    "displayName": "TextArea",
+    "methods": [
+      {
+        "name": "isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getError",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "onBlur",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "inlineStyle",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "hasError",
+            "type": null
+          },
+          {
+            "name": "isMissing",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  },
+  "src/components/TextEdit.js": {
+    "description": "Form control to edit a text field.\nSet the initial value with 'initialValue' and set a callback for\nvalue changed with 'onChange'.",
+    "displayName": "TextEdit",
+    "methods": [
+      {
+        "name": "isEmpty",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "isMissing",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "v",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "getError",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "handleBlur",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "inlineStyle",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "hasError",
+            "type": null
+          },
+          {
+            "name": "isMissing",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ]
+  }
+}

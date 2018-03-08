@@ -1,0 +1,22 @@
+{
+    "dynamic": {
+        "title": "Dynamic",
+        "description": "This example demonstrates using the pond.js library in conjunction with the charts library to do client side time series processing.",
+        "tags": ["Form"]
+    },
+    "form": {
+        "title": "Form",
+        "description": "This example shows a simple BarChart.",
+        "tags": ["Form"]
+    },
+    "list": {
+        "title": "List",
+        "description": "This example demonstrates drawing multiple Baselines across a LineChart.",
+        "tags": ["List"]
+    },
+    "schema": {
+        "title": "Schema",
+        "description": "This example demonstrates stacking of AreaCharts along with use of the Styler.",
+        "tags": ["Schema"]
+    }
+}
