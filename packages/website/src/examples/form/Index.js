@@ -94,11 +94,7 @@ const initialValue = {
     options: 1,
     tags: ["stanford"],
     city: "Berkeley",
-    notes: `Here are some notes in Markdown
-#### Title
-A text field with information that would otherwise overun the line.
-This is here to test how the textarea functions when presented with a blob of data
-* We also have a bullet here to show Markdown`
+    notes: `Here are some notes....`
 };
 
 const tagList = Immutable.fromJS([

@@ -153,7 +153,7 @@
           "name": "object"
         },
         "required": false,
-        "description": "choiceList* - Pass in the available list of options as a list of\nobjects. For example:\n```js\n[\n {id: 1: label: \"cat\"},\n {id: 2: label: \"dog\"},\n ... \n]\n```"
+        "description": "choiceList* - Pass in the available list of options as a list of\nobjects. For example:\n```\n[\n {id: 1: label: \"cat\"},\n {id: 2: label: \"dog\"},\n ... \n]\n```"
       },
       "disabled": {
         "type": {
@@ -230,7 +230,7 @@
     }
   },
   "src/components/DateEdit.js": {
-    "description": "Form control to edit a date text field.\n\nSet the initial value with 'initialValue' and set a callback for\nvalue changed with 'onChange'.",
+    "description": "Form control to edit a date text field.\n\nSet the initial value with `initialValue` and set a callback for\nvalue changed with `onChange`.",
     "displayName": "DateEdit",
     "methods": [
       {
@@ -308,7 +308,7 @@
     }
   },
   "src/components/Field.js": {
-    "description": "A `Field` is a part of the JSX definition of a `Schema`. Each `Field` describes\nthe rules and meta data associated with a field on the `Form`.\n\nFor example, here is an `Field` which will input the users email address, defining\na user friendly label \"Email\", a placeholder and a validation rule that expects\nthe field to be a valid email address. The field is also required to be filled in.\n\n```js\n<Schema>\n    ...\n     <Field\n        required\n        name=\"email\"\n        label=\"Email\"\n        placeholder=\"Enter valid email address\"\n        validation={{\"format\": \"email\"}}/>\n    ...\n</Schema>\n```",
+    "description": "A `Field` is a part of the JSX definition of a `Schema`. Each `Field` describes\nthe rules and meta data associated with a field on the `Form`.\n\nFor example, here is an `Field` which will input the users email address, defining\na user friendly label \"Email\", a placeholder and a validation rule that expects\nthe field to be a valid email address. The field is also required to be filled in.\n\n```\n<Schema>\n    ...\n     <Field\n        required\n        name=\"email\"\n        label=\"Email\"\n        placeholder=\"Enter valid email address\"\n        validation={{\"format\": \"email\"}}/>\n    ...\n</Schema>\n```",
     "displayName": "Field",
     "methods": [],
     "props": {
@@ -611,7 +611,7 @@
     }
   },
   "src/components/Schema.js": {
-    "description": "A schema can be specified using JSX to define the rules for\neach form field. As an example, here is a Form that will take the\nfirst name, last name and email of a contact. We can define also\nthat the email should be of format `email` and that the first and\nlast names are `required`:\n\n```js\nconst schema = (\n    <Schema>\n        <Field name=\"first_name\" label=\"First name\" placeholder=\"Enter first name\"\n               required={true} validation={{\"type\": \"string\"}} />\n        <Field name=\"last_name\" label=\"Last name\" placeholder=\"Enter last name\"\n               required={true} validation={{\"type\": \"string\"}} />\n        <Field name=\"email\" label=\"Email\" placeholder=\"Enter valid email address\"\n               validation={{\"format\": \"email\"}} />\n    </Schema>\n);\n```\n\nSee also `Field`.",
+    "description": "A schema can be specified using JSX to define the rules for\neach form field. As an example, here is a Form that will take the\nfirst name, last name and email of a contact. We can define also\nthat the email should be of format `email` and that the first and\nlast names are `required`:\n\n```\nconst schema = (\n    <Schema>\n        <Field name=\"first_name\" label=\"First name\" placeholder=\"Enter first name\"\n               required={true} validation={{\"type\": \"string\"}} />\n        <Field name=\"last_name\" label=\"Last name\" placeholder=\"Enter last name\"\n               required={true} validation={{\"type\": \"string\"}} />\n        <Field name=\"email\" label=\"Email\" placeholder=\"Enter valid email address\"\n               validation={{\"format\": \"email\"}} />\n    </Schema>\n);\n```\n\nSee also `Field`.",
     "displayName": "Schema",
     "methods": []
   },
@@ -793,5 +793,10 @@
         "returns": null
       }
     ]
+  },
+  "src/components/View.js": {
+    "description": "",
+    "displayName": "View",
+    "methods": []
   }
 }
