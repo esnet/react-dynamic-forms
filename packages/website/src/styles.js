@@ -9,7 +9,7 @@
  */
 
 export const sidebarStyle = {
-    flex: "0 0 14.4em",
+    flex: "0 0 12em",
     background: "#FEFEFE",
     color: "#4183C4",
     textDecoration: "none",

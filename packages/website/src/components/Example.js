@@ -85,10 +85,13 @@ export default class extends Component {
             fontSize: "smaller"
         };
 
+        console.log(this.props);
+
         const exampleName = this.props.match.params.example;
         const ExampleMetaData = Meta[exampleName];
         const Component = Examples[exampleName];
-        const sourceCode = `https://github.com/esnet/react-timeseries-charts/tree/master/src/website/packages/charts/examples/${exampleName}/Index.js`;
+        const Link = Meta[exampleName].link;
+        const sourceCode = `https://github.com/esnet/react-dynamic-forms/tree/inline-editing-layouts2/src/website/examples/${Link}.js`;
 
         return (
             <div>

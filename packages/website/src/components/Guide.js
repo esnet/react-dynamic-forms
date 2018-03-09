@@ -15,6 +15,9 @@ import Markdown from "react-markdown";
 import Guides from "../guides/guides";
 import logo from "../logo.png";
 
+import Prism from "prismjs";
+import { codeRenderer, codeBlockRenderer } from "../renderers";
+
 export default class extends Component {
     constructor(props) {
         super(props);
@@ -25,9 +28,8 @@ export default class extends Component {
 
     componentDidMount() {
         window.scrollTo(0, 0);
-        // console.log("this.props is ", this.props);
+        Prism.highlightAll();
         const guideName = this.props.match.params.doc || "intro";
-        // console.log(guideName);
         const markdownFile = Guides[guideName];
         fetch(markdownFile)
             .then(response => {
@@ -53,6 +55,10 @@ export default class extends Component {
         this.setState({ markdown: null });
     }
 
+    componentDidUpdate() {
+        Prism.highlightAll();
+    }
+
     render() {
         if (this.state.markdown !== null) {
             return (
@@ -61,6 +67,7 @@ export default class extends Component {
                         <div className="col-md-12">
                             <Markdown 
                                 source={this.state.markdown}
+                                renderers={{ Code: codeRenderer, CodeBlock: codeBlockRenderer }} 
                             />
                         </div>
                     </div>
