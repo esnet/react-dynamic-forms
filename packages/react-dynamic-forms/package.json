@@ -1,0 +1,68 @@
+{
+  "name": "react-dynamic-forms",
+  "version": "1.0.0",
+  "description": "Dynamic forms library for React",
+  "keywords": ["forms", "dynamic", "react"],
+  "main": "lib/index.js",
+  "author": "ESnet SEG <seg@es.net>",
+  "bugs": {
+    "url": "https://github.com/esnet/esnet-react-forms/issues"
+  },
+  "scripts": {
+    "docs": "echo \"*** Building API docs\n\" && react-docgen src/components -x js -o ../website/src/api/docs.json --pretty",
+    "lint": "eslint src/components/*.js",
+    "test": "npm run lint",
+    "build": "echo \"*** Building lib\n\" && rm -rf lib/* && babel src/components --optional runtime --stage 0 --out-dir lib/components && mkdir lib/css && cp ./src/css/*.css ./lib/css/ && babel src/js --optional runtime --stage 0 --out-dir lib/js && babel src/index.js --optional runtime --stage 0 --out-file lib/index.js",
+    "start-website": "react-scripts start",
+    "build-website": "echo \"*** Building website\n\" && rm -rf docs && react-scripts build && mv build docs",
+    "precommit": "lint-staged",
+    "prettier": "prettier --print-width 100 --tab-width 4 --write \"src/**/*.js\""
+  },
+  "lint-staged": {
+    "*.js": ["prettier --print-width 100 --tab-width 4 --write", "git add"]
+  },
+  "pre-commit": ["lint", "build"],
+  "license": "BSD-3-Clause-LBNL",
+  "dependencies": {
+    "classnames": "^2.1.3",
+    "deepcopy": "^0.6.3",
+    "enzyme-to-json": "^3.3.2",
+    "flexbox-react": "^4.2.1",
+    "immutable": "^3.8.1",
+    "invariant": "^2.2.3",
+    "keymirror": "^0.1.1",
+    "moment": "^2.21.0",
+    "react-addons-css-transition-group": "^15.6.2",
+    "react-datepicker": "^1.1.0",
+    "react-virtualized": "^9.18.5",
+    "react-virtualized-select": "^3.1.3",
+    "revalidator": "^0.3.1",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-core": "^6.5.2",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-class-properties": "^6.22.0",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "chance": "^1.0.6",
+    "enzyme": "^3.3.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-react-app": "^2.1.0",
+    "lint-staged": "^7.0.0",
+    "prettier": "^1.11.1",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-docgen": "^2.20.1",
+    "react-dom": "^16.2.0",
+    "react-scripts": "^1.1.1",
+    "react-select": "^1.2.1",
+    "react-test-renderer": "^16.2.0",
+    "underscore": "^1.8.3"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  }
+}

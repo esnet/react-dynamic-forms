@@ -1,0 +1,74 @@
+/**
+ *  Copyright (c) 2015 - present, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
+
+.Select-control {
+    height: 26px;
+}
+
+.Select-value {
+  line-height: 26px !important;
+}
+
+.Select-value-label {
+    line-height: 24px;
+    font-size: 12px;
+  }
+
+.Select-menu-outer {
+    font-size: 12px;
+}
+
+.Select-input {
+  height: 26px;
+}
+
+.Select.is-missing > .Select-control {
+  background: floralwhite;
+}
+
+.Select--multi .Select-value {
+    height: 26px;
+    height: 24px;
+    margin-top: 1px;
+    border-color: #ccc
+}
+
+.Select--multi .Select-value-label {
+    line-height: 22px;
+    font-size: 12px;
+    padding: 0px;
+    margin-top: -6px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: #DDD;
+    color: #555555;
+    border-color: #555;
+}
+
+.Select--multi .Select-value-icon {
+    line-height: 22px;
+    font-size: 12px;
+    padding: 0px;
+    margin-top: -6px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: #DDD;
+    color: #555555;
+    border-right-color: #ccc;
+}
+
+.Select--multi .Select-value-icon:hover {
+    background: #DFDFDF;
+    color: #b94a48;
+}
+
+.Select.missing.Select--multi.is-searchable > .Select-control {
+    background: floralwhite;
+}
