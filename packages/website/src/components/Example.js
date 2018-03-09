@@ -11,10 +11,8 @@
 import React, {Component} from "react";
 import Markdown from "react-markdown";
 
-import Highlighter from "./Highlighter";
-
 import Examples from "../examples/examples.js";
-import Meta from "../examples/examples.json";
+// import Meta from "../examples/examples.json";
 
 import Prism from "prismjs";
 import { codeRenderer, codeBlockRenderer } from "../renderers";
@@ -77,40 +75,24 @@ export default class extends Component {
     }
 
     render() {
-        const tagStyle = {
+        /* const tagStyle = {
             background: "#EEE",
             padding: 5,
             borderRadius: 2,
             margin: 2,
             fontSize: "smaller"
-        };
-
-        console.log(this.props);
+        }; */
 
         const exampleName = this.props.match.params.example;
-        const ExampleMetaData = Meta[exampleName];
+        // const ExampleMetaData = Meta[exampleName];
         const Component = Examples[exampleName];
-        const Link = Meta[exampleName].link;
-        const sourceCode = `https://github.com/esnet/react-dynamic-forms/tree/inline-editing-layouts2/src/website/examples/${Link}.js`;
+        // const Link = Meta[exampleName].link;
+        // const sourceCode = `https://github.com/esnet/react-dynamic-forms/tree/inline-editing-layouts2/src/website/examples/${Link}.js`;
 
         return (
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3>{ExampleMetaData.title}</h3>
-                        <p>
-                            <a
-                                style={{ fontSize: "small" }}
-                                href={sourceCode}
-                                target="_blank"
-                            >
-                                Source Code »
-                            </a>
-                        </p>
-                        <p>
-                            {ExampleMetaData.description}
-                        </p>
-                        <hr />
                         <Component />
                         <hr />
                         {this.renderMarkdown()}

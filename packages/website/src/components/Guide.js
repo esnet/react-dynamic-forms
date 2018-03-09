@@ -9,13 +9,10 @@
  */
 
 import React, {Component} from "react";
-import Highlighter from "./Highlighter";
 import Markdown from "react-markdown";
+import Prism from "prismjs";
 
 import Guides from "../guides/guides";
-import logo from "../logo.png";
-
-import Prism from "prismjs";
 import { codeRenderer, codeBlockRenderer } from "../renderers";
 
 export default class extends Component {

@@ -4,66 +4,62 @@ To create a list that can be added and removed, the Forms library provides a Lis
 
 The first step is to create the item itself. The item can be a form itself (i.e. use the FormMixin) but it doesn't have to be. If it is, values, as well as error and missing count information will flow up to the List itself. In the case of this example we do have a little form that asks for the email address and email type. In that case we specify a schema and a form component to render that form:
 
-```js
-var emailSchema = (
-    <Schema>
-        <Attr name="email" defaultValue="" label="Email" required={true} validation={{"format": "email"}}/>
-        <Attr name="email_type" defaultValue={1} label="Type" required={true}/>
-    </Schema>
-);
+    var emailSchema = (
+        <Schema>
+            <Attr name="email" defaultValue="" label="Email" required={true} validation={{"format": "email"}}/>
+            <Attr name="email_type" defaultValue={1} label="Type" required={true}/>
+        </Schema>
+    );
 
-/**
- * Renders a form for entering an email address
- */
-var EmailItemEditor = React.createClass({
+    /**
+    * Renders a form for entering an email address
+    */
+    var EmailItemEditor = React.createClass({
 
-    mixins: [FormMixin],
+        mixins: [FormMixin],
 
-    renderForm: function() {
-        var id = this.value("email_type");
-        return (
-            <div>
-                <ChooserGroup attr="email_type"
-                              initialChoice={id}
-                              initialChoiceList={emailTypes}
-                              disableSearch={true}
-                              width={100} />
-                <TextEditGroup attr="email" width={300} />
-            </div>
-        );
-    }
-});
-```
+        renderForm: function() {
+            var id = this.value("email_type");
+            return (
+                <div>
+                    <ChooserGroup attr="email_type"
+                                initialChoice={id}
+                                initialChoiceList={emailTypes}
+                                disableSearch={true}
+                                width={100} />
+                    <TextEditGroup attr="email" width={300} />
+                </div>
+            );
+        }
+    });
 
 Having defined that, we can now use it in the list itself:
 
-```js
-var EmailListEditor = React.createClass({
+    var EmailListEditor = React.createClass({
 
-    mixins: [ListEditorMixin],
+        mixins: [ListEditorMixin],
 
-    /** Set initial items */
-    initialItems: function() {
-        return this.props.emails || [];
-    },
+        /** Set initial items */
+        initialItems: function() {
+            return this.props.emails || [];
+        },
 
-    /** Create a new item */
-    createItem: function() {
-        return {
-            "email": "",
-            "email_type": 1
-        };
-    },
+        /** Create a new item */
+        createItem: function() {
+            return {
+                "email": "",
+                "email_type": 1
+            };
+        },
 
-    /** Render one of the items */
-    renderItem: function(item) {
-        return (
-            <EmailItemEditor schema={emailSchema}
-                             values={item} />
-        );
-    },
-});
-```
+        /** Render one of the items */
+        renderItem: function(item) {
+            return (
+                <EmailItemEditor schema={emailSchema}
+                                values={item} />
+            );
+        },
+    });
 
 Here we see the main pieces of the API:
 
@@ -75,10 +71,8 @@ Here we see the main pieces of the API:
 
 Finally, to use the `EmailListEditor` in our main form's `renderForm()` we surround it with a <Group> like so:
 
-```js
-<Group attr="emails" >
-    <EmailListEditor emails={emails}/>
-</Group>
-```
+    <Group attr="emails" >
+        <EmailListEditor emails={emails}/>
+    </Group>
 
 ---

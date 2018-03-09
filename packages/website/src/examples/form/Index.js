@@ -27,7 +27,6 @@ import {
     View, 
     FormEditStates 
 } from "react-dynamic-forms";
-import Highlighter from "../../components/Highlighter";
 
 import form_docs from "./form_docs.md";
 import form_thumbnail from "./form_thumbnail.png";
@@ -267,7 +266,7 @@ class form extends React.Component {
                     />
                     <TextArea
                         field="notes"
-                        width={800}
+                        width={400}
                         view={value => {
                             return <Markdown source={value} />;
                         }}
@@ -313,10 +312,9 @@ class form extends React.Component {
                     </div>
                     <div className="col-md-4">
                         <b>STATE:</b>
-                        <pre style={{ borderLeftColor: "steelblue" }}>
-                            value = {" "}
-                            {JSON.stringify(this.state.value.toJSON(), null, 3)}
-                        </pre>
+                         <pre style={{ borderLeftColor: "steelblue" }}>
+                             value = {JSON.stringify(this.state.value.toJSON(), null, 3)} 
+                        </pre> 
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}
                         </pre>

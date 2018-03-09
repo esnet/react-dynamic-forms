@@ -3,15 +3,11 @@ Getting Started
 
 Install the forms library with npm:
 
-```js
-npm install react-dynamic-forms --save
-```
+    npm install react-dynamic-forms --save
 
 Once installed, you can import the necessary components from the library:
 
-```js
-import {Form, Schema, Field, TextEdit, Chooser} from "react-dynamic-forms";
-```
+    import {Form, Schema, Field, TextEdit, Chooser} from "react-dynamic-forms";
 
 Anatomy of a form
 -----------------
@@ -28,36 +24,32 @@ Form State
 
 As the creator of the form, you bring the form's state to the table, either in the form of an initial value or previous state you're loaded up to be edited. The form state will be passed into the form via the `value` prop, and should be an Immutable.Map. In the examples, we just keep this on this.state, but a flux store or redux would be other options.
 
-```js
-const ContactForm = React.createClass({
-    ...
-    getInitialState() {
-        return {
-            value: Immutable.fromJS({
-                first_name: "Bill",
-                last_name: "Jones",
-                email: "bill@mail.com",
-            }),
-        };
-    },
-    ...
-});
-```
+    const ContactForm = React.createClass({
+        ...
+        getInitialState() {
+            return {
+                value: Immutable.fromJS({
+                    first_name: "Bill",
+                    last_name: "Jones",
+                    email: "bill@mail.com",
+                }),
+            };
+        },
+        ...
+    });
 
 Schema
 ------
 
 A schema is specified using JSX to define the rules and meta data for each form field. As an example, here is a form that will take the first name, last name and email of a contact. The name here is the key for each value, so there would be corresponding keys in the form state (see initialValue above) and in the render of the form controls (see below). We can define also that the email should be of format `email` and that the first_name and last_name fields are `required`:
 
-```js
-const schema = (
-    <Schema>
-        <Field name="first_name" label="First name" required={true} validation={{"type": "string"}} />
-        <Field name="last_name" label="Last name" required={true} validation={{"type": "string"}} />
-        <Field name="email" label="Email" validation={{"format": "email"}} />
-    </Schema>
-);
-```
+    const schema = (
+        <Schema>
+            <Field name="first_name" label="First name" required={true} validation={{"type": "string"}} />
+            <Field name="last_name" label="Last name" required={true} validation={{"type": "string"}} />
+            <Field name="email" label="Email" validation={{"format": "email"}} />
+        </Schema>
+    );
 
 In ESDB, we actually derive the schema from information we get from our server.
 
@@ -66,30 +58,28 @@ Implementation of render()
 
 We've found from experience that we want a separation between schema and presentation, so instead we lay out the form out in the form component's `render()` function, just like any other React component, but in a way that we refer to our schema attributes using an `field` prop on each control.
 
-```js
-render() {
-    ...
-    return (
-        <Form
-            name="basic"
-            schema={schema}
-            value={this.state.value}
-            onChange={(fieldName, value) =>
-                this.setState({ value })}
-            onMissingCountChange={(fieldName, missing) =>
-                this.setState({ hasMissing: missing > 0 })}
-            onErrorCountChange={(fieldName, errors) =>
-                this.setState({ hasErrors: errors > 0 })}
-        >
-            <TextEdit field="first_name" width={300} />
-            <TextEdit field="last_name" width={300} />
-            <TextEdit field="email" />
-            <hr />
-            <Button className="btn btn-default" onClick={() => handleSubmit()} disabled={disableSubmit} />
-        </Form>
-    );
-}
-```
+    render() {
+        ...
+        return (
+            <Form
+                name="basic"
+                schema={schema}
+                value={this.state.value}
+                onChange={(fieldName, value) =>
+                    this.setState({ value })}
+                onMissingCountChange={(fieldName, missing) =>
+                    this.setState({ hasMissing: missing > 0 })}
+                onErrorCountChange={(fieldName, errors) =>
+                    this.setState({ hasErrors: errors > 0 })}
+            >
+                <TextEdit field="first_name" width={300} />
+                <TextEdit field="last_name" width={300} />
+                <TextEdit field="email" />
+                <hr />
+                <Button className="btn btn-default" onClick={() => handleSubmit()} disabled={disableSubmit} />
+            </Form>
+        );
+    }
 
 Things to note here:
 
@@ -108,25 +98,19 @@ Developing
 
 Within a forked repo, you first need to run:
 
-```js
-npm install
-```
+    npm install
 
 This will install the development dependencies into your node_modules directory.
 
 You can then start up the test server, as well as automatic source building, by doing:
 
-```js
-npm run start
-```
+    npm run start
 
 Then, point your browser to: [http://localhost:3000](http://localhost:3000/)
 
 To build the lib directory, use:
 
-```js
-npm run build
-```
+    npm run build
 
 License
 -------

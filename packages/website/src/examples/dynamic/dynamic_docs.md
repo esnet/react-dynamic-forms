@@ -18,30 +18,28 @@ for us. Here is the main part of the renderForm() function, excluding
     a little code to get out bookmarks map for the Bookmark chooser
 choice list.
 
-```js
-return (
-    <Form style={formStyle}>
-        <Chooser field="bookmarked" width={300} initialChoiceList={bookmarks} />
-        <hr />
-        <TextEdit field="name" width={300} />
-        <TextArea field="description" />
-        <hr />
-        <Chooser field="type" width={200} initialChoice={this.value("type")}
-                 initialChoiceList={endpointTypes} disableSearch={true} 
-        />
-        <TextEdit field="device_name" />
-        <TextEdit field="interface" />
-        <TextEdit field="foreign_description" />
-        <TextEdit field="organization" />
-        <TextEdit field="panel_name" />
-        <TextEdit field="port_id" />
-        <TextEdit field="port_side" />
-        <TextEdit field="port_location" />
-        <hr />
-        <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit} />
-    </Form>
-);
-```
+    return (
+        <Form style={formStyle}>
+            <Chooser field="bookmarked" width={300} initialChoiceList={bookmarks} />
+            <hr />
+            <TextEdit field="name" width={300} />
+            <TextArea field="description" />
+            <hr />
+            <Chooser field="type" width={200} initialChoice={this.value("type")}
+                    initialChoiceList={endpointTypes} disableSearch={true} 
+            />
+            <TextEdit field="device_name" />
+            <TextEdit field="interface" />
+            <TextEdit field="foreign_description" />
+            <TextEdit field="organization" />
+            <TextEdit field="panel_name" />
+            <TextEdit field="port_id" />
+            <TextEdit field="port_side" />
+            <TextEdit field="port_location" />
+            <hr />
+            <input className="btn btn-default" type="submit" value="Submit" disabled={disableSubmit} />
+        </Form>
+    );
 
 #### Tags
 
@@ -50,22 +48,20 @@ to quickly control which set of fields show be visible and which should
 not, rather than setting each one. The schema for our example looks like
 this
 
-```js
-<Schema>
-    <Field name="bookmarked" label=""  tags={["all"]} />
-    <Field name="name" label="Name"  tags={["all"]} required={true} />
-    <Field name="description" label="Description"  tags={["all"]} required={true} />
-    <Field name="type" label="Type"  tags={["all"]} required={true} />
-    <Field name="device_name" label="Device name"  tags={["Equipment Port"]} required={true} />
-    <Field name="interface" label="Interface" tags={["Equipment Port"]} required={true} />
-    <Field name="foreign_description" label="Foreign description" tags={["Foreign"]} required={true} />
-    <Field name="organization" label="Organization" tags={["Foreign"]} required={true} />
-    <Field name="panel_name" label="Panel name" tags={["Patch Panel"]} required={true} />
-    <Field name="port_id" label="Port Id" tags={["Patch Panel"]} required={true} />
-    <Field name="port_side" label="Port side" tags={["Patch Panel"]} required={true} />
-    <Field name="port_location" label="Port location" tags={["Patch Panel"]} required={true} />
-</Schema>
-```
+    <Schema>
+        <Field name="bookmarked" label=""  tags={["all"]} />
+        <Field name="name" label="Name"  tags={["all"]} required={true} />
+        <Field name="description" label="Description"  tags={["all"]} required={true} />
+        <Field name="type" label="Type"  tags={["all"]} required={true} />
+        <Field name="device_name" label="Device name"  tags={["Equipment Port"]} required={true} />
+        <Field name="interface" label="Interface" tags={["Equipment Port"]} required={true} />
+        <Field name="foreign_description" label="Foreign description" tags={["Foreign"]} required={true} />
+        <Field name="organization" label="Organization" tags={["Foreign"]} required={true} />
+        <Field name="panel_name" label="Panel name" tags={["Patch Panel"]} required={true} />
+        <Field name="port_id" label="Port Id" tags={["Patch Panel"]} required={true} />
+        <Field name="port_side" label="Port side" tags={["Patch Panel"]} required={true} />
+        <Field name="port_location" label="Port location" tags={["Patch Panel"]} required={true} />
+    </Schema>
 
 You can see that for each Field we've defined a tags prop. This is a list
 of visibility tags. Here we've named our tags based on our type values
@@ -99,15 +95,13 @@ Let's think this through:
     it as our source of truth. In this way the change of a single item
     can be applied to many items.
 
-    ```js
-    if (value.get("bookmarked") !== this.state.value.get("bookmarked")) {
-        const bookmark = bookmarked[value.get("bookmarked")];
-        const merged = value.merge(bookmark);
-        this.setState({ value: merged });
-    } else {
-        this.setState({ value });
-    }
-    ```
+        if (value.get("bookmarked") !== this.state.value.get("bookmarked")) {
+            const bookmark = bookmarked[value.get("bookmarked")];
+            const merged = value.merge(bookmark);
+            this.setState({ value: merged });
+        } else {
+            this.setState({ value });
+        }
 
  4. The form will then re-render and update to show the new values. However
     we need to handle the visibility state of the form. The visibility
@@ -118,18 +112,16 @@ Let's think this through:
     in our render function we get the "type" out of our form state and then
     set our visibility based on that:
 
-    ```js
-    render() {
+        render() {
 
-        // Current type
-        const currentType = values.get("type");
+            // Current type
+            const currentType = values.get("type");
 
-        // Find the visibility tag given our current type
-        const visiblityTag = getVisibilityTag(currentType);
+            // Find the visibility tag given our current type
+            const visiblityTag = getVisibilityTag(currentType);
 
-        ...
-    }
-    ```
+            ...
+        }
 
     As mentioned above, we encode the tags within the Schema, so here we are
     simply mapping between those tags and the type.
@@ -137,19 +129,17 @@ Let's think this through:
  5. Finally, to complete the dynamically updating form, we simply render
     the form but set the visibility prop to our `visibilityTag`.
 
-    ```js
-    render() {
-        ...
-        return (
-            <Form
-                ...
-                visible={visiblityTag}
-                ...
-            >
-                ...
-            </Form>
-        );
-    }
-    ```
+        render() {
+            ...
+            return (
+                <Form
+                    ...
+                    visible={visiblityTag}
+                    ...
+                >
+                    ...
+                </Form>
+            );
+        }
 
 ---

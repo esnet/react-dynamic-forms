@@ -36,20 +36,18 @@ example a field (called an Field in this library),
 
 The form elements are defined by a **schema**. Schemas can be defined with JSX or manually. Here's the schema used in this page:
 
-```js
-var schema = (
-    <Schema>
-        <Field name="first_name" label="First name" placeholder="Enter first name"
-                required={true} validation={{"type": "string"}}/>
-        <Field name="last_name" label="Last name" placeholder="Enter last name"
-                required={true} validation={{"type": "string"}}/>
-        <Field name="email" label="Email" placeholder="Enter valid email address"
-                validation={{"format": "email"}}/>
-        <Field name="birthdate" label="Birthdate"  required={true} />
+    var schema = (
+        <Schema>
+            <Field name="first_name" label="First name" placeholder="Enter first name"
+                    required={true} validation={{"type": "string"}}/>
+            <Field name="last_name" label="Last name" placeholder="Enter last name"
+                    required={true} validation={{"type": "string"}}/>
+            <Field name="email" label="Email" placeholder="Enter valid email address"
+                    validation={{"format": "email"}}/>
+            <Field name="birthdate" label="Birthdate"  required={true} />
 
-    </Schema>
-);
-```
+        </Schema>
+    );
 
 As you can see the schema is used to associate the Field name ("first_name" for example) with some properties which define how it looks and what is a valid value for that Field. Here we define a label ("First name"), a placeholder text, and some validation properties. Required can be set true to have the form track that this Field field needs to be filled out before the form is submitted. More on errors and missing value counts below. In addition to being required or not, the Field can have a validation prop set which will be passed to Revalidator for field validation while the user interacts with the form. It is most common to use it to specify the type ("string", "integer", or "number"), but you can also specify a format, such as in the example above where the email Field is checked to make sure it is a valid email address. Maximum string lengths, or ranges of numeric values can also be specified. For full details see the [Revalidator website](https://github.com/flatiron/revalidator).
 
@@ -57,15 +55,12 @@ Rendering is not automatic. Instead the form itself is a React component that yo
 
 We define the form itself like this:
 
-```js
-var ContactForm = React.createClass({
+    var ContactForm = React.createClass({
 
-    mixins: [FormMixin],
-```
+        mixins: [FormMixin],
 
 And then implement the form layout like this:
 
-```js
     renderForm: function() {
         var disableSubmit = this.hasErrors();
         return (
@@ -79,7 +74,6 @@ And then implement the form layout like this:
             </Form>
         );
     }
-```
 
 As you can see, we return a `<Form>` element which contains further JSX, which is a convenience. In fact, you can define this with a `<form>` too. You can use any JSX in here to render the form however you like. This makes the layout of the form as flexible as any other React code.
 
@@ -89,13 +83,11 @@ Now that we have out form it's time to use it. Typically the form will be contai
 
 To render the form we created above we need to pass in the initial values and schema. Here is the key part of render function for this page's example:
 
-```js
     render: function() {
         ...
         <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit}/>
         ...
     }
-```
 
 Note that the schema is required, so you cannot render the form until one is available. If this is being loaded from the server you would display a Spinner until it is available.
 

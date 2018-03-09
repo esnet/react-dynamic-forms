@@ -9,8 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
-import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
 import * as Immutable from "immutable";
 import { 
@@ -23,12 +21,8 @@ import {
     FormEditStates 
 } from "react-dynamic-forms";
 
-import Highlighter from "../../components/Highlighter";
-
 import dynamic_docs from "./dynamic_docs.md";
 import dynamic_thumbnail from "./dynamic_thumbnail.png";
-
-var util = require('util');
 
 const description = `This shows a more complicated form where there's
 conditional fields and pre-filling.  To use, either select from the top

@@ -9,10 +9,8 @@
  */
 
 import React from "react";
-import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
 import Immutable from "immutable";
-import Highlighter from "../../components/Highlighter";
 
 import { Form, Schema, Field, Chooser, TextEdit, formGroup, formList, FormEditStates } from "react-dynamic-forms";
 

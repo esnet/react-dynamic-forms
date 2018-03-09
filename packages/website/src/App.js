@@ -10,7 +10,7 @@
 
 import "./App.css";
 import React, {Component} from "react";
-import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import Prism from "prismjs"; // eslint-disable-line
 import "prismjs/components/prism-typescript";
