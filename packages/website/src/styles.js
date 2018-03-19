@@ -9,12 +9,18 @@
  */
 
 export const sidebarStyle = {
-    flex: "0 0 12em",
+    position: "fixed",
+    right: 0,
+    top: 80,
+    width: 250,
+    bottom: 0,
+    overflowY: "auto",
     background: "#FEFEFE",
     color: "#4183C4",
     textDecoration: "none",
+    borderWidth: 1,
     borderLeftStyle: "solid",
-    borderLeftColor: "#64b2c5",
+    borderLeftColor: "#ddd",
     marginLeft: 40
 };
 
@@ -31,7 +37,7 @@ export const sidebarTitleStyle = {
 
 export const sidebarItemStyle = {
     fontFamily: "fakt-web,Helvetica Neue,Hevetica,sans-serif",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 400,
     letterSpacing: 0,
     padding: "10px 20px",
@@ -50,9 +56,11 @@ export const activeLinkStyle = {
 
 export const bodyStyle = {
     marginTop: 100,
+    marginRight: 300,
     display: "flex",
     minHeight: "100vh",
-    flexDirection: "column"
+    flexDirection: "column",
+    overflowY: "hidden"
 };
 
 export const mainStyle = {

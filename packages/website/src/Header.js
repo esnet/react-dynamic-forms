@@ -9,7 +9,7 @@
  */
 
 import React, { Component } from "react";
-import logo from "./logo.png";
+import logo from "./img/forms.png";
 import githubLogo from "./img/github.png";
 
 /* eslint-disable  jsx-a11y/href-no-hash */
@@ -27,16 +27,18 @@ export default class Header extends Component {
                     <div className="navbar-header">
                         <div className="navbar-brand">
                             <span>
-                            <a href="/">
-                                <img
-                                    style={{ marginTop: -4 }}
-                                    src={logo}
-                                    alt="logo"
-                                    height={60}
-                                />
-                            </a>
+                                <a href="/">
+                                    <img
+                                        style={{ marginTop: -4 }}
+                                        src={logo}
+                                        alt="logo"
+                                        height={60}
+                                    />
+                                </a>
                             </span>
-                            <span style={{ fontSize: 32, marginLeft: 10 }}>React Dynamic Forms</span>
+                            <span style={{ fontSize: 32, marginLeft: 10 }}>
+                                React Dynamic Forms
+                            </span>
                         </div>
                     </div>
                     <div>

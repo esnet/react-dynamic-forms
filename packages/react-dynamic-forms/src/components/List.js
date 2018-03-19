@@ -11,7 +11,7 @@
 import React from "react";
 import _ from "underscore";
 import Flexbox from "flexbox-react";
-import ReactCSSTransitionGroup from "react-addons-css-transition-group";
+import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 
 import "../css/list.css";
 import "../css/icon.css";
@@ -147,25 +147,29 @@ export default class List extends React.Component {
                 }
             }
 
-            const minusAction = addMinus
-                ? <Flexbox width="28px">
-                      <span key={actionSpanKey} className="icon" style={{ background: "white" }}>
-                          {minus}
-                      </span>
-                  </Flexbox>
-                : <div />;
+            const minusAction = addMinus ? (
+                <Flexbox width="28px">
+                    <span key={actionSpanKey} className="icon" style={{ background: "white" }}>
+                        {minus}
+                    </span>
+                </Flexbox>
+            ) : (
+                <div />
+            );
 
-            const editAction = addEdit
-                ? <Flexbox width="28px">
-                      <span
-                          key={actionSpanKey}
-                          className="icon"
-                          style={{ background: "white", verticalAlign: "top" }}
-                      >
-                          {edit}
-                      </span>
-                  </Flexbox>
-                : <div />;
+            const editAction = addEdit ? (
+                <Flexbox width="28px">
+                    <span
+                        key={actionSpanKey}
+                        className="icon"
+                        style={{ background: "white", verticalAlign: "top" }}
+                    >
+                        {edit}
+                    </span>
+                </Flexbox>
+            ) : (
+                <div />
+            );
 
             // JSX for each row, includes: UI Item and [x] remove item button
             return (
@@ -229,13 +233,13 @@ export default class List extends React.Component {
                 }}
             >
                 <ul className="esnet-forms-listeditview-container">
-                     <ReactCSSTransitionGroup
+                    <ReactCSSTransitionGroup
                         transitionName="esnet-forms-list-item"
                         transitionEnterTimeout={500}
                         transitionLeaveTimeout={300}
-                    > 
+                    >
                         {itemList}
-                     </ReactCSSTransitionGroup> 
+                    </ReactCSSTransitionGroup>
                 </ul>
                 {plus}
             </div>

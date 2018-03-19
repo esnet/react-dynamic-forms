@@ -18,9 +18,9 @@ var _flexboxReact = require("flexbox-react");
 
 var _flexboxReact2 = _interopRequireDefault(_flexboxReact);
 
-var _reactAddonsCssTransitionGroup = require("react-addons-css-transition-group");
+var _CSSTransitionGroup = require("react-transition-group/CSSTransitionGroup");
 
-var _reactAddonsCssTransitionGroup2 = _interopRequireDefault(_reactAddonsCssTransitionGroup);
+var _CSSTransitionGroup2 = _interopRequireDefault(_CSSTransitionGroup);
 
 require("../css/list.css");
 
@@ -289,7 +289,7 @@ var List = function (_React$Component) {
                     "ul",
                     { className: "esnet-forms-listeditview-container" },
                     _react2.default.createElement(
-                        _reactAddonsCssTransitionGroup2.default,
+                        _CSSTransitionGroup2.default,
                         {
                             transitionName: "esnet-forms-list-item",
                             transitionEnterTimeout: 500,

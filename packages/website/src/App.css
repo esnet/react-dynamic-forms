@@ -8,13 +8,10 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-html {
-    overflow-y: scroll;
-}
-
 body {
     padding: 0;
     margin: 0;
+    overflow: hidden;
 }
 
 h2 {
@@ -126,7 +123,7 @@ h4 {
 
 .tools-links > li a.selected,
 .tools-links > li a:hover {
-    background-color: #4ec1e0;
+    background-color: #4ec1e0 !important;
 }
 
 /* Navigation pills altered to look like the links above */
@@ -150,4 +147,8 @@ h4 {
     .footer {
         display: none;
     }
+}
+
+.scrollable::-webkit-scrollbar {
+    display: none;
 }

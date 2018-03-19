@@ -9,42 +9,50 @@
  */
 
 import "./App.css";
-import React, {Component} from "react";
+import React, { Component } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import Prism from "prismjs"; // eslint-disable-line
 import "prismjs/components/prism-typescript";
 import "prismjs/themes/prism.css";
 
-import Header from './Header';
-import Sidebar from './Sidebar';
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 import Guide from "./components/Guide";
 import Example from "./components/Example";
 import API from "./components/API";
 
-import {bodyStyle, mainStyle, contentStyle} from './styles';
+import { bodyStyle, mainStyle, contentStyle } from "./styles";
+
+class Page extends Component {
+    render() {
+        return (
+            <div style={mainStyle}>
+                <div style={contentStyle}>
+                    {" "}
+                    <Switch>
+                        <Route exact path="/" component={Guide} />
+                        <Route path="/guide/:doc" component={Guide} />
+                        <Route path="/example/:example" component={Example} />
+                        <Route path="/api/forms/:component" component={API} />
+                    </Switch>
+                </div>
+                <Sidebar affixTo={this} />
+            </div>
+        );
+    }
+}
 
 class App extends Component {
     render() {
-        return(
+        return (
             <Router>
                 <div style={bodyStyle}>
                     <Header />
-                    <div style={mainStyle}>
-                        <div style={contentStyle}>
-                            {" "}
-                            <Switch>
-                                <Route exact path="/" component={Guide} />
-                                <Route path="/guide/:doc" component={Guide} />
-                                <Route path="/example/:example" component={Example} />
-                                <Route path="/api/forms/:component" component={API} />
-                            </Switch>
-                        </div>
-                        <Sidebar />
-                    </div>
+                    <Page />
                 </div>
             </Router>
-        )
+        );
     }
 }
 
