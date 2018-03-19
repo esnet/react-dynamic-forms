@@ -18,8 +18,8 @@ import "../css/textedit.css";
 
 /**
  * Form control to edit a text field.
- * Set the initial value with 'initialValue' and set a callback for
- * value changed with 'onChange'.
+ * Set the initial value with `initialValue` and set a callback for
+ * value changed with `onChange`.
  */
 class TextEdit extends React.Component {
     constructor(props) {

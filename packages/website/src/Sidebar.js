@@ -52,6 +52,9 @@ export default class extends Component {
                 </div>
                 <ul className="nav nav-sidebar" style={sidebarItemStyle}>
                     <li>
+                        <Link to="/api/forms/CheckBoxes">CheckBoxes</Link>
+                    </li>
+                    <li>
                         <Link to="/api/forms/Chooser">Chooser</Link>
                     </li>
                     <li>
@@ -67,7 +70,22 @@ export default class extends Component {
                         <Link to="/api/forms/List">List</Link>
                     </li>
                     <li>
+                        <Link to="/api/forms/RadioButtons">RadioButtons</Link>
+                    </li>
+                    <li>
                         <Link to="/api/forms/Schema">Schema</Link>
+                    </li>
+                    <li>
+                        <Link to="/api/forms/TagsEdit">TagsEdit</Link>
+                    </li>
+                    <li>
+                        <Link to="/api/forms/TextArea">TextArea</Link>
+                    </li>
+                    <li>
+                        <Link to="/api/forms/TextEdit">TextEdit</Link>
+                    </li>
+                    <li>
+                        <Link to="/api/forms/View">View</Link>
                     </li>
                 </ul>
 

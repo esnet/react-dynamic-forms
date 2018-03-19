@@ -723,7 +723,7 @@
     ]
   },
   "src/components/TextEdit.js": {
-    "description": "Form control to edit a text field.\nSet the initial value with 'initialValue' and set a callback for\nvalue changed with 'onChange'.",
+    "description": "Form control to edit a text field.\nSet the initial value with `initialValue` and set a callback for\nvalue changed with `onChange`.",
     "displayName": "TextEdit",
     "methods": [
       {
