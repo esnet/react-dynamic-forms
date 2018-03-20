@@ -82,7 +82,6 @@ class Chooser extends React.Component {
             value = +v;
         }
 
-        // console.log("this is ", this);
         // Callbacks
         if (this.props.onChange) {
             this.props.onChange(this.props.name, value);
@@ -96,7 +95,6 @@ class Chooser extends React.Component {
     }
 
     getOptionList() {
-        // console.log("getOptionList is ", this.props.choiceList);
         return this.props.choiceList
             .map(item => {
                 let disabled = false;
@@ -110,14 +108,12 @@ class Chooser extends React.Component {
     }
 
     getFilteredOptionList(input) {
-        // console.log("getOFilteredptionList is ", this.props.choiceList);
         const items = this.props.choiceList;
         const filteredItems = input
             ? items.filter(item => {
                   return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !== -1;
               })
             : items;
-        // console.log("filteredItems is ", filteredItems);
         const result = [];
         filteredItems.forEach(item =>
             result.push({
@@ -139,7 +135,6 @@ class Chooser extends React.Component {
         const choiceItem = this.props.choiceList.find(item => {
             return item.get("id") === this.props.value;
         });
-        // console.log("getCurrentChoice is ", choiceItem);
         return choiceItem ? choiceItem.get("id") : undefined;
     }
 
@@ -147,12 +142,10 @@ class Chooser extends React.Component {
         const choiceItem = this.props.choiceList.find(item => {
             return item.get("id") === this.props.value;
         });
-        // console.log("getCurrentChoiceLabel is ", choiceItem);
         return choiceItem ? choiceItem.get("label") : "";
     }
 
     render() {
-        console.log("chooser this ", this);
         const choice = this.getCurrentChoice();
         const isMissing = this.isMissing(this.props.value);
 
@@ -162,9 +155,7 @@ class Chooser extends React.Component {
             const clearable = this.props.allowSingleDeselect;
             const searchable = !this.props.disableSearch;
 
-            console.log("this.props.searchContains ", this.props.searchContains);
             const matchPos = this.props.searchContains ? "any" : "start";
-            console.log("matchPos ", matchPos);
 
             if (searchable) {
                 const options = this.getFilteredOptionList(null);
@@ -287,10 +278,9 @@ Chooser.propTypes = {
 Chooser.defaultProps = {
     disabled: false,
     disableSearch: false,
-    searchContains: true,
+    searchContains: "any",
     allowSingleDeselect: false,
-    width: 300,
-    searchContains: "any"
+    width: 300
 };
 
 export default formGroup(Chooser);

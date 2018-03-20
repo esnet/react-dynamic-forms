@@ -54,7 +54,6 @@ export default class List extends React.Component {
     }
 
     handleDeselect() {
-        //console.log("Handle deselect");
         this.selectItem(null);
     }
 
@@ -62,8 +61,6 @@ export default class List extends React.Component {
         const addPlus = this.props.canAddItems;
         const addMinus = this.props.canRemoveItems;
         const addEdit = this.props.canEditItems;
-
-        //console.log(this.props);
 
         // Plus [+] icon
         let plus;

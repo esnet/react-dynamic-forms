@@ -94,9 +94,7 @@ class DateEdit extends React.Component {
         const selected = this.props.value ? moment(this.props.value) : null;
 
         let className = "datepicker__input rdf";
-        //if (this.state.error) {
-        //  className = "datepicker__input rdf has-error";
-        //}
+
         if (isMissing) {
             className += " is-missing";
         }
@@ -118,7 +116,7 @@ class DateEdit extends React.Component {
                 </div>
             );
         } else {
-            const hasError = false; //this.state.error;
+            const hasError = false;
             let text = selected ? selected.format("MM/DD/YYYY") : "";
             if (isMissing) {
                 text = " ";

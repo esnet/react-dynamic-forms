@@ -143,7 +143,6 @@ export default function list(ItemComponent, hideEditRemove) {
         }
 
         render() {
-            //console.log("LIST", this.props.edit);
             const itemComponents = [];
             this.props.value.forEach((item, index) => {
                 const { key = index } = item;

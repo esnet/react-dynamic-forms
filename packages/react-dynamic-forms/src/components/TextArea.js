@@ -98,8 +98,6 @@ class TextArea extends React.Component {
 
     onBlur() {
         const { value } = this.textInput;
-        // console.log("value is ", value);
-        // const value = this.refs.input.value;
         const missing = this.props.required && this.isEmpty(value);
         const { validationError } = this.getError(value);
 
@@ -136,9 +134,6 @@ class TextArea extends React.Component {
     }
 
     render() {
-        // console.log("Touched", this.state.touched);
-        // console.log("this is ", this);
-
         // Control state
         const isMissing = this.isMissing(this.props.value);
         const { validationError, validationErrorMessage } = this.getError(this.props.value);
@@ -156,7 +151,6 @@ class TextArea extends React.Component {
             // Warning style
             const style = isMissing ? { background: "floralwhite" } : {};
 
-            // console.log("before render");
             return (
                 <div className={className}>
                      <textarea

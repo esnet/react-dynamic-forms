@@ -72,10 +72,6 @@ class TagsEdit extends React.Component {
     render() {
         const isMissing = this.isMissing(this.props.value);
         if (this.props.edit) {
-            //const key = `${this.props.value.join("-")}--${this.props.tagList.join(
-            //  "-"
-            //)}`;
-
             const options = [];
             const value = [];
 

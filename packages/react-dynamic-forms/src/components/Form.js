@@ -61,12 +61,6 @@ export default class Form extends React.Component {
             errorCounts: {}, 
             selection: null 
         };
-        // this.handleBlur = this.handleBlur.bind(this);
-        // this.handleChange = this.handleChange.bind(this);
-        // this.handleErrorCountChange = this.handleErrorCountChange.bind(this);
-        // this.handleMissingCountChange = this.handleMissingCountChange.bind(this);
-        // this.handleSelectItem = this.handleSelectItem.bind(this);
-        // this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     /**
@@ -85,7 +79,6 @@ export default class Form extends React.Component {
      *   - edit selection
      */
     getFieldProps({ formFields, formRules, formHiddenList }, fieldName) {
-        console.log("getFieldProps");
         let props = {};
         props.labelWidth = this.props.labelWidth || 300;
 
@@ -136,11 +129,8 @@ export default class Form extends React.Component {
         }
 
         // Field value
-        console.log("this fieldName ", this, fieldName);
         if (this.props.value.has(fieldName)) {
-            console.log("props.value");
             props.value = this.props.value.get(fieldName);
-            console.log("props.value is ", props.value);
         }
 
         // Callbacks
@@ -182,7 +172,6 @@ export default class Form extends React.Component {
      *       as a side effect of step (5) above
      */
     queueChange() {
-        console.log("queueChange");
         if (!this._deferSet) {
             _.defer(() => {
                 this._deferSet = false;
@@ -303,7 +292,6 @@ export default class Form extends React.Component {
      * until built up change is flushed to the onChange callback.
      */
     handleChange(fieldName, newValue) {
-        console.log("handleChange");
         // Hook to allow the component to alter the value before it is set.
         // However, you should be careful with side effects to state here.
         let v = newValue;
@@ -322,7 +310,6 @@ export default class Form extends React.Component {
     }
 
     handleBlur(fieldName) {
-        console.log("handleBlur");
         if (this.state.selection) {
             this.setState({ selection: null });
         }
@@ -335,7 +322,6 @@ export default class Form extends React.Component {
      * at once. If the same item is selected again it is deselected.
      */
     handleSelectItem(fieldName) {
-        console.log("handleSelectItem");
         if (this.state.selection !== fieldName) {
             this.setState({ selection: fieldName });
         } else {
@@ -352,7 +338,6 @@ export default class Form extends React.Component {
      * This is called every render.
      */
     getHiddenFields(formFields) {
-        console.log("getHiddenFields");
         let result = [];
         if (this.props.visible) {
             _.each(formFields, (field, fieldName) => {
@@ -393,9 +378,7 @@ export default class Form extends React.Component {
                         const fieldName = child.props.field;
                         props = { ...props, ...this.getFieldProps(formState, fieldName) };
                     }
-                    console.log("renderChildren here");
                     if (React.Children.count(child.props.children) > 0) {
-                        console.log("renderChildren");
                         props = {
                             ...props,
                             children: this.renderChildren(formState, child.props.children)
@@ -412,7 +395,6 @@ export default class Form extends React.Component {
                 children = null;
             }
         });
-        console.log("out of loop");
         return children;
     }
 
@@ -423,7 +405,6 @@ export default class Form extends React.Component {
      * the whole form render.
      */
     shouldComponentUpdate(nextProps, nextState) {
-        console.log("shouldComponentUpdate");
         const update = nextProps.value !== this.props.value ||
             nextProps.edit !== this.props.edit ||
             nextProps.schema !== this.props.schema ||
@@ -436,7 +417,6 @@ export default class Form extends React.Component {
      * Render the form and all its children.
      */
     render() {
-        console.log("form here ", this);
         const inner = this.props.inner;
         const schema = this.props.schema;
         const formFields = getFieldsFromSchema(schema);
@@ -469,7 +449,6 @@ export default class Form extends React.Component {
         }
 
         if (this.props.edit === FormEditStates.TABLE) {
-            console.log("1");
             return (
                 <Flexbox
                     flexDirection="row"
@@ -481,7 +460,6 @@ export default class Form extends React.Component {
             );
         } else {
             if (inner) {
-                console.log("2");
                 return (
                     <form
                         className={formClass}
@@ -496,7 +474,6 @@ export default class Form extends React.Component {
                     </form>
                 );
             } else {
-                console.log("3");
                 return (
                     <div
                         className={this.props.formClassName}
