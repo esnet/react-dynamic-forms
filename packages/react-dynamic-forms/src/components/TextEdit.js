@@ -27,8 +27,6 @@ class TextEdit extends React.Component {
         this.state = { 
             touched: false 
         };
-        this.handleBlur = this.handleBlur.bind(this);
-        this.handleChange = this.handleChange.bind(this);
     }
 
     isEmpty(value) {
@@ -107,12 +105,10 @@ class TextEdit extends React.Component {
         let cast = value;
 
         // Callbacks
-
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
         }
 
-        // console.log("Missing count changed");
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
         }
@@ -135,7 +131,6 @@ class TextEdit extends React.Component {
     }
 
     handleBlur() {
-        // console.log("Missing count changed");
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
@@ -185,6 +180,7 @@ class TextEdit extends React.Component {
                 <div className={className}>
                     <input
                         ref={(input) => { this.textInput = input; }}
+                        key={this.props.value}
                         className="form-control input-sm"
                         style={style}
                         type={type}
