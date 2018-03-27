@@ -113,10 +113,9 @@ class form extends React.Component {
             value: Immutable.fromJS(initialValue),
             tagList: Immutable.fromJS(tagList),
             loaded: false,
-            editMode: FormEditStates.ALWAYS            
+            editMode: FormEditStates.ALWAYS
         };
         this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.handleErrorCountChange = this.handleErrorCountChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -188,18 +187,13 @@ class form extends React.Component {
         }
     }
 
-    renderContactForm() {
-        //const disableSubmit = false;
-        //this.hasErrors();
-        const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
-
+    renderSubmit() {
         let submit;
         if (this.state.editMode === FormEditStates.ALWAYS) {
             let disableSubmit = true;
             if (this.state.hasErrors === false && this.state.hasMissing === false) {
                 disableSubmit = false;
             }
-            // console.log("Render submit button, disabled=", disableSubmit);
             submit = (
                 <button
                     type="submit"
@@ -213,8 +207,13 @@ class form extends React.Component {
         } else {
             submit = <div>* Make changes to the form by clicking the pencil icons</div>;
         }
+        return submit;
+    }
 
-        // console.log("Render form");
+    renderContactForm() {
+        //const disableSubmit = false;
+        //this.hasErrors();
+        const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
         if (this.state.loaded) {
             return (
@@ -226,7 +225,7 @@ class form extends React.Component {
                     edit={this.state.editMode}
                     labelWidth={200}
                     onSubmit={this.handleSubmit}
-                    onChange={this.handleChange}
+                    onChange={(formName, value) => this.handleChange(formName, value)}
                     onMissingCountChange={(fieldName, missing) =>
                         this.setState({ hasMissing: missing > 0 })}
                     onErrorCountChange={(fieldName, errors) =>
@@ -279,12 +278,6 @@ class form extends React.Component {
                         }}
                     />
                     <hr />
-                    <div className="row">
-                        <div className="col-md-3" />
-                        <div className="col-md-9">
-                            {submit}
-                        </div>
-                    </div>
                 </Form>
             );
         } else {
@@ -305,6 +298,12 @@ class form extends React.Component {
                 <div className="row">
                     <div className="col-md-8">
                         {this.renderContactForm()}
+                        <div className="row">
+                            <div className="col-md-3" />
+                            <div className="col-md-9">
+                                {this.renderSubmit()}
+                            </div>
+                        </div>
                     </div>
                     <div className="col-md-4">
                         <b>STATE:</b>

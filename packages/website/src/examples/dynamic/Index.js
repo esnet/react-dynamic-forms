@@ -33,7 +33,7 @@ fields should stay correct.
 
 const schema = (
     <Schema>
-        <Field name="bookmarked" label="" tags={["all"]} required={true} />
+        <Field name="bookmarked" label="Endpoint" tags={["all"]} required={true} />
         <Field name="name" label="Name" tags={["all"]} required={true} />
         <Field name="description" label="Description" tags={["all"]} required={true} />
         <Field name="type" label="Type" tags={["all"]} required={true} />
@@ -99,7 +99,8 @@ class dynamic extends React.Component {
         this.state = {
             value: Immutable.fromJS(initialValues),
             visibility: "all",
-            loaded: false
+            loaded: false,
+            editMode: FormEditStates.ALWAYS
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -127,8 +128,11 @@ class dynamic extends React.Component {
         // console.log("Errors:", errors > 0);
     }
 
-    handleSubmit() {
+    handleSubmit(e) {
         // console.log("Submit:", this.state.value);
+        this.setState({
+            editMode: FormEditStates.SELECTED
+        })
     }
 
     renderAlert() {
@@ -181,7 +185,7 @@ class dynamic extends React.Component {
                     style={style}
                     schema={schema}
                     value={value}
-                    edit={FormEditStates.ALWAYS}
+                    edit={this.state.editMode}
                     visible={visiblityTag}
                     onSubmit={this.handleSubmit}
                     onChange={(formName, value) => this.handleChange(formName, value)}
@@ -218,12 +222,6 @@ class dynamic extends React.Component {
                     <TextEdit field="port_side" />
                     <TextEdit field="port_location" />
                     <hr />
-                    <input
-                        className="btn btn-default"
-                        type="submit"
-                        value="Submit"
-                        disabled={this.state.hasErrors || this.state.hasMissing}
-                    />  
                 </Form>
             );
         } else {
@@ -233,6 +231,29 @@ class dynamic extends React.Component {
                 </div>
             );
         }
+    }
+
+    renderSubmit() {
+        let submit;
+        if (this.state.editMode === FormEditStates.ALWAYS) {
+            let disableSubmit = true;
+            if (this.state.hasErrors === false && this.state.hasMissing === false) {
+                disableSubmit = false;
+            }
+            submit = (
+                <button
+                    type="submit"
+                    className="btn btn-default"
+                    disabled={disableSubmit}
+                    onClick={() => this.handleSubmit()}
+                >
+                    Submit contact
+                </button>
+            );
+        } else {
+            submit = <div>* Make changes to the form by clicking the pencil icons</div>;
+        }
+        return submit;
     }
 
     render() {
@@ -249,7 +270,13 @@ class dynamic extends React.Component {
                 <hr />
                 <div className="row">
                     <div className="col-md-8">
-                          {this.renderForm()}  
+                        {this.renderForm()}
+                        <div className="row">
+                            <div className="col-md-3" />
+                            <div className="col-md-9">
+                                {this.renderSubmit()}
+                            </div>
+                        </div>  
                     </div>
                     <div className="col-md-4">
                         <b>STATE:</b>
