@@ -180,13 +180,12 @@ class TextEdit extends React.Component {
                 <div className={className}>
                     <input
                         ref={(input) => { this.textInput = input; }}
-                        key={this.props.value}
                         className="form-control input-sm"
                         style={style}
                         type={type}
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
-                        defaultValue={this.props.value}
+                        value={this.props.value}
                         onChange={() => this.handleChange()}
                         onBlur={() => this.handleBlur()}
                     />
