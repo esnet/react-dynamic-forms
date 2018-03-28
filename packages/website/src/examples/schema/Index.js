@@ -166,6 +166,15 @@ const HstoreEditor = formGroup(formList(HstoreForm, true));
  * Edit a Location
  */
 class LocationForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            editMode: FormEditStates.ALWAYS,
+            hasMissing: false,
+            hasErrors: false
+        }
+    }
+
     schema() {
         return (
             <Schema>
@@ -181,18 +190,6 @@ class LocationForm extends React.Component {
         );
     }
     
-    // Save the form
-    handleSubmit(e) {
-        e.preventDefault();
-        if (this.hasMissing()) {
-            this.showRequiredOn();
-            return;
-        }
-        if (this.props.onSubmit) {
-            this.props.onSubmit(this.getValues());
-        }
-    }
-
     handleMissingCountChange(form, missingCount) {
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(form, missingCount);
@@ -211,41 +208,71 @@ class LocationForm extends React.Component {
         }
     }
 
+    handleSubmit(e) {
+        this.setState({
+            editMode: FormEditStates.SELECTED
+        });
+    }
+
+    renderSubmit() {
+        let submit;
+        if (this.state.editMode === FormEditStates.ALWAYS) {
+            let disableSubmit = true;
+            if (this.state.hasErrors === false && this.state.hasMissing === false) {
+                disableSubmit = false;
+            }
+            submit = (
+                <button
+                    type="submit"
+                    className="btn btn-default"
+                    disabled={disableSubmit}
+                    onClick={() => this.handleSubmit()}
+                >
+                    Submit contact
+                </button>
+            );
+        } else {
+            submit = <div>* Make changes to the form by clicking the pencil icons</div>;
+        }
+        return submit;
+    }
+
     render() {
-        const disableSubmit = false;
         const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
         const { value } = this.props;
         const details = value.get("details");
 
         return (
-            <Form
-                field="location-form"
-                style={style}
-                schema={this.schema()}
-                value={value}
-                edit={FormEditStates.SELECTED}
-                labelWidth={100}
-                onSubmit={() => this.handleSubmit()}
-                onChange={(fieldName, value) => this.handleChange(fieldName, value)}
-                onMissingCountChange={(form, missing) =>
-                    this.handleMissingCountChange(form, missing)}
-                onErrorCountChange={(form, errors) => this.handleErrorCountChange(form, errors)}
-            >
-                <TextEdit field="location" width={300} />
-                <HstoreEditor
-                    field="details"
-                    value={details}
-                    options={details}
-                    types={this.props.detailsAttributes}
-                />
-                <hr />
-                <input
-                    className="btn btn-default"
-                    type="submit"
-                    value="Submit"
-                    disabled={disableSubmit}
-                />
-            </Form>
+            <div className="col-md-8">
+                <Form
+                    field="location-form"
+                    style={style}
+                    schema={this.schema()}
+                    value={value}
+                    edit={this.state.editMode}
+                    labelWidth={100}
+                    onSubmit={() => this.handleSubmit()}
+                    onChange={(fieldName, value) => this.handleChange(fieldName, value)}
+                    onMissingCountChange={(form, missing) =>
+                        this.handleMissingCountChange(form, missing)}
+                    onErrorCountChange={(form, errors) => this.handleErrorCountChange(form, errors)}
+                >
+                    <TextEdit field="location" width={300} />
+                    <HstoreEditor
+                        field="details"
+                        value={details}
+                        options={details}
+                        types={this.props.detailsAttributes}
+                    />
+                    <hr />
+                </Form>
+                <div className="row">
+                    <div className="col-md-3" />
+                    <div className="col-md-9">
+                        {this.renderSubmit()}
+                    </div>
+                </div>
+            </div>
         );
     }
 };
@@ -295,7 +322,6 @@ class schema extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleErrorCountChange = this.handleErrorCountChange.bind(this);
         this.handleMissingCountChange = this.handleMissingCountChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -306,10 +332,6 @@ class schema extends React.Component {
             },
             0
         );
-    }
-
-    handleSubmit(value) {
-        this.setState({ data: value });
     }
 
     handleChange(form, value) {
@@ -352,7 +374,6 @@ class schema extends React.Component {
                     onChange={this.handleChange}
                     onMissingCountChange={this.handleMissingCountChange}
                     onErrorCountChange={this.handleErrorCountChange}
-                    onSubmit={this.handleSubmit}
                 />
             );
         } else {

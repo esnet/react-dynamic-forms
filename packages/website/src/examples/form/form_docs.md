@@ -7,7 +7,7 @@ of lists within the forms. But here we keep it relatively simple.
 
 **What do we want from our form?**
 
-Essentially we want to provide perhaps some initial data, our form "value", 
+Essentially we want to provide perhaps some initial data, our form `"value"`, 
 defaults in the case of a new form, or maybe our current
 database state in the case of editing an existing entity.
 
@@ -36,7 +36,7 @@ example a field (called an Field in this library),
 
 The form elements are defined by a **schema**. Schemas can be defined with JSX or manually. Here's the schema used in this page:
 
-    var schema = (
+    const schema = (
         <Schema>
             <Field name="first_name" label="First name" placeholder="Enter first name"
                     required={true} validation={{"type": "string"}}/>
@@ -49,20 +49,18 @@ The form elements are defined by a **schema**. Schemas can be defined with JSX o
         </Schema>
     );
 
-As you can see the schema is used to associate the Field name ("first_name" for example) with some properties which define how it looks and what is a valid value for that Field. Here we define a label ("First name"), a placeholder text, and some validation properties. Required can be set true to have the form track that this Field field needs to be filled out before the form is submitted. More on errors and missing value counts below. In addition to being required or not, the Field can have a validation prop set which will be passed to Revalidator for field validation while the user interacts with the form. It is most common to use it to specify the type ("string", "integer", or "number"), but you can also specify a format, such as in the example above where the email Field is checked to make sure it is a valid email address. Maximum string lengths, or ranges of numeric values can also be specified. For full details see the [Revalidator website](https://github.com/flatiron/revalidator).
+As you can see the schema is used to associate the Field name (`"first_name"` for example) with some properties which define how it looks and what is a valid value for that Field. Here we define a label (`"First name"`), a placeholder text, and some validation properties. Required can be set true to have the form track that this Field field needs to be filled out before the form is submitted. More on errors and missing value counts below. In addition to being required or not, the Field can have a validation prop set which will be passed to Revalidator for field validation while the user interacts with the form. It is most common to use it to specify the type (`"string", "integer", or "number"`), but you can also specify a format, such as in the example above where the email Field is checked to make sure it is a valid email address. Maximum string lengths, or ranges of numeric values can also be specified. For full details see the [Revalidator website](https://github.com/flatiron/revalidator).
 
-Rendering is not automatic. Instead the form itself is a React component that you define. This React component will need to use the **FormMixin** to get the proper behavior, as well as implement a layout of the form widgets with special render method called `renderForm()`.
+Rendering is not automatic. Instead the form itself is a React component that you define. We define the form itself like this:
 
-We define the form itself like this:
+    class ContactForm extends React.Component {
 
-    var ContactForm = React.createClass({
-
-        mixins: [FormMixin],
+    }
 
 And then implement the form layout like this:
 
-    renderForm: function() {
-        var disableSubmit = this.hasErrors();
+    renderForm() {
+        const disableSubmit = this.hasErrors();
         return (
             <Form>
                 <TextEdit field="first_name" width={300} />
@@ -85,7 +83,11 @@ To render the form we created above we need to pass in the initial values and sc
 
     render: function() {
         ...
-        <ContactForm schema={schema} values={values} onSubmit={this.handleSubmit}/>
+        <ContactForm 
+            schema={schema} 
+            values={values} 
+            onSubmit={this.handleSubmit}
+        />
         ...
     }
 

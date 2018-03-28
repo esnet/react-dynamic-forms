@@ -15,60 +15,57 @@ for us. Here is the main part of the renderForm() function, excluding
 a little code to get out bookmarks map for the Bookmark chooser
 choice list.
 
-```js
-return (
-    <Form
-        name="dynamic"
-        style={style}
-        schema={schema}
-        value={value}
-        edit={FormEditStates.ALWAYS}
-        visible={visibilityTag}
-        onSubmit={this.handleSubmit}
-        onChange={(formName, value) => this.handleChange(formName, value)}
-        onMissingCountChange={(formName, missing) => this.setState({ hasMissing: missing > 0 })}
-        onErrorCountChange={(formName, errors) => this.setState({ hasErrors: errors > 0 })}
-    >
-        <h5>Bookmarked endpoints</h5>
-        <Chooser field="bookmarked" width={300} disableSearch={false} choiceList={bookmarkList} />
+    return (
+        <Form
+            name="dynamic"
+            style={style}
+            schema={schema}
+            value={value}
+            edit={FormEditStates.ALWAYS}
+            visible={visibilityTag}
+            onSubmit={this.handleSubmit}
+            onChange={(formName, value) => this.handleChange(formName, value)}
+            onMissingCountChange={(formName, missing) => this.setState({ hasMissing: missing > 0 })}
+            onErrorCountChange={(formName, errors) => this.setState({ hasErrors: errors > 0 })}
+        >
+            <h5>Bookmarked endpoints</h5>
+            <Chooser field="bookmarked" width={300} disableSearch={false} choiceList={bookmarkList} />
 
-        <hr />
+            <hr />
 
-        <h5>General information</h5>
-        <TextEdit field="name" width={300} />
-        <TextArea field="description" />
+            <h5>General information</h5>
+            <TextEdit field="name" width={300} />
+            <TextArea field="description" />
 
-        <hr />
+            <hr />
 
-        <h5>Endpoint type</h5>
-        <Chooser field="type" width={200} disableSearch={true} choiceList={endpointTypes} />
-        <TextEdit field="device_name" />
-        <TextEdit field="interface" hidden={true} />
-        <TextEdit field="foreign_description" />
-        <TextEdit field="organization" />
-        <TextEdit field="panel_name" />
-        <TextEdit field="port_id" />
-        <TextEdit field="port_side" />
-        <TextEdit field="port_location" />
+            <h5>Endpoint type</h5>
+            <Chooser field="type" width={200} disableSearch={true} choiceList={endpointTypes} />
+            <TextEdit field="device_name" />
+            <TextEdit field="interface" hidden={true} />
+            <TextEdit field="foreign_description" />
+            <TextEdit field="organization" />
+            <TextEdit field="panel_name" />
+            <TextEdit field="port_id" />
+            <TextEdit field="port_side" />
+            <TextEdit field="port_location" />
 
-        <hr />
+            <hr />
 
-        <input
-            className="btn btn-default"
-            type="submit"
-            value="Submit"
-            disabled={this.state.hasErrors || this.state.hasMissing}
-        />
-    </Form>
-);
-```
+            <input
+                className="btn btn-default"
+                type="submit"
+                value="Submit"
+                disabled={this.state.hasErrors || this.state.hasMissing}
+            />
+        </Form>
+    );
 
 #### Tags
 
 The forms library `schema` supports visibility tags, which can be used to quickly control which set of fields show be visible and which should not, rather than setting each one. The schema for our example looks like
 this:
 
-```
     <Schema>
         <Field name="bookmarked" label=""  tags={["all"]} />
         <Field name="name" label="Name"  tags={["all"]} required={true} />
@@ -83,7 +80,7 @@ this:
         <Field name="port_side" label="Port side" tags={["Patch Panel"]} required={true} />
         <Field name="port_location" label="Port location" tags={["Patch Panel"]} required={true} />
     </Schema>
-```
+
 
 You can see that for each Field we've defined a tags prop. This is a list
 of visibility tags. Here we've named our tags based on our type values
