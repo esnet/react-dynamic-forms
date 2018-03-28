@@ -143,9 +143,7 @@ var DateEdit = function (_React$Component) {
             var selected = this.props.value ? (0, _moment2.default)(this.props.value) : null;
 
             var className = "datepicker__input rdf";
-            //if (this.state.error) {
-            //  className = "datepicker__input rdf has-error";
-            //}
+
             if (isMissing) {
                 className += " is-missing";
             }
@@ -173,7 +171,7 @@ var DateEdit = function (_React$Component) {
                     )
                 );
             } else {
-                var hasError = false; //this.state.error;
+                var hasError = false;
                 var text = selected ? selected.format("MM/DD/YYYY") : "";
                 if (isMissing) {
                     text = " ";

@@ -118,10 +118,6 @@ var TagsEdit = function (_React$Component) {
 
             var isMissing = this.isMissing(this.props.value);
             if (this.props.edit) {
-                //const key = `${this.props.value.join("-")}--${this.props.tagList.join(
-                //  "-"
-                //)}`;
-
                 var options = [];
                 var value = [];
 

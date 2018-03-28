@@ -36,8 +36,6 @@ require("../css/chooser.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -116,7 +114,6 @@ var Chooser = function (_React$Component) {
                 value = +v;
             }
 
-            // console.log("this is ", this);
             // Callbacks
             if (this.props.onChange) {
                 this.props.onChange(this.props.name, value);
@@ -133,7 +130,6 @@ var Chooser = function (_React$Component) {
         value: function getOptionList() {
             var _this2 = this;
 
-            // console.log("getOptionList is ", this.props.choiceList);
             return this.props.choiceList.map(function (item) {
                 var disabled = false;
                 var isDisabled = item.has("disabled") && item.get("disabled") === true;
@@ -146,12 +142,10 @@ var Chooser = function (_React$Component) {
     }, {
         key: "getFilteredOptionList",
         value: function getFilteredOptionList(input) {
-            // console.log("getOFilteredptionList is ", this.props.choiceList);
             var items = this.props.choiceList;
             var filteredItems = input ? items.filter(function (item) {
                 return item.label.toLowerCase().indexOf(("" + input).toLowerCase()) !== -1;
             }) : items;
-            // console.log("filteredItems is ", filteredItems);
             var result = [];
             filteredItems.forEach(function (item) {
                 return result.push({
@@ -178,7 +172,6 @@ var Chooser = function (_React$Component) {
             var choiceItem = this.props.choiceList.find(function (item) {
                 return item.get("id") === _this3.props.value;
             });
-            // console.log("getCurrentChoice is ", choiceItem);
             return choiceItem ? choiceItem.get("id") : undefined;
         }
     }, {
@@ -189,7 +182,6 @@ var Chooser = function (_React$Component) {
             var choiceItem = this.props.choiceList.find(function (item) {
                 return item.get("id") === _this4.props.value;
             });
-            // console.log("getCurrentChoiceLabel is ", choiceItem);
             return choiceItem ? choiceItem.get("label") : "";
         }
     }, {
@@ -197,7 +189,6 @@ var Chooser = function (_React$Component) {
         value: function render() {
             var _this5 = this;
 
-            console.log("chooser this ", this);
             var choice = this.getCurrentChoice();
             var isMissing = this.isMissing(this.props.value);
 
@@ -207,9 +198,7 @@ var Chooser = function (_React$Component) {
                 var clearable = this.props.allowSingleDeselect;
                 var searchable = !this.props.disableSearch;
 
-                console.log("this.props.searchContains ", this.props.searchContains);
                 var matchPos = this.props.searchContains ? "any" : "start";
-                console.log("matchPos ", matchPos);
 
                 if (searchable) {
                     var options = this.getFilteredOptionList(null);
@@ -348,12 +337,12 @@ Chooser.propTypes = {
     searchContains: _propTypes2.default.oneOf(["any", "start"])
 };
 
-Chooser.defaultProps = _defineProperty({
+Chooser.defaultProps = {
     disabled: false,
     disableSearch: false,
-    searchContains: true,
+    searchContains: "any",
     allowSingleDeselect: false,
     width: 300
-}, "searchContains", "any");
+};
 
 exports.default = (0, _formGroup2.default)(Chooser);

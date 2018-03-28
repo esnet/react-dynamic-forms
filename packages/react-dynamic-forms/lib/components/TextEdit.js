@@ -40,8 +40,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Form control to edit a text field.
- * Set the initial value with 'initialValue' and set a callback for
- * value changed with 'onChange'.
+ * Set the initial value with `initialValue` and set a callback for
+ * value changed with `onChange`.
  */
 var TextEdit = function (_React$Component) {
     _inherits(TextEdit, _React$Component);
@@ -54,8 +54,6 @@ var TextEdit = function (_React$Component) {
         _this.state = {
             touched: false
         };
-        _this.handleBlur = _this.handleBlur.bind(_this);
-        _this.handleChange = _this.handleChange.bind(_this);
         return _this;
     }
 
@@ -154,12 +152,10 @@ var TextEdit = function (_React$Component) {
             var cast = value;
 
             // Callbacks
-
             if (this.props.onErrorCountChange) {
                 this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
             }
 
-            // console.log("Missing count changed");
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
             }
@@ -183,7 +179,6 @@ var TextEdit = function (_React$Component) {
     }, {
         key: "handleBlur",
         value: function handleBlur() {
-            // console.log("Missing count changed");
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
@@ -248,7 +243,7 @@ var TextEdit = function (_React$Component) {
                         type: type,
                         disabled: this.props.disabled,
                         placeholder: this.props.placeholder,
-                        defaultValue: this.props.value,
+                        value: this.props.value,
                         onChange: function onChange() {
                             return _this2.handleChange();
                         },

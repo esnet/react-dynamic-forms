@@ -210,7 +210,6 @@ function formGroup(Widget, hideEdit) {
 
                 // Group
                 if (this.props.layout === _constants.FormGroupLayout.INLINE) {
-                    //console.log("Inline", label);
                     return _react2.default.createElement(
                         _flexboxReact2.default,
                         {
@@ -226,7 +225,6 @@ function formGroup(Widget, hideEdit) {
                         widget
                     );
                 } else if (this.props.layout === _constants.FormGroupLayout.COLUMN) {
-                    //console.log("Column layout");
                     return _react2.default.createElement(
                         _flexboxReact2.default,
                         {
@@ -284,7 +282,6 @@ function formGroup(Widget, hideEdit) {
                         )
                     );
                 } else {
-                    //console.log("Layout", label, allowEdit, hideEdit);
                     return _react2.default.createElement(
                         _flexboxReact2.default,
                         {

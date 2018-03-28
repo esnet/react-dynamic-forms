@@ -161,7 +161,7 @@ class ContactForm extends React.Component {
         }
     }
 
-    handleSubmit(e) {
+    handleSubmit() {
         this.setState({
             editMode: FormEditStates.SELECTED
         });

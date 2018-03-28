@@ -93,7 +93,6 @@ var List = function (_React$Component) {
     }, {
         key: "handleDeselect",
         value: function handleDeselect() {
-            //console.log("Handle deselect");
             this.selectItem(null);
         }
     }, {
@@ -104,8 +103,6 @@ var List = function (_React$Component) {
             var addPlus = this.props.canAddItems;
             var addMinus = this.props.canRemoveItems;
             var addEdit = this.props.canEditItems;
-
-            //console.log(this.props);
 
             // Plus [+] icon
             var plus = void 0;

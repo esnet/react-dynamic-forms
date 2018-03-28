@@ -143,8 +143,6 @@ var TextArea = function (_React$Component) {
         key: "onBlur",
         value: function onBlur() {
             var value = this.textInput.value;
-            // console.log("value is ", value);
-            // const value = this.refs.input.value;
 
             var missing = this.props.required && this.isEmpty(value);
 
@@ -190,9 +188,6 @@ var TextArea = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            // console.log("Touched", this.state.touched);
-            // console.log("this is ", this);
-
             // Control state
             var isMissing = this.isMissing(this.props.value);
 
@@ -213,7 +208,6 @@ var TextArea = function (_React$Component) {
                 // Warning style
                 var style = isMissing ? { background: "floralwhite" } : {};
 
-                // console.log("before render");
                 return _react2.default.createElement(
                     "div",
                     { className: className },

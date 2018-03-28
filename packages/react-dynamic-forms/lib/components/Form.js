@@ -102,12 +102,6 @@ var Form = function (_React$Component) {
             errorCounts: {},
             selection: null
         };
-        // this.handleBlur = this.handleBlur.bind(this);
-        // this.handleChange = this.handleChange.bind(this);
-        // this.handleErrorCountChange = this.handleErrorCountChange.bind(this);
-        // this.handleMissingCountChange = this.handleMissingCountChange.bind(this);
-        // this.handleSelectItem = this.handleSelectItem.bind(this);
-        // this.handleSubmit = this.handleSubmit.bind(this);
         return _this;
     }
 
@@ -137,7 +131,6 @@ var Form = function (_React$Component) {
                 formRules = _ref.formRules,
                 formHiddenList = _ref.formHiddenList;
 
-            console.log("getFieldProps");
             var props = {};
             props.labelWidth = this.props.labelWidth || 300;
 
@@ -188,11 +181,8 @@ var Form = function (_React$Component) {
             }
 
             // Field value
-            console.log("this fieldName ", this, fieldName);
             if (this.props.value.has(fieldName)) {
-                console.log("props.value");
                 props.value = this.props.value.get(fieldName);
-                console.log("props.value is ", props.value);
             }
 
             // Callbacks
@@ -247,7 +237,6 @@ var Form = function (_React$Component) {
         value: function queueChange() {
             var _this3 = this;
 
-            console.log("queueChange");
             if (!this._deferSet) {
                 _underscore2.default.defer(function () {
                     _this3._deferSet = false;
@@ -376,7 +365,6 @@ var Form = function (_React$Component) {
     }, {
         key: "handleChange",
         value: function handleChange(fieldName, newValue) {
-            console.log("handleChange");
             // Hook to allow the component to alter the value before it is set.
             // However, you should be careful with side effects to state here.
             var v = newValue;
@@ -396,7 +384,6 @@ var Form = function (_React$Component) {
     }, {
         key: "handleBlur",
         value: function handleBlur(fieldName) {
-            console.log("handleBlur");
             if (this.state.selection) {
                 this.setState({ selection: null });
             }
@@ -412,7 +399,6 @@ var Form = function (_React$Component) {
     }, {
         key: "handleSelectItem",
         value: function handleSelectItem(fieldName) {
-            console.log("handleSelectItem");
             if (this.state.selection !== fieldName) {
                 this.setState({ selection: fieldName });
             } else {
@@ -434,7 +420,6 @@ var Form = function (_React$Component) {
         value: function getHiddenFields(formFields) {
             var _this4 = this;
 
-            console.log("getHiddenFields");
             var result = [];
             if (this.props.visible) {
                 _underscore2.default.each(formFields, function (field, fieldName) {
@@ -479,9 +464,7 @@ var Form = function (_React$Component) {
                             var fieldName = child.props.field;
                             props = _extends({}, props, _this5.getFieldProps(formState, fieldName));
                         }
-                        console.log("renderChildren here");
                         if (_react2.default.Children.count(child.props.children) > 0) {
-                            console.log("renderChildren");
                             props = _extends({}, props, {
                                 children: _this5.renderChildren(formState, child.props.children)
                             });
@@ -497,7 +480,6 @@ var Form = function (_React$Component) {
                     children = null;
                 }
             });
-            console.log("out of loop");
             return children;
         }
 
@@ -511,7 +493,6 @@ var Form = function (_React$Component) {
     }, {
         key: "shouldComponentUpdate",
         value: function shouldComponentUpdate(nextProps, nextState) {
-            console.log("shouldComponentUpdate");
             var update = nextProps.value !== this.props.value || nextProps.edit !== this.props.edit || nextProps.schema !== this.props.schema || nextProps.visibility !== this.props.visibility || nextState.selection !== this.state.selection;
             return update;
         }
@@ -525,7 +506,6 @@ var Form = function (_React$Component) {
         value: function render() {
             var _this6 = this;
 
-            console.log("form here ", this);
             var inner = this.props.inner;
             var schema = this.props.schema;
             var formFields = getFieldsFromSchema(schema);
@@ -558,7 +538,6 @@ var Form = function (_React$Component) {
             }
 
             if (this.props.edit === _constants.FormEditStates.TABLE) {
-                console.log("1");
                 return _react2.default.createElement(
                     _flexboxReact2.default,
                     {
@@ -570,7 +549,6 @@ var Form = function (_React$Component) {
                 );
             } else {
                 if (inner) {
-                    console.log("2");
                     return _react2.default.createElement(
                         "form",
                         {
@@ -585,7 +563,6 @@ var Form = function (_React$Component) {
                         this.renderChildren(formState, this.props.children)
                     );
                 } else {
-                    console.log("3");
                     return _react2.default.createElement(
                         "div",
                         {

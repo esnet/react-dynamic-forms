@@ -204,7 +204,6 @@ function list(ItemComponent, hideEditRemove) {
             value: function render() {
                 var _this2 = this;
 
-                //console.log("LIST", this.props.edit);
                 var itemComponents = [];
                 this.props.value.forEach(function (item, index) {
                     var _item$key = item.key,
