@@ -94,13 +94,13 @@ export default class extends Component {
                 </div>
                 <ul className="nav nav-sidebar" style={sidebarItemStyle}>
                     <li>
-                        <a href="https://github.com/esnet/react-dynamic-forms">GitHub</a>
+                        <a href="https://github.com/esnet/react-dynamic-forms" target="__blank__">GitHub</a>
                     </li>
                     <li>
-                        <a href="https://www.es.net/">ESnet</a>
+                        <a href="https://www.es.net/" target="__blank__">ESnet</a>
                     </li>
                     <li>
-                        <a href="http://software.es.net/">Open Source</a>
+                        <a href="http://software.es.net/" target="__blank__">Open Source</a>
                     </li>
                 </ul>
 
@@ -109,10 +109,10 @@ export default class extends Component {
                 </div>
                 <ul className="nav nav-sidebar" style={sidebarItemStyle}>
                     <li>
-                        <a href="http://software.es.net/pond/">pond.js</a>
+                        <a href="http://software.es.net/pond/" target="__blank__">pond.js</a>
                     </li>
                     <li>
-                        <a href="http://software.es.net/react-network-diagrams/">
+                        <a href="http://software.es.net/react-network-diagrams/" target="__blank__">
                             Network Diagrams
                         </a>
                     </li>

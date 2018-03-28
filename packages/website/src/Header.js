@@ -44,18 +44,18 @@ export default class Header extends Component {
                     <div>
                         <ul className="nav navbar-nav navbar-right tools-links">
                             <li>
-                                <a href="https://github.com/esnet/pond" style={{ paddingTop: 8 }}>
+                                <a href="https://github.com/esnet/react-dynamic-forms" style={{ paddingTop: 8 }} target="__blank__">
                                     <img src={githubLogo} style={githubLogoStyle} alt="github" />
                                     Github
                                 </a>
                             </li>
                             <li>
-                                <a href="http://software.es.net" style={{ paddingTop: 8 }}>
+                                <a href="http://software.es.net" style={{ paddingTop: 8 }} target="__blank__">
                                     Open Source
                                 </a>
                             </li>
                             <li>
-                                <a href="http://es.net" style={{ paddingTop: 8 }}>
+                                <a href="http://es.net" style={{ paddingTop: 8 }} target="__blank__">
                                     ESnet
                                 </a>
                             </li>
