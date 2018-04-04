@@ -1,80 +1,11 @@
 {
-  "name": "react-dynamic-forms",
-  "version": "0.15.0",
-  "description": "Dynamic forms library for React",
-  "license": "BSD-3-Clause-LBNL",
-  "main": "index.js",
-  "author": "ESnet Tools Team <tools@es.net>",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com:esnet/esnet-react-forms.git"
-  },
-  "bugs": {
-    "url": "https://github.com/esnet/esnet-react-forms/issues"
-  },
-  "scripts": {
-    "prepublish": "npm test && npm run build",
-    "lint": "eslint src/*.jsx",
-    "test": "npm run lint",
-    "test-only": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf lib/* && cp src/*.css lib/ && babel src --stage 0 --out-dir lib",
-    "start-website": "webpack-dev-server  --config webpack.examples.config.js -d",
-    "deploy-website": "gh-pages-deploy"
-  },
-  "pre-commit": [
-    "lint",
-    "build"
-  ],
-  "gh-pages-deploy": {
-    "staticpath": "examples",
-    "prep": [
-      "build-website"
-    ]
-  },
-  "dependencies": {
-    "classnames": "^2.1.3",
-    "deepcopy": "^0.5.0",
-    "invariant": "^2.1.1",
-    "jquery": "^2.1.1",
-    "moment": "^2.10.6",
-    "react-addons-css-transition-group": "^0.14.3",
-    "react-bootstrap": "^0.28.1",
-    "react-datepicker": "^0.15.2",
-    "react-select": "^0.9.1",
-    "revalidator": "^0.3.1",
-    "string-hash": "^1.1.0",
-    "underscore": "^1.7.0"
-  },
-  "peerDependencies": {
-    "react": "^0.14.3"
-  },
-  "devDependencies": {
-    "babel": "^5.8.3",
-    "babel-core": "^5.1.13",
-    "babel-eslint": "^4.1.5",
-    "babel-loader": "^5.0.0",
-    "bundle-loader": "^0.5.0",
-    "chance": "^0.7.7",
-    "css-loader": "^0.9.0",
-    "eslint": "^1.10.0",
-    "eslint-config-esnet": "^0.1.0",
-    "eslint-plugin-babel": "^2.1.1",
-    "eslint-plugin-react": "^3.9.0",
-    "file-loader": "^0.7.2",
-    "gh-pages-deploy": "^0.3.0",
-    "json-loader": "^0.5.1",
-    "raw-loader": "^0.5.1",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-markdown": "^1.0.5",
-    "react-router": "^1.0.0",
-    "style-loader": "^0.8.0",
-    "url-loader": "^0.5.5",
-    "webpack-dev-server": "^1.6.5"
-  },
-  "keywords": [
-    "forms",
-    "dynamic",
-    "react"
-  ]
+    "scripts": {
+        "start": "cd packages/website && npm run start",
+        "build-website":
+            "echo \"*** Building website\n\" && rm -rf docs && cd packages/website && npm run build"
+    },
+    "devDependencies": {
+        "lerna": "^2.5.1"
+    },
+    "dependencies": {}
 }

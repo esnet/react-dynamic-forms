@@ -1,0 +1,40 @@
+/**
+ *  Copyright (c) 2015 - present, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
+
+.Select-control {
+    height: 30px;
+}
+
+.Select-value {
+  line-height: 26px !important;
+}
+
+.Select-value-label {
+    line-height: 26px;
+    font-size: 12px;
+  }
+
+.Select-menu-outer {
+    font-size: 12px;
+}
+
+.Select-input {
+  height: 26px;
+}
+
+.Select-placeholder {
+    line-height: 20px;
+    font-size: 12px;
+    padding-top: 5px;
+}
+
+.Select.is-missing > .Select-control {
+  background: floralwhite;
+}

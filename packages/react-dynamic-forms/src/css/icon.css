@@ -1,0 +1,41 @@
+/**
+ *  Copyright (c) 2015 - present, The Regents of the University of California,
+ *  through Lawrence Berkeley National Laboratory (subject to receipt
+ *  of any required approvals from the U.S. Dept. of Energy).
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ */
+
+ .icon {
+    cursor: pointer;
+    font-size: 9px;
+    padding-bottom: 10px;
+    color: steelblue;
+    padding-top: 3px;
+}
+
+.hostile_icon {
+    cursor: pointer;
+    font-size: 9px;
+    padding-bottom: 10px;
+    color: #b94a48;
+    padding-top: 3px;
+}
+
+.delete-action:hover {
+    color: #b94a48;
+}
+
+.edit-action:hover {
+    color: steelblue;
+}
+
+.edit-action.active {
+    color: steelblue;
+}
+
+.add-action:hover {
+    color: green;
+}
