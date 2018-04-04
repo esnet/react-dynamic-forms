@@ -12,13 +12,24 @@ import _ from "underscore";
 import React from "react";
 import { Alert } from "react-bootstrap";
 import Immutable from "immutable";
-import { Form, Schema, Field, Chooser, TextEdit, formGroup, formList, FormEditStates } from "react-dynamic-forms";
+import {
+    Form,
+    Schema,
+    Field,
+    Chooser,
+    TextEdit,
+    formGroup,
+    formList,
+    FormEditStates
+} from "react-dynamic-forms";
 
 import schema_docs from "./schema_docs.md";
 import schema_thumbnail from "./schema_thumbnail.png";
 
 const description = `This shows an example form with a schema generated dynamically from a list of choices with
-different validation requirements`;
+different validation requirements. To use, click the + icon to add a new item to the list. Select one of the
+built in "key names". The corresponding "value" field will validate based on the type of the key name (either
+string or numeric in this case) `;
 
 /**
  * Renders a form for entering an email address
@@ -36,7 +47,6 @@ function limitedHstoreChooserList(currentChoice, attributes, usedAttributes) {
             newChooserList.push(attr);
         }
     });
-    //console.log(currentChoice, attributes, usedAttributes)
 
     const existingValue = _.findWhere(attributes, { keyname: currentChoice });
     if (existingValue) {
@@ -172,7 +182,7 @@ class LocationForm extends React.Component {
             editMode: FormEditStates.ALWAYS,
             hasMissing: false,
             hasErrors: false
-        }
+        };
     }
 
     schema() {
@@ -189,7 +199,7 @@ class LocationForm extends React.Component {
             </Schema>
         );
     }
-    
+
     handleMissingCountChange(form, missingCount) {
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(form, missingCount);
@@ -254,7 +264,8 @@ class LocationForm extends React.Component {
                     onSubmit={() => this.handleSubmit()}
                     onChange={(fieldName, value) => this.handleChange(fieldName, value)}
                     onMissingCountChange={(form, missing) =>
-                        this.handleMissingCountChange(form, missing)}
+                        this.handleMissingCountChange(form, missing)
+                    }
                     onErrorCountChange={(form, errors) => this.handleErrorCountChange(form, errors)}
                 >
                     <TextEdit field="location" width={300} />
@@ -268,14 +279,12 @@ class LocationForm extends React.Component {
                 </Form>
                 <div className="row">
                     <div className="col-md-3" />
-                    <div className="col-md-9">
-                        {this.renderSubmit()}
-                    </div>
+                    <div className="col-md-9">{this.renderSubmit()}</div>
                 </div>
             </div>
         );
     }
-};
+}
 
 const detailsAttributes = [
     {
@@ -326,12 +335,9 @@ class schema extends React.Component {
 
     componentDidMount() {
         // Simulate ASYNC state update
-        setTimeout(
-            () => {
-                this.setState({ loaded: true });
-            },
-            0
-        );
+        setTimeout(() => {
+            this.setState({ loaded: true });
+        }, 0);
     }
 
     handleChange(form, value) {
@@ -390,7 +396,7 @@ class schema extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3>List example</h3>
+                        <h3>Dynamic schema example</h3>
                         <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>
@@ -416,6 +422,6 @@ class schema extends React.Component {
             </div>
         );
     }
-};
+}
 
 export default { schema, schema_docs, schema_thumbnail };

@@ -90,7 +90,7 @@ Things to note here:
 
 ## Beyond this
 
-Given what you know now, you should be ready to start building a form. Please also see the examples for how you can control the appearance of the form using tags specified in the schema as well as how to create lists.
+Given what you know now, you should be ready to start building a form. Please also see the examples for more advanced usage such as how you can control the appearance of the form using tags specified in the schema as well as how to create lists of sub-forms.
 
 ## Developing
 

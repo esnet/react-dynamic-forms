@@ -12,7 +12,16 @@ import React from "react";
 import { Alert } from "react-bootstrap";
 import Immutable from "immutable";
 
-import { Form, Schema, Field, Chooser, TextEdit, formGroup, formList, FormEditStates } from "react-dynamic-forms";
+import {
+    Form,
+    Schema,
+    Field,
+    Chooser,
+    TextEdit,
+    formGroup,
+    formList,
+    FormEditStates
+} from "react-dynamic-forms";
 
 import list_docs from "./list_docs.md";
 import list_thumbnail from "./list_thumbnail.png";
@@ -99,7 +108,6 @@ class EmailForm extends React.Component {
                         disableSearch={true}
                         width={250}
                     />
-
                 </Form>
             );
         }
@@ -119,7 +127,7 @@ class ContactForm extends React.Component {
             editMode: FormEditStates.ALWAYS,
             hasMissing: false,
             hasErrors: false
-        }
+        };
     }
     schema() {
         return (
@@ -144,12 +152,14 @@ class ContactForm extends React.Component {
     }
 
     handleMissingCountChange(form, missingCount) {
+        this.setState({ hasMissing: missingCount > 0 });
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(form, missingCount);
         }
     }
 
     handleErrorCountChange(form, errorCount) {
+        this.setState({ hasErrors: errorCount > 0 });
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(form, errorCount);
         }
@@ -171,18 +181,37 @@ class ContactForm extends React.Component {
         let submit;
         if (this.state.editMode === FormEditStates.ALWAYS) {
             let disableSubmit = true;
+            let helperText = "";
             if (this.state.hasErrors === false && this.state.hasMissing === false) {
                 disableSubmit = false;
+            } else {
+                helperText =
+                    this.state.hasErrors === true
+                        ? "* Unable to save because while form has errors"
+                        : "* Unable to save because the form has some missing required fields";
             }
             submit = (
-                <button
-                    type="submit"
-                    className="btn btn-default"
-                    disabled={disableSubmit}
-                    onClick={() => this.handleSubmit()}
-                >
-                    Submit contact
-                </button>
+                <div>
+                    <span>
+                        <button
+                            type="submit"
+                            className="btn btn-default"
+                            disabled={disableSubmit}
+                            onClick={() => this.handleSubmit()}
+                        >
+                            Save contact
+                        </button>
+                    </span>
+                    <span
+                        style={{
+                            fontSize: 12,
+                            paddingLeft: 10,
+                            color: "orange"
+                        }}
+                    >
+                        {helperText}
+                    </span>
+                </div>
             );
         } else {
             submit = <div>* Make changes to the form by clicking the pencil icons</div>;
@@ -207,7 +236,8 @@ class ContactForm extends React.Component {
                     onSubmit={() => this.handleSubmit()}
                     onChange={(fieldName, value) => this.handleChange(fieldName, value)}
                     onMissingCountChange={(form, missing) =>
-                        this.handleMissingCountChange(form, missing)}
+                        this.handleMissingCountChange(form, missing)
+                    }
                     onErrorCountChange={(form, errors) => this.handleErrorCountChange(form, errors)}
                 >
                     <TextEdit field="first_name" width={300} />
@@ -217,14 +247,12 @@ class ContactForm extends React.Component {
                 </Form>
                 <div className="row">
                     <div className="col-md-3" />
-                    <div className="col-md-9">
-                        {this.renderSubmit()}
-                    </div>
+                    <div className="col-md-9">{this.renderSubmit()}</div>
                 </div>
             </div>
         );
     }
-};
+}
 
 class list extends React.Component {
     constructor(props) {
@@ -248,12 +276,9 @@ class list extends React.Component {
 
     componentDidMount() {
         // Simulate ASYNC state update
-        setTimeout(
-            () => {
-                this.setState({ loaded: true });
-            },
-            0
-        );
+        setTimeout(() => {
+            this.setState({ loaded: true });
+        }, 0);
     }
 
     handleChange(form, value) {
@@ -281,9 +306,7 @@ class list extends React.Component {
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{ margin: 5 }}>
                     <strong>Success!</strong>
                     {firstName}
-                    {lastName}
-                    {" "}was submitted with{" "}
-                    {emailList.length}
+                    {lastName} was submitted with {emailList.length}
                     email(s).
                 </Alert>
             );
@@ -303,7 +326,11 @@ class list extends React.Component {
                 />
             );
         } else {
-            return <div style={{ marginTop: 50 }}><b>Loading...</b></div>;
+            return (
+                <div style={{ marginTop: 50 }}>
+                    <b>Loading...</b>
+                </div>
+            );
         }
     }
 
@@ -318,14 +345,11 @@ class list extends React.Component {
                 </div>
                 <hr />
                 <div className="row">
-                    <div className="col-md-8">
-                        {this.renderContactForm()}
-                    </div>
+                    <div className="col-md-8">{this.renderContactForm()}</div>
                     <div className="col-md-4">
                         <b>STATE:</b>
                         <pre style={{ borderLeftColor: "steelblue" }}>
-                            value = {" "}
-                            {JSON.stringify(this.state.value.toJSON(), null, 3)}
+                            value = {JSON.stringify(this.state.value.toJSON(), null, 3)}
                         </pre>
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}
@@ -336,13 +360,11 @@ class list extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-9">
-                        {this.renderAlert()}
-                    </div>
+                    <div className="col-md-9">{this.renderAlert()}</div>
                 </div>
             </div>
         );
     }
-};
+}
 
 export default { list, list_docs, list_thumbnail };

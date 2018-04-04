@@ -11,14 +11,14 @@
 import React from "react";
 import { Alert } from "react-bootstrap";
 import * as Immutable from "immutable";
-import { 
-    Form, 
-    Schema, 
+import {
+    Form,
+    Schema,
     Field,
-    TextEdit, 
-    TextArea, 
-    Chooser, 
-    FormEditStates 
+    TextEdit,
+    TextArea,
+    Chooser,
+    FormEditStates
 } from "react-dynamic-forms";
 
 import dynamic_docs from "./dynamic_docs.md";
@@ -108,8 +108,8 @@ class dynamic extends React.Component {
     componentDidMount() {
         // Simulate ASYNC state update (not necessary)
         setTimeout(() => {
-                this.setState({ loaded: true });
-            }, 0);
+            this.setState({ loaded: true });
+        }, 0);
     }
 
     handleChange(formName, value) {
@@ -132,7 +132,7 @@ class dynamic extends React.Component {
         // console.log("Submit:", this.state.value);
         this.setState({
             editMode: FormEditStates.SELECTED
-        })
+        });
     }
 
     renderAlert() {
@@ -141,12 +141,7 @@ class dynamic extends React.Component {
             const lastName = this.state.data["last_name"];
             return (
                 <Alert bsStyle="success" onDismiss={this.handleAlertDismiss} style={{ margin: 5 }}>
-                    <strong>Success!</strong>
-                    {" "}
-                    {firstName}
-                    {" "}
-                    {lastName}
-                    {" "}was submitted.
+                    <strong>Success!</strong> {firstName} {lastName} was submitted.
                 </Alert>
             );
         } else {
@@ -190,9 +185,11 @@ class dynamic extends React.Component {
                     onSubmit={this.handleSubmit}
                     onChange={(formName, value) => this.handleChange(formName, value)}
                     onMissingCountChange={(formName, missing) =>
-                        this.setState({ hasMissing: missing > 0 })}
+                        this.setState({ hasMissing: missing > 0 })
+                    }
                     onErrorCountChange={(formName, errors) =>
-                        this.setState({ hasErrors: errors > 0 })}
+                        this.setState({ hasErrors: errors > 0 })
+                    }
                 >
                     <h5>Bookmarked endpoints</h5>
                     <Chooser
@@ -206,7 +203,7 @@ class dynamic extends React.Component {
                     <TextEdit field="name" width={300} />
                     <TextArea field="description" />
                     <hr />
-                     <h5>Endpoint type</h5>
+                    <h5>Endpoint type</h5>
                     <Chooser
                         field="type"
                         width={200}
@@ -237,18 +234,37 @@ class dynamic extends React.Component {
         let submit;
         if (this.state.editMode === FormEditStates.ALWAYS) {
             let disableSubmit = true;
+            let helperText = "";
             if (this.state.hasErrors === false && this.state.hasMissing === false) {
                 disableSubmit = false;
+            } else {
+                helperText =
+                    this.state.hasErrors === true
+                        ? "* Unable to save because while form has errors"
+                        : "* Unable to save because the form has some missing required fields";
             }
             submit = (
-                <button
-                    type="submit"
-                    className="btn btn-default"
-                    disabled={disableSubmit}
-                    onClick={() => this.handleSubmit()}
-                >
-                    Submit contact
-                </button>
+                <div>
+                    <span>
+                        <button
+                            type="submit"
+                            className="btn btn-default"
+                            disabled={disableSubmit}
+                            onClick={() => this.handleSubmit()}
+                        >
+                            Save endpoint
+                        </button>
+                    </span>
+                    <span
+                        style={{
+                            fontSize: 12,
+                            paddingLeft: 10,
+                            color: "orange"
+                        }}
+                    >
+                        {helperText}
+                    </span>
+                </div>
             );
         } else {
             submit = <div>* Make changes to the form by clicking the pencil icons</div>;
@@ -262,9 +278,7 @@ class dynamic extends React.Component {
                 <div className="row">
                     <div className="col-md-12">
                         <h3>Dynamic form</h3>
-                        <div style={{ marginBottom: 20 }}>
-                            {description}
-                        </div>
+                        <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>
                 <hr />
@@ -273,10 +287,8 @@ class dynamic extends React.Component {
                         {this.renderForm()}
                         <div className="row">
                             <div className="col-md-3" />
-                            <div className="col-md-9">
-                                {this.renderSubmit()}
-                            </div>
-                        </div>  
+                            <div className="col-md-9">{this.renderSubmit()}</div>
+                        </div>
                     </div>
                     <div className="col-md-4">
                         <b>STATE:</b>
@@ -292,13 +304,11 @@ class dynamic extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-9">
-                        {this.renderAlert()}
-                    </div>
+                    <div className="col-md-9">{this.renderAlert()}</div>
                 </div>
             </div>
         );
     }
-};
+}
 
 export default { dynamic, dynamic_docs, dynamic_thumbnail };
