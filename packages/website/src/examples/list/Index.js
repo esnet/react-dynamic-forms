@@ -36,6 +36,13 @@ This shows an example form with a list of emails that can be added or removed.
 class EmailForm extends React.Component {
     static defaultValues = { email_type: 1, email: "" };
 
+    static header = {
+        Email: 250,
+        Type: 250
+    };
+
+    static actionButtonIndex = 62;
+
     static schema = (
         <Schema>
             <Field
@@ -68,7 +75,8 @@ class EmailForm extends React.Component {
             onChange,
             onMissingCountChange,
             onErrorCountChange,
-            value = EmailForm.defaultValues
+            value = EmailForm.defaultValues,
+            initialValue = EmailForm.defaultValues
         } = this.props;
         const callbacks = { onChange, onMissingCountChange, onErrorCountChange };
 
@@ -78,6 +86,7 @@ class EmailForm extends React.Component {
                     name={this.props.name}
                     schema={EmailForm.schema}
                     value={value}
+                    initialValue={initialValue}
                     edit={FormEditStates.ALWAYS}
                     labelWidth={50}
                     {...callbacks}
@@ -97,6 +106,7 @@ class EmailForm extends React.Component {
                     name={this.props.name}
                     schema={EmailForm.schema}
                     value={value}
+                    intialValue={initialValue}
                     edit={FormEditStates.TABLE}
                     labelWidth={50}
                     {...callbacks}
@@ -221,7 +231,7 @@ class ContactForm extends React.Component {
 
     render() {
         const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
-        const { value } = this.props;
+        const { value, initialValue } = this.props;
         const emails = value.get("emails");
 
         return (
@@ -231,6 +241,7 @@ class ContactForm extends React.Component {
                     style={style}
                     schema={this.schema()}
                     value={value}
+                    initialValue={initialValue}
                     edit={this.state.editMode}
                     labelWidth={100}
                     onSubmit={() => this.handleSubmit()}
@@ -254,19 +265,22 @@ class ContactForm extends React.Component {
     }
 }
 
+const savedValues = new Immutable.fromJS({
+    first_name: "Bill",
+    last_name: "Jones",
+    emails: [
+        { email: "b.jones@work.com", email_type: 1 },
+        { email: "bill@gmail.com", email_type: 2 }
+    ]
+});
+
 class list extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loaded: false,
-            value: new Immutable.fromJS({
-                first_name: "Bill",
-                last_name: "Jones",
-                emails: [
-                    { email: "b.jones@work.com", email_type: 1 },
-                    { email: "bill@gmail.com", email_type: 2 }
-                ]
-            })
+            value: Immutable.Map(), // value will update as the user interacts with the form
+            initialValue: Immutable.Map() // initialValue will only update when the user saves the form
         };
         this.handleAlertDismiss = this.handleAlertDismiss.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -277,8 +291,13 @@ class list extends React.Component {
     componentDidMount() {
         // Simulate ASYNC state update
         setTimeout(() => {
-            this.setState({ loaded: true });
-        }, 0);
+            console.log("Loaded!");
+            this.setState({
+                loaded: true,
+                value: savedValues,
+                initialValue: savedValues
+            });
+        }, 3000);
     }
 
     handleChange(form, value) {
@@ -320,6 +339,7 @@ class list extends React.Component {
             return (
                 <ContactForm
                     value={this.state.value}
+                    initialValue={this.state.initialValue}
                     onChange={this.handleChange}
                     onMissingCountChange={this.handleMissingCountChange}
                     onErrorCountChange={this.handleErrorCountChange}
@@ -327,8 +347,8 @@ class list extends React.Component {
             );
         } else {
             return (
-                <div style={{ marginTop: 50 }}>
-                    <b>Loading...</b>
+                <div style={{ marginTop: 50, marginBottom: 100 }}>
+                    <b>Loading saved data...</b>
                 </div>
             );
         }
@@ -345,8 +365,8 @@ class list extends React.Component {
                 </div>
                 <hr />
                 <div className="row">
-                    <div className="col-md-8">{this.renderContactForm()}</div>
-                    <div className="col-md-4">
+                    <div className="col-md-12">{this.renderContactForm()}</div>
+                    {/* <div className="col-md-4">
                         <b>STATE:</b>
                         <pre style={{ borderLeftColor: "steelblue" }}>
                             value = {JSON.stringify(this.state.value.toJSON(), null, 3)}
@@ -357,7 +377,7 @@ class list extends React.Component {
                         <pre style={{ borderLeftColor: "orange" }}>
                             {`hasMissing: ${this.state.hasMissing}`}
                         </pre>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="row">
                     <div className="col-md-9">{this.renderAlert()}</div>

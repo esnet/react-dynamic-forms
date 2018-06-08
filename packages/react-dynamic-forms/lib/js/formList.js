@@ -69,6 +69,14 @@ function list(ItemComponent, hideEditRemove) {
                     this.setState({ selected: null });
                 }
             }
+        }, {
+            key: "handleRevertItem",
+            value: function handleRevertItem(i) {
+                var newValue = this.props.value.set(i, this.props.initialValue.get(i));
+                if (this.props.onChange) {
+                    this.props.onChange(this.props.name, newValue);
+                }
+            }
 
             //Handle an item at i changing to a new value.
 
@@ -192,13 +200,13 @@ function list(ItemComponent, hideEditRemove) {
                 });
                 return total;
             }
-        }, {
-            key: "componentWillReceiveProps",
-            value: function componentWillReceiveProps(nextProps) {
-                if (nextProps.edit === false) {
-                    this.setState({ selected: null });
-                }
-            }
+
+            // componentWillReceiveProps(nextProps) {
+            //     if (nextProps.edit === false) {
+            //         this.setState({ selected: null });
+            //     }
+            // }
+
         }, {
             key: "render",
             value: function render() {
@@ -209,10 +217,11 @@ function list(ItemComponent, hideEditRemove) {
                     var _item$key = item.key,
                         key = _item$key === undefined ? index : _item$key;
 
+                    var itemInitialValue = _this2.props.initialValue ? _this2.props.initialValue.get(index) : null;
+
                     var props = {
                         key: key,
                         name: index,
-                        edit: _this2.props.edit,
                         innerForm: true,
                         hideMinus: hideEditRemove && index < _this2.props.value.size - 1,
                         types: _this2.props.types,
@@ -230,8 +239,9 @@ function list(ItemComponent, hideEditRemove) {
                     };
                     itemComponents.push(_react2.default.createElement(ItemComponent, _extends({}, props, {
                         value: item,
+                        initialValue: itemInitialValue,
                         editable: _this2.props.edit,
-                        edit: _this2.state.selected === index && _this2.props.edit
+                        edit: _this2.state.selected === index
                     })));
                 });
 
@@ -252,9 +262,11 @@ function list(ItemComponent, hideEditRemove) {
 
                 return _react2.default.createElement(_List2.default, {
                     items: itemComponents,
-                    canAddItems: canAddItems && this.props.edit,
-                    canRemoveItems: canRemoveItems && this.props.edit,
-                    canEditItems: this.props.edit,
+                    header: ItemComponent.header,
+                    buttonIndent: ItemComponent.actionButtonIndex,
+                    canAddItems: canAddItems,
+                    canRemoveItems: canRemoveItems,
+                    canEditItems: true,
                     hideEditRemove: hideEditRemove,
                     plusWidth: 400,
                     plusElement: plusElement,
@@ -266,6 +278,9 @@ function list(ItemComponent, hideEditRemove) {
                     },
                     onSelectItem: function onSelectItem(index) {
                         return _this2.handleSelectItem(index);
+                    },
+                    onRevertItem: function onRevertItem(index) {
+                        return _this2.handleRevertItem(index);
                     }
                 });
             }

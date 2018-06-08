@@ -157,6 +157,7 @@ var Form = function (_React$Component) {
                 }
 
                 if (this.props.edit === _constants.FormEditStates.TABLE) {
+                    props.allowEdit = false;
                     props.layout = _constants.FormGroupLayout.INLINE;
                 } else {
                     props.layout = this.props.groupLayout;
@@ -180,9 +181,10 @@ var Form = function (_React$Component) {
                 props.validation = formRules[fieldName].validation;
             }
 
-            // Field value
+            // Field value (current and initial)
             if (this.props.value.has(fieldName)) {
                 props.value = this.props.value.get(fieldName);
+                props.initialValue = this.props.initialValue ? this.props.initialValue.get(fieldName) : null;
             }
 
             // Callbacks

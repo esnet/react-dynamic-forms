@@ -52,12 +52,28 @@ var TextEdit = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (TextEdit.__proto__ || Object.getPrototypeOf(TextEdit)).call(this, props));
 
         _this.state = {
+            hover: false,
             touched: false
         };
         return _this;
     }
 
     _createClass(TextEdit, [{
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
+        }
+    }, {
         key: "isEmpty",
         value: function isEmpty(value) {
             return _underscore2.default.isNull(value) || _underscore2.default.isUndefined(value) || value === "";
@@ -216,6 +232,10 @@ var TextEdit = function (_React$Component) {
                 validationError = _getError4.validationError,
                 validationErrorMessage = _getError4.validationErrorMessage;
 
+            var iconStyle = {
+                fontSize: 11
+            };
+
             if (this.props.edit) {
                 // Error style/message
                 var className = "";
@@ -259,16 +279,46 @@ var TextEdit = function (_React$Component) {
                 );
             } else {
                 var view = this.props.view;
-                var text = this.props.value;
+                var text = _react2.default.createElement(
+                    "span",
+                    null,
+                    this.props.value
+                );
                 if (isMissing) {
-                    text = " ";
+                    text = _react2.default.createElement("span", null);
                 }
+
+                var editAction = _react2.default.createElement("span", null);
+                if (this.state.hover && this.props.allowEdit) {
+                    editAction = _react2.default.createElement(
+                        "span",
+                        { style: { marginLeft: 5 }, onClick: function onClick() {
+                                return _this2.handleEditItem();
+                            } },
+                        _react2.default.createElement("i", {
+                            style: iconStyle,
+                            className: "glyphicon glyphicon-pencil icon edit-action active"
+                        })
+                    );
+                } else {
+                    editAction = _react2.default.createElement("div", null);
+                }
+
                 var _style = this.inlineStyle(validationError, isMissing);
                 if (!view) {
                     return _react2.default.createElement(
                         "div",
-                        { style: _style },
-                        text
+                        {
+                            style: _style,
+                            onMouseEnter: function onMouseEnter() {
+                                return _this2.handleMouseEnter();
+                            },
+                            onMouseLeave: function onMouseLeave() {
+                                return _this2.handleMouseLeave();
+                            }
+                        },
+                        text,
+                        editAction
                     );
                 } else {
                     return _react2.default.createElement(

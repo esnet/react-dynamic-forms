@@ -56,10 +56,10 @@ function getRulesFromSchema(schema) {
 export default class Form extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            missingCounts: {}, 
-            errorCounts: {}, 
-            selection: null 
+        this.state = {
+            missingCounts: {},
+            errorCounts: {},
+            selection: null
         };
     }
 
@@ -105,6 +105,7 @@ export default class Form extends React.Component {
             }
 
             if (this.props.edit === FormEditStates.TABLE) {
+                props.allowEdit = false;
                 props.layout = FormGroupLayout.INLINE;
             } else {
                 props.layout = this.props.groupLayout;
@@ -128,19 +129,22 @@ export default class Form extends React.Component {
             props.validation = formRules[fieldName].validation;
         }
 
-        // Field value
+        // Field value (current and initial)
         if (this.props.value.has(fieldName)) {
             props.value = this.props.value.get(fieldName);
+            props.initialValue = this.props.initialValue
+                ? this.props.initialValue.get(fieldName)
+                : null;
         }
 
         // Callbacks
-        props.onSelectItem = (fieldName) => this.handleSelectItem(fieldName);
+        props.onSelectItem = fieldName => this.handleSelectItem(fieldName);
         props.onErrorCountChange = (fieldName, count) =>
             this.handleErrorCountChange(fieldName, count);
         props.onMissingCountChange = (fieldName, count) =>
             this.handleMissingCountChange(fieldName, count);
         props.onChange = (fieldName, d) => this.handleChange(fieldName, d);
-        props.onBlur = (fieldName) => this.handleBlur(fieldName);
+        props.onBlur = fieldName => this.handleBlur(fieldName);
 
         return props;
     }
@@ -344,8 +348,10 @@ export default class Form extends React.Component {
                 let makeHidden;
                 const tags = field.tags || [];
                 if (_.isArray(this.props.visible)) {
-                    makeHidden = !(_.intersection(tags, this.props.visible).length > 0 ||
-                        _.contains(tags, "all"));
+                    makeHidden = !(
+                        _.intersection(tags, this.props.visible).length > 0 ||
+                        _.contains(tags, "all")
+                    );
                 } else {
                     makeHidden = !(_.contains(tags, this.props.visible) || _.contains(tags, "all"));
                 }
@@ -405,7 +411,8 @@ export default class Form extends React.Component {
      * the whole form render.
      */
     shouldComponentUpdate(nextProps, nextState) {
-        const update = nextProps.value !== this.props.value ||
+        const update =
+            nextProps.value !== this.props.value ||
             nextProps.edit !== this.props.edit ||
             nextProps.schema !== this.props.schema ||
             nextProps.visibility !== this.props.visibility ||

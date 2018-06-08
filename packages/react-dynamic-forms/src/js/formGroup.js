@@ -11,7 +11,8 @@
 import React from "react";
 import Flexbox from "flexbox-react";
 import classNames from "classnames";
-
+import Immutable from "immutable";
+import _ from "underscore";
 import { FormGroupLayout } from "../js/constants";
 
 import "../css/group.css";
@@ -39,7 +40,7 @@ import "../css/icon.css";
  * users code.
  */
 
-export default function formGroup(Widget, hideEdit) {
+export default function formGroup(Control, hideEdit) {
     return class Group extends React.Component {
         constructor(props) {
             super(props);
@@ -61,7 +62,7 @@ export default function formGroup(Widget, hideEdit) {
         }
 
         render() {
-            const { hidden = false, width, allowEdit, ...props } = this.props;
+            const { hidden = false, width, ...props } = this.props;
             const {
                 name,
                 label,
@@ -70,8 +71,13 @@ export default function formGroup(Widget, hideEdit) {
                 disabled,
                 required,
                 showRequired,
-                onSelectItem
+                onSelectItem,
+                value,
+                initialValue
             } = props;
+
+            const isBeingEdited = edit;
+            const hasChanged = _.isNull(initialValue) ? false : !Immutable.is(value, initialValue);
 
             const selectStyle = {};
 
@@ -83,17 +89,17 @@ export default function formGroup(Widget, hideEdit) {
             }
 
             //
-            // Widget
+            // Control
             //
 
-            const widgetWidth = width ? `${width}px` : "100%";
-            const widget = (
+            const controlWidth = width ? `${width}px` : "100%";
+            const control = (
                 <div
                     style={{
-                        width: widgetWidth
+                        width: controlWidth
                     }}
                 >
-                    <Widget {...props} />
+                    <Control {...props} onEditItem={onSelectItem} />
                 </div>
             );
 
@@ -103,7 +109,9 @@ export default function formGroup(Widget, hideEdit) {
             let requiredMarker;
             if (required && showRequired) {
                 requiredMarker = (
-                    <span className="group-required" style={{ paddingLeft: 3 }}>*</span>
+                    <span className="group-required" style={{ paddingLeft: 3 }}>
+                        *
+                    </span>
                 );
             } else {
                 requiredMarker = <span />;
@@ -120,6 +128,14 @@ export default function formGroup(Widget, hideEdit) {
             if (this.props.layout === FormGroupLayout.COLUMN) {
                 marginLeft = null;
             }
+
+            let labelColor = "inherit";
+            if (this.state.error) {
+                labelColor = "b94a48";
+            } else if (hasChanged) {
+                labelColor = "steelblue";
+            }
+
             const fieldLabel = (
                 <div
                     className={labelClasses}
@@ -127,112 +143,84 @@ export default function formGroup(Widget, hideEdit) {
                         whiteSpace: "nowrap",
                         marginLeft,
                         paddingTop: 3,
-                        color: this.state.error ? "b94a48" : "inherit"
+                        color: labelColor
                     }}
                 >
-                    <label muted={disabled} htmlFor={key}>{label}</label>
+                    <label muted={disabled} htmlFor={key}>
+                        {label}
+                    </label>
                 </div>
             );
             const labelWidth = this.props.labelWidth ? `${this.props.labelWidth}px` : "300px";
 
-            //
-            // Edit
-            //
-
-            const isBeingEdited = edit;
-
-            const flip = {
-                transform: "scaleX(-1)",
-                fontSize: 11
-            };
-
-            let editIcon = <span />;
-            if (this.state.over && allowEdit && !hideEdit) {
-                editIcon = (
-                    <i
-                        style={flip}
-                        className={
-                            isBeingEdited
-                                ? "glyphicon glyphicon-pencil icon edit-action active"
-                                : "glyphicon glyphicon-pencil icon edit-action"
-                        }
-                        onClick={() => onSelectItem ? onSelectItem(name) : null}
-                    />
-                );
-            }
-
             // Group
-            if (this.props.layout === FormGroupLayout.INLINE) {
-                return (
-                    <Flexbox
-                        flexDirection="column"
-                        width={widgetWidth}
-                        onMouseEnter={() => this.handleMouseEnter()}
-                        onMouseLeave={() => this.handleMouseLeave()}
-                    >
-                        {widget}
-                    </Flexbox>
-                );
-            } else if (this.props.layout === FormGroupLayout.COLUMN) {
-                return (
-                    <Flexbox
-                        flexDirection="column"
-                        onMouseEnter={() => this.handleMouseEnter()}
-                        onMouseLeave={() => this.handleMouseLeave()}
-                    >
+            switch (this.props.layout) {
+                case FormGroupLayout.INLINE:
+                    return (
+                        <Flexbox
+                            flexDirection="column"
+                            width={controlWidth}
+                            onMouseEnter={() => this.handleMouseEnter()}
+                            onMouseLeave={() => this.handleMouseLeave()}
+                        >
+                            {control}
+                        </Flexbox>
+                    );
+                case FormGroupLayout.COLUMN:
+                    return (
+                        <Flexbox
+                            flexDirection="column"
+                            onMouseEnter={() => this.handleMouseEnter()}
+                            onMouseLeave={() => this.handleMouseLeave()}
+                        >
+                            <Flexbox
+                                flexDirection="row"
+                                onMouseEnter={() => this.handleMouseEnter()}
+                                onMouseLeave={() => this.handleMouseLeave()}
+                            >
+                                <Flexbox>{fieldLabel}</Flexbox>
+                                <Flexbox minWidth="14px" width="14px">
+                                    {requiredMarker}
+                                </Flexbox>
+                            </Flexbox>
+                            <Flexbox
+                                flexDirection="row"
+                                onMouseEnter={() => this.handleMouseEnter()}
+                                onMouseLeave={() => this.handleMouseLeave()}
+                            >
+                                <Flexbox flexGrow={1} style={selectStyle}>
+                                    {control}
+                                </Flexbox>
+                            </Flexbox>
+                        </Flexbox>
+                    );
+                case FormGroupLayout.ROW:
+                    return (
                         <Flexbox
                             flexDirection="row"
                             onMouseEnter={() => this.handleMouseEnter()}
                             onMouseLeave={() => this.handleMouseLeave()}
                         >
-                            <Flexbox>
+                            <Flexbox minWidth={labelWidth} width={labelWidth}>
                                 {fieldLabel}
                             </Flexbox>
                             <Flexbox minWidth="14px" width="14px">
                                 {requiredMarker}
                             </Flexbox>
-                            <Flexbox minWidth="18px" width="18px" style={selectStyle}>
-                                {editIcon}
+                            <Flexbox
+                                width={controlWidth}
+                                style={selectStyle}
+                                onDoubleClick={() =>
+                                    onSelectItem && !isBeingEdited ? onSelectItem(name) : null
+                                }
+                            >
+                                {control}
                             </Flexbox>
+                            <Flexbox flexGrow={1} />
                         </Flexbox>
-                        <Flexbox
-                            flexDirection="row"
-                            onMouseEnter={() => this.handleMouseEnter()}
-                            onMouseLeave={() => this.handleMouseLeave()}
-                        >
-                            <Flexbox flexGrow={1} style={selectStyle}>
-                                {widget}
-                            </Flexbox>
-                        </Flexbox>
-                    </Flexbox>
-                );
-            } else {
-                return (
-                    <Flexbox
-                        flexDirection="row"
-                        onMouseEnter={() => this.handleMouseEnter()}
-                        onMouseLeave={() => this.handleMouseLeave()}
-                    >
-                        <Flexbox minWidth={labelWidth} width={labelWidth}>
-                            {fieldLabel}
-                        </Flexbox>
-                        <Flexbox minWidth="14px" width="14px">
-                            {requiredMarker}
-                        </Flexbox>
-                        <Flexbox minWidth="18px" width="18px" style={selectStyle}>
-                            {editIcon}
-                        </Flexbox>
-                        <Flexbox
-                            width={widgetWidth}
-                            style={selectStyle}
-                            onDoubleClick={() =>
-                                onSelectItem && !isBeingEdited ? onSelectItem(name) : null}
-                        >
-                            {widget}
-                        </Flexbox>
-                        <Flexbox flexGrow={1} />
-                    </Flexbox>
-                );
+                    );
+                default:
+                    return <div />;
             }
         }
     };

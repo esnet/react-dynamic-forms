@@ -24,9 +24,22 @@ import "../css/textedit.css";
 class TextEdit extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            touched: false 
+        this.state = {
+            hover: false,
+            touched: false
         };
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
     }
 
     isEmpty(value) {
@@ -161,6 +174,10 @@ class TextEdit extends React.Component {
         const isMissing = this.isMissing(this.props.value);
         const { validationError, validationErrorMessage } = this.getError(this.props.value);
 
+        const iconStyle = {
+            fontSize: 11
+        };
+
         if (this.props.edit) {
             // Error style/message
             let className = "";
@@ -179,7 +196,9 @@ class TextEdit extends React.Component {
             return (
                 <div className={className}>
                     <input
-                        ref={(input) => { this.textInput = input; }}
+                        ref={input => {
+                            this.textInput = input;
+                        }}
                         className="form-control input-sm"
                         style={style}
                         type={type}
@@ -194,13 +213,37 @@ class TextEdit extends React.Component {
             );
         } else {
             const view = this.props.view;
-            let text = this.props.value;
+            let text = <span>{this.props.value}</span>;
             if (isMissing) {
-                text = " ";
+                text = <span />;
             }
+
+            let editAction = <span />;
+            if (this.state.hover && this.props.allowEdit) {
+                editAction = (
+                    <span style={{ marginLeft: 5 }} onClick={() => this.handleEditItem()}>
+                        <i
+                            style={iconStyle}
+                            className="glyphicon glyphicon-pencil icon edit-action active"
+                        />
+                    </span>
+                );
+            } else {
+                editAction = <div />;
+            }
+
             const style = this.inlineStyle(validationError, isMissing);
             if (!view) {
-                return <div style={style}>{text}</div>;
+                return (
+                    <div
+                        style={style}
+                        onMouseEnter={() => this.handleMouseEnter()}
+                        onMouseLeave={() => this.handleMouseLeave()}
+                    >
+                        {text}
+                        {editAction}
+                    </div>
+                );
             } else {
                 return <div style={style}>{view(text)}</div>;
             }

@@ -2,36 +2,26 @@
     "name": "react-dynamic-forms",
     "version": "1.0.1",
     "description": "Dynamic forms library for React",
-    "keywords": [
-        "forms",
-        "dynamic",
-        "react"
-    ],
+    "keywords": ["forms", "dynamic", "react"],
     "main": "lib/index.js",
     "author": "ESnet SEG <seg@es.net>",
     "bugs": {
         "url": "https://github.com/esnet/esnet-react-forms/issues"
     },
     "scripts": {
-        "docs": "echo \"*** Building API docs\n\" && react-docgen src/components -x js -o ../website/src/api/docs.json --pretty",
+        "docs":
+            "echo \"*** Building API docs\n\" && react-docgen src/components -x js -o ../website/src/api/docs.json --pretty",
         "lint": "eslint src/components/*.js",
         "test": "npm run lint",
-        "build": "echo \"*** Building lib\n\" && rm -rf lib/* && babel src/components --optional runtime --stage 0 --out-dir lib/components && mkdir lib/css && cp ./src/css/*.css ./lib/css/ && babel src/js --optional runtime --stage 0 --out-dir lib/js && babel src/index.js --optional runtime --stage 0 --out-file lib/index.js",
-        "start-website": "react-scripts start",
-        "build-website": "echo \"*** Building website\n\" && rm -rf docs && react-scripts build && mv build docs",
+        "build":
+            "echo \"*** Building lib\n\" && rm -rf lib/* && babel src/components --optional runtime --stage 0 --out-dir lib/components && mkdir lib/css && cp ./src/css/*.css ./lib/css/ && babel src/js --optional runtime --stage 0 --out-dir lib/js && babel src/index.js --optional runtime --stage 0 --out-file lib/index.js",
         "precommit": "lint-staged",
         "prettier": "prettier --print-width 100 --tab-width 4 --write \"src/**/*.js\""
     },
     "lint-staged": {
-        "*.js": [
-            "prettier --print-width 100 --tab-width 4 --write",
-            "git add"
-        ]
+        "*.js": ["prettier --print-width 100 --tab-width 4 --write", "git add"]
     },
-    "pre-commit": [
-        "lint",
-        "build"
-    ],
+    "pre-commit": ["lint", "build"],
     "license": "BSD-3-Clause-LBNL",
     "peerDependencies": {
         "react": "^16.2.0",

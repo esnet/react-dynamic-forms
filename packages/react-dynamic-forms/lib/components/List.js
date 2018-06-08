@@ -63,13 +63,28 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var List = function (_React$Component) {
     _inherits(List, _React$Component);
 
-    function List() {
+    function List(props) {
         _classCallCheck(this, List);
 
-        return _possibleConstructorReturn(this, (List.__proto__ || Object.getPrototypeOf(List)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (List.__proto__ || Object.getPrototypeOf(List)).call(this, props));
+
+        _this.state = {
+            hover: false
+        };
+        return _this;
     }
 
     _createClass(List, [{
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
         key: "addItem",
         value: function addItem() {
             if (this.props.onAddItem) {
@@ -91,6 +106,14 @@ var List = function (_React$Component) {
             }
         }
     }, {
+        key: "revertItem",
+        value: function revertItem(index) {
+            if (this.props.onRevertItem) {
+                this.props.onRevertItem(index);
+                this.selectItem(null);
+            }
+        }
+    }, {
         key: "handleDeselect",
         value: function handleDeselect() {
             this.selectItem(null);
@@ -104,10 +127,12 @@ var List = function (_React$Component) {
             var addMinus = this.props.canRemoveItems;
             var addEdit = this.props.canEditItems;
 
+            var mouseOver = this.state.hover;
+
             // Plus [+] icon
-            var plus = void 0;
-            if (addPlus) {
-                plus = _react2.default.createElement("i", {
+            var plusIcon = void 0;
+            if (addPlus && mouseOver) {
+                plusIcon = _react2.default.createElement("i", {
                     key: "plus",
                     className: "glyphicon glyphicon-plus icon add-action",
                     onClick: function onClick() {
@@ -115,8 +140,11 @@ var List = function (_React$Component) {
                     }
                 });
             } else {
-                plus = _react2.default.createElement("div", null);
+                plusIcon = _react2.default.createElement("div", null);
             }
+
+            var LISTWIDTH = 600;
+            var ICONWIDTH = 28;
 
             // Build the item list, which is a list of table rows, each row containing
             // an item and a [-] icon used for removing that item.
@@ -142,107 +170,179 @@ var List = function (_React$Component) {
                     isEditable = true;
                 }
                 if (isEditable) {
-                    if (addMinus && !itemMinusHide) {
+                    if (addMinus && !itemMinusHide && mouseOver) {
                         minus = _react2.default.createElement("i", {
                             id: index,
                             key: minusActionKey,
-                            className: "glyphicon glyphicon-remove hostile_icon delete-action",
-                            onClick: function onClick() {
-                                return _this2.removeItem(index);
-                            }
+                            className: "glyphicon glyphicon-remove hostile_icon delete-action"
                         });
                     } else {
                         listEditItemClass += " no-controls";
                         minus = _react2.default.createElement("div", { className: "icon delete-action" });
                     }
 
-                    var flip = {
-                        transform: "scaleX(-1)",
-                        fontSize: 10
-                    };
-
                     // Edit item icon
-                    if (addEdit) {
-                        if (isBeingEdited) {
-                            edit = _react2.default.createElement("i", {
-                                id: index,
-                                key: minusActionKey,
-                                className: "glyphicon glyphicon-chevron-down icon edit-action active",
-                                onClick: function onClick() {
-                                    return _this2.selectItem(index);
-                                }
-                            });
-                        } else {
-                            edit = _react2.default.createElement("i", {
-                                id: index,
-                                key: minusActionKey,
-                                style: flip,
-                                className: "glyphicon glyphicon-chevron-left icon edit-action",
-                                onClick: function onClick() {
-                                    return _this2.selectItem(index);
-                                }
-                            });
-                        }
+                    if (addEdit && mouseOver) {
+                        edit = _react2.default.createElement("i", {
+                            id: index,
+                            key: minusActionKey,
+                            style: { paddingLeft: 5, paddingRight: 5 },
+                            className: "glyphicon glyphicon-pencil icon edit-action active"
+                        });
                     }
                 }
 
                 var minusAction = addMinus ? _react2.default.createElement(
                     _flexboxReact2.default,
-                    { width: "28px" },
-                    _react2.default.createElement(
-                        "span",
-                        { key: actionSpanKey, className: "icon", style: { background: "white" } },
-                        minus
-                    )
-                ) : _react2.default.createElement("div", null);
-
-                var editAction = addEdit ? _react2.default.createElement(
-                    _flexboxReact2.default,
-                    { width: "28px" },
+                    { width: "28px", onClick: function onClick() {
+                            return _this2.removeItem(index);
+                        } },
                     _react2.default.createElement(
                         "span",
                         {
                             key: actionSpanKey,
                             className: "icon",
-                            style: { background: "white", verticalAlign: "top" }
+                            style: { paddingLeft: 5, paddingRight: 5 }
                         },
+                        minus
+                    )
+                ) : _react2.default.createElement("div", { style: { height: 30 } });
+
+                var editAction = addEdit ? _react2.default.createElement(
+                    _flexboxReact2.default,
+                    {
+                        width: "28px",
+                        onClick: function onClick() {
+                            _this2.selectItem(index);
+                        }
+                    },
+                    _react2.default.createElement(
+                        "span",
+                        { key: actionSpanKey, className: "icon", style: { verticalAlign: "top" } },
                         edit
                     )
                 ) : _react2.default.createElement("div", null);
 
+                var doneStyle = {
+                    padding: 5,
+                    marginRight: 5,
+                    marginBottom: 5,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "#b5b5b5",
+                    borderRadius: 2,
+                    color: "steelblue",
+                    cursor: "pointer"
+                };
+
+                var cancelStyle = {
+                    padding: 5,
+                    marginRight: 5,
+                    marginBottom: 5,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "#b5b5b5",
+                    borderRadius: 2,
+                    color: "#AAA",
+                    cursor: "pointer"
+                };
+
                 // JSX for each row, includes: UI Item and [x] remove item button
-                return _react2.default.createElement(
-                    "li",
-                    {
-                        height: "80px",
-                        key: itemKey,
-                        className: "esnet-forms-list-item",
-                        style: {
-                            borderBottomStyle: "solid",
-                            borderBottomColor: "#DDD",
-                            borderBottomWidth: 1
-                        }
-                    },
-                    _react2.default.createElement(
-                        _flexboxReact2.default,
-                        { flexDirection: "row" },
-                        minusAction,
-                        editAction,
+
+                if (!isBeingEdited) {
+                    return _react2.default.createElement(
+                        "li",
+                        {
+                            height: "80px",
+                            width: "600px",
+                            key: itemKey,
+                            className: "esnet-forms-list-item",
+                            style: {
+                                borderBottomStyle: "solid",
+                                borderBottomColor: "#DDD",
+                                borderBottomWidth: 1
+                            }
+                        },
                         _react2.default.createElement(
                             _flexboxReact2.default,
-                            { flexGrow: 1 },
+                            { flexDirection: "row", style: { width: "100%", paddingTop: 5 } },
                             _react2.default.createElement(
-                                "span",
-                                { key: itemSpanKey, className: listEditItemClass },
-                                item
-                            )
+                                _flexboxReact2.default,
+                                { style: { width: LISTWIDTH - ICONWIDTH * 2 } },
+                                _react2.default.createElement(
+                                    "span",
+                                    { key: itemSpanKey, className: listEditItemClass },
+                                    item
+                                )
+                            ),
+                            minusAction,
+                            editAction
                         )
-                    )
-                );
+                    );
+                } else {
+                    return _react2.default.createElement(
+                        "li",
+                        {
+                            height: "80px",
+                            key: itemKey,
+                            className: "esnet-forms-list-item",
+                            style: {
+                                borderBottomStyle: "solid",
+                                borderBottomColor: "#DDD",
+                                borderBottomWidth: 1
+                            }
+                        },
+                        _react2.default.createElement(
+                            _flexboxReact2.default,
+                            {
+                                flexDirection: "row",
+                                style: { width: "100%", paddingTop: 10, paddingBottom: 10 }
+                            },
+                            _react2.default.createElement(
+                                _flexboxReact2.default,
+                                { flexDirection: "column" },
+                                _react2.default.createElement(
+                                    _flexboxReact2.default,
+                                    { style: { width: LISTWIDTH - ICONWIDTH * 2 } },
+                                    _react2.default.createElement(
+                                        "span",
+                                        { key: itemSpanKey, className: listEditItemClass },
+                                        item
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _flexboxReact2.default,
+                                    {
+                                        style: { fontSize: 12, marginLeft: _this2.props.buttonIndent }
+                                    },
+                                    _react2.default.createElement(
+                                        "span",
+                                        { style: doneStyle, onClick: function onClick() {
+                                                return _this2.handleDeselect();
+                                            } },
+                                        "DONE"
+                                    ),
+                                    _react2.default.createElement(
+                                        "span",
+                                        {
+                                            style: cancelStyle,
+                                            onClick: function onClick() {
+                                                return _this2.revertItem(index);
+                                            }
+                                        },
+                                        "REVERT"
+                                    )
+                                )
+                            ),
+                            minusAction
+                        )
+                    );
+                }
             });
 
             // Build the [+] elements
-            if (addPlus) {
+            var plus = void 0;
+            if (addPlus && mouseOver) {
                 if (this.props.plusElement) {
                     plus = this.props.plusElement;
                 } else {
@@ -257,17 +357,49 @@ var List = function (_React$Component) {
                                 {
                                     key: "plus",
                                     className: "icon",
-                                    style: { background: "white", verticalAlign: "top", fontSize: 10 }
+                                    style: { verticalAlign: "top", fontSize: 10 }
                                 },
-                                plus
+                                plusIcon
                             )
                         ),
                         _react2.default.createElement(_flexboxReact2.default, { width: "28px" })
                     );
                 }
             } else {
-                plus = _react2.default.createElement("div", null);
+                plus = _react2.default.createElement("div", { style: { height: 35 } });
             }
+
+            //
+            // Build the header
+            //
+
+            var headerStyle = {
+                fontSize: 11,
+                paddingTop: 3,
+                height: 20,
+                color: "#9a9a9a",
+                borderBottom: "#ddd",
+                borderBottomStyle: "solid",
+                borderBottomWidth: 1
+            };
+
+            var headerItems = _underscore2.default.map(this.props.header, function (size, label) {
+                return _react2.default.createElement(
+                    _flexboxReact2.default,
+                    { width: size + "px" },
+                    _react2.default.createElement(
+                        "span",
+                        { style: { verticalAlign: "top", fontSize: 10, paddingLeft: 3 } },
+                        label
+                    )
+                );
+            });
+
+            var header = this.props.header ? _react2.default.createElement(
+                _flexboxReact2.default,
+                { flexDirection: "row", style: headerStyle },
+                headerItems
+            ) : _react2.default.createElement("div", null);
 
             //
             // Build the table of item rows, with the [+] at the bottom if required
@@ -277,11 +409,19 @@ var List = function (_React$Component) {
                 "div",
                 {
                     style: {
+                        width: 600,
                         borderTopStyle: "solid",
                         borderTopWidth: 1,
                         borderTopColor: "#DDD"
+                    },
+                    onMouseEnter: function onMouseEnter() {
+                        return _this2.handleMouseEnter();
+                    },
+                    onMouseLeave: function onMouseLeave() {
+                        return _this2.handleMouseLeave();
                     }
                 },
+                header,
                 _react2.default.createElement(
                     "ul",
                     { className: "esnet-forms-listeditview-container" },
