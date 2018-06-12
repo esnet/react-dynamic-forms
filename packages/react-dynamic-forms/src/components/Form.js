@@ -229,6 +229,7 @@ export default class Form extends React.Component {
                     if (this.props.onErrorCountChange) {
                         this.props.onErrorCountChange(this.props.name, errorCount, errorFields);
                     }
+                    this._pendingErrors = null;
                 }
 
                 // On change callback
@@ -496,7 +497,8 @@ export default class Form extends React.Component {
 }
 
 Form.propTypes = {
-    value: PropTypes.object
+    value: PropTypes.object,
+    initialValue: PropTypes.object
 };
 
 Form.defaultProps = {

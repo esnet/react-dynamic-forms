@@ -288,6 +288,7 @@ var Form = function (_React$Component) {
                         if (_this3.props.onErrorCountChange) {
                             _this3.props.onErrorCountChange(_this3.props.name, errorCount, errorFields);
                         }
+                        _this3._pendingErrors = null;
                     }
 
                     // On change callback
@@ -586,7 +587,8 @@ exports.default = Form;
 
 
 Form.propTypes = {
-    value: _propTypes2.default.object
+    value: _propTypes2.default.object,
+    initialValue: _propTypes2.default.object
 };
 
 Form.defaultProps = {

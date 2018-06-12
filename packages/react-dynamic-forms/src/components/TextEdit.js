@@ -18,15 +18,15 @@ import "../css/textedit.css";
 
 /**
  * Form control to edit a text field.
- * Set the initial value with `initialValue` and set a callback for
- * value changed with `onChange`.
  */
 class TextEdit extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            hover: false,
-            touched: false
+            value: props.value,
+            isFocused: false,
+            touched: false,
+            selectText: false
         };
     }
 
@@ -82,15 +82,19 @@ class TextEdit extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
+        if (this.props.edit !== nextProps.edit && nextProps.edit === true) {
+            this.setState({ selectText: true });
+        }
+        if (this.state.value !== nextProps.value && !this.state.isFocused) {
+            this.setState({ value: nextProps.value });
+
             const missing = this.isMissing(nextProps.value);
-            const { validationError } = this.getError(nextProps.value);
+            const { validationError: error } = this.getError(nextProps.value);
 
-            // Broadcast error and missing states up to the owner
+            // Broadcast error and missing states up to the parent
             if (this.props.onErrorCountChange) {
-                this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+                this.props.onErrorCountChange(this.props.name, error ? 1 : 0);
             }
-
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
             }
@@ -111,36 +115,44 @@ class TextEdit extends React.Component {
         }
     }
 
-    handleChange() {
-        const { value } = this.textInput;
-        const missing = this.props.required && this.isEmpty(value);
-        const { validationError } = this.getError(value);
-        let cast = value;
+    handleChange(e) {
+        const name = this.props.name;
+        const value = e.target.value;
 
-        // Callbacks
-        if (this.props.onErrorCountChange) {
-            this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
-        }
+        this.setState({ value }, () => {
+            const missing = this.props.required && this.isEmpty(value);
+            const { validationError } = this.getError(value);
+            let cast = value;
 
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
-        }
-
-        if (this.props.onChange) {
-            if (_.has(this.props.rules, "type")) {
-                switch (this.props.rules.type) {
-                    case "integer":
-                        cast = value === "" ? null : parseInt(value, 10);
-                        break;
-                    case "number":
-                        cast = value === "" ? null : parseFloat(value, 10);
-                        break;
-                    //pass
-                    default:
-                }
+            // Callbacks
+            if (this.props.onErrorCountChange) {
+                this.props.onErrorCountChange(name, validationError ? 1 : 0);
             }
-            this.props.onChange(this.props.name, cast);
-        }
+
+            if (this.props.onMissingCountChange) {
+                this.props.onMissingCountChange(name, missing ? 1 : 0);
+            }
+
+            if (this.props.onChange) {
+                if (_.has(this.props.rules, "type")) {
+                    switch (this.props.rules.type) {
+                        case "integer":
+                            cast = value === "" ? null : parseInt(value, 10);
+                            break;
+                        case "number":
+                            cast = value === "" ? null : parseFloat(value, 10);
+                            break;
+                        //pass
+                        default:
+                    }
+                }
+                this.props.onChange(name, cast);
+            }
+        });
+    }
+
+    handleFocus() {
+        this.setState({ isFocused: true });
     }
 
     handleBlur() {
@@ -148,7 +160,7 @@ class TextEdit extends React.Component {
             this.props.onBlur(this.props.name);
         }
 
-        this.setState({ touched: true });
+        this.setState({ isFocused: false, touched: true });
     }
 
     inlineStyle(hasError, isMissing) {
@@ -167,6 +179,14 @@ class TextEdit extends React.Component {
             width: "100%",
             paddingLeft: 3
         };
+    }
+
+    componentDidUpdate() {
+        if (this.state.selectText) {
+            this.textInput.focus();
+            this.textInput.select();
+            this.setState({ selectText: false });
+        }
     }
 
     render() {
@@ -204,11 +224,13 @@ class TextEdit extends React.Component {
                         type={type}
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
-                        value={this.props.value}
-                        onChange={() => this.handleChange()}
+                        value={this.state.value}
+                        onChange={e => this.handleChange(e)}
+                        onFocus={e => this.handleFocus(e)}
                         onBlur={() => this.handleBlur()}
                     />
                     <div className={helpClassName}>{msg}</div>
+                    <div>{this.state.isFocused}</div>
                 </div>
             );
         } else {
