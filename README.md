@@ -1,3 +1,6 @@
+# React Dynamic Forms
+
+[![Build Status](https://travis-ci.org/esnet/react-dynamic-forms.svg)](https://travis-ci.org/esnet/react-dynamic-forms) [![npm version](https://badge.fury.io/js/react-dynamic-forms.svg)](https://badge.fury.io/js/react-dynamic-forms)
 
 **NOTE: v1.0 adds support for React 16.x, but since the way Mixins work in React 15, this is a fairly substantial rewrite to provide an API that doesn't use Mixins at all.**
 
