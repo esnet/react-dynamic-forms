@@ -235,7 +235,14 @@ class TextEdit extends React.Component {
             );
         } else {
             const view = this.props.view;
-            let text = <span>{this.props.value}</span>;
+            let text;
+
+            if (!view) {
+                text = <span>{this.props.value}</span>;
+            } else {
+                text = <span>{view(this.props.value)}</span>;
+            }
+
             if (isMissing) {
                 text = <span />;
             }
@@ -255,20 +262,17 @@ class TextEdit extends React.Component {
             }
 
             const style = this.inlineStyle(validationError, isMissing);
-            if (!view) {
-                return (
-                    <div
-                        style={style}
-                        onMouseEnter={() => this.handleMouseEnter()}
-                        onMouseLeave={() => this.handleMouseLeave()}
-                    >
-                        {text}
-                        {editAction}
-                    </div>
-                );
-            } else {
-                return <div style={style}>{view(text)}</div>;
-            }
+
+            return (
+                <div
+                    style={style}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {text}
+                    {editAction}
+                </div>
+            );
         }
     }
 }

@@ -40,8 +40,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Form control to edit a text field.
- * Set the initial value with `initialValue` and set a callback for
- * value changed with `onChange`.
  */
 var TextEdit = function (_React$Component) {
     _inherits(TextEdit, _React$Component);
@@ -124,21 +122,19 @@ var TextEdit = function (_React$Component) {
                 this.setState({ selectText: true });
             }
             if (this.state.value !== nextProps.value && !this.state.isFocused) {
-                console.log("SETSTATE new value", this.state.value, nextProps.value, this.state.isFocused);
                 this.setState({ value: nextProps.value });
 
                 var missing = this.isMissing(nextProps.value);
 
                 var _getError = this.getError(nextProps.value),
-                    validationError = _getError.validationError;
+                    error = _getError.validationError;
 
-                // Broadcast error and missing states up to the owner
+                // Broadcast error and missing states up to the parent
 
 
                 if (this.props.onErrorCountChange) {
-                    this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+                    this.props.onErrorCountChange(this.props.name, error ? 1 : 0);
                 }
-
                 if (this.props.onMissingCountChange) {
                     this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
                 }
@@ -314,11 +310,22 @@ var TextEdit = function (_React$Component) {
                 );
             } else {
                 var view = this.props.view;
-                var text = _react2.default.createElement(
-                    "span",
-                    null,
-                    this.props.value
-                );
+                var text = void 0;
+
+                if (!view) {
+                    text = _react2.default.createElement(
+                        "span",
+                        null,
+                        this.props.value
+                    );
+                } else {
+                    text = _react2.default.createElement(
+                        "span",
+                        null,
+                        view(this.props.value)
+                    );
+                }
+
                 if (isMissing) {
                     text = _react2.default.createElement("span", null);
                 }
@@ -340,28 +347,21 @@ var TextEdit = function (_React$Component) {
                 }
 
                 var _style = this.inlineStyle(validationError, isMissing);
-                if (!view) {
-                    return _react2.default.createElement(
-                        "div",
-                        {
-                            style: _style,
-                            onMouseEnter: function onMouseEnter() {
-                                return _this3.handleMouseEnter();
-                            },
-                            onMouseLeave: function onMouseLeave() {
-                                return _this3.handleMouseLeave();
-                            }
+
+                return _react2.default.createElement(
+                    "div",
+                    {
+                        style: _style,
+                        onMouseEnter: function onMouseEnter() {
+                            return _this3.handleMouseEnter();
                         },
-                        text,
-                        editAction
-                    );
-                } else {
-                    return _react2.default.createElement(
-                        "div",
-                        { style: _style },
-                        view(text)
-                    );
-                }
+                        onMouseLeave: function onMouseLeave() {
+                            return _this3.handleMouseLeave();
+                        }
+                    },
+                    text,
+                    editAction
+                );
             }
         }
     }]);
