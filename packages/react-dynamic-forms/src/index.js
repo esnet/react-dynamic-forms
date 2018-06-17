@@ -23,6 +23,7 @@ import RadioButtons from "./components/RadioButtons";
 import CheckBoxes from "./components/CheckBoxes";
 import View from "./components/View";
 import { FormEditStates, FormGroupLayout } from "./js/constants";
+import { textView, linkView, markdownView } from "./js/renderers";
 
 export { Form };
 export { Schema };
@@ -39,3 +40,4 @@ export { RadioButtons };
 export { CheckBoxes };
 export { View };
 export { FormEditStates, FormGroupLayout };
+export { textView, linkView, markdownView };

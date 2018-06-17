@@ -13,6 +13,8 @@ import _ from "underscore";
 import { validate } from "revalidator";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
 
 import "../css/textarea.css";
 
@@ -22,9 +24,24 @@ import "../css/textarea.css";
 class TextArea extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            touched: false 
+        this.state = {
+            value: props.value,
+            isFocused: false,
+            touched: false,
+            selectText: false
         };
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
     }
 
     isEmpty(value) {
@@ -67,15 +84,19 @@ class TextArea extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
+        if (this.props.edit !== nextProps.edit && nextProps.edit === true) {
+            this.setState({ selectText: true });
+        }
+        if (this.state.value !== nextProps.value && !this.state.isFocused) {
+            this.setState({ value: nextProps.value });
+
             const missing = this.isMissing(nextProps.value);
             const { validationError } = this.getError(nextProps.value);
 
-            // Broadcast error and missing states up to the owner
+            // Broadcast error and missing states up to the parent
             if (this.props.onErrorCountChange) {
                 this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
             }
-
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
             }
@@ -86,7 +107,7 @@ class TextArea extends React.Component {
         const missing = this.isMissing(this.props.value);
         const { validationError } = this.getError(this.props.value);
 
-        // Initial error and missing states are fed up to the owner
+        // Initial error and missing states are fed up to the parent
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
         }
@@ -96,23 +117,46 @@ class TextArea extends React.Component {
         }
     }
 
-    onBlur() {
-        const { value } = this.textInput;
-        const missing = this.props.required && this.isEmpty(value);
-        const { validationError } = this.getError(value);
+    componentDidUpdate() {
+        if (this.state.selectText) {
+            this.textInput.focus();
+            this.setState({ selectText: false });
+        }
+    }
 
-        // Callbacks
-        if (this.props.onChange) {
-            this.props.onChange(this.props.name, value);
-        }
-        if (this.props.onErrorCountChange) {
-            this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
-        }
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
-        }
+    handleChange(e) {
+        const name = this.props.name;
+        const value = e.target.value;
 
-        this.setState({ touched: true });
+        this.setState({ value }, () => {
+            const missing = this.props.required && this.isEmpty(value);
+            const { validationError } = this.getError(value);
+            let cast = value;
+
+            // Callbacks
+            if (this.props.onErrorCountChange) {
+                this.props.onErrorCountChange(name, validationError ? 1 : 0);
+            }
+
+            if (this.props.onMissingCountChange) {
+                this.props.onMissingCountChange(name, missing ? 1 : 0);
+            }
+
+            if (this.props.onChange) {
+                this.props.onChange(name, value);
+            }
+        });
+    }
+
+    handleFocus() {
+        this.setState({ isFocused: true });
+    }
+
+    handleBlur() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, touched: true });
     }
 
     inlineStyle(hasError, isMissing) {
@@ -153,36 +197,43 @@ class TextArea extends React.Component {
 
             return (
                 <div className={className}>
-                     <textarea
-                        ref={input => { this.textInput = input; }}
-                        key={this.props.value}
+                    <textarea
+                        ref={input => {
+                            this.textInput = input;
+                        }}
                         className="form-control"
                         style={style}
                         type="text"
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
-                        defaultValue={this.props.value}
-                        rows={this.props.rows}
-                        onBlur={() => this.onBlur()}
+                        value={this.state.value}
+                        onChange={e => this.handleChange(e)}
+                        onFocus={e => this.handleFocus(e)}
+                        onBlur={() => this.handleBlur()}
                     />
                     <div className={helpClassName}>{msg}</div>
                 </div>
             );
         } else {
-            const view = this.props.view;
-            let text = this.props.value;
-            if (isMissing) {
-                text = " ";
-            }
-            const style = {
-                height: 100,
-                ...this.inlineStyle(validationError, isMissing)
-            };
-            if (!view) {
-                return <div style={style}>{text}</div>;
-            } else {
-                return <div style={style}>{view(text)}</div>;
-            }
+            const view = this.props.view || textView;
+            const text = isMissing ? <span /> : <span>{view(this.props.value)}</span>;
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
+
+            const style = this.inlineStyle(validationError, isMissing);
+            return (
+                <div
+                    style={style}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    <hr style={{ marginTop: 3, marginBottom: 1 }} />
+                    {text}
+                    {edit}
+                    <hr style={{ marginTop: 1, marginBottom: 3 }} />
+                </div>
+            );
         }
     }
 }

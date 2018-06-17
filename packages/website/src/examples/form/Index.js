@@ -9,23 +9,24 @@
  */
 
 import React from "react";
-import Markdown from "react-markdown";
 import { Alert } from "react-bootstrap";
 import Immutable from "immutable";
 import Chance from "chance";
 import {
-    Form, 
-    Schema, 
-    Field, 
-    TextEdit, 
-    TextArea, 
-    DateEdit, 
-    Chooser, 
-    TagsEdit, 
-    CheckBoxes, 
-    RadioButtons, 
-    View, 
-    FormEditStates 
+    Form,
+    Schema,
+    Field,
+    TextEdit,
+    TextArea,
+    DateEdit,
+    Chooser,
+    TagsEdit,
+    CheckBoxes,
+    RadioButtons,
+    View,
+    linkView,
+    markdownView,
+    FormEditStates
 } from "react-dynamic-forms";
 
 import form_docs from "./form_docs.md";
@@ -122,12 +123,9 @@ class form extends React.Component {
 
     componentDidMount() {
         //Simulate ASYNC state update (not required)
-        setTimeout(
-            () => {
-                this.setState({ loaded: true });
-            },
-            0
-        );
+        setTimeout(() => {
+            this.setState({ loaded: true });
+        }, 0);
     }
 
     handleChange(formName, value) {
@@ -166,6 +164,7 @@ class form extends React.Component {
                 ["ucberkeley", "esnet", "stanford", "doe", "industry", "government"],
                 chance.integer({ min: 0, max: 3 })
             ),
+            notes: chance.sentence(),
             city: chance.city()
         };
 
@@ -227,9 +226,11 @@ class form extends React.Component {
                     onSubmit={this.handleSubmit}
                     onChange={(formName, value) => this.handleChange(formName, value)}
                     onMissingCountChange={(fieldName, missing) =>
-                        this.setState({ hasMissing: missing > 0 })}
+                        this.setState({ hasMissing: missing > 0 })
+                    }
                     onErrorCountChange={(fieldName, errors) =>
-                        this.setState({ hasErrors: errors > 0 })}
+                        this.setState({ hasErrors: errors > 0 })
+                    }
                 >
                     <Chooser
                         field="type"
@@ -239,17 +240,7 @@ class form extends React.Component {
                     />
                     <TextEdit field="first_name" width={300} />
                     <TextEdit field="last_name" width={300} />
-                    <TextEdit
-                        field="email"
-                        width={400}
-                        view={value => {
-                            return (
-                                <a>
-                                    {value}
-                                </a>
-                            );
-                        }}
-                    />
+                    <TextEdit field="email" width={400} view={linkView} />
                     <DateEdit field="birthdate" width={100} />
                     <CheckBoxes field="languages" optionList={availableLanguages} />
                     <RadioButtons field="options" optionList={availableEmailOptions} />
@@ -259,29 +250,29 @@ class form extends React.Component {
                         onTagListChange={(name, tagList) => this.setState({ tagList })}
                         width={400}
                     />
-                    <TextArea
-                        field="notes"
-                        width={400}
-                        view={value => {
-                            return <Markdown source={value} />;
-                        }}
-                    />
+                    <TextArea field="notes" width={400} rows={5} view={markdownView} />
                     <View
                         field="city"
                         width={400}
-                        view={value => {
-                            return (
-                                <b>
-                                    {value}
-                                </b>
-                            );
-                        }}
+                        view={value => (
+                            <span style={{ marginLeft: 5 }}>
+                                <i
+                                    style={{ fontSize: 11, marginRight: 5, color: "#444444" }}
+                                    className="glyphicon glyphicon-home icon"
+                                />
+                                {value}
+                            </span>
+                        )}
                     />
                     <hr />
                 </Form>
             );
         } else {
-            return <div style={{ marginTop: 50 }}><b>Loading...</b></div>;
+            return (
+                <div style={{ marginTop: 50 }}>
+                    <b>Loading...</b>
+                </div>
+            );
         }
     }
 
@@ -300,16 +291,14 @@ class form extends React.Component {
                         {this.renderContactForm()}
                         <div className="row">
                             <div className="col-md-3" />
-                            <div className="col-md-9">
-                                {this.renderSubmit()}
-                            </div>
+                            <div className="col-md-9">{this.renderSubmit()}</div>
                         </div>
                     </div>
                     <div className="col-md-4">
                         <b>STATE:</b>
-                         <pre style={{ borderLeftColor: "steelblue" }}>
-                             value = {JSON.stringify(this.state.value.toJSON(), null, 3)} 
-                        </pre> 
+                        <pre style={{ borderLeftColor: "steelblue" }}>
+                            value = {JSON.stringify(this.state.value.toJSON(), null, 3)}
+                        </pre>
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}
                         </pre>
@@ -322,13 +311,11 @@ class form extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-9">
-                        {this.renderAlert()}
-                    </div>
+                    <div className="col-md-9">{this.renderAlert()}</div>
                 </div>
             </div>
         );
     }
-};
+}
 
 export default { form, form_docs, form_thumbnail };

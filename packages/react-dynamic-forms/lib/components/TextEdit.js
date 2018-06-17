@@ -20,6 +20,10 @@ var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
 
+var _renderers = require("../js/renderers");
+
+var _actions = require("../js/actions");
+
 require("../css/textedit.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -148,7 +152,7 @@ var TextEdit = function (_React$Component) {
             var _getError2 = this.getError(this.props.value),
                 validationError = _getError2.validationError;
 
-            // Initial error and missing states are fed up to the owner
+            // Initial error and missing states are fed up to the parent
 
 
             if (this.props.onErrorCountChange) {
@@ -157,6 +161,15 @@ var TextEdit = function (_React$Component) {
 
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+            }
+        }
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate() {
+            if (this.state.selectText) {
+                this.textInput.focus();
+                this.textInput.select();
+                this.setState({ selectText: false });
             }
         }
     }, {
@@ -212,7 +225,6 @@ var TextEdit = function (_React$Component) {
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
-
             this.setState({ isFocused: false, touched: true });
         }
     }, {
@@ -235,15 +247,6 @@ var TextEdit = function (_React$Component) {
             };
         }
     }, {
-        key: "componentDidUpdate",
-        value: function componentDidUpdate() {
-            if (this.state.selectText) {
-                this.textInput.focus();
-                this.textInput.select();
-                this.setState({ selectText: false });
-            }
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this3 = this;
@@ -254,10 +257,6 @@ var TextEdit = function (_React$Component) {
             var _getError4 = this.getError(this.props.value),
                 validationError = _getError4.validationError,
                 validationErrorMessage = _getError4.validationErrorMessage;
-
-            var iconStyle = {
-                fontSize: 11
-            };
 
             if (this.props.edit) {
                 // Error style/message
@@ -271,7 +270,6 @@ var TextEdit = function (_React$Component) {
 
                 // Warning style
                 var style = isMissing ? { background: "floralwhite" } : {};
-
                 var type = this.props.type || "text";
 
                 return _react2.default.createElement(
@@ -309,45 +307,16 @@ var TextEdit = function (_React$Component) {
                     )
                 );
             } else {
-                var view = this.props.view;
-                var text = void 0;
-
-                if (!view) {
-                    text = _react2.default.createElement(
-                        "span",
-                        null,
-                        this.props.value
-                    );
-                } else {
-                    text = _react2.default.createElement(
-                        "span",
-                        null,
-                        view(this.props.value)
-                    );
-                }
-
-                if (isMissing) {
-                    text = _react2.default.createElement("span", null);
-                }
-
-                var editAction = _react2.default.createElement("span", null);
-                if (this.state.hover && this.props.allowEdit) {
-                    editAction = _react2.default.createElement(
-                        "span",
-                        { style: { marginLeft: 5 }, onClick: function onClick() {
-                                return _this3.handleEditItem();
-                            } },
-                        _react2.default.createElement("i", {
-                            style: iconStyle,
-                            className: "glyphicon glyphicon-pencil icon edit-action active"
-                        })
-                    );
-                } else {
-                    editAction = _react2.default.createElement("div", null);
-                }
-
+                var view = this.props.view || _renderers.textView;
+                var text = isMissing ? _react2.default.createElement("span", null) : _react2.default.createElement(
+                    "span",
+                    { style: { minHeight: 28 } },
+                    view(this.props.value)
+                );
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this3.handleEditItem();
+                });
                 var _style = this.inlineStyle(validationError, isMissing);
-
                 return _react2.default.createElement(
                     "div",
                     {
@@ -360,7 +329,7 @@ var TextEdit = function (_React$Component) {
                         }
                     },
                     text,
-                    editAction
+                    edit
                 );
             }
         }

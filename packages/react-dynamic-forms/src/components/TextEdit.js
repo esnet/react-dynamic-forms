@@ -13,6 +13,8 @@ import _ from "underscore";
 import { validate } from "revalidator";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
 
 import "../css/textedit.css";
 
@@ -105,13 +107,21 @@ class TextEdit extends React.Component {
         const missing = this.isMissing(this.props.value);
         const { validationError } = this.getError(this.props.value);
 
-        // Initial error and missing states are fed up to the owner
+        // Initial error and missing states are fed up to the parent
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
         }
 
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.state.selectText) {
+            this.textInput.focus();
+            this.textInput.select();
+            this.setState({ selectText: false });
         }
     }
 
@@ -159,7 +169,6 @@ class TextEdit extends React.Component {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
-
         this.setState({ isFocused: false, touched: true });
     }
 
@@ -181,22 +190,10 @@ class TextEdit extends React.Component {
         };
     }
 
-    componentDidUpdate() {
-        if (this.state.selectText) {
-            this.textInput.focus();
-            this.textInput.select();
-            this.setState({ selectText: false });
-        }
-    }
-
     render() {
         // Control state
         const isMissing = this.isMissing(this.props.value);
         const { validationError, validationErrorMessage } = this.getError(this.props.value);
-
-        const iconStyle = {
-            fontSize: 11
-        };
 
         if (this.props.edit) {
             // Error style/message
@@ -210,7 +207,6 @@ class TextEdit extends React.Component {
 
             // Warning style
             const style = isMissing ? { background: "floralwhite" } : {};
-
             const type = this.props.type || "text";
 
             return (
@@ -234,35 +230,16 @@ class TextEdit extends React.Component {
                 </div>
             );
         } else {
-            const view = this.props.view;
-            let text;
-
-            if (!view) {
-                text = <span>{this.props.value}</span>;
-            } else {
-                text = <span>{view(this.props.value)}</span>;
-            }
-
-            if (isMissing) {
-                text = <span />;
-            }
-
-            let editAction = <span />;
-            if (this.state.hover && this.props.allowEdit) {
-                editAction = (
-                    <span style={{ marginLeft: 5 }} onClick={() => this.handleEditItem()}>
-                        <i
-                            style={iconStyle}
-                            className="glyphicon glyphicon-pencil icon edit-action active"
-                        />
-                    </span>
-                );
-            } else {
-                editAction = <div />;
-            }
-
+            const view = this.props.view || textView;
+            const text = isMissing ? (
+                <span />
+            ) : (
+                <span style={{ minHeight: 28 }}>{view(this.props.value)}</span>
+            );
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
             const style = this.inlineStyle(validationError, isMissing);
-
             return (
                 <div
                     style={style}
@@ -270,7 +247,7 @@ class TextEdit extends React.Component {
                     onMouseLeave={() => this.handleMouseLeave()}
                 >
                     {text}
-                    {editAction}
+                    {edit}
                 </div>
             );
         }
