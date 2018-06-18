@@ -18,6 +18,12 @@ var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
 
+var _renderers = require("../js/renderers");
+
+var _actions = require("../js/actions");
+
+var _style = require("../js/style");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37,13 +43,49 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var RadioButtons = function (_React$Component) {
     _inherits(RadioButtons, _React$Component);
 
-    function RadioButtons() {
+    function RadioButtons(props) {
         _classCallCheck(this, RadioButtons);
 
-        return _possibleConstructorReturn(this, (RadioButtons.__proto__ || Object.getPrototypeOf(RadioButtons)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (RadioButtons.__proto__ || Object.getPrototypeOf(RadioButtons)).call(this, props));
+
+        _this.state = { isFocused: false };
+        return _this;
     }
 
     _createClass(RadioButtons, [{
+        key: "getCurrentChoiceLabel",
+        value: function getCurrentChoiceLabel() {
+            var _this2 = this;
+
+            var choiceItem = this.props.optionList.find(function (item) {
+                return item.get("id") === _this2.props.value;
+            });
+            return choiceItem ? choiceItem.get("label") : "";
+        }
+    }, {
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleFocus",
+        value: function handleFocus() {
+            this.setState({ isFocused: true });
+        }
+    }, {
+        key: "handleBlur",
+        value: function handleBlur() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, touched: true });
+        }
+    }, {
         key: "handleChange",
         value: function handleChange(v) {
             // Callbacks
@@ -55,32 +97,9 @@ var RadioButtons = function (_React$Component) {
             }
         }
     }, {
-        key: "getCurrentChoiceLabel",
-        value: function getCurrentChoiceLabel() {
-            var _this2 = this;
-
-            var choiceItem = this.props.optionList.find(function (item) {
-                return item.get("id") === _this2.props.value;
-            });
-            return choiceItem ? choiceItem.get("label") : "";
-        }
-    }, {
-        key: "inlineStyle",
-        value: function inlineStyle(hasError, isMissing) {
-            var color = "inherited";
-            var background = "inherited";
-            if (hasError) {
-                color = "#b94a48";
-                background = "#fff0f3";
-            } else if (isMissing) {
-                background = "floralwhite";
-            }
-            return {
-                color: color,
-                background: background,
-                width: "100%",
-                paddingLeft: 3
-            };
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
         }
     }, {
         key: "render",
@@ -117,11 +136,29 @@ var RadioButtons = function (_React$Component) {
                     items
                 );
             } else {
-                var text = this.getCurrentChoiceLabel();
+                var s = this.getCurrentChoiceLabel();
+                var view = this.props.view || _renderers.textView;
+                var text = _react2.default.createElement(
+                    "span",
+                    { style: { minHeight: 28 } },
+                    view(s)
+                );
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this3.handleEditItem();
+                });
                 return _react2.default.createElement(
                     "div",
-                    { style: this.inlineStyle(false, false) },
-                    text
+                    {
+                        style: (0, _style.inlineStyle)(false, false),
+                        onMouseEnter: function onMouseEnter() {
+                            return _this3.handleMouseEnter();
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            return _this3.handleMouseLeave();
+                        }
+                    },
+                    text,
+                    edit
                 );
             }
         }

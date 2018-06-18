@@ -22,6 +22,12 @@ var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
 
+var _renderers = require("../js/renderers");
+
+var _actions = require("../js/actions");
+
+var _style = require("../js/style");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -45,10 +51,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var CheckBoxes = function (_React$Component) {
     _inherits(CheckBoxes, _React$Component);
 
-    function CheckBoxes() {
+    function CheckBoxes(props) {
         _classCallCheck(this, CheckBoxes);
 
-        return _possibleConstructorReturn(this, (CheckBoxes.__proto__ || Object.getPrototypeOf(CheckBoxes)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (CheckBoxes.__proto__ || Object.getPrototypeOf(CheckBoxes)).call(this, props));
+
+        _this.state = { isFocused: false };
+        return _this;
     }
 
     _createClass(CheckBoxes, [{
@@ -60,6 +69,30 @@ var CheckBoxes = function (_React$Component) {
                     this.props.onMissingCountChange(this.props.name, missingCount);
                 }
             }
+        }
+    }, {
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleFocus",
+        value: function handleFocus() {
+            this.setState({ isFocused: true });
+        }
+    }, {
+        key: "handleBlur",
+        value: function handleBlur() {
+            console.log("XXX BLUR");
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, touched: true });
         }
     }, {
         key: "handleChange",
@@ -78,6 +111,11 @@ var CheckBoxes = function (_React$Component) {
             }
         }
     }, {
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
+        }
+    }, {
         key: "isEmpty",
         value: function isEmpty(value) {
             if (_immutable2.default.List.isList(value)) {
@@ -91,24 +129,6 @@ var CheckBoxes = function (_React$Component) {
             var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props.value;
 
             return this.props.required && !this.props.disabled && this.isEmpty(value);
-        }
-    }, {
-        key: "inlineStyle",
-        value: function inlineStyle(hasError, isMissing) {
-            var color = "inherited";
-            var background = "inherited";
-            if (hasError) {
-                color = "#b94a48";
-                background = "#fff0f3";
-            } else if (isMissing) {
-                background = "floralwhite";
-            }
-            return {
-                color: color,
-                background: background,
-                width: "100%",
-                paddingLeft: 3
-            };
         }
     }, {
         key: "render",
@@ -136,16 +156,40 @@ var CheckBoxes = function (_React$Component) {
                     ));
                 });
 
+                // @TODO So apparently this will blur if you click a checkbox and then click another
+                //       checkbox...
                 return _react2.default.createElement(
                     "div",
-                    null,
+                    { onFocus: function onFocus(e) {
+                            return _this2.handleFocus(e);
+                        }, onBlur: function onBlur() {
+                            return _this2.handleBlur();
+                        } },
                     items
                 );
             } else {
+                var view = this.props.view || _renderers.textView;
+                var text = _react2.default.createElement(
+                    "span",
+                    { style: { minHeight: 28 } },
+                    view(this.props.value.join(", "))
+                );
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this2.handleEditItem();
+                });
                 return _react2.default.createElement(
                     "div",
-                    { style: this.inlineStyle(false, false) },
-                    this.props.value.join(", ")
+                    {
+                        style: (0, _style.inlineStyle)(false, false),
+                        onMouseEnter: function onMouseEnter() {
+                            return _this2.handleMouseEnter();
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            return _this2.handleMouseLeave();
+                        }
+                    },
+                    text,
+                    edit
                 );
             }
         }

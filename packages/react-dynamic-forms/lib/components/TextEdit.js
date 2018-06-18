@@ -24,6 +24,8 @@ var _renderers = require("../js/renderers");
 
 var _actions = require("../js/actions");
 
+var _style2 = require("../js/style");
+
 require("../css/textedit.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -225,26 +227,7 @@ var TextEdit = function (_React$Component) {
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
-            this.setState({ isFocused: false, touched: true });
-        }
-    }, {
-        key: "inlineStyle",
-        value: function inlineStyle(hasError, isMissing) {
-            var color = "";
-            var background = "";
-            if (hasError) {
-                color = "#b94a48";
-                background = "#fff0f3";
-            } else if (isMissing) {
-                background = "floralwhite";
-            }
-            return {
-                color: color,
-                background: background,
-                height: 23,
-                width: "100%",
-                paddingLeft: 3
-            };
+            this.setState({ isFocused: false, hover: false, touched: true });
         }
     }, {
         key: "render",
@@ -269,7 +252,7 @@ var TextEdit = function (_React$Component) {
                 }
 
                 // Warning style
-                var style = isMissing ? { background: "floralwhite" } : {};
+                var style = isMissing ? { background: _style2.colors.MISSING_COLOR_BG } : {};
                 var type = this.props.type || "text";
 
                 return _react2.default.createElement(
@@ -299,11 +282,6 @@ var TextEdit = function (_React$Component) {
                         "div",
                         { className: helpClassName },
                         msg
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        null,
-                        this.state.isFocused
                     )
                 );
             } else {
@@ -316,7 +294,7 @@ var TextEdit = function (_React$Component) {
                 var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
                     return _this3.handleEditItem();
                 });
-                var _style = this.inlineStyle(validationError, isMissing);
+                var _style = (0, _style2.inlineStyle)(validationError, isMissing);
                 return _react2.default.createElement(
                     "div",
                     {

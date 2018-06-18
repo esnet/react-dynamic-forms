@@ -24,6 +24,7 @@ import CheckBoxes from "./components/CheckBoxes";
 import View from "./components/View";
 import { FormEditStates, FormGroupLayout } from "./js/constants";
 import { textView, linkView, markdownView } from "./js/renderers";
+import { colors } from "./js/style";
 
 export { Form };
 export { Schema };
@@ -41,3 +42,4 @@ export { CheckBoxes };
 export { View };
 export { FormEditStates, FormGroupLayout };
 export { textView, linkView, markdownView };
+export { colors };

@@ -15,6 +15,7 @@ import { validate } from "revalidator";
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";
 import { editAction } from "../js/actions";
+import { inlineTextAreaStyle } from "../js/style";
 
 import "../css/textarea.css";
 
@@ -159,24 +160,6 @@ class TextArea extends React.Component {
         this.setState({ isFocused: false, touched: true });
     }
 
-    inlineStyle(hasError, isMissing) {
-        let color = "";
-        let background = "";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
-        }
-        return {
-            color,
-            background,
-            height: "100%",
-            width: "100%",
-            paddingLeft: 3
-        };
-    }
-
     render() {
         // Control state
         const isMissing = this.isMissing(this.props.value);
@@ -221,7 +204,7 @@ class TextArea extends React.Component {
                 this.handleEditItem()
             );
 
-            const style = this.inlineStyle(validationError, isMissing);
+            const style = inlineTextAreaStyle(validationError, isMissing);
             return (
                 <div
                     style={style}

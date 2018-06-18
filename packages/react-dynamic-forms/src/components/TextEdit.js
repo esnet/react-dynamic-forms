@@ -15,6 +15,7 @@ import { validate } from "revalidator";
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";
 import { editAction } from "../js/actions";
+import { inlineStyle, colors } from "../js/style";
 
 import "../css/textedit.css";
 
@@ -169,25 +170,7 @@ class TextEdit extends React.Component {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
-        this.setState({ isFocused: false, touched: true });
-    }
-
-    inlineStyle(hasError, isMissing) {
-        let color = "";
-        let background = "";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
-        }
-        return {
-            color,
-            background,
-            height: 23,
-            width: "100%",
-            paddingLeft: 3
-        };
+        this.setState({ isFocused: false, hover: false, touched: true });
     }
 
     render() {
@@ -206,7 +189,7 @@ class TextEdit extends React.Component {
             }
 
             // Warning style
-            const style = isMissing ? { background: "floralwhite" } : {};
+            const style = isMissing ? { background: colors.MISSING_COLOR_BG } : {};
             const type = this.props.type || "text";
 
             return (
@@ -226,7 +209,6 @@ class TextEdit extends React.Component {
                         onBlur={() => this.handleBlur()}
                     />
                     <div className={helpClassName}>{msg}</div>
-                    <div>{this.state.isFocused}</div>
                 </div>
             );
         } else {
@@ -239,7 +221,7 @@ class TextEdit extends React.Component {
             const edit = editAction(this.state.hover && this.props.allowEdit, () =>
                 this.handleEditItem()
             );
-            const style = this.inlineStyle(validationError, isMissing);
+            const style = inlineStyle(validationError, isMissing);
             return (
                 <div
                     style={style}

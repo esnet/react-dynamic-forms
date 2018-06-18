@@ -13,10 +13,13 @@ import _ from "underscore";
 import PropTypes from "prop-types";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineChooserStyle } from "../js/style";
 
-import 'react-select/dist/react-select.css'
-import 'react-virtualized/styles.css'
-import 'react-virtualized-select/styles.css'
+import "react-select/dist/react-select.css";
+import "react-virtualized/styles.css";
+import "react-virtualized-select/styles.css";
 
 import VirtualizedSelect from "react-virtualized-select";
 
@@ -28,7 +31,27 @@ import "../css/chooser.css";
 class Chooser extends React.Component {
     constructor(props) {
         super(props);
+        this.state = { isFocused: false, focusChooser: false };
         this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleFocus() {
+        this.setState({ isFocused: true });
+    }
+
+    handleBlur() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false });
     }
 
     isEmpty(value) {
@@ -40,7 +63,8 @@ class Chooser extends React.Component {
     }
 
     componentDidMount() {
-        const missing = this.props.required &&
+        const missing =
+            this.props.required &&
             !this.props.disabled &&
             (_.isNull(this.props.value) ||
                 _.isUndefined(this.props.value) ||
@@ -53,6 +77,9 @@ class Chooser extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (this.props.edit !== nextProps.edit && nextProps.edit === true) {
+            this.setState({ focusChooser: true });
+        }
         if (
             this.props.value !== nextProps.value ||
             (!this.props.value && nextProps.value) ||
@@ -60,7 +87,8 @@ class Chooser extends React.Component {
         ) {
             // The value might have been missing and is now set explicitly
             // with a prop
-            const missing = this.props.required &&
+            const missing =
+                this.props.required &&
                 !this.props.disabled &&
                 (_.isNull(nextProps.value) ||
                     _.isUndefined(nextProps.value) ||
@@ -70,6 +98,13 @@ class Chooser extends React.Component {
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missingCount);
             }
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.state.focusChooser) {
+            this.chooser.focus();
+            this.setState({ focusChooser: false });
         }
     }
 
@@ -92,6 +127,12 @@ class Chooser extends React.Component {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
+
+        this.setState({ hover: false });
+    }
+
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
     }
 
     getOptionList() {
@@ -120,7 +161,8 @@ class Chooser extends React.Component {
                 value: `${item.get("id")}`,
                 label: item.get("label"),
                 disabled: item.has("disabled") ? item["disabled"] : false
-            }));
+            })
+        );
         return result;
     }
 
@@ -162,12 +204,21 @@ class Chooser extends React.Component {
                 const labelList = _.map(options, item => item.label);
                 const key = `${labelList}--${choice}`;
                 return (
-                    <div className={className} style={chooserStyle}>
+                    <div
+                        className={className}
+                        style={chooserStyle}
+                        onFocus={e => this.handleFocus(e)}
+                        onBlur={() => this.handleBlur()}
+                    >
                         <VirtualizedSelect
+                            ref={chooser => {
+                                this.chooser = chooser;
+                            }}
                             className={isMissing ? "is-missing" : ""}
                             key={key}
                             value={choice}
                             options={options}
+                            openOnFocus={true}
                             disabled={this.props.disabled}
                             searchable={true}
                             matchPos={matchPos}
@@ -181,12 +232,21 @@ class Chooser extends React.Component {
                 const labelList = _.map(options, item => item.label);
                 const key = `${labelList}--${choice}`;
                 return (
-                    <div className={className} style={chooserStyle}>
+                    <div
+                        className={className}
+                        style={chooserStyle}
+                        onFocus={e => this.handleFocus(e)}
+                        onBlur={() => this.handleBlur()}
+                    >
                         <VirtualizedSelect
+                            ref={chooser => {
+                                this.chooser = chooser;
+                            }}
                             className={isMissing ? "is-missing" : ""}
                             key={key}
                             value={choice}
                             options={options}
+                            openOnFocus={true}
                             disabled={this.props.disabled}
                             searchable={false}
                             matchPos={matchPos}
@@ -198,36 +258,24 @@ class Chooser extends React.Component {
                 );
             }
         } else {
-            const view = this.props.view;
-            let text = this.getCurrentChoiceLabel();
-            let color = "";
-            let background = "";
-            if (isMissing) {
-                text = " ";
-                background = "floralwhite";
-            }
+            let s = this.getCurrentChoiceLabel();
+            const view = this.props.view || textView;
+            const style = inlineChooserStyle(false, false, !!view);
 
-            const viewStyle = {
-                color,
-                background,
-                minHeight: 23,
-                width: "100%",
-                paddingLeft: 3
-            };
-
-            const style = {
-                color,
-                background,
-                height: 23,
-                width: "100%",
-                paddingLeft: 3
-            };
-
-            if (!view) {
-                return <div style={style}>{text}</div>;
-            } else {
-                return <div style={viewStyle}>{view(text, choice)}</div>;
-            }
+            const text = <span style={{ minHeight: 28 }}>{view(s, choice)}</span>;
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
+            return (
+                <div
+                    style={style}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {text}
+                    {edit}
+                </div>
+            );
         }
     }
 }
@@ -240,7 +288,7 @@ Chooser.propTypes = {
      * [
      *  {id: 1: label: "cat"},
      *  {id: 2: label: "dog"},
-     *  ... 
+     *  ...
      * ]
      * ```
      */
@@ -249,7 +297,7 @@ Chooser.propTypes = {
     disabled: PropTypes.bool,
 
     /**
-     * disableSearch* - If true the chooser becomes a simple pulldown menu 
+     * disableSearch* - If true the chooser becomes a simple pulldown menu
      * rather than allowing the user to type into it.
      */
     disableSearch: PropTypes.bool,

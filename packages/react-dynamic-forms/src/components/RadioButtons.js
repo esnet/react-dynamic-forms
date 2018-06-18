@@ -12,8 +12,42 @@ import React from "react";
 import _ from "underscore";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineStyle } from "../js/style";
 
 class RadioButtons extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { isFocused: false };
+    }
+
+    getCurrentChoiceLabel() {
+        const choiceItem = this.props.optionList.find(item => {
+            return item.get("id") === this.props.value;
+        });
+        return choiceItem ? choiceItem.get("label") : "";
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleFocus() {
+        this.setState({ isFocused: true });
+    }
+
+    handleBlur() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, touched: true });
+    }
+
     handleChange(v) {
         // Callbacks
         if (this.props.onChange) {
@@ -24,28 +58,8 @@ class RadioButtons extends React.Component {
         }
     }
 
-    getCurrentChoiceLabel() {
-        const choiceItem = this.props.optionList.find(item => {
-            return item.get("id") === this.props.value;
-        });
-        return choiceItem ? choiceItem.get("label") : "";
-    }
-
-    inlineStyle(hasError, isMissing) {
-        let color = "inherited";
-        let background = "inherited";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
-        }
-        return {
-            color,
-            background,
-            width: "100%",
-            paddingLeft: 3
-        };
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
     }
 
     render() {
@@ -69,16 +83,22 @@ class RadioButtons extends React.Component {
                     </div>
                 );
             });
-            return (
-                <div>
-                    {items}
-                </div>
-            );
+            return <div>{items}</div>;
         } else {
-            let text = this.getCurrentChoiceLabel();
+            let s = this.getCurrentChoiceLabel();
+            const view = this.props.view || textView;
+            const text = <span style={{ minHeight: 28 }}>{view(s)}</span>;
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
             return (
-                <div style={this.inlineStyle(false, false)}>
+                <div
+                    style={inlineStyle(false, false)}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
                     {text}
+                    {edit}
                 </div>
             );
         }

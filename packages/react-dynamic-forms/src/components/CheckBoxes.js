@@ -13,12 +13,19 @@ import _ from "underscore";
 import Immutable from "immutable";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineStyle } from "../js/style";
 
 /**
  * Form control to select multiple items from a list,
  * uses checkboxes next to each item.
  */
 class CheckBoxes extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { isFocused: false };
+    }
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
             const missingCount = this.isMissing(nextProps.value) ? 1 : 0;
@@ -26,6 +33,26 @@ class CheckBoxes extends React.Component {
                 this.props.onMissingCountChange(this.props.name, missingCount);
             }
         }
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleFocus() {
+        this.setState({ isFocused: true });
+    }
+
+    handleBlur() {
+        console.log("XXX BLUR");
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false, touched: true });
     }
 
     handleChange(i) {
@@ -41,6 +68,10 @@ class CheckBoxes extends React.Component {
         }
     }
 
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
+    }
+
     isEmpty(value) {
         if (Immutable.List.isList(value)) {
             return value.size === 0;
@@ -50,23 +81,6 @@ class CheckBoxes extends React.Component {
 
     isMissing(value = this.props.value) {
         return this.props.required && !this.props.disabled && this.isEmpty(value);
-    }
-
-    inlineStyle(hasError, isMissing) {
-        let color = "inherited";
-        let background = "inherited";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
-        }
-        return {
-            color,
-            background,
-            width: "100%",
-            paddingLeft: 3
-        };
     }
 
     render() {
@@ -87,15 +101,27 @@ class CheckBoxes extends React.Component {
                 );
             });
 
+            // @TODO So apparently this will blur if you click a checkbox and then click another
+            //       checkbox...
             return (
-                <div>
+                <div onFocus={e => this.handleFocus(e)} onBlur={() => this.handleBlur()}>
                     {items}
                 </div>
             );
         } else {
+            const view = this.props.view || textView;
+            const text = <span style={{ minHeight: 28 }}>{view(this.props.value.join(", "))}</span>;
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
             return (
-                <div style={this.inlineStyle(false, false)}>
-                    {this.props.value.join(", ")}
+                <div
+                    style={inlineStyle(false, false)}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {text}
+                    {edit}
                 </div>
             );
         }

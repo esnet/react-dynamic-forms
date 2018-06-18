@@ -22,6 +22,12 @@ var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
 
+var _renderers = require("../js/renderers");
+
+var _actions = require("../js/actions");
+
+var _style = require("../js/style");
+
 require("react-select/dist/react-select.css");
 
 require("react-virtualized/styles.css");
@@ -61,11 +67,35 @@ var Chooser = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Chooser.__proto__ || Object.getPrototypeOf(Chooser)).call(this, props));
 
+        _this.state = { isFocused: false, focusChooser: false };
         _this.handleChange = _this.handleChange.bind(_this);
         return _this;
     }
 
     _createClass(Chooser, [{
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleFocus",
+        value: function handleFocus() {
+            this.setState({ isFocused: true });
+        }
+    }, {
+        key: "handleBlur",
+        value: function handleBlur() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false });
+        }
+    }, {
         key: "isEmpty",
         value: function isEmpty(value) {
             return _underscore2.default.isNull(value) || _underscore2.default.isUndefined(value) || value === "";
@@ -90,6 +120,9 @@ var Chooser = function (_React$Component) {
     }, {
         key: "componentWillReceiveProps",
         value: function componentWillReceiveProps(nextProps) {
+            if (this.props.edit !== nextProps.edit && nextProps.edit === true) {
+                this.setState({ focusChooser: true });
+            }
             if (this.props.value !== nextProps.value || !this.props.value && nextProps.value || this.props.value && !nextProps.value) {
                 // The value might have been missing and is now set explicitly
                 // with a prop
@@ -99,6 +132,14 @@ var Chooser = function (_React$Component) {
                 if (this.props.onMissingCountChange) {
                     this.props.onMissingCountChange(this.props.name, missingCount);
                 }
+            }
+        }
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate() {
+            if (this.state.focusChooser) {
+                this.chooser.focus();
+                this.setState({ focusChooser: false });
             }
         }
     }, {
@@ -124,6 +165,13 @@ var Chooser = function (_React$Component) {
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
+
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
         }
     }, {
         key: "getOptionList",
@@ -208,12 +256,25 @@ var Chooser = function (_React$Component) {
                     var key = labelList + "--" + choice;
                     return _react2.default.createElement(
                         "div",
-                        { className: className, style: chooserStyle },
+                        {
+                            className: className,
+                            style: chooserStyle,
+                            onFocus: function onFocus(e) {
+                                return _this5.handleFocus(e);
+                            },
+                            onBlur: function onBlur() {
+                                return _this5.handleBlur();
+                            }
+                        },
                         _react2.default.createElement(_reactVirtualizedSelect2.default, {
+                            ref: function ref(chooser) {
+                                _this5.chooser = chooser;
+                            },
                             className: isMissing ? "is-missing" : "",
                             key: key,
                             value: choice,
                             options: options,
+                            openOnFocus: true,
                             disabled: this.props.disabled,
                             searchable: true,
                             matchPos: matchPos,
@@ -231,12 +292,25 @@ var Chooser = function (_React$Component) {
                     var _key = _labelList + "--" + choice;
                     return _react2.default.createElement(
                         "div",
-                        { className: className, style: chooserStyle },
+                        {
+                            className: className,
+                            style: chooserStyle,
+                            onFocus: function onFocus(e) {
+                                return _this5.handleFocus(e);
+                            },
+                            onBlur: function onBlur() {
+                                return _this5.handleBlur();
+                            }
+                        },
                         _react2.default.createElement(_reactVirtualizedSelect2.default, {
+                            ref: function ref(chooser) {
+                                _this5.chooser = chooser;
+                            },
                             className: isMissing ? "is-missing" : "",
                             key: _key,
                             value: choice,
                             options: _options,
+                            openOnFocus: true,
                             disabled: this.props.disabled,
                             searchable: false,
                             matchPos: matchPos,
@@ -249,44 +323,32 @@ var Chooser = function (_React$Component) {
                     );
                 }
             } else {
-                var view = this.props.view;
-                var text = this.getCurrentChoiceLabel();
-                var color = "";
-                var background = "";
-                if (isMissing) {
-                    text = " ";
-                    background = "floralwhite";
-                }
+                var s = this.getCurrentChoiceLabel();
+                var view = this.props.view || _renderers.textView;
+                var style = (0, _style.inlineChooserStyle)(false, false, !!view);
 
-                var viewStyle = {
-                    color: color,
-                    background: background,
-                    minHeight: 23,
-                    width: "100%",
-                    paddingLeft: 3
-                };
-
-                var style = {
-                    color: color,
-                    background: background,
-                    height: 23,
-                    width: "100%",
-                    paddingLeft: 3
-                };
-
-                if (!view) {
-                    return _react2.default.createElement(
-                        "div",
-                        { style: style },
-                        text
-                    );
-                } else {
-                    return _react2.default.createElement(
-                        "div",
-                        { style: viewStyle },
-                        view(text, choice)
-                    );
-                }
+                var text = _react2.default.createElement(
+                    "span",
+                    { style: { minHeight: 28 } },
+                    view(s, choice)
+                );
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this5.handleEditItem();
+                });
+                return _react2.default.createElement(
+                    "div",
+                    {
+                        style: style,
+                        onMouseEnter: function onMouseEnter() {
+                            return _this5.handleMouseEnter();
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            return _this5.handleMouseLeave();
+                        }
+                    },
+                    text,
+                    edit
+                );
             }
         }
     }]);
@@ -302,7 +364,7 @@ Chooser.propTypes = {
      * [
      *  {id: 1: label: "cat"},
      *  {id: 2: label: "dog"},
-     *  ... 
+     *  ...
      * ]
      * ```
      */
@@ -311,7 +373,7 @@ Chooser.propTypes = {
     disabled: _propTypes2.default.bool,
 
     /**
-     * disableSearch* - If true the chooser becomes a simple pulldown menu 
+     * disableSearch* - If true the chooser becomes a simple pulldown menu
      * rather than allowing the user to type into it.
      */
     disableSearch: _propTypes2.default.bool,

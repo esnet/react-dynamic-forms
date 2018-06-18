@@ -24,6 +24,8 @@ var _renderers = require("../js/renderers");
 
 var _actions = require("../js/actions");
 
+var _style2 = require("../js/style");
+
 require("../css/textarea.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -215,25 +217,6 @@ var TextArea = function (_React$Component) {
             this.setState({ isFocused: false, touched: true });
         }
     }, {
-        key: "inlineStyle",
-        value: function inlineStyle(hasError, isMissing) {
-            var color = "";
-            var background = "";
-            if (hasError) {
-                color = "#b94a48";
-                background = "#fff0f3";
-            } else if (isMissing) {
-                background = "floralwhite";
-            }
-            return {
-                color: color,
-                background: background,
-                height: "100%",
-                width: "100%",
-                paddingLeft: 3
-            };
-        }
-    }, {
         key: "render",
         value: function render() {
             var _this3 = this;
@@ -298,7 +281,7 @@ var TextArea = function (_React$Component) {
                     return _this3.handleEditItem();
                 });
 
-                var _style = this.inlineStyle(validationError, isMissing);
+                var _style = (0, _style2.inlineTextAreaStyle)(validationError, isMissing);
                 return _react2.default.createElement(
                     "div",
                     {
