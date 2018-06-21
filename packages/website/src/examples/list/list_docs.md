@@ -50,6 +50,10 @@ Having defined that, we can now create a form to edit a contact:
 
     class ContactForm extends React.Component {
 
+        validate(name){
+            return true ? name === "Jones" : false;
+        }
+
         schema() {
             return (
                 <Schema>
@@ -65,7 +69,7 @@ Having defined that, we can now create a form to edit a contact:
                         label="Last name"
                         placeholder="Enter last name"
                         required={true}
-                        validation={{ type: "string" }}
+                        validation={{ type: "string", message: "This field can be Jones only", conform: a => this.validate(a)}}
                     />
                     <Field name="emails" label="Emails" />
                 </Schema>
