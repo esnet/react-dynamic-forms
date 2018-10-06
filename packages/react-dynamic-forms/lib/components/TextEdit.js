@@ -16,6 +16,10 @@ var _underscore2 = _interopRequireDefault(_underscore);
 
 var _revalidator = require("revalidator");
 
+var _flexboxReact = require("flexbox-react");
+
+var _flexboxReact2 = _interopRequireDefault(_flexboxReact);
+
 var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
@@ -219,15 +223,49 @@ var TextEdit = function (_React$Component) {
     }, {
         key: "handleFocus",
         value: function handleFocus() {
-            this.setState({ isFocused: true });
+            this.setState({ isFocused: true, oldValue: this.props.value });
         }
     }, {
         key: "handleBlur",
         value: function handleBlur() {
+            // if (this.props.onBlur) {
+            //     this.props.onBlur(this.props.name);
+            // }
+            this.setState({ isFocused: false, hover: false, touched: true });
+        }
+    }, {
+        key: "handleDone",
+        value: function handleDone() {
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
-            this.setState({ isFocused: false, hover: false, touched: true });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            console.log("REVERT TO", this.state.oldValue);
+
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                console.log("ON CHANGE", v);
+                var cast = v;
+                if (_underscore2.default.has(this.props.rules, "type")) {
+                    switch (this.props.rules.type) {
+                        case "integer":
+                            cast = v === "" ? null : parseInt(v, 10);
+                            break;
+                        case "number":
+                            cast = v === "" ? null : parseFloat(v, 10);
+                            break;
+                        //pass
+                        default:
+                    }
+                }
+                console.log("ON CHANGE >>", cast);
+                this.props.onChange(this.props.name, cast);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
         }
     }, {
         key: "render",
@@ -255,34 +293,80 @@ var TextEdit = function (_React$Component) {
                 var style = isMissing ? { background: _style2.colors.MISSING_COLOR_BG } : {};
                 var type = this.props.type || "text";
 
+                // Inline edit buttons
+                var doneStyle = {
+                    padding: 5,
+                    marginLeft: 5,
+                    fontSize: 12,
+                    height: 30,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "rgba(70, 129, 180, 0.19)",
+                    borderRadius: 2,
+                    color: "steelblue",
+                    cursor: "pointer"
+                };
+
+                var cancelStyle = {
+                    padding: 5,
+                    marginLeft: 3,
+                    marginBottom: 5,
+                    height: 30,
+                    color: "#AAA",
+                    cursor: "pointer",
+                    fontSize: 12
+                };
+
                 return _react2.default.createElement(
-                    "div",
-                    { className: className },
-                    _react2.default.createElement("input", {
-                        ref: function ref(input) {
-                            _this3.textInput = input;
-                        },
-                        className: "form-control input-sm",
-                        style: style,
-                        type: type,
-                        disabled: this.props.disabled,
-                        placeholder: this.props.placeholder,
-                        value: this.state.value,
-                        onChange: function onChange(e) {
-                            return _this3.handleChange(e);
-                        },
-                        onFocus: function onFocus(e) {
-                            return _this3.handleFocus(e);
-                        },
-                        onBlur: function onBlur() {
-                            return _this3.handleBlur();
-                        }
-                    }),
+                    _flexboxReact2.default,
+                    { flexDirection: "row", style: { width: "100%" } },
                     _react2.default.createElement(
                         "div",
-                        { className: helpClassName },
-                        msg
-                    )
+                        { className: className },
+                        _react2.default.createElement("input", {
+                            ref: function ref(input) {
+                                _this3.textInput = input;
+                            },
+                            className: "form-control input-sm",
+                            style: style,
+                            type: type,
+                            disabled: this.props.disabled,
+                            placeholder: this.props.placeholder,
+                            value: this.state.value,
+                            onChange: function onChange(e) {
+                                return _this3.handleChange(e);
+                            },
+                            onFocus: function onFocus(e) {
+                                return _this3.handleFocus(e);
+                            },
+                            onBlur: function onBlur() {
+                                return _this3.handleBlur();
+                            }
+                        }),
+                        _react2.default.createElement(
+                            "div",
+                            { className: helpClassName },
+                            msg
+                        )
+                    ),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 5 } },
+                        _react2.default.createElement(
+                            "span",
+                            { style: doneStyle, onClick: function onClick() {
+                                    return _this3.handleDone();
+                                } },
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            { style: cancelStyle, onClick: function onClick() {
+                                    return _this3.handleCancel();
+                                } },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
                 );
             } else {
                 var view = this.props.view || _renderers.textView;

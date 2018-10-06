@@ -30,6 +30,12 @@ var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
 
+var _renderers = require("../js/renderers");
+
+var _actions = require("../js/actions");
+
+var _style = require("../js/style");
+
 require("react-datepicker/dist/react-datepicker.css");
 
 require("../css/dateedit.css");
@@ -59,23 +65,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var DateEdit = function (_React$Component) {
     _inherits(DateEdit, _React$Component);
 
-    function DateEdit() {
+    function DateEdit(props) {
         _classCallCheck(this, DateEdit);
 
-        return _possibleConstructorReturn(this, (DateEdit.__proto__ || Object.getPrototypeOf(DateEdit)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (DateEdit.__proto__ || Object.getPrototypeOf(DateEdit)).call(this, props));
+
+        _this.state = { isFocused: false };
+        return _this;
     }
 
     _createClass(DateEdit, [{
-        key: "isEmpty",
-        value: function isEmpty(value) {
-            return _underscore2.default.isNull(value) || _underscore2.default.isUndefined(value) || value === "";
-        }
-    }, {
-        key: "isMissing",
-        value: function isMissing(v) {
-            return this.props.required && !this.props.disabled && this.isEmpty(v);
-        }
-    }, {
         key: "componentWillReceiveProps",
         value: function componentWillReceiveProps(nextProps) {
             if (this.props.value && nextProps.value) {
@@ -96,6 +95,29 @@ var DateEdit = function (_React$Component) {
             }
         }
     }, {
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleFocus",
+        value: function handleFocus() {
+            this.setState({ isFocused: true });
+        }
+    }, {
+        key: "handleBlur",
+        value: function handleBlur() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, touched: true });
+        }
+    }, {
         key: "handleDateChange",
         value: function handleDateChange(v) {
             var value = v ? v.toDate() : null;
@@ -113,23 +135,19 @@ var DateEdit = function (_React$Component) {
             }
         }
     }, {
-        key: "inlineStyle",
-        value: function inlineStyle(hasError, isMissing) {
-            var color = "inherited";
-            var background = "inherited";
-            if (hasError) {
-                color = "#b94a48";
-                background = "#fff0f3";
-            } else if (isMissing) {
-                background = "floralwhite";
-            }
-            return {
-                color: color,
-                background: background,
-                height: 23,
-                width: "100%",
-                paddingLeft: 3
-            };
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
+        }
+    }, {
+        key: "isEmpty",
+        value: function isEmpty(value) {
+            return _underscore2.default.isNull(value) || _underscore2.default.isUndefined(value) || value === "";
+        }
+    }, {
+        key: "isMissing",
+        value: function isMissing(v) {
+            return this.props.required && !this.props.disabled && this.isEmpty(v);
         }
     }, {
         key: "render",
@@ -166,21 +184,39 @@ var DateEdit = function (_React$Component) {
                             selected: selected,
                             onChange: function onChange(v) {
                                 return _this2.handleDateChange(v);
+                            },
+                            onFocus: function onFocus(e) {
+                                return _this2.handleFocus(e);
+                            },
+                            onBlur: function onBlur() {
+                                return _this2.handleBlur();
                             }
                         })
                     )
                 );
             } else {
-                var hasError = false;
-                var text = selected ? selected.format("MM/DD/YYYY") : "";
-                if (isMissing) {
-                    text = " ";
-                }
-                var style = this.inlineStyle(hasError, isMissing);
+                var view = this.props.view || (0, _renderers.dateView)("MM/DD/YYYY");
+                var text = _react2.default.createElement(
+                    "span",
+                    { style: { minHeight: 28 } },
+                    view(selected)
+                );
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this2.handleEditItem();
+                });
                 return _react2.default.createElement(
                     "div",
-                    { style: style },
-                    text
+                    {
+                        style: (0, _style.inlineStyle)(false, false),
+                        onMouseEnter: function onMouseEnter() {
+                            return _this2.handleMouseEnter();
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            return _this2.handleMouseLeave();
+                        }
+                    },
+                    text,
+                    edit
                 );
             }
         }

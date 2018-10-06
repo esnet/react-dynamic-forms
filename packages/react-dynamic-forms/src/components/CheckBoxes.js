@@ -26,6 +26,7 @@ class CheckBoxes extends React.Component {
         super(props);
         this.state = { isFocused: false };
     }
+
     componentWillReceiveProps(nextProps) {
         if (this.props.value !== nextProps.value) {
             const missingCount = this.isMissing(nextProps.value) ? 1 : 0;

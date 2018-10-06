@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.textView = textView;
 exports.linkView = linkView;
 exports.markdownView = markdownView;
+exports.dateView = dateView;
 
 var _underscore = require("underscore");
 
@@ -60,4 +61,17 @@ function markdownView(value) {
             _react2.default.createElement(_reactMarkdown2.default, { source: value })
         );
     }
+}
+
+function dateView() {
+    var fmt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "MM/DD/YYYYY";
+
+    return function (d) {
+        var s = d ? d.format(fmt) : "";
+        return _react2.default.createElement(
+            "span",
+            { style: { minHeight: 28 } },
+            s
+        );
+    };
 }

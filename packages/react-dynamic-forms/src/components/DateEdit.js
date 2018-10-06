@@ -15,6 +15,9 @@ import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
 
 import formGroup from "../js/formGroup";
+import { dateView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineStyle } from "../js/style";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "../css/dateedit.css";
@@ -26,12 +29,9 @@ import "../css/dateedit.css";
  * value changed with `onChange`.
  */
 class DateEdit extends React.Component {
-    isEmpty(value) {
-        return _.isNull(value) || _.isUndefined(value) || value === "";
-    }
-
-    isMissing(v) {
-        return this.props.required && !this.props.disabled && this.isEmpty(v);
+    constructor(props) {
+        super(props);
+        this.state = { isFocused: false };
     }
 
     componentWillReceiveProps(nextProps) {
@@ -52,6 +52,25 @@ class DateEdit extends React.Component {
         }
     }
 
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleFocus() {
+        this.setState({ isFocused: true });
+    }
+
+    handleBlur() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false, touched: true });
+    }
+
     handleDateChange(v) {
         const value = v ? v.toDate() : null;
         const missing = this.isMissing(value);
@@ -68,22 +87,16 @@ class DateEdit extends React.Component {
         }
     }
 
-    inlineStyle(hasError, isMissing) {
-        let color = "inherited";
-        let background = "inherited";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
-        }
-        return {
-            color,
-            background,
-            height: 23,
-            width: "100%",
-            paddingLeft: 3
-        };
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
+    }
+
+    isEmpty(value) {
+        return _.isNull(value) || _.isUndefined(value) || value === "";
+    }
+
+    isMissing(v) {
+        return this.props.required && !this.props.disabled && this.isEmpty(v);
     }
 
     render() {
@@ -105,24 +118,36 @@ class DateEdit extends React.Component {
                     <div>
                         <DatePicker
                             key={`date`}
-                            ref={(input) => { this.textInput = input; }}
+                            ref={input => {
+                                this.textInput = input;
+                            }}
                             className={className}
                             disabled={this.props.disabled}
                             placeholderText={this.props.placeholder}
                             selected={selected}
                             onChange={v => this.handleDateChange(v)}
+                            onFocus={e => this.handleFocus(e)}
+                            onBlur={() => this.handleBlur()}
                         />
                     </div>
                 </div>
             );
         } else {
-            const hasError = false;
-            let text = selected ? selected.format("MM/DD/YYYY") : "";
-            if (isMissing) {
-                text = " ";
-            }
-            const style = this.inlineStyle(hasError, isMissing);
-            return <div style={style}>{text}</div>;
+            const view = this.props.view || dateView("MM/DD/YYYY");
+            const text = <span style={{ minHeight: 28 }}>{view(selected)}</span>;
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
+            return (
+                <div
+                    style={inlineStyle(false, false)}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {text}
+                    {edit}
+                </div>
+            );
         }
     }
 }

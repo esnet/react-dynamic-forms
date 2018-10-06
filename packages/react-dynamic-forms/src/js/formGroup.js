@@ -40,10 +40,11 @@ import "../css/icon.css";
  * users code.
  */
 
-export default function formGroup(Control, hideEdit) {
-    return class Group extends React.Component {
+export default function formGroup(Control, name) {
+    const wrapped = class Group extends React.Component {
         constructor(props) {
             super(props);
+
             this.state = { over: false };
         }
 
@@ -224,4 +225,6 @@ export default function formGroup(Control, hideEdit) {
             }
         }
     };
+    wrapped.displayName = name;
+    return wrapped;
 }

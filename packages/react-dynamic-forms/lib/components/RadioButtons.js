@@ -10,10 +10,6 @@ var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _underscore = require("underscore");
-
-var _underscore2 = _interopRequireDefault(_underscore);
-
 var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);

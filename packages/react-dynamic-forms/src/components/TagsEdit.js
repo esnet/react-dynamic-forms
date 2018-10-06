@@ -25,8 +25,8 @@ import "../css/tagsedit.css";
 class TagsEdit extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            touched: false 
+        this.state = {
+            touched: false
         };
     }
 
@@ -118,7 +118,11 @@ class TagsEdit extends React.Component {
             };
             return (
                 <div>
-                    {this.props.value.map((tag, i) => <span key={i} style={tagStyle}>{tag}</span>)}
+                    {this.props.value.map((tag, i) => (
+                        <span key={i} style={tagStyle}>
+                            {tag}
+                        </span>
+                    ))}
                 </div>
             );
         }

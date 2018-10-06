@@ -16,7 +16,9 @@
         "build":
             "echo \"*** Building lib\n\" && rm -rf lib/* && babel src/components --optional runtime --stage 0 --out-dir lib/components && mkdir lib/css && cp ./src/css/*.css ./lib/css/ && babel src/js --optional runtime --stage 0 --out-dir lib/js && babel src/index.js --optional runtime --stage 0 --out-file lib/index.js",
         "precommit": "lint-staged",
-        "prettier": "prettier --print-width 100 --tab-width 4 --write \"src/**/*.js\""
+        "prettier": "prettier --print-width 100 --tab-width 4 --write \"src/**/*.js\"",
+        "storybook": "start-storybook -p 9009 -s public",
+        "build-storybook": "build-storybook -s public"
     },
     "lint-staged": {
         "*.js": ["prettier --print-width 100 --tab-width 4 --write", "git add"]
@@ -43,6 +45,14 @@
         "underscore": "^1.8.3"
     },
     "devDependencies": {
+        "@sambego/storybook-state": "^1.0.7",
+        "@storybook/addon-actions": "^3.4.8",
+        "@storybook/addon-info": "^3.4.8",
+        "@storybook/addon-knobs": "^3.4.8",
+        "@storybook/addon-links": "^3.4.8",
+        "@storybook/addon-storyshots": "^3.4.8",
+        "@storybook/addons": "^3.4.8",
+        "@storybook/react": "^3.4.8",
         "babel-cli": "^6.5.1",
         "babel-core": "^6.5.2",
         "babel-loader": "^7.1.4",
@@ -50,11 +60,13 @@
         "babel-preset-es2015": "^6.5.0",
         "babel-preset-react": "^6.5.0",
         "babel-preset-stage-0": "^6.5.0",
+        "babel-runtime": "^7.0.0-beta.3",
         "chance": "^1.0.6",
         "enzyme": "3.3.0",
         "enzyme-to-json": "3.3.1",
         "eslint-config-prettier": "^2.9.0",
         "eslint-config-react-app": "^2.1.0",
+        "jest-css-modules": "^1.1.0",
         "lint-staged": "^7.0.0",
         "prettier": "^1.11.1",
         "prop-types": "^15.6.1",
@@ -67,5 +79,10 @@
     },
     "eslintConfig": {
         "extends": "react-app"
+    },
+    "jest": {
+        "moduleNameMapper": {
+            "\\.(css)$": "<rootDir>/node_modules/jest-css-modules"
+        }
     }
 }

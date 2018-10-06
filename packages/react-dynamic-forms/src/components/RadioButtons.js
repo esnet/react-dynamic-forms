@@ -9,7 +9,6 @@
  */
 
 import React from "react";
-import _ from "underscore";
 
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";

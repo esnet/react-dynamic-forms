@@ -143,11 +143,15 @@ var Form = function (_React$Component) {
                 props.hidden = false;
                 props.disabled = false;
 
+                props.selected = false;
                 props.edit = false;
                 props.showRequired = true;
 
                 if (this.props.edit === _constants.FormEditStates.SELECTED) {
-                    props.edit = this.state.selection === fieldName;
+                    if (this.state.selection === fieldName) {
+                        props.edit = true;
+                        props.selected = true;
+                    }
                     props.showRequired = props.edit;
                     props.allowEdit = true;
                 } else if (this.props.edit === _constants.FormEditStates.ALWAYS) {

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.colors = exports.markdownView = exports.linkView = exports.textView = exports.FormGroupLayout = exports.FormEditStates = exports.View = exports.CheckBoxes = exports.RadioButtons = exports.TagsEdit = exports.DateEdit = exports.Chooser = exports.TextArea = exports.TextEdit = exports.List = exports.formList = exports.formGroup = exports.Field = exports.Schema = exports.Form = undefined;
+exports.colors = exports.dateView = exports.markdownView = exports.linkView = exports.textView = exports.FormGroupLayout = exports.FormEditStates = exports.View = exports.CheckBoxes = exports.RadioButtons = exports.TagsEdit = exports.DateEdit = exports.Chooser = exports.TextArea = exports.TextEdit = exports.List = exports.formList = exports.formGroup = exports.Field = exports.Schema = exports.Form = undefined;
 
 var _Form = require("./components/Form");
 
@@ -97,4 +97,5 @@ exports.FormGroupLayout = _constants.FormGroupLayout;
 exports.textView = _renderers.textView;
 exports.linkView = _renderers.linkView;
 exports.markdownView = _renderers.markdownView;
+exports.dateView = _renderers.dateView;
 exports.colors = _style.colors;

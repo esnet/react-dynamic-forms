@@ -10,7 +10,7 @@
 
 import _ from "underscore";
 import React from "react";
-import Markdown from "react-markdown";
+// import Markdown from "react-markdown";
 
 export function textView(value) {
     return <span style={{ minHeight: 28 }}>{value}</span>;
@@ -29,10 +29,13 @@ export function markdownView(value) {
     if (value === "" || _.isUndefined(value)) {
         return <div style={{ height: 28 }} />;
     } else {
-        return (
-            <span style={{ minHeight: 28 }}>
-                <Markdown source={value} />
-            </span>
-        );
+        return <span style={{ minHeight: 28 }}>{/* <Markdown source={value} /> */}</span>;
     }
+}
+
+export function dateView(fmt = "MM/DD/YYYYY") {
+    return function(d) {
+        const s = d ? d.format(fmt) : "";
+        return <span style={{ minHeight: 28 }}>{s}</span>;
+    };
 }

@@ -11,6 +11,7 @@
 import React from "react";
 import _ from "underscore";
 import { validate } from "revalidator";
+import Flexbox from "flexbox-react";
 
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";
@@ -163,14 +164,46 @@ class TextEdit extends React.Component {
     }
 
     handleFocus() {
-        this.setState({ isFocused: true });
+        this.setState({ isFocused: true, oldValue: this.props.value });
     }
 
     handleBlur() {
+        // if (this.props.onBlur) {
+        //     this.props.onBlur(this.props.name);
+        // }
+        this.setState({ isFocused: false, hover: false, touched: true });
+    }
+
+    handleDone() {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
-        this.setState({ isFocused: false, hover: false, touched: true });
+    }
+
+    handleCancel() {
+        console.log("REVERT TO", this.state.oldValue);
+
+        if (this.props.onChange) {
+            const v = this.state.oldValue;
+            console.log("ON CHANGE", v);
+            let cast = v;
+            if (_.has(this.props.rules, "type")) {
+                switch (this.props.rules.type) {
+                    case "integer":
+                        cast = v === "" ? null : parseInt(v, 10);
+                        break;
+                    case "number":
+                        cast = v === "" ? null : parseFloat(v, 10);
+                        break;
+                    //pass
+                    default:
+                }
+            }
+            console.log("ON CHANGE >>", cast);
+            this.props.onChange(this.props.name, cast);
+        }
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     render() {
@@ -192,24 +225,62 @@ class TextEdit extends React.Component {
             const style = isMissing ? { background: colors.MISSING_COLOR_BG } : {};
             const type = this.props.type || "text";
 
+            // Inline edit buttons
+            const doneStyle = {
+                padding: 5,
+                marginLeft: 5,
+                fontSize: 12,
+                height: 30,
+                borderStyle: "solid",
+                borderWidth: 1,
+                borderColor: "rgba(70, 129, 180, 0.19)",
+                borderRadius: 2,
+                color: "steelblue",
+                cursor: "pointer"
+            };
+
+            const cancelStyle = {
+                padding: 5,
+                marginLeft: 3,
+                marginBottom: 5,
+                height: 30,
+                color: "#AAA",
+                cursor: "pointer",
+                fontSize: 12
+            };
+
             return (
-                <div className={className}>
-                    <input
-                        ref={input => {
-                            this.textInput = input;
-                        }}
-                        className="form-control input-sm"
-                        style={style}
-                        type={type}
-                        disabled={this.props.disabled}
-                        placeholder={this.props.placeholder}
-                        value={this.state.value}
-                        onChange={e => this.handleChange(e)}
-                        onFocus={e => this.handleFocus(e)}
-                        onBlur={() => this.handleBlur()}
-                    />
-                    <div className={helpClassName}>{msg}</div>
-                </div>
+                <Flexbox flexDirection="row" style={{ width: "100%" }}>
+                    <div className={className}>
+                        <input
+                            ref={input => {
+                                this.textInput = input;
+                            }}
+                            className="form-control input-sm"
+                            style={style}
+                            type={type}
+                            disabled={this.props.disabled}
+                            placeholder={this.props.placeholder}
+                            value={this.state.value}
+                            onChange={e => this.handleChange(e)}
+                            onFocus={e => this.handleFocus(e)}
+                            onBlur={() => this.handleBlur()}
+                        />
+                        <div className={helpClassName}>{msg}</div>
+                    </div>
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 5 }}>
+                            <span style={doneStyle} onClick={() => this.handleDone()}>
+                                DONE
+                            </span>
+                            <span style={cancelStyle} onClick={() => this.handleCancel()}>
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
+                </Flexbox>
             );
         } else {
             const view = this.props.view || textView;

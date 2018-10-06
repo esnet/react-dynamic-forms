@@ -263,7 +263,7 @@ export default class List extends React.Component {
                                         style={cancelStyle}
                                         onClick={() => this.revertItem(index)}
                                     >
-                                        REVERT
+                                        CANCEL
                                     </span>
                                 </Flexbox>
                             </Flexbox>
