@@ -128,7 +128,7 @@ export class Chooser extends React.Component {
             this.props.onBlur(this.props.name);
         }
 
-        this.setState({ hover: false });
+        this.setState({ isFocused: false, hover: false });
     }
 
     handleEditItem() {

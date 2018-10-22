@@ -105,9 +105,9 @@ var TextArea = function (_React$Component) {
             obj[this.props.name] = value;
 
             var properties = {};
-            properties[this.props.name] = this.props.rules;
+            properties[this.props.name] = this.props.validation;
 
-            var rules = this.props.rules ? { properties: properties } : null;
+            var rules = this.props.validation ? { properties: properties } : null;
             if (obj && rules) {
                 var validation = (0, _revalidator.validate)(obj, rules, { cast: true });
                 var name = this.props.name || "Value";
@@ -170,6 +170,7 @@ var TextArea = function (_React$Component) {
         value: function componentDidUpdate() {
             if (this.state.selectText) {
                 this.textInput.focus();
+                this.textInput.select();
                 this.setState({ selectText: false });
             }
         }
@@ -187,9 +188,9 @@ var TextArea = function (_React$Component) {
                 var _getError3 = _this2.getError(value),
                     validationError = _getError3.validationError;
 
-                var cast = value;
-
                 // Callbacks
+
+
                 if (_this2.props.onErrorCountChange) {
                     _this2.props.onErrorCountChange(name, validationError ? 1 : 0);
                 }
@@ -206,15 +207,56 @@ var TextArea = function (_React$Component) {
     }, {
         key: "handleFocus",
         value: function handleFocus() {
-            this.setState({ isFocused: true });
+            if (!this.state.isFocused) {
+                this.setState({ isFocused: true, oldValue: this.props.value });
+            }
         }
     }, {
-        key: "handleBlur",
-        value: function handleBlur() {
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
+            }
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
+        }
+    }, {
+        key: "handleDone",
+        value: function handleDone() {
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
-            this.setState({ isFocused: false, touched: true });
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            console.log("REVERT TO", this.state.oldValue);
+
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                console.log("ON CHANGE", v);
+                var cast = v;
+                if (_underscore2.default.has(this.props.rules, "type")) {
+                    switch (this.props.rules.type) {
+                        case "integer":
+                            cast = v === "" ? null : parseInt(v, 10);
+                            break;
+                        case "number":
+                            cast = v === "" ? null : parseFloat(v, 10);
+                            break;
+                        //pass
+                        default:
+                    }
+                }
+                console.log("ON CHANGE >>", cast);
+                this.props.onChange(this.props.name, cast);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
         }
     }, {
         key: "render",
@@ -241,9 +283,33 @@ var TextArea = function (_React$Component) {
                 // Warning style
                 var style = isMissing ? { background: "floralwhite" } : {};
 
+                // Inline edit buttons
+                var doneStyle = {
+                    padding: 5,
+                    marginLeft: 5,
+                    fontSize: 12,
+                    height: 30,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "rgba(70, 129, 180, 0.19)",
+                    borderRadius: 2,
+                    color: "steelblue",
+                    cursor: "pointer"
+                };
+
+                var cancelStyle = {
+                    padding: 5,
+                    marginLeft: 3,
+                    marginBottom: 5,
+                    height: 30,
+                    color: "#AAA",
+                    cursor: "pointer",
+                    fontSize: 12
+                };
+
                 return _react2.default.createElement(
                     "div",
-                    { className: className },
+                    { className: className, style: { marginBottom: 10 } },
                     _react2.default.createElement("textarea", {
                         ref: function ref(input) {
                             _this3.textInput = input;
@@ -260,28 +326,43 @@ var TextArea = function (_React$Component) {
                         onFocus: function onFocus(e) {
                             return _this3.handleFocus(e);
                         },
-                        onBlur: function onBlur() {
-                            return _this3.handleBlur();
+                        onKeyUp: function onKeyUp(e) {
+                            return _this3.handleKeyPress(e);
                         }
                     }),
                     _react2.default.createElement(
                         "div",
                         { className: helpClassName },
                         msg
-                    )
+                    ),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 5 } },
+                        _react2.default.createElement(
+                            "span",
+                            { style: doneStyle, onClick: function onClick() {
+                                    return _this3.handleDone();
+                                } },
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            { style: cancelStyle, onClick: function onClick() {
+                                    return _this3.handleCancel();
+                                } },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
                 );
             } else {
                 var view = this.props.view || _renderers.textView;
-                var text = isMissing ? _react2.default.createElement("span", null) : _react2.default.createElement(
-                    "span",
-                    null,
-                    view(this.props.value)
-                );
+                var text = isMissing ? _react2.default.createElement("span", null) : view(this.props.value);
                 var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
                     return _this3.handleEditItem();
                 });
 
                 var _style = (0, _style2.inlineTextAreaStyle)(validationError, isMissing);
+
                 return _react2.default.createElement(
                     "div",
                     {
@@ -293,10 +374,12 @@ var TextArea = function (_React$Component) {
                             return _this3.handleMouseLeave();
                         }
                     },
-                    _react2.default.createElement("hr", { style: { marginTop: 3, marginBottom: 1 } }),
                     text,
-                    edit,
-                    _react2.default.createElement("hr", { style: { marginTop: 1, marginBottom: 3 } })
+                    _react2.default.createElement(
+                        "span",
+                        null,
+                        edit
+                    )
                 );
             }
         }

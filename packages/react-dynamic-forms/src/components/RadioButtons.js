@@ -37,14 +37,21 @@ class RadioButtons extends React.Component {
     }
 
     handleFocus() {
-        this.setState({ isFocused: true });
+        if (!this.state.isFocused) {
+            console.log("Setting oldValue", this.props.value);
+            this.setState({ isFocused: true, oldValue: this.props.value });
+        }
     }
 
-    handleBlur() {
-        if (this.props.onBlur) {
-            this.props.onBlur(this.props.name);
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
         }
-        this.setState({ isFocused: false, touched: true });
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
     }
 
     handleChange(v) {
@@ -52,17 +59,62 @@ class RadioButtons extends React.Component {
         if (this.props.onChange) {
             this.props.onChange(this.props.name, v);
         }
-        if (this.props.onBlur) {
-            this.props.onBlur(this.props.name);
-        }
     }
 
     handleEditItem() {
         this.props.onEditItem(this.props.name);
     }
 
+    handleDone() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
+    handleCancel() {
+        if (this.props.onChange) {
+            const v = this.state.oldValue;
+            this.props.onChange(this.props.name, v);
+        }
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
     render() {
         if (this.props.edit) {
+            const editStyle = {
+                borderStyle: "solid",
+                borderRadius: 2,
+                borderWidth: 1,
+                padding: 5,
+                borderColor: "#ececec",
+                marginBottom: 5
+            };
+
+            // Inline edit buttons
+            const doneStyle = {
+                padding: 5,
+                fontSize: 12,
+                height: 30,
+                borderStyle: "solid",
+                borderWidth: 1,
+                borderColor: "rgba(70, 129, 180, 0.19)",
+                borderRadius: 2,
+                color: "steelblue",
+                cursor: "pointer"
+            };
+
+            const cancelStyle = {
+                padding: 5,
+                marginLeft: 3,
+                marginBottom: 5,
+                height: 30,
+                color: "#AAA",
+                cursor: "pointer",
+                fontSize: 12
+            };
+
             const items = this.props.optionList.map((item, i) => {
                 const id = item.get("id");
                 const label = item.get("label");
@@ -82,7 +134,29 @@ class RadioButtons extends React.Component {
                     </div>
                 );
             });
-            return <div>{items}</div>;
+            return (
+                <div style={{ marginBottom: 10 }}>
+                    <div
+                        onFocus={e => this.handleFocus(e)}
+                        onKeyUp={e => this.handleKeyPress(e)}
+                        style={editStyle}
+                    >
+                        {items}
+                    </div>
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 5 }}>
+                            <span style={doneStyle} onClick={() => this.handleDone()}>
+                                DONE
+                            </span>
+                            <span style={cancelStyle} onClick={() => this.handleCancel()}>
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
+                </div>
+            );
         } else {
             let s = this.getCurrentChoiceLabel();
             const view = this.props.view || textView;

@@ -39,8 +39,6 @@ var _TextArea2 = _interopRequireDefault(_TextArea);
 
 var _Chooser = require("./components/Chooser.js");
 
-var _Chooser2 = _interopRequireDefault(_Chooser);
-
 var _DateEdit = require("./components/DateEdit");
 
 var _DateEdit2 = _interopRequireDefault(_DateEdit);
@@ -86,7 +84,7 @@ exports.formList = _formList2.default;
 exports.List = _List2.default;
 exports.TextEdit = _TextEdit2.default;
 exports.TextArea = _TextArea2.default;
-exports.Chooser = _Chooser2.default;
+exports.Chooser = _Chooser.ChooserGroup;
 exports.DateEdit = _DateEdit2.default;
 exports.TagsEdit = _TagsEdit2.default;
 exports.RadioButtons = _RadioButtons2.default;

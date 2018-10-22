@@ -49,6 +49,7 @@ export function inlineTextAreaStyle(hasError, isMissing) {
         background,
         height: "100%",
         width: "100%",
+        minHeight: 28,
         paddingLeft: LEFT_SPACING
     };
 }

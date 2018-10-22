@@ -71,15 +71,22 @@ var RadioButtons = function (_React$Component) {
     }, {
         key: "handleFocus",
         value: function handleFocus() {
-            this.setState({ isFocused: true });
+            if (!this.state.isFocused) {
+                console.log("Setting oldValue", this.props.value);
+                this.setState({ isFocused: true, oldValue: this.props.value });
+            }
         }
     }, {
-        key: "handleBlur",
-        value: function handleBlur() {
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
             }
-            this.setState({ isFocused: false, touched: true });
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
         }
     }, {
         key: "handleChange",
@@ -88,9 +95,6 @@ var RadioButtons = function (_React$Component) {
             if (this.props.onChange) {
                 this.props.onChange(this.props.name, v);
             }
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
-            }
         }
     }, {
         key: "handleEditItem",
@@ -98,11 +102,61 @@ var RadioButtons = function (_React$Component) {
             this.props.onEditItem(this.props.name);
         }
     }, {
+        key: "handleDone",
+        value: function handleDone() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                this.props.onChange(this.props.name, v);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this3 = this;
 
             if (this.props.edit) {
+                var editStyle = {
+                    borderStyle: "solid",
+                    borderRadius: 2,
+                    borderWidth: 1,
+                    padding: 5,
+                    borderColor: "#ececec",
+                    marginBottom: 5
+                };
+
+                // Inline edit buttons
+                var doneStyle = {
+                    padding: 5,
+                    fontSize: 12,
+                    height: 30,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "rgba(70, 129, 180, 0.19)",
+                    borderRadius: 2,
+                    color: "steelblue",
+                    cursor: "pointer"
+                };
+
+                var cancelStyle = {
+                    padding: 5,
+                    marginLeft: 3,
+                    marginBottom: 5,
+                    height: 30,
+                    color: "#AAA",
+                    cursor: "pointer",
+                    fontSize: 12
+                };
+
                 var items = this.props.optionList.map(function (item, i) {
                     var id = item.get("id");
                     var label = item.get("label");
@@ -128,8 +182,38 @@ var RadioButtons = function (_React$Component) {
                 });
                 return _react2.default.createElement(
                     "div",
-                    null,
-                    items
+                    { style: { marginBottom: 10 } },
+                    _react2.default.createElement(
+                        "div",
+                        {
+                            onFocus: function onFocus(e) {
+                                return _this3.handleFocus(e);
+                            },
+                            onKeyUp: function onKeyUp(e) {
+                                return _this3.handleKeyPress(e);
+                            },
+                            style: editStyle
+                        },
+                        items
+                    ),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 5 } },
+                        _react2.default.createElement(
+                            "span",
+                            { style: doneStyle, onClick: function onClick() {
+                                    return _this3.handleDone();
+                                } },
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            { style: cancelStyle, onClick: function onClick() {
+                                    return _this3.handleCancel();
+                                } },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
                 );
             } else {
                 var s = this.getCurrentChoiceLabel();

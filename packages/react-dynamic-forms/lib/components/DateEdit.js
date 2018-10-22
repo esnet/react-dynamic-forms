@@ -26,6 +26,10 @@ var _reactDatepicker = require("react-datepicker");
 
 var _reactDatepicker2 = _interopRequireDefault(_reactDatepicker);
 
+var _flexboxReact = require("flexbox-react");
+
+var _flexboxReact2 = _interopRequireDefault(_flexboxReact);
+
 var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
@@ -107,15 +111,19 @@ var DateEdit = function (_React$Component) {
     }, {
         key: "handleFocus",
         value: function handleFocus() {
-            this.setState({ isFocused: true });
+            this.setState({ isFocused: true, oldValue: this.props.value });
         }
     }, {
-        key: "handleBlur",
-        value: function handleBlur() {
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
             }
-            this.setState({ isFocused: false, hover: false, touched: true });
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
         }
     }, {
         key: "handleDateChange",
@@ -129,9 +137,6 @@ var DateEdit = function (_React$Component) {
             }
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
-            }
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
             }
         }
     }, {
@@ -148,6 +153,41 @@ var DateEdit = function (_React$Component) {
         key: "isMissing",
         value: function isMissing(v) {
             return this.props.required && !this.props.disabled && this.isEmpty(v);
+        }
+    }, {
+        key: "handleDone",
+        value: function handleDone() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            console.log("REVERT TO", this.state.oldValue);
+
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                console.log("ON CHANGE", v);
+                var cast = v;
+                if (_underscore2.default.has(this.props.rules, "type")) {
+                    switch (this.props.rules.type) {
+                        case "integer":
+                            cast = v === "" ? null : parseInt(v, 10);
+                            break;
+                        case "number":
+                            cast = v === "" ? null : parseFloat(v, 10);
+                            break;
+                        //pass
+                        default:
+                    }
+                }
+                console.log("ON CHANGE >>", cast);
+                this.props.onChange(this.props.name, cast);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
         }
     }, {
         key: "render",
@@ -167,32 +207,71 @@ var DateEdit = function (_React$Component) {
             }
 
             if (this.props.edit) {
+                // Inline edit buttons
+                var doneStyle = {
+                    padding: 5,
+                    marginLeft: 5,
+                    fontSize: 12,
+                    height: 30,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "rgba(70, 129, 180, 0.19)",
+                    borderRadius: 2,
+                    color: "steelblue",
+                    cursor: "pointer"
+                };
+
+                var cancelStyle = {
+                    padding: 5,
+                    marginLeft: 3,
+                    marginBottom: 5,
+                    height: 30,
+                    color: "#AAA",
+                    cursor: "pointer",
+                    fontSize: 12
+                };
+
                 return _react2.default.createElement(
-                    "div",
-                    null,
-                    _react2.default.createElement(
-                        "div",
-                        null,
-                        _react2.default.createElement(_reactDatepicker2.default, {
-                            key: "date",
-                            ref: function ref(input) {
-                                _this2.textInput = input;
-                            },
-                            className: className,
-                            disabled: this.props.disabled,
-                            placeholderText: this.props.placeholder,
-                            selected: selected,
-                            onChange: function onChange(v) {
-                                return _this2.handleDateChange(v);
-                            },
-                            onFocus: function onFocus(e) {
-                                return _this2.handleFocus(e);
-                            },
-                            onBlur: function onBlur() {
-                                return _this2.handleBlur();
-                            }
-                        })
-                    )
+                    _flexboxReact2.default,
+                    { flexDirection: "row", style: { width: "100%" } },
+                    _react2.default.createElement(_reactDatepicker2.default, {
+                        autofocus: true,
+                        key: "date",
+                        ref: function ref(input) {
+                            _this2.textInput = input;
+                        },
+                        className: className,
+                        disabled: this.props.disabled,
+                        placeholderText: this.props.placeholder,
+                        selected: selected,
+                        onChange: function onChange(v) {
+                            return _this2.handleDateChange(v);
+                        },
+                        onFocus: function onFocus(e) {
+                            return _this2.handleFocus(e);
+                        },
+                        onKeyUp: function onKeyUp(e) {
+                            return _this2.handleKeyPress(e);
+                        }
+                    }),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 5 } },
+                        _react2.default.createElement(
+                            "span",
+                            { style: doneStyle, onClick: function onClick() {
+                                    return _this2.handleDone();
+                                } },
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            { style: cancelStyle, onClick: function onClick() {
+                                    return _this2.handleCancel();
+                                } },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
                 );
             } else {
                 var view = this.props.view || (0, _renderers.dateView)("MM/DD/YYYY");

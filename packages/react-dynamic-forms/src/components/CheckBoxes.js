@@ -45,15 +45,20 @@ class CheckBoxes extends React.Component {
     }
 
     handleFocus() {
-        this.setState({ isFocused: true });
+        if (!this.state.isFocused) {
+            this.setState({ isFocused: true, oldValue: this.props.value });
+        }
     }
 
-    handleBlur() {
-        console.log("XXX BLUR");
-        if (this.props.onBlur) {
-            this.props.onBlur(this.props.name);
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
         }
-        this.setState({ isFocused: false, hover: false, touched: true });
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
     }
 
     handleChange(i) {
@@ -73,6 +78,22 @@ class CheckBoxes extends React.Component {
         this.props.onEditItem(this.props.name);
     }
 
+    handleDone() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
+    handleCancel() {
+        if (this.props.onChange) {
+            const v = this.state.oldValue;
+            this.props.onChange(this.props.name, v);
+        }
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
     isEmpty(value) {
         if (Immutable.List.isList(value)) {
             return value.size === 0;
@@ -84,8 +105,46 @@ class CheckBoxes extends React.Component {
         return this.props.required && !this.props.disabled && this.isEmpty(value);
     }
 
+    // border-style: solid;
+    // border-radius: 2px;
+    // border-width: 1px;
+    // padding: 5px;
+    // border-color: #ececec;
+
     render() {
         if (this.props.edit) {
+            const editStyle = {
+                borderStyle: "solid",
+                borderRadius: 2,
+                borderWidth: 1,
+                padding: 5,
+                borderColor: "#ececec",
+                marginBottom: 5
+            };
+
+            // Inline edit buttons
+            const doneStyle = {
+                padding: 5,
+                fontSize: 12,
+                height: 30,
+                borderStyle: "solid",
+                borderWidth: 1,
+                borderColor: "rgba(70, 129, 180, 0.19)",
+                borderRadius: 2,
+                color: "steelblue",
+                cursor: "pointer"
+            };
+
+            const cancelStyle = {
+                padding: 5,
+                marginLeft: 3,
+                marginBottom: 5,
+                height: 30,
+                color: "#AAA",
+                cursor: "pointer",
+                fontSize: 12
+            };
+
             const items = [];
             this.props.optionList.forEach((option, i) => {
                 items.push(
@@ -102,11 +161,27 @@ class CheckBoxes extends React.Component {
                 );
             });
 
-            // @TODO So apparently this will blur if you click a checkbox and then click another
-            //       checkbox...
             return (
-                <div onFocus={e => this.handleFocus(e)} onBlur={() => this.handleBlur()}>
-                    {items}
+                <div style={{ marginBottom: 5 }}>
+                    <div
+                        style={editStyle}
+                        onFocus={e => this.handleFocus(e)}
+                        onKeyUp={e => this.handleKeyPress(e)}
+                    >
+                        {items}
+                    </div>
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 5 }}>
+                            <span style={doneStyle} onClick={() => this.handleDone()}>
+                                DONE
+                            </span>
+                            <span style={cancelStyle} onClick={() => this.handleCancel()}>
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
                 </div>
             );
         } else {

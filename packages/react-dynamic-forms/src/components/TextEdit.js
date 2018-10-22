@@ -164,14 +164,21 @@ class TextEdit extends React.Component {
     }
 
     handleFocus() {
-        this.setState({ isFocused: true, oldValue: this.props.value });
+        if (!this.state.isFocused) {
+            console.log("Setting tag state to", this.props.value);
+            this.setState({ isFocused: true, oldValue: this.props.value });
+        }
     }
 
-    handleBlur() {
-        // if (this.props.onBlur) {
-        //     this.props.onBlur(this.props.name);
-        // }
-        this.setState({ isFocused: false, hover: false, touched: true });
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
+        }
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
     }
 
     handleDone() {
@@ -181,11 +188,8 @@ class TextEdit extends React.Component {
     }
 
     handleCancel() {
-        console.log("REVERT TO", this.state.oldValue);
-
         if (this.props.onChange) {
             const v = this.state.oldValue;
-            console.log("ON CHANGE", v);
             let cast = v;
             if (_.has(this.props.rules, "type")) {
                 switch (this.props.rules.type) {
@@ -199,7 +203,6 @@ class TextEdit extends React.Component {
                     default:
                 }
             }
-            console.log("ON CHANGE >>", cast);
             this.props.onChange(this.props.name, cast);
         }
         this.props.onBlur(this.props.name);
@@ -264,12 +267,12 @@ class TextEdit extends React.Component {
                             value={this.state.value}
                             onChange={e => this.handleChange(e)}
                             onFocus={e => this.handleFocus(e)}
-                            onBlur={() => this.handleBlur()}
+                            onKeyUp={e => this.handleKeyPress(e)}
                         />
                         <div className={helpClassName}>{msg}</div>
                     </div>
                     {this.props.selected ? (
-                        <span style={{ marginTop: 5 }}>
+                        <span style={{ marginTop: 3 }}>
                             <span style={doneStyle} onClick={() => this.handleDone()}>
                                 DONE
                             </span>

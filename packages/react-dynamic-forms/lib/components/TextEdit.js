@@ -223,15 +223,22 @@ var TextEdit = function (_React$Component) {
     }, {
         key: "handleFocus",
         value: function handleFocus() {
-            this.setState({ isFocused: true, oldValue: this.props.value });
+            if (!this.state.isFocused) {
+                console.log("Setting tag state to", this.props.value);
+                this.setState({ isFocused: true, oldValue: this.props.value });
+            }
         }
     }, {
-        key: "handleBlur",
-        value: function handleBlur() {
-            // if (this.props.onBlur) {
-            //     this.props.onBlur(this.props.name);
-            // }
-            this.setState({ isFocused: false, hover: false, touched: true });
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
+            }
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
         }
     }, {
         key: "handleDone",
@@ -243,11 +250,8 @@ var TextEdit = function (_React$Component) {
     }, {
         key: "handleCancel",
         value: function handleCancel() {
-            console.log("REVERT TO", this.state.oldValue);
-
             if (this.props.onChange) {
                 var v = this.state.oldValue;
-                console.log("ON CHANGE", v);
                 var cast = v;
                 if (_underscore2.default.has(this.props.rules, "type")) {
                     switch (this.props.rules.type) {
@@ -261,7 +265,6 @@ var TextEdit = function (_React$Component) {
                         default:
                     }
                 }
-                console.log("ON CHANGE >>", cast);
                 this.props.onChange(this.props.name, cast);
             }
             this.props.onBlur(this.props.name);
@@ -339,8 +342,8 @@ var TextEdit = function (_React$Component) {
                             onFocus: function onFocus(e) {
                                 return _this3.handleFocus(e);
                             },
-                            onBlur: function onBlur() {
-                                return _this3.handleBlur();
+                            onKeyUp: function onKeyUp(e) {
+                                return _this3.handleKeyPress(e);
                             }
                         }),
                         _react2.default.createElement(
@@ -351,7 +354,7 @@ var TextEdit = function (_React$Component) {
                     ),
                     this.props.selected ? _react2.default.createElement(
                         "span",
-                        { style: { marginTop: 5 } },
+                        { style: { marginTop: 3 } },
                         _react2.default.createElement(
                             "span",
                             { style: doneStyle, onClick: function onClick() {

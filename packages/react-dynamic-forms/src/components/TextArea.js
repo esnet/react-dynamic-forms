@@ -67,9 +67,9 @@ class TextArea extends React.Component {
         obj[this.props.name] = value;
 
         let properties = {};
-        properties[this.props.name] = this.props.rules;
+        properties[this.props.name] = this.props.validation;
 
-        const rules = this.props.rules ? { properties } : null;
+        const rules = this.props.validation ? { properties } : null;
         if (obj && rules) {
             const validation = validate(obj, rules, { cast: true });
             const name = this.props.name || "Value";
@@ -121,6 +121,7 @@ class TextArea extends React.Component {
     componentDidUpdate() {
         if (this.state.selectText) {
             this.textInput.focus();
+            this.textInput.select();
             this.setState({ selectText: false });
         }
     }
@@ -132,7 +133,6 @@ class TextArea extends React.Component {
         this.setState({ value }, () => {
             const missing = this.props.required && this.isEmpty(value);
             const { validationError } = this.getError(value);
-            let cast = value;
 
             // Callbacks
             if (this.props.onErrorCountChange) {
@@ -150,14 +150,53 @@ class TextArea extends React.Component {
     }
 
     handleFocus() {
-        this.setState({ isFocused: true });
+        if (!this.state.isFocused) {
+            this.setState({ isFocused: true, oldValue: this.props.value });
+        }
     }
 
-    handleBlur() {
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
+        }
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
+    }
+
+    handleDone() {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
-        this.setState({ isFocused: false, touched: true });
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
+    handleCancel() {
+        console.log("REVERT TO", this.state.oldValue);
+
+        if (this.props.onChange) {
+            const v = this.state.oldValue;
+            console.log("ON CHANGE", v);
+            let cast = v;
+            if (_.has(this.props.rules, "type")) {
+                switch (this.props.rules.type) {
+                    case "integer":
+                        cast = v === "" ? null : parseInt(v, 10);
+                        break;
+                    case "number":
+                        cast = v === "" ? null : parseFloat(v, 10);
+                        break;
+                    //pass
+                    default:
+                }
+            }
+            console.log("ON CHANGE >>", cast);
+            this.props.onChange(this.props.name, cast);
+        }
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     render() {
@@ -178,8 +217,32 @@ class TextArea extends React.Component {
             // Warning style
             const style = isMissing ? { background: "floralwhite" } : {};
 
+            // Inline edit buttons
+            const doneStyle = {
+                padding: 5,
+                marginLeft: 5,
+                fontSize: 12,
+                height: 30,
+                borderStyle: "solid",
+                borderWidth: 1,
+                borderColor: "rgba(70, 129, 180, 0.19)",
+                borderRadius: 2,
+                color: "steelblue",
+                cursor: "pointer"
+            };
+
+            const cancelStyle = {
+                padding: 5,
+                marginLeft: 3,
+                marginBottom: 5,
+                height: 30,
+                color: "#AAA",
+                cursor: "pointer",
+                fontSize: 12
+            };
+
             return (
-                <div className={className}>
+                <div className={className} style={{ marginBottom: 10 }}>
                     <textarea
                         ref={input => {
                             this.textInput = input;
@@ -192,29 +255,40 @@ class TextArea extends React.Component {
                         value={this.state.value}
                         onChange={e => this.handleChange(e)}
                         onFocus={e => this.handleFocus(e)}
-                        onBlur={() => this.handleBlur()}
+                        onKeyUp={e => this.handleKeyPress(e)}
                     />
                     <div className={helpClassName}>{msg}</div>
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 5 }}>
+                            <span style={doneStyle} onClick={() => this.handleDone()}>
+                                DONE
+                            </span>
+                            <span style={cancelStyle} onClick={() => this.handleCancel()}>
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
                 </div>
             );
         } else {
             const view = this.props.view || textView;
-            const text = isMissing ? <span /> : <span>{view(this.props.value)}</span>;
+            const text = isMissing ? <span /> : view(this.props.value);
             const edit = editAction(this.state.hover && this.props.allowEdit, () =>
                 this.handleEditItem()
             );
 
             const style = inlineTextAreaStyle(validationError, isMissing);
+
             return (
                 <div
                     style={style}
                     onMouseEnter={() => this.handleMouseEnter()}
                     onMouseLeave={() => this.handleMouseLeave()}
                 >
-                    <hr style={{ marginTop: 3, marginBottom: 1 }} />
                     {text}
-                    {edit}
-                    <hr style={{ marginTop: 1, marginBottom: 3 }} />
+                    <span>{edit}</span>
                 </div>
             );
         }

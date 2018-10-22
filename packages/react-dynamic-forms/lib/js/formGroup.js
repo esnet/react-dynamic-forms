@@ -76,8 +76,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * users code.
  */
 
-function formGroup(Control, hideEdit) {
-    return function (_React$Component) {
+function formGroup(Control, name) {
+    var wrapped = function (_React$Component) {
         _inherits(Group, _React$Component);
 
         function Group(props) {
@@ -320,4 +320,6 @@ function formGroup(Control, hideEdit) {
 
         return Group;
     }(_react2.default.Component);
+    wrapped.displayName = name;
+    return wrapped;
 }

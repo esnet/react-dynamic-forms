@@ -83,16 +83,21 @@ var CheckBoxes = function (_React$Component) {
     }, {
         key: "handleFocus",
         value: function handleFocus() {
-            this.setState({ isFocused: true });
+            if (!this.state.isFocused) {
+                this.setState({ isFocused: true, oldValue: this.props.value });
+            }
         }
     }, {
-        key: "handleBlur",
-        value: function handleBlur() {
-            console.log("XXX BLUR");
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
             }
-            this.setState({ isFocused: false, hover: false, touched: true });
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
         }
     }, {
         key: "handleChange",
@@ -116,6 +121,24 @@ var CheckBoxes = function (_React$Component) {
             this.props.onEditItem(this.props.name);
         }
     }, {
+        key: "handleDone",
+        value: function handleDone() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                this.props.onChange(this.props.name, v);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
         key: "isEmpty",
         value: function isEmpty(value) {
             if (_immutable2.default.List.isList(value)) {
@@ -130,12 +153,51 @@ var CheckBoxes = function (_React$Component) {
 
             return this.props.required && !this.props.disabled && this.isEmpty(value);
         }
+
+        // border-style: solid;
+        // border-radius: 2px;
+        // border-width: 1px;
+        // padding: 5px;
+        // border-color: #ececec;
+
     }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             if (this.props.edit) {
+                var editStyle = {
+                    borderStyle: "solid",
+                    borderRadius: 2,
+                    borderWidth: 1,
+                    padding: 5,
+                    borderColor: "#ececec",
+                    marginBottom: 5
+                };
+
+                // Inline edit buttons
+                var doneStyle = {
+                    padding: 5,
+                    fontSize: 12,
+                    height: 30,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "rgba(70, 129, 180, 0.19)",
+                    borderRadius: 2,
+                    color: "steelblue",
+                    cursor: "pointer"
+                };
+
+                var cancelStyle = {
+                    padding: 5,
+                    marginLeft: 3,
+                    marginBottom: 5,
+                    height: 30,
+                    color: "#AAA",
+                    cursor: "pointer",
+                    fontSize: 12
+                };
+
                 var items = [];
                 this.props.optionList.forEach(function (option, i) {
                     items.push(_react2.default.createElement(
@@ -156,16 +218,40 @@ var CheckBoxes = function (_React$Component) {
                     ));
                 });
 
-                // @TODO So apparently this will blur if you click a checkbox and then click another
-                //       checkbox...
                 return _react2.default.createElement(
                     "div",
-                    { onFocus: function onFocus(e) {
-                            return _this2.handleFocus(e);
-                        }, onBlur: function onBlur() {
-                            return _this2.handleBlur();
-                        } },
-                    items
+                    { style: { marginBottom: 5 } },
+                    _react2.default.createElement(
+                        "div",
+                        {
+                            style: editStyle,
+                            onFocus: function onFocus(e) {
+                                return _this2.handleFocus(e);
+                            },
+                            onKeyUp: function onKeyUp(e) {
+                                return _this2.handleKeyPress(e);
+                            }
+                        },
+                        items
+                    ),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 5 } },
+                        _react2.default.createElement(
+                            "span",
+                            { style: doneStyle, onClick: function onClick() {
+                                    return _this2.handleDone();
+                                } },
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            { style: cancelStyle, onClick: function onClick() {
+                                    return _this2.handleCancel();
+                                } },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
                 );
             } else {
                 var view = this.props.view || _renderers.textView;

@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.ChooserGroup = exports.Chooser = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -59,7 +60,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * React Form control to select an item from a list.
  */
-var Chooser = function (_React$Component) {
+var Chooser = exports.Chooser = function (_React$Component) {
     _inherits(Chooser, _React$Component);
 
     function Chooser(props) {
@@ -166,7 +167,7 @@ var Chooser = function (_React$Component) {
                 this.props.onBlur(this.props.name);
             }
 
-            this.setState({ hover: false });
+            this.setState({ isFocused: false, hover: false });
         }
     }, {
         key: "handleEditItem",
@@ -358,43 +359,48 @@ var Chooser = function (_React$Component) {
 
 Chooser.propTypes = {
     /**
-     * choiceList* - Pass in the available list of options as a list of
-     * objects. For example:
-     * ```
-     * [
-     *  {id: 1: label: "cat"},
-     *  {id: 2: label: "dog"},
-     *  ...
-     * ]
-     * ```
+     * The identifier of the field being edited. References back into
+     * the Form's Schema for additional properties of this field
      */
-    choiceList: _propTypes2.default.object,
+    field: _propTypes2.default.string.isRequired,
 
+    /**
+     * Pass in the available list of options as a Immutable.List of objects. Each
+     * object contains a "id" and the user visible "label". For example:
+     *
+     * Immutable.fromJS([
+     *     { id: 1, label: "Dog" },
+     *     { id: 2, label: "Duck" },
+     *     { id: 3, label: "Cat" }
+     * ]);
+     *
+     */
+    choiceList: _propTypes2.default.object.isRequired,
+
+    /**
+     * If the chooser should be shown as disabled
+     */
     disabled: _propTypes2.default.bool,
 
     /**
-     * disableSearch* - If true the chooser becomes a simple pulldown menu
-     * rather than allowing the user to type into it.
+     * If true the chooser becomes a simple pulldown menu
+     * rather than allowing the user to type into it to search
+     * though the entries
      */
     disableSearch: _propTypes2.default.bool,
 
     /**
-     * width - Customize the horizontal size of the Chooser
+     * Customize the horizontal size of the Chooser
      */
     width: _propTypes2.default.number,
 
     /**
-     * field - The identifier of the field being edited
-     */
-    field: _propTypes2.default.string,
-
-    /**
-     * allowSingleDeselect - Add a [x] icon to the chooser allowing the user to clear the selected value
+     * Add a [x] icon to the chooser allowing the user to clear the selected value
      */
     allowSingleDeselect: _propTypes2.default.bool,
 
     /**
-     * searchContains - Can be "any" or "start", indicating how the search is matched within the items (anywhere, or starting with)
+     * Can be "any" or "start", indicating how the search is matched within the items (anywhere, or starting with)
      */
     searchContains: _propTypes2.default.oneOf(["any", "start"])
 };
@@ -407,4 +413,4 @@ Chooser.defaultProps = {
     width: 300
 };
 
-exports.default = (0, _formGroup2.default)(Chooser);
+var ChooserGroup = exports.ChooserGroup = (0, _formGroup2.default)(Chooser, "Chooser");
