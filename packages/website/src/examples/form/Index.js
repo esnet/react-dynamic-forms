@@ -238,14 +238,14 @@ class form extends React.Component {
                 >
                     <Chooser
                         field="type"
-                        width={150}
+                        width={250}
                         choiceList={availableTypes}
                         disableSearch={true}
                     />
-                    <TextEdit field="first_name" width={300} />
-                    <TextEdit field="last_name" width={300} />
-                    <TextEdit field="email" width={400} view={linkView} />
-                    <DateEdit field="birthdate" width={100} />
+                    <TextEdit field="first_name" width={250} />
+                    <TextEdit field="last_name" width={250} />
+                    <TextEdit field="email" width={350} view={linkView} />
+                    <DateEdit field="birthdate" width={200} />
                     <CheckBoxes field="languages" optionList={availableLanguages} />
                     <RadioButtons field="options" optionList={availableEmailOptions} />
                     <TagsEdit
@@ -285,7 +285,7 @@ class form extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                        <h3>Basic form</h3>
+                        <h3>Contact form example</h3>
                         <div style={{ marginBottom: 20 }}>{description}</div>
                     </div>
                 </div>
@@ -300,15 +300,16 @@ class form extends React.Component {
                     </div>
                     <div className="col-md-4">
                         <b>STATE:</b>
-                        <pre style={{ borderLeftColor: "steelblue" }}>
-                            value = {JSON.stringify(this.state.value.toJSON(), null, 3)}
-                        </pre>
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}
                         </pre>
                         <pre style={{ borderLeftColor: "orange" }}>
                             {`hasMissing: ${this.state.hasMissing}`}
                         </pre>
+                        <pre style={{ borderLeftColor: "steelblue" }}>
+                            value = {JSON.stringify(this.state.value.toJSON(), null, 3)}
+                        </pre>
+
                         <button className="btn btn-default btn-sm" onClick={() => this.random()}>
                             Random
                         </button>

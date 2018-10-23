@@ -224,7 +224,6 @@ var TextEdit = function (_React$Component) {
         key: "handleFocus",
         value: function handleFocus() {
             if (!this.state.isFocused) {
-                console.log("Setting tag state to", this.props.value);
                 this.setState({ isFocused: true, oldValue: this.props.value });
             }
         }
@@ -246,6 +245,7 @@ var TextEdit = function (_React$Component) {
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
+            this.setState({ isFocused: false, hover: false, oldValue: null });
         }
     }, {
         key: "handleCancel",
@@ -296,36 +296,12 @@ var TextEdit = function (_React$Component) {
                 var style = isMissing ? { background: _style2.colors.MISSING_COLOR_BG } : {};
                 var type = this.props.type || "text";
 
-                // Inline edit buttons
-                var doneStyle = {
-                    padding: 5,
-                    marginLeft: 5,
-                    fontSize: 12,
-                    height: 30,
-                    borderStyle: "solid",
-                    borderWidth: 1,
-                    borderColor: "rgba(70, 129, 180, 0.19)",
-                    borderRadius: 2,
-                    color: "steelblue",
-                    cursor: "pointer"
-                };
-
-                var cancelStyle = {
-                    padding: 5,
-                    marginLeft: 3,
-                    marginBottom: 5,
-                    height: 30,
-                    color: "#AAA",
-                    cursor: "pointer",
-                    fontSize: 12
-                };
-
                 return _react2.default.createElement(
                     _flexboxReact2.default,
                     { flexDirection: "row", style: { width: "100%" } },
                     _react2.default.createElement(
                         "div",
-                        { className: className },
+                        { className: className, style: { width: "100%" } },
                         _react2.default.createElement("input", {
                             ref: function ref(input) {
                                 _this3.textInput = input;
@@ -357,16 +333,22 @@ var TextEdit = function (_React$Component) {
                         { style: { marginTop: 3 } },
                         _react2.default.createElement(
                             "span",
-                            { style: doneStyle, onClick: function onClick() {
+                            {
+                                style: (0, _style2.inlineDoneButtonStyle)(5),
+                                onClick: function onClick() {
                                     return _this3.handleDone();
-                                } },
+                                }
+                            },
                             "DONE"
                         ),
                         _react2.default.createElement(
                             "span",
-                            { style: cancelStyle, onClick: function onClick() {
+                            {
+                                style: (0, _style2.inlineCancelButtonStyle)(),
+                                onClick: function onClick() {
                                     return _this3.handleCancel();
-                                } },
+                                }
+                            },
                             "CANCEL"
                         )
                     ) : _react2.default.createElement("div", null)

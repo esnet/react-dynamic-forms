@@ -14,8 +14,37 @@ const LEFT_SPACING = 3;
 export const colors = {
     ERROR_COLOR: "#b94a48",
     ERROR_COLOR_BG: "#fff0f3",
-    MISSING_COLOR_BG: "floralwhite"
+    MISSING_COLOR_BG: "floralwhite",
+    PRIMARY_ACTION_COLOR: "steelblue",
+    SECONDARY_ACTION_COLOR: "#AAA"
 };
+
+export function inlineDoneButtonStyle(marginLeft) {
+    return {
+        padding: 5,
+        marginLeft,
+        fontSize: 12,
+        height: 30,
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderColor: "rgba(70, 129, 180, 0.19)",
+        borderRadius: 2,
+        color: colors.PRIMARY_ACTION_COLOR,
+        cursor: "pointer"
+    };
+}
+
+export function inlineCancelButtonStyle() {
+    return {
+        padding: 5,
+        marginLeft: 3,
+        marginBottom: 5,
+        height: 30,
+        color: colors.SECONDARY_ACTION_COLOR,
+        cursor: "pointer",
+        fontSize: 12
+    };
+}
 
 export function inlineStyle(hasError, isMissing) {
     let color = "inherited";

@@ -93,7 +93,7 @@ export default function formGroup(Control, name) {
             // Control
             //
 
-            const controlWidth = width ? `${width}px` : "100%";
+            const controlWidth = width ? width : "100%";
             const control = (
                 <div
                     style={{

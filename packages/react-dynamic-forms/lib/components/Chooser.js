@@ -19,6 +19,10 @@ var _propTypes = require("prop-types");
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _flexboxReact = require("flexbox-react");
+
+var _flexboxReact2 = _interopRequireDefault(_flexboxReact);
+
 var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
@@ -86,15 +90,27 @@ var Chooser = exports.Chooser = function (_React$Component) {
     }, {
         key: "handleFocus",
         value: function handleFocus() {
-            this.setState({ isFocused: true });
+            if (!this.state.isFocused) {
+                this.setState({ isFocused: true, oldValue: this.props.value });
+            }
         }
     }, {
-        key: "handleBlur",
-        value: function handleBlur() {
+        key: "handleDone",
+        value: function handleDone() {
             if (this.props.onBlur) {
                 this.props.onBlur(this.props.name);
             }
-            this.setState({ isFocused: false, hover: false });
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                this.props.onChange(this.props.name, v);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
         }
     }, {
         key: "isEmpty",
@@ -163,11 +179,6 @@ var Chooser = exports.Chooser = function (_React$Component) {
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
             }
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
-            }
-
-            this.setState({ isFocused: false, hover: false });
         }
     }, {
         key: "handleEditItem",
@@ -243,86 +254,100 @@ var Chooser = exports.Chooser = function (_React$Component) {
 
             if (this.props.edit) {
                 var className = "";
-                var chooserStyle = { marginBottom: 10 };
+                var chooserStyle = { marginBottom: 10, width: "100%" };
                 var clearable = this.props.allowSingleDeselect;
                 var searchable = !this.props.disableSearch;
 
                 var matchPos = this.props.searchContains ? "any" : "start";
 
+                var ctl = void 0;
                 if (searchable) {
                     var options = this.getFilteredOptionList(null);
                     var labelList = _underscore2.default.map(options, function (item) {
                         return item.label;
                     });
                     var key = labelList + "--" + choice;
-                    return _react2.default.createElement(
-                        "div",
-                        {
-                            className: className,
-                            style: chooserStyle,
-                            onFocus: function onFocus(e) {
-                                return _this5.handleFocus(e);
-                            },
-                            onBlur: function onBlur() {
-                                return _this5.handleBlur();
-                            }
+                    ctl = _react2.default.createElement(_reactVirtualizedSelect2.default, {
+                        ref: function ref(chooser) {
+                            _this5.chooser = chooser;
                         },
-                        _react2.default.createElement(_reactVirtualizedSelect2.default, {
-                            ref: function ref(chooser) {
-                                _this5.chooser = chooser;
-                            },
-                            className: isMissing ? "is-missing" : "",
-                            key: key,
-                            value: choice,
-                            options: options,
-                            openOnFocus: true,
-                            disabled: this.props.disabled,
-                            searchable: true,
-                            matchPos: matchPos,
-                            placeholder: this.props.placeholder,
-                            onChange: function onChange(v) {
-                                return _this5.handleChange(v);
-                            }
-                        })
-                    );
+                        className: isMissing ? "is-missing" : "",
+                        key: key,
+                        value: choice,
+                        options: options,
+                        openOnFocus: true,
+                        disabled: this.props.disabled,
+                        searchable: true,
+                        matchPos: matchPos,
+                        placeholder: this.props.placeholder,
+                        onChange: function onChange(v) {
+                            return _this5.handleChange(v);
+                        }
+                    });
                 } else {
                     var _options = this.getOptionList();
                     var _labelList = _underscore2.default.map(_options, function (item) {
                         return item.label;
                     });
                     var _key = _labelList + "--" + choice;
-                    return _react2.default.createElement(
+                    ctl = _react2.default.createElement(_reactVirtualizedSelect2.default, {
+                        ref: function ref(chooser) {
+                            _this5.chooser = chooser;
+                        },
+                        className: isMissing ? "is-missing" : "",
+                        key: _key,
+                        value: choice,
+                        options: _options,
+                        openOnFocus: true,
+                        disabled: this.props.disabled,
+                        searchable: false,
+                        matchPos: matchPos,
+                        placeholder: this.props.placeholder,
+                        clearable: clearable,
+                        onChange: function onChange(v) {
+                            return _this5.handleChange(v);
+                        }
+                    });
+                }
+                return _react2.default.createElement(
+                    _flexboxReact2.default,
+                    { flexDirection: "row", style: { width: "100%" } },
+                    _react2.default.createElement(
                         "div",
                         {
                             className: className,
                             style: chooserStyle,
                             onFocus: function onFocus(e) {
                                 return _this5.handleFocus(e);
-                            },
-                            onBlur: function onBlur() {
-                                return _this5.handleBlur();
                             }
                         },
-                        _react2.default.createElement(_reactVirtualizedSelect2.default, {
-                            ref: function ref(chooser) {
-                                _this5.chooser = chooser;
+                        ctl
+                    ),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 5 } },
+                        _react2.default.createElement(
+                            "span",
+                            {
+                                style: (0, _style.inlineDoneButtonStyle)(5),
+                                onClick: function onClick() {
+                                    return _this5.handleDone();
+                                }
                             },
-                            className: isMissing ? "is-missing" : "",
-                            key: _key,
-                            value: choice,
-                            options: _options,
-                            openOnFocus: true,
-                            disabled: this.props.disabled,
-                            searchable: false,
-                            matchPos: matchPos,
-                            placeholder: this.props.placeholder,
-                            clearable: clearable,
-                            onChange: function onChange(v) {
-                                return _this5.handleChange(v);
-                            }
-                        })
-                    );
-                }
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            {
+                                style: (0, _style.inlineCancelButtonStyle)(),
+                                onClick: function onClick() {
+                                    return _this5.handleCancel();
+                                }
+                            },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
+                );
             } else {
                 var s = this.getCurrentChoiceLabel();
                 var view = this.props.view || _renderers.textView;

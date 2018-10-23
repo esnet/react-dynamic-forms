@@ -11,11 +11,12 @@
 import React from "react";
 import _ from "underscore";
 import PropTypes from "prop-types";
+import Flexbox from "flexbox-react";
 
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";
 import { editAction } from "../js/actions";
-import { inlineChooserStyle } from "../js/style";
+import { inlineChooserStyle, inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
 import "react-select/dist/react-select.css";
 import "react-virtualized/styles.css";
@@ -44,14 +45,25 @@ export class Chooser extends React.Component {
     }
 
     handleFocus() {
-        this.setState({ isFocused: true });
+        if (!this.state.isFocused) {
+            this.setState({ isFocused: true, oldValue: this.props.value });
+        }
     }
 
-    handleBlur() {
+    handleDone() {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
-        this.setState({ isFocused: false, hover: false });
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
+    handleCancel() {
+        if (this.props.onChange) {
+            const v = this.state.oldValue;
+            this.props.onChange(this.props.name, v);
+        }
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     isEmpty(value) {
@@ -124,11 +136,6 @@ export class Chooser extends React.Component {
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
         }
-        if (this.props.onBlur) {
-            this.props.onBlur(this.props.name);
-        }
-
-        this.setState({ isFocused: false, hover: false });
     }
 
     handleEditItem() {
@@ -193,70 +200,86 @@ export class Chooser extends React.Component {
 
         if (this.props.edit) {
             let className = "";
-            const chooserStyle = { marginBottom: 10 };
+            const chooserStyle = { marginBottom: 10, width: "100%" };
             const clearable = this.props.allowSingleDeselect;
             const searchable = !this.props.disableSearch;
 
             const matchPos = this.props.searchContains ? "any" : "start";
 
+            let ctl;
             if (searchable) {
                 const options = this.getFilteredOptionList(null);
                 const labelList = _.map(options, item => item.label);
                 const key = `${labelList}--${choice}`;
-                return (
-                    <div
-                        className={className}
-                        style={chooserStyle}
-                        onFocus={e => this.handleFocus(e)}
-                        onBlur={() => this.handleBlur()}
-                    >
-                        <VirtualizedSelect
-                            ref={chooser => {
-                                this.chooser = chooser;
-                            }}
-                            className={isMissing ? "is-missing" : ""}
-                            key={key}
-                            value={choice}
-                            options={options}
-                            openOnFocus={true}
-                            disabled={this.props.disabled}
-                            searchable={true}
-                            matchPos={matchPos}
-                            placeholder={this.props.placeholder}
-                            onChange={v => this.handleChange(v)}
-                        />
-                    </div>
+                ctl = (
+                    <VirtualizedSelect
+                        ref={chooser => {
+                            this.chooser = chooser;
+                        }}
+                        className={isMissing ? "is-missing" : ""}
+                        key={key}
+                        value={choice}
+                        options={options}
+                        openOnFocus={true}
+                        disabled={this.props.disabled}
+                        searchable={true}
+                        matchPos={matchPos}
+                        placeholder={this.props.placeholder}
+                        onChange={v => this.handleChange(v)}
+                    />
                 );
             } else {
                 const options = this.getOptionList();
                 const labelList = _.map(options, item => item.label);
                 const key = `${labelList}--${choice}`;
-                return (
+                ctl = (
+                    <VirtualizedSelect
+                        ref={chooser => {
+                            this.chooser = chooser;
+                        }}
+                        className={isMissing ? "is-missing" : ""}
+                        key={key}
+                        value={choice}
+                        options={options}
+                        openOnFocus={true}
+                        disabled={this.props.disabled}
+                        searchable={false}
+                        matchPos={matchPos}
+                        placeholder={this.props.placeholder}
+                        clearable={clearable}
+                        onChange={v => this.handleChange(v)}
+                    />
+                );
+            }
+            return (
+                <Flexbox flexDirection="row" style={{ width: "100%" }}>
                     <div
                         className={className}
                         style={chooserStyle}
                         onFocus={e => this.handleFocus(e)}
-                        onBlur={() => this.handleBlur()}
                     >
-                        <VirtualizedSelect
-                            ref={chooser => {
-                                this.chooser = chooser;
-                            }}
-                            className={isMissing ? "is-missing" : ""}
-                            key={key}
-                            value={choice}
-                            options={options}
-                            openOnFocus={true}
-                            disabled={this.props.disabled}
-                            searchable={false}
-                            matchPos={matchPos}
-                            placeholder={this.props.placeholder}
-                            clearable={clearable}
-                            onChange={v => this.handleChange(v)}
-                        />
+                        {ctl}
                     </div>
-                );
-            }
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 5 }}>
+                            <span
+                                style={inlineDoneButtonStyle(5)}
+                                onClick={() => this.handleDone()}
+                            >
+                                DONE
+                            </span>
+                            <span
+                                style={inlineCancelButtonStyle()}
+                                onClick={() => this.handleCancel()}
+                            >
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
+                </Flexbox>
+            );
         } else {
             let s = this.getCurrentChoiceLabel();
             const view = this.props.view || textView;

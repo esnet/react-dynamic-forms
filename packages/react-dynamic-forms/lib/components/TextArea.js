@@ -234,11 +234,8 @@ var TextArea = function (_React$Component) {
     }, {
         key: "handleCancel",
         value: function handleCancel() {
-            console.log("REVERT TO", this.state.oldValue);
-
             if (this.props.onChange) {
                 var v = this.state.oldValue;
-                console.log("ON CHANGE", v);
                 var cast = v;
                 if (_underscore2.default.has(this.props.rules, "type")) {
                     switch (this.props.rules.type) {
@@ -252,7 +249,6 @@ var TextArea = function (_React$Component) {
                         default:
                     }
                 }
-                console.log("ON CHANGE >>", cast);
                 this.props.onChange(this.props.name, cast);
             }
             this.props.onBlur(this.props.name);
@@ -282,30 +278,6 @@ var TextArea = function (_React$Component) {
 
                 // Warning style
                 var style = isMissing ? { background: "floralwhite" } : {};
-
-                // Inline edit buttons
-                var doneStyle = {
-                    padding: 5,
-                    marginLeft: 5,
-                    fontSize: 12,
-                    height: 30,
-                    borderStyle: "solid",
-                    borderWidth: 1,
-                    borderColor: "rgba(70, 129, 180, 0.19)",
-                    borderRadius: 2,
-                    color: "steelblue",
-                    cursor: "pointer"
-                };
-
-                var cancelStyle = {
-                    padding: 5,
-                    marginLeft: 3,
-                    marginBottom: 5,
-                    height: 30,
-                    color: "#AAA",
-                    cursor: "pointer",
-                    fontSize: 12
-                };
 
                 return _react2.default.createElement(
                     "div",
@@ -340,16 +312,22 @@ var TextArea = function (_React$Component) {
                         { style: { marginTop: 5 } },
                         _react2.default.createElement(
                             "span",
-                            { style: doneStyle, onClick: function onClick() {
+                            {
+                                style: (0, _style2.inlineDoneButtonStyle)(0),
+                                onClick: function onClick() {
                                     return _this3.handleDone();
-                                } },
+                                }
+                            },
                             "DONE"
                         ),
                         _react2.default.createElement(
                             "span",
-                            { style: cancelStyle, onClick: function onClick() {
+                            {
+                                style: (0, _style2.inlineCancelButtonStyle)(),
+                                onClick: function onClick() {
                                     return _this3.handleCancel();
-                                } },
+                                }
+                            },
                             "CANCEL"
                         )
                     ) : _react2.default.createElement("div", null)

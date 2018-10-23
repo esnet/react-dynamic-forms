@@ -15,7 +15,7 @@ import Immutable from "immutable";
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";
 import { editAction } from "../js/actions";
-import { inlineStyle } from "../js/style";
+import { inlineStyle, inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
 /**
  * Form control to select multiple items from a list,
@@ -122,29 +122,6 @@ class CheckBoxes extends React.Component {
                 marginBottom: 5
             };
 
-            // Inline edit buttons
-            const doneStyle = {
-                padding: 5,
-                fontSize: 12,
-                height: 30,
-                borderStyle: "solid",
-                borderWidth: 1,
-                borderColor: "rgba(70, 129, 180, 0.19)",
-                borderRadius: 2,
-                color: "steelblue",
-                cursor: "pointer"
-            };
-
-            const cancelStyle = {
-                padding: 5,
-                marginLeft: 3,
-                marginBottom: 5,
-                height: 30,
-                color: "#AAA",
-                cursor: "pointer",
-                fontSize: 12
-            };
-
             const items = [];
             this.props.optionList.forEach((option, i) => {
                 items.push(
@@ -172,10 +149,16 @@ class CheckBoxes extends React.Component {
                     </div>
                     {this.props.selected ? (
                         <span style={{ marginTop: 5 }}>
-                            <span style={doneStyle} onClick={() => this.handleDone()}>
+                            <span
+                                style={inlineDoneButtonStyle(0)}
+                                onClick={() => this.handleDone()}
+                            >
                                 DONE
                             </span>
-                            <span style={cancelStyle} onClick={() => this.handleCancel()}>
+                            <span
+                                style={inlineCancelButtonStyle()}
+                                onClick={() => this.handleCancel()}
+                            >
                                 CANCEL
                             </span>
                         </span>

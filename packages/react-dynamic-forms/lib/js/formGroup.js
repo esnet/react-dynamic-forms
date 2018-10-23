@@ -145,7 +145,7 @@ function formGroup(Control, name) {
                 // Control
                 //
 
-                var controlWidth = width ? width + "px" : "100%";
+                var controlWidth = width ? width : "100%";
                 var control = _react2.default.createElement(
                     "div",
                     {

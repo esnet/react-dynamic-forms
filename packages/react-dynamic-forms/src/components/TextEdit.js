@@ -16,7 +16,7 @@ import Flexbox from "flexbox-react";
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";
 import { editAction } from "../js/actions";
-import { inlineStyle, colors } from "../js/style";
+import { inlineStyle, inlineDoneButtonStyle, inlineCancelButtonStyle, colors } from "../js/style";
 
 import "../css/textedit.css";
 
@@ -165,7 +165,6 @@ class TextEdit extends React.Component {
 
     handleFocus() {
         if (!this.state.isFocused) {
-            console.log("Setting tag state to", this.props.value);
             this.setState({ isFocused: true, oldValue: this.props.value });
         }
     }
@@ -185,6 +184,7 @@ class TextEdit extends React.Component {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     handleCancel() {
@@ -228,33 +228,9 @@ class TextEdit extends React.Component {
             const style = isMissing ? { background: colors.MISSING_COLOR_BG } : {};
             const type = this.props.type || "text";
 
-            // Inline edit buttons
-            const doneStyle = {
-                padding: 5,
-                marginLeft: 5,
-                fontSize: 12,
-                height: 30,
-                borderStyle: "solid",
-                borderWidth: 1,
-                borderColor: "rgba(70, 129, 180, 0.19)",
-                borderRadius: 2,
-                color: "steelblue",
-                cursor: "pointer"
-            };
-
-            const cancelStyle = {
-                padding: 5,
-                marginLeft: 3,
-                marginBottom: 5,
-                height: 30,
-                color: "#AAA",
-                cursor: "pointer",
-                fontSize: 12
-            };
-
             return (
                 <Flexbox flexDirection="row" style={{ width: "100%" }}>
-                    <div className={className}>
+                    <div className={className} style={{ width: "100%" }}>
                         <input
                             ref={input => {
                                 this.textInput = input;
@@ -273,10 +249,16 @@ class TextEdit extends React.Component {
                     </div>
                     {this.props.selected ? (
                         <span style={{ marginTop: 3 }}>
-                            <span style={doneStyle} onClick={() => this.handleDone()}>
+                            <span
+                                style={inlineDoneButtonStyle(5)}
+                                onClick={() => this.handleDone()}
+                            >
                                 DONE
                             </span>
-                            <span style={cancelStyle} onClick={() => this.handleCancel()}>
+                            <span
+                                style={inlineCancelButtonStyle()}
+                                onClick={() => this.handleCancel()}
+                            >
                                 CANCEL
                             </span>
                         </span>

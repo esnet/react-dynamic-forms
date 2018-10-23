@@ -134,29 +134,6 @@ var RadioButtons = function (_React$Component) {
                     marginBottom: 5
                 };
 
-                // Inline edit buttons
-                var doneStyle = {
-                    padding: 5,
-                    fontSize: 12,
-                    height: 30,
-                    borderStyle: "solid",
-                    borderWidth: 1,
-                    borderColor: "rgba(70, 129, 180, 0.19)",
-                    borderRadius: 2,
-                    color: "steelblue",
-                    cursor: "pointer"
-                };
-
-                var cancelStyle = {
-                    padding: 5,
-                    marginLeft: 3,
-                    marginBottom: 5,
-                    height: 30,
-                    color: "#AAA",
-                    cursor: "pointer",
-                    fontSize: 12
-                };
-
                 var items = this.props.optionList.map(function (item, i) {
                     var id = item.get("id");
                     var label = item.get("label");
@@ -201,16 +178,22 @@ var RadioButtons = function (_React$Component) {
                         { style: { marginTop: 5 } },
                         _react2.default.createElement(
                             "span",
-                            { style: doneStyle, onClick: function onClick() {
+                            {
+                                style: (0, _style.inlineDoneButtonStyle)(0),
+                                onClick: function onClick() {
                                     return _this3.handleDone();
-                                } },
+                                }
+                            },
                             "DONE"
                         ),
                         _react2.default.createElement(
                             "span",
-                            { style: cancelStyle, onClick: function onClick() {
+                            {
+                                style: (0, _style.inlineCancelButtonStyle)(),
+                                onClick: function onClick() {
                                     return _this3.handleCancel();
-                                } },
+                                }
+                            },
                             "CANCEL"
                         )
                     ) : _react2.default.createElement("div", null)
