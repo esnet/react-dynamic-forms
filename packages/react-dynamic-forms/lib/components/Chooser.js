@@ -137,7 +137,7 @@ var Chooser = exports.Chooser = function (_React$Component) {
     }, {
         key: "componentWillReceiveProps",
         value: function componentWillReceiveProps(nextProps) {
-            if (this.props.edit !== nextProps.edit && nextProps.edit === true) {
+            if (nextProps.selected && this.props.edit !== nextProps.edit && nextProps.edit === true) {
                 this.setState({ focusChooser: true });
             }
             if (this.props.value !== nextProps.value || !this.props.value && nextProps.value || this.props.value && !nextProps.value) {

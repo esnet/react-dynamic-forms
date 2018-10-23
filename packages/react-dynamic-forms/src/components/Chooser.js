@@ -89,7 +89,7 @@ export class Chooser extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.edit !== nextProps.edit && nextProps.edit === true) {
+        if (nextProps.selected && this.props.edit !== nextProps.edit && nextProps.edit === true) {
             this.setState({ focusChooser: true });
         }
         if (

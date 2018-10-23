@@ -141,9 +141,14 @@ class form extends React.Component {
     }
 
     handleSubmit(e) {
-        // console.log("handleSubmit");
         this.setState({
             editMode: FormEditStates.SELECTED
+        });
+    }
+
+    handleEdit() {
+        this.setState({
+            editMode: FormEditStates.ALWAYS
         });
     }
 
@@ -190,7 +195,7 @@ class form extends React.Component {
         }
     }
 
-    renderSubmit() {
+    renderButtons() {
         let submit;
         if (this.state.editMode === FormEditStates.ALWAYS) {
             let disableSubmit = true;
@@ -198,17 +203,33 @@ class form extends React.Component {
                 disableSubmit = false;
             }
             submit = (
-                <button
-                    type="submit"
-                    className="btn btn-default"
-                    disabled={disableSubmit}
-                    onClick={() => this.handleSubmit()}
-                >
-                    Submit contact
-                </button>
+                <div>
+                    <span>
+                        <button
+                            type="submit"
+                            className="btn btn-success"
+                            disabled={disableSubmit}
+                            onClick={() => this.handleSubmit()}
+                        >
+                            Save
+                        </button>
+                    </span>
+                    <span style={{ marginLeft: 5 }}>
+                        <button
+                            className="btn btn-default btn-secondary"
+                            onClick={() => this.random()}
+                        >
+                            I feel lucky
+                        </button>
+                    </span>
+                </div>
             );
         } else {
-            submit = <div>* Make changes to the form by clicking the pencil icons</div>;
+            submit = (
+                <button type="submit" className="btn btn-primary" onClick={() => this.handleEdit()}>
+                    Edit
+                </button>
+            );
         }
         return submit;
     }
@@ -291,15 +312,11 @@ class form extends React.Component {
                 </div>
                 <hr />
                 <div className="row">
-                    <div className="col-md-8">
-                        {this.renderContactForm()}
-                        <div className="row">
-                            <div className="col-md-3" />
-                            <div className="col-md-9">{this.renderSubmit()}</div>
-                        </div>
-                    </div>
+                    <div className="col-md-8">{this.renderContactForm()}</div>
                     <div className="col-md-4">
-                        <b>STATE:</b>
+                        <div>{this.renderButtons()}</div>
+                        <p />
+                        <hr />
                         <pre style={{ borderLeftColor: "#b94a48" }}>
                             {`hasErrors: ${this.state.hasErrors}`}
                         </pre>
@@ -309,10 +326,6 @@ class form extends React.Component {
                         <pre style={{ borderLeftColor: "steelblue" }}>
                             value = {JSON.stringify(this.state.value.toJSON(), null, 3)}
                         </pre>
-
-                        <button className="btn btn-default btn-sm" onClick={() => this.random()}>
-                            Random
-                        </button>
                     </div>
                 </div>
                 <div className="row">

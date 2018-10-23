@@ -109,26 +109,9 @@ class DateEdit extends React.Component {
     }
 
     handleCancel() {
-        console.log("REVERT TO", this.state.oldValue);
-
         if (this.props.onChange) {
             const v = this.state.oldValue;
-            console.log("ON CHANGE", v);
-            let cast = v;
-            if (_.has(this.props.rules, "type")) {
-                switch (this.props.rules.type) {
-                    case "integer":
-                        cast = v === "" ? null : parseInt(v, 10);
-                        break;
-                    case "number":
-                        cast = v === "" ? null : parseFloat(v, 10);
-                        break;
-                    //pass
-                    default:
-                }
-            }
-            console.log("ON CHANGE >>", cast);
-            this.props.onChange(this.props.name, cast);
+            this.props.onChange(this.props.name, v);
         }
         this.props.onBlur(this.props.name);
         this.setState({ isFocused: false, hover: false, oldValue: null });

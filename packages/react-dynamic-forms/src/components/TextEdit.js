@@ -86,10 +86,11 @@ class TextEdit extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.edit !== nextProps.edit && nextProps.edit === true) {
+        if (nextProps.selected && this.props.edit !== nextProps.edit && nextProps.edit === true) {
             this.setState({ selectText: true });
         }
         if (this.state.value !== nextProps.value && !this.state.isFocused) {
+            console.log("state value set to", nextProps.value);
             this.setState({ value: nextProps.value });
 
             const missing = this.isMissing(nextProps.value);
