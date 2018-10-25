@@ -7,6 +7,7 @@ exports.textView = textView;
 exports.linkView = linkView;
 exports.markdownView = markdownView;
 exports.dateView = dateView;
+exports.colorView = colorView;
 
 var _underscore = require("underscore");
 
@@ -51,7 +52,6 @@ function linkView(value) {
 }
 
 function markdownView(value) {
-    console.log(value);
     if (value === "" || _underscore2.default.isUndefined(value)) {
         return _react2.default.createElement("div", { style: { height: 28 } });
     } else {
@@ -74,4 +74,20 @@ function dateView() {
             s
         );
     };
+}
+
+function colorView(hex) {
+    var style = {
+        marginTop: 4,
+        width: 14,
+        height: 14,
+        borderRadius: 2,
+        background: hex,
+        float: "left"
+    };
+    return _react2.default.createElement(
+        "span",
+        null,
+        _react2.default.createElement("div", { style: style })
+    );
 }

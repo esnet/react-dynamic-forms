@@ -25,7 +25,6 @@ export function linkView(value) {
 }
 
 export function markdownView(value) {
-    console.log(value);
     if (value === "" || _.isUndefined(value)) {
         return <div style={{ height: 28 }} />;
     } else {
@@ -42,4 +41,20 @@ export function dateView(fmt = "MM/DD/YYYYY") {
         const s = d ? d.format(fmt) : "";
         return <span style={{ minHeight: 28 }}>{s}</span>;
     };
+}
+
+export function colorView(hex) {
+    const style = {
+        marginTop: 4,
+        width: 14,
+        height: 14,
+        borderRadius: 2,
+        background: hex,
+        float: "left"
+    };
+    return (
+        <span>
+            <div style={style} />
+        </span>
+    );
 }
