@@ -38,7 +38,6 @@ class RadioButtons extends React.Component {
 
     handleFocus() {
         if (!this.state.isFocused) {
-            console.log("Setting oldValue", this.props.value);
             this.setState({ isFocused: true, oldValue: this.props.value });
         }
     }

@@ -135,7 +135,6 @@ export class AsyncChooser extends React.Component {
 
         // Callbacks
         if (this.props.onChange) {
-            console.log("onChange", { id, label });
             this.props.onChange(this.props.name, Immutable.Map({ id, label }));
         }
         if (this.props.onMissingCountChange) {
@@ -179,7 +178,6 @@ export class AsyncChooser extends React.Component {
     }
 
     render() {
-        console.log("Rendering", this.props.value);
         const choice = this.props.value ? this.props.value.get("id") : null;
         const isMissing = this.isMissing(this.props.value);
 
@@ -237,7 +235,6 @@ export class AsyncChooser extends React.Component {
                 this.handleEditItem()
             );
 
-            console.log("LABEL", label);
             return (
                 <div
                     style={style}

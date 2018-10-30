@@ -130,6 +130,8 @@ class DateEdit extends React.Component {
             className += " is-missing";
         }
 
+        const canCommit = !isMissing;
+
         if (this.props.edit) {
             return (
                 <Flexbox flexDirection="row" style={{ width: "100%" }}>
@@ -148,13 +150,18 @@ class DateEdit extends React.Component {
                         onKeyUp={e => this.handleKeyPress(e)}
                     />
                     {this.props.selected ? (
-                        <span style={{ marginTop: 5 }}>
-                            <span
-                                style={inlineDoneButtonStyle(5)}
-                                onClick={() => this.handleDone()}
-                            >
-                                DONE
-                            </span>
+                        <span style={{ marginTop: 3 }}>
+                            {canCommit ? (
+                                <span
+                                    style={inlineDoneButtonStyle(5, true)}
+                                    onClick={() => this.handleDone()}
+                                >
+                                    DONE
+                                </span>
+                            ) : (
+                                <span style={inlineDoneButtonStyle(5, false)}>DONE</span>
+                            )}
+
                             <span
                                 style={inlineCancelButtonStyle()}
                                 onClick={() => this.handleCancel()}

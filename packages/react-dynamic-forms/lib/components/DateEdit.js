@@ -189,6 +189,8 @@ var DateEdit = function (_React$Component) {
                 className += " is-missing";
             }
 
+            var canCommit = !isMissing;
+
             if (this.props.edit) {
                 return _react2.default.createElement(
                     _flexboxReact2.default,
@@ -215,15 +217,19 @@ var DateEdit = function (_React$Component) {
                     }),
                     this.props.selected ? _react2.default.createElement(
                         "span",
-                        { style: { marginTop: 5 } },
-                        _react2.default.createElement(
+                        { style: { marginTop: 3 } },
+                        canCommit ? _react2.default.createElement(
                             "span",
                             {
-                                style: (0, _style.inlineDoneButtonStyle)(5),
+                                style: (0, _style.inlineDoneButtonStyle)(5, true),
                                 onClick: function onClick() {
                                     return _this2.handleDone();
                                 }
                             },
+                            "DONE"
+                        ) : _react2.default.createElement(
+                            "span",
+                            { style: (0, _style.inlineDoneButtonStyle)(5, false) },
                             "DONE"
                         ),
                         _react2.default.createElement(

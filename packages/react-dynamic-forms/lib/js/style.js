@@ -3,22 +3,29 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.colors = undefined;
 exports.inlineDoneButtonStyle = inlineDoneButtonStyle;
 exports.inlineCancelButtonStyle = inlineCancelButtonStyle;
 exports.inlineStyle = inlineStyle;
 exports.inlineTextAreaStyle = inlineTextAreaStyle;
 exports.inlineChooserStyle = inlineChooserStyle;
-/**
- *  Copyright (c) 2018 - present, The Regents of the University of California,
- *  through Lawrence Berkeley National Laboratory (subject to receipt
- *  of any required approvals from the U.S. Dept. of Energy).
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree.
- */
 
-var LINE_HEIGHT = 23;
+var _underscore = require("underscore");
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var LINE_HEIGHT = 23; /**
+                       *  Copyright (c) 2018 - present, The Regents of the University of California,
+                       *  through Lawrence Berkeley National Laboratory (subject to receipt
+                       *  of any required approvals from the U.S. Dept. of Energy).
+                       *  All rights reserved.
+                       *
+                       *  This source code is licensed under the BSD-style license found in the
+                       *  LICENSE file in the root directory of this source tree.
+                       */
+
 var LEFT_SPACING = 3;
 
 var colors = exports.colors = {
@@ -31,7 +38,7 @@ var colors = exports.colors = {
 };
 
 function inlineDoneButtonStyle(marginLeft, enabled) {
-    var isEnabled = _.isUndefined(enabled) ? false : enabled;
+    var isEnabled = _underscore2.default.isUndefined(enabled) ? true : enabled;
     return {
         padding: 5,
         marginLeft: marginLeft,

@@ -208,7 +208,6 @@ class form extends React.Component {
             if (this.state.hasErrors === false && this.state.hasMissing === false) {
                 disableSubmit = false;
             }
-            console.log("Submit disabled?", this.state.hasErrors, this.state.hasMissing);
             submit = (
                 <div>
                     <span>

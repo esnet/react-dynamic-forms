@@ -279,6 +279,8 @@ var TextArea = function (_React$Component) {
                 // Warning style
                 var style = isMissing ? { background: "floralwhite" } : {};
 
+                var canCommit = !isMissing && !validationError;
+
                 return _react2.default.createElement(
                     "div",
                     { className: className, style: { marginBottom: 10 } },
@@ -310,14 +312,18 @@ var TextArea = function (_React$Component) {
                     this.props.selected ? _react2.default.createElement(
                         "span",
                         { style: { marginTop: 5 } },
-                        _react2.default.createElement(
+                        canCommit ? _react2.default.createElement(
                             "span",
                             {
-                                style: (0, _style2.inlineDoneButtonStyle)(0),
+                                style: (0, _style2.inlineDoneButtonStyle)(5, true),
                                 onClick: function onClick() {
                                     return _this3.handleDone();
                                 }
                             },
+                            "DONE"
+                        ) : _react2.default.createElement(
+                            "span",
+                            { style: (0, _style2.inlineDoneButtonStyle)(5, false) },
                             "DONE"
                         ),
                         _react2.default.createElement(

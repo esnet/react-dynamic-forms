@@ -7,6 +7,7 @@
  *  This source code is licensed under the BSD-style license found in the
  *  LICENSE file in the root directory of this source tree.
  */
+import _ from "underscore";
 
 const LINE_HEIGHT = 23;
 const LEFT_SPACING = 3;
@@ -21,7 +22,7 @@ export const colors = {
 };
 
 export function inlineDoneButtonStyle(marginLeft, enabled) {
-    const isEnabled = _.isUndefined(enabled) ? false : enabled;
+    const isEnabled = _.isUndefined(enabled) ? true : enabled;
     return {
         padding: 5,
         marginLeft,

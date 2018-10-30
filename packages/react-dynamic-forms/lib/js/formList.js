@@ -254,8 +254,6 @@ function list(ItemComponent, hideEditRemove) {
 
                 var canCommitItem = !_underscore2.default.isNull(selected) ? this.errors[selected] === 0 && this.missing[selected] === 0 : false;
 
-                console.log(selected, this.errors[selected], this.missing[selected], canCommitItem);
-
                 return _react2.default.createElement(_List2.default, {
                     items: itemComponents,
                     header: ItemComponent.header,

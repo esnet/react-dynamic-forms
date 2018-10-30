@@ -90,7 +90,6 @@ class TextEdit extends React.Component {
             this.setState({ selectText: true });
         }
         if (this.state.value !== nextProps.value && !this.state.isFocused) {
-            console.log("state value set to", nextProps.value);
             this.setState({ value: nextProps.value });
 
             const missing = this.isMissing(nextProps.value);
@@ -229,6 +228,8 @@ class TextEdit extends React.Component {
             const style = isMissing ? { background: colors.MISSING_COLOR_BG } : {};
             const type = this.props.type || "text";
 
+            const canCommit = !isMissing && !validationError;
+
             return (
                 <Flexbox flexDirection="row" style={{ width: "100%" }}>
                     <div className={className} style={{ width: "100%" }}>
@@ -250,12 +251,17 @@ class TextEdit extends React.Component {
                     </div>
                     {this.props.selected ? (
                         <span style={{ marginTop: 3 }}>
-                            <span
-                                style={inlineDoneButtonStyle(5)}
-                                onClick={() => this.handleDone()}
-                            >
-                                DONE
-                            </span>
+                            {canCommit ? (
+                                <span
+                                    style={inlineDoneButtonStyle(5, true)}
+                                    onClick={() => this.handleDone()}
+                                >
+                                    DONE
+                                </span>
+                            ) : (
+                                <span style={inlineDoneButtonStyle(5, false)}>DONE</span>
+                            )}
+
                             <span
                                 style={inlineCancelButtonStyle()}
                                 onClick={() => this.handleCancel()}
@@ -282,6 +288,7 @@ class TextEdit extends React.Component {
             return (
                 <div
                     style={style}
+                    key={`key-${isMissing}-${validationError}`}
                     onMouseEnter={() => this.handleMouseEnter()}
                     onMouseLeave={() => this.handleMouseLeave()}
                 >

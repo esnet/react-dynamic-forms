@@ -213,6 +213,8 @@ class TextArea extends React.Component {
             // Warning style
             const style = isMissing ? { background: "floralwhite" } : {};
 
+            const canCommit = !isMissing && !validationError;
+
             return (
                 <div className={className} style={{ marginBottom: 10 }}>
                     <textarea
@@ -232,12 +234,16 @@ class TextArea extends React.Component {
                     <div className={helpClassName}>{msg}</div>
                     {this.props.selected ? (
                         <span style={{ marginTop: 5 }}>
-                            <span
-                                style={inlineDoneButtonStyle(0)}
-                                onClick={() => this.handleDone()}
-                            >
-                                DONE
-                            </span>
+                            {canCommit ? (
+                                <span
+                                    style={inlineDoneButtonStyle(5, true)}
+                                    onClick={() => this.handleDone()}
+                                >
+                                    DONE
+                                </span>
+                            ) : (
+                                <span style={inlineDoneButtonStyle(5, false)}>DONE</span>
+                            )}
                             <span
                                 style={inlineCancelButtonStyle()}
                                 onClick={() => this.handleCancel()}

@@ -189,8 +189,6 @@ export default function list(ItemComponent, hideEditRemove) {
                 ? this.errors[selected] === 0 && this.missing[selected] === 0
                 : false;
 
-            console.log(selected, this.errors[selected], this.missing[selected], canCommitItem);
-
             return (
                 <List
                     items={itemComponents}

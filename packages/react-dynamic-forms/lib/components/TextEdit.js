@@ -132,7 +132,6 @@ var TextEdit = function (_React$Component) {
                 this.setState({ selectText: true });
             }
             if (this.state.value !== nextProps.value && !this.state.isFocused) {
-                console.log("state value set to", nextProps.value);
                 this.setState({ value: nextProps.value });
 
                 var missing = this.isMissing(nextProps.value);
@@ -297,6 +296,8 @@ var TextEdit = function (_React$Component) {
                 var style = isMissing ? { background: _style2.colors.MISSING_COLOR_BG } : {};
                 var type = this.props.type || "text";
 
+                var canCommit = !isMissing && !validationError;
+
                 return _react2.default.createElement(
                     _flexboxReact2.default,
                     { flexDirection: "row", style: { width: "100%" } },
@@ -332,14 +333,18 @@ var TextEdit = function (_React$Component) {
                     this.props.selected ? _react2.default.createElement(
                         "span",
                         { style: { marginTop: 3 } },
-                        _react2.default.createElement(
+                        canCommit ? _react2.default.createElement(
                             "span",
                             {
-                                style: (0, _style2.inlineDoneButtonStyle)(5),
+                                style: (0, _style2.inlineDoneButtonStyle)(5, true),
                                 onClick: function onClick() {
                                     return _this3.handleDone();
                                 }
                             },
+                            "DONE"
+                        ) : _react2.default.createElement(
+                            "span",
+                            { style: (0, _style2.inlineDoneButtonStyle)(5, false) },
                             "DONE"
                         ),
                         _react2.default.createElement(
@@ -369,6 +374,7 @@ var TextEdit = function (_React$Component) {
                     "div",
                     {
                         style: _style,
+                        key: "key-" + isMissing + "-" + validationError,
                         onMouseEnter: function onMouseEnter() {
                             return _this3.handleMouseEnter();
                         },

@@ -72,7 +72,6 @@ var RadioButtons = function (_React$Component) {
         key: "handleFocus",
         value: function handleFocus() {
             if (!this.state.isFocused) {
-                console.log("Setting oldValue", this.props.value);
                 this.setState({ isFocused: true, oldValue: this.props.value });
             }
         }

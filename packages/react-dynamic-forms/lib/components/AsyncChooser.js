@@ -181,7 +181,6 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
 
             // Callbacks
             if (this.props.onChange) {
-                console.log("onChange", { id: id, label: label });
                 this.props.onChange(this.props.name, _immutable2.default.Map({ id: id, label: label }));
             }
             if (this.props.onMissingCountChange) {
@@ -233,7 +232,6 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
         value: function render() {
             var _this4 = this;
 
-            console.log("Rendering", this.props.value);
             var choice = this.props.value ? this.props.value.get("id") : null;
             var isMissing = this.isMissing(this.props.value);
 
@@ -307,7 +305,6 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
                     return _this4.handleEditItem();
                 });
 
-                console.log("LABEL", label);
                 return _react2.default.createElement(
                     "div",
                     {
