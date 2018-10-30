@@ -1,6 +1,6 @@
 {
     "name": "website",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "homepage": "http://software.es.net/react-dynamic-forms",
     "private": true,
     "dependencies": {
@@ -13,7 +13,7 @@
         "react": "^16.2.0",
         "react-bootstrap": "^0.32.1",
         "react-dom": "^16.2.0",
-        "react-dynamic-forms": "^1.0.1",
+        "react-dynamic-forms": "^1.0.2",
         "react-markdown": "^3.1.4",
         "react-overlays": "^0.8.3",
         "react-router-dom": "^4.2.2",
