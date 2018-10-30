@@ -143,6 +143,7 @@ class ContactForm extends React.Component {
             hasErrors: false
         };
     }
+
     schema() {
         return (
             <Schema>

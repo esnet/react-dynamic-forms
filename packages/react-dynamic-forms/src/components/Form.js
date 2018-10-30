@@ -46,6 +46,10 @@ function getRulesFromSchema(schema) {
             if (child.type === Field) {
                 const required = child.props.required || false;
                 const validation = deepCopy(child.props.validation);
+                // the conform is a function that can not be copied properly
+                if (child.props.validation && "conform" in child.props.validation) {
+                    validation["conform"] = child.props.validation["conform"];
+                }
                 rules[child.props.name] = { required, validation };
             }
         });
