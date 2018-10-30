@@ -34,7 +34,7 @@ This shows an example form with a list of emails that can be added or removed.
  * Renders a form for entering an email address
  */
 class EmailForm extends React.Component {
-    static defaultValues = { email_type: 1, email: "" };
+    static defaultValues = Immutable.Map({ email_type: 1, email: "" });
 
     static header = {
         Email: 250,
@@ -72,13 +72,17 @@ class EmailForm extends React.Component {
 
     render() {
         const {
-            onChange,
-            onMissingCountChange,
-            onErrorCountChange,
             value = EmailForm.defaultValues,
             initialValue = EmailForm.defaultValues
         } = this.props;
-        const callbacks = { onChange, onMissingCountChange, onErrorCountChange };
+
+        // these supplied callbacks need to be added to the Form below, so that changes to the
+        // state within this sub-form are fed up to the main form and user code
+        const callbacks = {
+            onChange: this.props.onChange,
+            onMissingCountChange: this.props.onMissingCountChange,
+            onErrorCountChange: this.props.onErrorCountChange
+        };
 
         if (this.props.edit) {
             return (
@@ -237,6 +241,7 @@ class ContactForm extends React.Component {
         return (
             <div className="col-md-8">
                 <Form
+                    name="contact"
                     field="contact-form"
                     style={style}
                     schema={this.schema()}
@@ -291,13 +296,12 @@ class list extends React.Component {
     componentDidMount() {
         // Simulate ASYNC state update
         setTimeout(() => {
-            console.log("Loaded!");
             this.setState({
                 loaded: true,
                 value: savedValues,
                 initialValue: savedValues
             });
-        }, 3000);
+        }, 0);
     }
 
     handleChange(form, value) {

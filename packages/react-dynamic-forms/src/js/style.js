@@ -15,11 +15,13 @@ export const colors = {
     ERROR_COLOR: "#b94a48",
     ERROR_COLOR_BG: "#fff0f3",
     MISSING_COLOR_BG: "floralwhite",
-    PRIMARY_ACTION_COLOR: "steelblue",
+    PRIMARY_ACTION_COLOR: "#2379c1",
+    PRIMARY_ACTION_COLOR_DISABLED: "#2379c169",
     SECONDARY_ACTION_COLOR: "#AAA"
 };
 
-export function inlineDoneButtonStyle(marginLeft) {
+export function inlineDoneButtonStyle(marginLeft, enabled) {
+    const isEnabled = _.isUndefined(enabled) ? false : enabled;
     return {
         padding: 5,
         marginLeft,
@@ -29,7 +31,7 @@ export function inlineDoneButtonStyle(marginLeft) {
         borderWidth: 1,
         borderColor: "rgba(70, 129, 180, 0.19)",
         borderRadius: 2,
-        color: colors.PRIMARY_ACTION_COLOR,
+        color: isEnabled ? colors.PRIMARY_ACTION_COLOR : colors.PRIMARY_ACTION_COLOR_DISABLED,
         cursor: "pointer"
     };
 }

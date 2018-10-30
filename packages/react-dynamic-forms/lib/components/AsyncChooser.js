@@ -212,7 +212,6 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
         value: function loadOptions(input, cb) {
             var _this3 = this;
 
-            console.log("loadOptions");
             if (this.cachedOptions) {
                 cb(null, {
                     options: this.getOptionList(this.cachedOptions),
@@ -222,7 +221,6 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
             }
 
             this.props.loader(input, function (err, options) {
-                console.log(" ... got data");
                 cb(err, {
                     options: _this3.getOptionList(options),
                     complete: true

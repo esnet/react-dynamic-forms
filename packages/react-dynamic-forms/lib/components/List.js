@@ -22,6 +22,8 @@ var _CSSTransitionGroup = require("react-transition-group/CSSTransitionGroup");
 
 var _CSSTransitionGroup2 = _interopRequireDefault(_CSSTransitionGroup);
 
+var _style = require("../js/style");
+
 require("../css/list.css");
 
 require("../css/icon.css");
@@ -223,32 +225,7 @@ var List = function (_React$Component) {
                     )
                 ) : _react2.default.createElement("div", null);
 
-                var doneStyle = {
-                    padding: 5,
-                    marginRight: 5,
-                    marginBottom: 5,
-                    borderStyle: "solid",
-                    borderWidth: 1,
-                    borderColor: "#b5b5b5",
-                    borderRadius: 2,
-                    color: "steelblue",
-                    cursor: "pointer"
-                };
-
-                var cancelStyle = {
-                    padding: 5,
-                    marginRight: 5,
-                    marginBottom: 5,
-                    borderStyle: "solid",
-                    borderWidth: 1,
-                    borderColor: "#b5b5b5",
-                    borderRadius: 2,
-                    color: "#AAA",
-                    cursor: "pointer"
-                };
-
                 // JSX for each row, includes: UI Item and [x] remove item button
-
                 if (!isBeingEdited) {
                     return _react2.default.createElement(
                         "li",
@@ -315,17 +292,24 @@ var List = function (_React$Component) {
                                     {
                                         style: { fontSize: 12, marginLeft: _this2.props.buttonIndent }
                                     },
-                                    _react2.default.createElement(
+                                    _this2.props.canCommitItem ? _react2.default.createElement(
                                         "span",
-                                        { style: doneStyle, onClick: function onClick() {
+                                        {
+                                            style: (0, _style.inlineDoneButtonStyle)(0, true),
+                                            onClick: function onClick() {
                                                 return _this2.handleDeselect();
-                                            } },
+                                            }
+                                        },
+                                        "DONE"
+                                    ) : _react2.default.createElement(
+                                        "span",
+                                        { style: (0, _style.inlineDoneButtonStyle)(0, false) },
                                         "DONE"
                                     ),
                                     _react2.default.createElement(
                                         "span",
                                         {
-                                            style: cancelStyle,
+                                            style: (0, _style.inlineCancelButtonStyle)(),
                                             onClick: function onClick() {
                                                 return _this2.revertItem(index);
                                             }

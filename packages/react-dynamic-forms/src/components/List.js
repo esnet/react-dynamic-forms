@@ -12,6 +12,7 @@ import React from "react";
 import _ from "underscore";
 import Flexbox from "flexbox-react";
 import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
+import { inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
 import "../css/list.css";
 import "../css/icon.css";
@@ -181,32 +182,7 @@ export default class List extends React.Component {
                 <div />
             );
 
-            const doneStyle = {
-                padding: 5,
-                marginRight: 5,
-                marginBottom: 5,
-                borderStyle: "solid",
-                borderWidth: 1,
-                borderColor: "#b5b5b5",
-                borderRadius: 2,
-                color: "steelblue",
-                cursor: "pointer"
-            };
-
-            const cancelStyle = {
-                padding: 5,
-                marginRight: 5,
-                marginBottom: 5,
-                borderStyle: "solid",
-                borderWidth: 1,
-                borderColor: "#b5b5b5",
-                borderRadius: 2,
-                color: "#AAA",
-                cursor: "pointer"
-            };
-
             // JSX for each row, includes: UI Item and [x] remove item button
-
             if (!isBeingEdited) {
                 return (
                     <li
@@ -253,14 +229,22 @@ export default class List extends React.Component {
                                         {item}
                                     </span>
                                 </Flexbox>
+
                                 <Flexbox
                                     style={{ fontSize: 12, marginLeft: this.props.buttonIndent }}
                                 >
-                                    <span style={doneStyle} onClick={() => this.handleDeselect()}>
-                                        DONE
-                                    </span>
+                                    {this.props.canCommitItem ? (
+                                        <span
+                                            style={inlineDoneButtonStyle(0, true)}
+                                            onClick={() => this.handleDeselect()}
+                                        >
+                                            DONE
+                                        </span>
+                                    ) : (
+                                        <span style={inlineDoneButtonStyle(0, false)}>DONE</span>
+                                    )}
                                     <span
-                                        style={cancelStyle}
+                                        style={inlineCancelButtonStyle()}
                                         onClick={() => this.revertItem(index)}
                                     >
                                         CANCEL
