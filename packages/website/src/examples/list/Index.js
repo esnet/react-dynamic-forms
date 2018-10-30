@@ -130,10 +130,6 @@ class ContactForm extends React.Component {
         };
     }
 
-    validate(name){
-        return true ? name === "Jones" : false;
-    }
-
     schema() {
         return (
             <Schema>
@@ -147,9 +143,9 @@ class ContactForm extends React.Component {
                 <Field
                     name="last_name"
                     label="Last name"
-                    placeholder="Enter last name (allowed: Jones only)"
+                    placeholder="Enter last name"
                     required={true}
-                    validation={{ type: "string", message: "This field can be Jones only", conform: a => this.validate(a)}}
+                    validation={{ type: "string" }}
                 />
                 <Field name="emails" label="Emails" />
             </Schema>
