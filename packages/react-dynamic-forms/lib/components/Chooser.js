@@ -261,7 +261,8 @@ var Chooser = function (_React$Component) {
                 var viewStyle = {
                     color: color,
                     background: background,
-                    minHeight: 23,
+                    // minHeight: 23,
+                    height: "100%",
                     width: "100%",
                     paddingLeft: 3
                 };
@@ -269,7 +270,8 @@ var Chooser = function (_React$Component) {
                 var style = {
                     color: color,
                     background: background,
-                    height: 23,
+                    // height: 23,
+                    height: "100%",
                     width: "100%",
                     paddingLeft: 3
                 };

@@ -49,7 +49,8 @@ var View = function (_React$Component) {
             var style = {
                 color: color,
                 background: background,
-                height: 23,
+                // height: 23,
+                height: "100%",
                 width: "100%",
                 paddingLeft: 3
             };
