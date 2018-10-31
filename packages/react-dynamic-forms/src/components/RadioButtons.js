@@ -9,19 +9,16 @@
  */
 
 import React from "react";
-import _ from "underscore";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineStyle, inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
 class RadioButtons extends React.Component {
-    handleChange(v) {
-        // Callbacks
-        if (this.props.onChange) {
-            this.props.onChange(this.props.name, v);
-        }
-        if (this.props.onBlur) {
-            this.props.onBlur(this.props.name);
-        }
+    constructor(props) {
+        super(props);
+        this.state = { isFocused: false };
     }
 
     getCurrentChoiceLabel() {
@@ -31,25 +28,69 @@ class RadioButtons extends React.Component {
         return choiceItem ? choiceItem.get("label") : "";
     }
 
-    inlineStyle(hasError, isMissing) {
-        let color = "inherited";
-        let background = "inherited";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleFocus() {
+        if (!this.state.isFocused) {
+            this.setState({ isFocused: true, oldValue: this.props.value });
         }
-        return {
-            color,
-            background,
-            width: "100%",
-            paddingLeft: 3
-        };
+    }
+
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
+        }
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
+    }
+
+    handleChange(v) {
+        // Callbacks
+        if (this.props.onChange) {
+            this.props.onChange(this.props.name, v);
+        }
+    }
+
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
+    }
+
+    handleDone() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
+    handleCancel() {
+        if (this.props.onChange) {
+            const v = this.state.oldValue;
+            this.props.onChange(this.props.name, v);
+        }
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     render() {
         if (this.props.edit) {
+            const editStyle = {
+                borderStyle: "solid",
+                borderRadius: 2,
+                borderWidth: 1,
+                padding: 5,
+                borderColor: "#ececec",
+                marginBottom: 5
+            };
+
             const items = this.props.optionList.map((item, i) => {
                 const id = item.get("id");
                 const label = item.get("label");
@@ -70,15 +111,49 @@ class RadioButtons extends React.Component {
                 );
             });
             return (
-                <div>
-                    {items}
+                <div style={{ marginBottom: 10 }}>
+                    <div
+                        onFocus={e => this.handleFocus(e)}
+                        onKeyUp={e => this.handleKeyPress(e)}
+                        style={editStyle}
+                    >
+                        {items}
+                    </div>
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 5 }}>
+                            <span
+                                style={inlineDoneButtonStyle(0)}
+                                onClick={() => this.handleDone()}
+                            >
+                                DONE
+                            </span>
+                            <span
+                                style={inlineCancelButtonStyle()}
+                                onClick={() => this.handleCancel()}
+                            >
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
                 </div>
             );
         } else {
-            let text = this.getCurrentChoiceLabel();
+            let s = this.getCurrentChoiceLabel();
+            const view = this.props.view || textView;
+            const text = <span style={{ minHeight: 28 }}>{view(s)}</span>;
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
             return (
-                <div style={this.inlineStyle(false, false)}>
+                <div
+                    style={inlineStyle(false, false)}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
                     {text}
+                    {edit}
                 </div>
             );
         }

@@ -13,6 +13,9 @@ import _ from "underscore";
 import { validate } from "revalidator";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineTextAreaStyle, inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
 import "../css/textarea.css";
 
@@ -22,9 +25,24 @@ import "../css/textarea.css";
 class TextArea extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            touched: false 
+        this.state = {
+            value: props.value,
+            isFocused: false,
+            touched: false,
+            selectText: false
         };
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
     }
 
     isEmpty(value) {
@@ -49,9 +67,9 @@ class TextArea extends React.Component {
         obj[this.props.name] = value;
 
         let properties = {};
-        properties[this.props.name] = this.props.rules;
+        properties[this.props.name] = this.props.validation;
 
-        const rules = this.props.rules ? { properties } : null;
+        const rules = this.props.validation ? { properties } : null;
         if (obj && rules) {
             const validation = validate(obj, rules, { cast: true });
             const name = this.props.name || "Value";
@@ -67,15 +85,19 @@ class TextArea extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
+        if (nextProps.selected && this.props.edit !== nextProps.edit && nextProps.edit === true) {
+            this.setState({ selectText: true });
+        }
+        if (this.state.value !== nextProps.value && !this.state.isFocused) {
+            this.setState({ value: nextProps.value });
+
             const missing = this.isMissing(nextProps.value);
             const { validationError } = this.getError(nextProps.value);
 
-            // Broadcast error and missing states up to the owner
+            // Broadcast error and missing states up to the parent
             if (this.props.onErrorCountChange) {
                 this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
             }
-
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
             }
@@ -86,7 +108,7 @@ class TextArea extends React.Component {
         const missing = this.isMissing(this.props.value);
         const { validationError } = this.getError(this.props.value);
 
-        // Initial error and missing states are fed up to the owner
+        // Initial error and missing states are fed up to the parent
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
         }
@@ -96,41 +118,81 @@ class TextArea extends React.Component {
         }
     }
 
-    onBlur() {
-        const { value } = this.textInput;
-        const missing = this.props.required && this.isEmpty(value);
-        const { validationError } = this.getError(value);
+    componentDidUpdate() {
+        if (this.state.selectText) {
+            this.textInput.focus();
+            this.textInput.select();
+            this.setState({ selectText: false });
+        }
+    }
 
-        // Callbacks
+    handleChange(e) {
+        const name = this.props.name;
+        const value = e.target.value;
+
+        this.setState({ value }, () => {
+            const missing = this.props.required && this.isEmpty(value);
+            const { validationError } = this.getError(value);
+
+            // Callbacks
+            if (this.props.onErrorCountChange) {
+                this.props.onErrorCountChange(name, validationError ? 1 : 0);
+            }
+
+            if (this.props.onMissingCountChange) {
+                this.props.onMissingCountChange(name, missing ? 1 : 0);
+            }
+
+            if (this.props.onChange) {
+                this.props.onChange(name, value);
+            }
+        });
+    }
+
+    handleFocus() {
+        if (!this.state.isFocused) {
+            this.setState({ isFocused: true, oldValue: this.props.value });
+        }
+    }
+
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
+        }
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
+    }
+
+    handleDone() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
+    handleCancel() {
         if (this.props.onChange) {
-            this.props.onChange(this.props.name, value);
+            const v = this.state.oldValue;
+            let cast = v;
+            if (_.has(this.props.rules, "type")) {
+                switch (this.props.rules.type) {
+                    case "integer":
+                        cast = v === "" ? null : parseInt(v, 10);
+                        break;
+                    case "number":
+                        cast = v === "" ? null : parseFloat(v, 10);
+                        break;
+                    //pass
+                    default:
+                }
+            }
+            this.props.onChange(this.props.name, cast);
         }
-        if (this.props.onErrorCountChange) {
-            this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
-        }
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
-        }
-
-        this.setState({ touched: true });
-    }
-
-    inlineStyle(hasError, isMissing) {
-        let color = "";
-        let background = "";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
-        }
-        return {
-            color,
-            background,
-            height: "100%",
-            width: "100%",
-            paddingLeft: 3
-        };
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     render() {
@@ -151,38 +213,68 @@ class TextArea extends React.Component {
             // Warning style
             const style = isMissing ? { background: "floralwhite" } : {};
 
+            const canCommit = !isMissing && !validationError;
+
             return (
-                <div className={className}>
-                     <textarea
-                        ref={input => { this.textInput = input; }}
-                        key={this.props.value}
+                <div className={className} style={{ marginBottom: 10 }}>
+                    <textarea
+                        ref={input => {
+                            this.textInput = input;
+                        }}
                         className="form-control"
                         style={style}
                         type="text"
                         disabled={this.props.disabled}
                         placeholder={this.props.placeholder}
-                        defaultValue={this.props.value}
-                        rows={this.props.rows}
-                        onBlur={() => this.onBlur()}
+                        value={this.state.value}
+                        onChange={e => this.handleChange(e)}
+                        onFocus={e => this.handleFocus(e)}
+                        onKeyUp={e => this.handleKeyPress(e)}
                     />
                     <div className={helpClassName}>{msg}</div>
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 5 }}>
+                            {canCommit ? (
+                                <span
+                                    style={inlineDoneButtonStyle(5, true)}
+                                    onClick={() => this.handleDone()}
+                                >
+                                    DONE
+                                </span>
+                            ) : (
+                                <span style={inlineDoneButtonStyle(5, false)}>DONE</span>
+                            )}
+                            <span
+                                style={inlineCancelButtonStyle()}
+                                onClick={() => this.handleCancel()}
+                            >
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
                 </div>
             );
         } else {
-            const view = this.props.view;
-            let text = this.props.value;
-            if (isMissing) {
-                text = " ";
-            }
-            const style = {
-                height: 100,
-                ...this.inlineStyle(validationError, isMissing)
-            };
-            if (!view) {
-                return <div style={style}>{text}</div>;
-            } else {
-                return <div style={style}>{view(text)}</div>;
-            }
+            const view = this.props.view || textView;
+            const text = isMissing ? <span /> : view(this.props.value);
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
+
+            const style = inlineTextAreaStyle(validationError, isMissing);
+
+            return (
+                <div
+                    style={style}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {text}
+                    <span>{edit}</span>
+                </div>
+            );
         }
     }
 }

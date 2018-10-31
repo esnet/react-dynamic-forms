@@ -60,10 +60,10 @@ function getRulesFromSchema(schema) {
 export default class Form extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            missingCounts: {}, 
-            errorCounts: {}, 
-            selection: null 
+        this.state = {
+            missingCounts: {},
+            errorCounts: {},
+            selection: null
         };
     }
 
@@ -95,11 +95,15 @@ export default class Form extends React.Component {
             props.hidden = false;
             props.disabled = false;
 
+            props.selected = false;
             props.edit = false;
             props.showRequired = true;
 
             if (this.props.edit === FormEditStates.SELECTED) {
-                props.edit = this.state.selection === fieldName;
+                if (this.state.selection === fieldName) {
+                    props.edit = true;
+                    props.selected = true;
+                }
                 props.showRequired = props.edit;
                 props.allowEdit = true;
             } else if (this.props.edit === FormEditStates.ALWAYS) {
@@ -109,6 +113,7 @@ export default class Form extends React.Component {
             }
 
             if (this.props.edit === FormEditStates.TABLE) {
+                props.allowEdit = false;
                 props.layout = FormGroupLayout.INLINE;
             } else {
                 props.layout = this.props.groupLayout;
@@ -132,19 +137,22 @@ export default class Form extends React.Component {
             props.validation = formRules[fieldName].validation;
         }
 
-        // Field value
+        // Field value (current and initial)
         if (this.props.value.has(fieldName)) {
             props.value = this.props.value.get(fieldName);
+            props.initialValue = this.props.initialValue
+                ? this.props.initialValue.get(fieldName)
+                : null;
         }
 
         // Callbacks
-        props.onSelectItem = (fieldName) => this.handleSelectItem(fieldName);
+        props.onSelectItem = fieldName => this.handleSelectItem(fieldName);
         props.onErrorCountChange = (fieldName, count) =>
             this.handleErrorCountChange(fieldName, count);
         props.onMissingCountChange = (fieldName, count) =>
             this.handleMissingCountChange(fieldName, count);
         props.onChange = (fieldName, d) => this.handleChange(fieldName, d);
-        props.onBlur = (fieldName) => this.handleBlur(fieldName);
+        props.onBlur = fieldName => this.handleBlur(fieldName);
 
         return props;
     }
@@ -229,6 +237,7 @@ export default class Form extends React.Component {
                     if (this.props.onErrorCountChange) {
                         this.props.onErrorCountChange(this.props.name, errorCount, errorFields);
                     }
+                    this._pendingErrors = null;
                 }
 
                 // On change callback
@@ -348,8 +357,10 @@ export default class Form extends React.Component {
                 let makeHidden;
                 const tags = field.tags || [];
                 if (_.isArray(this.props.visible)) {
-                    makeHidden = !(_.intersection(tags, this.props.visible).length > 0 ||
-                        _.contains(tags, "all"));
+                    makeHidden = !(
+                        _.intersection(tags, this.props.visible).length > 0 ||
+                        _.contains(tags, "all")
+                    );
                 } else {
                     makeHidden = !(_.contains(tags, this.props.visible) || _.contains(tags, "all"));
                 }
@@ -409,7 +420,8 @@ export default class Form extends React.Component {
      * the whole form render.
      */
     shouldComponentUpdate(nextProps, nextState) {
-        const update = nextProps.value !== this.props.value ||
+        const update =
+            nextProps.value !== this.props.value ||
             nextProps.edit !== this.props.edit ||
             nextProps.schema !== this.props.schema ||
             nextProps.visibility !== this.props.visibility ||
@@ -427,25 +439,6 @@ export default class Form extends React.Component {
         const formRules = getRulesFromSchema(schema);
         const formHiddenList = this.getHiddenFields(formFields);
         const formState = { formFields, formRules, formHiddenList };
-
-        /*
-            <form class="form-inline">
-            <div class="form-group">
-                <label class="sr-only" for="exampleInputEmail3">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
-            </div>
-            <div class="form-group">
-                <label class="sr-only" for="exampleInputPassword3">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
-            </div>
-            <div class="checkbox">
-                <label>
-                <input type="checkbox"> Remember me
-                </label>
-            </div>
-            <button type="submit" class="btn btn-default">Sign in</button>
-            </form>
-        */
 
         let formClass = this.props.formClassName;
         if (this.props.inline) {
@@ -493,7 +486,8 @@ export default class Form extends React.Component {
 }
 
 Form.propTypes = {
-    value: PropTypes.object
+    value: PropTypes.object,
+    initialValue: PropTypes.object
 };
 
 Form.defaultProps = {

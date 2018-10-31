@@ -56,7 +56,10 @@ function list(ItemComponent, hideEditRemove) {
 
             var _this = _possibleConstructorReturn(this, (HOC.__proto__ || Object.getPrototypeOf(HOC)).call(this, props));
 
-            _this.state = { errors: [], missing: [], selected: null };
+            _this.errors = [];
+            _this.missing = [];
+
+            _this.state = { selected: null };
             return _this;
         }
 
@@ -64,9 +67,22 @@ function list(ItemComponent, hideEditRemove) {
             key: "handleSelectItem",
             value: function handleSelectItem(i) {
                 if (this.state.selected !== i) {
-                    this.setState({ selected: i });
+                    this.setState({ selected: i, oldValue: this.props.value.get(i) });
                 } else {
-                    this.setState({ selected: null });
+                    this.setState({ selected: null, oldValue: null });
+                }
+            }
+        }, {
+            key: "handleRevertItem",
+            value: function handleRevertItem(i) {
+                var oldValue = this.state.oldValue;
+                if (oldValue) {
+                    var newValue = this.props.value.set(i, oldValue);
+                    if (this.props.onChange) {
+                        this.props.onChange(this.props.name, newValue);
+                    }
+                } else {
+                    this.handleRemovedItem(i);
                 }
             }
 
@@ -83,16 +99,16 @@ function list(ItemComponent, hideEditRemove) {
         }, {
             key: "handleMissingCountChange",
             value: function handleMissingCountChange(i, missingCount) {
-                var totalMissingCount = void 0;
-                var missingList = this.state.missing;
-                missingList[i] = missingCount;
-                totalMissingCount = _underscore2.default.reduce(missingList, function (memo, num) {
-                    return memo + num;
-                }, 0);
+                if (i >= this.props.value.size) {
+                    return;
+                }
+
+                // Mutate our missing count
+                this.missing[i] = missingCount;
 
                 // Callback
                 if (this.props.onMissingCountChange) {
-                    this.props.onMissingCountChange(this.props.name, totalMissingCount);
+                    this.props.onMissingCountChange(this.props.name, this.numMissing());
                 }
             }
 
@@ -103,16 +119,12 @@ function list(ItemComponent, hideEditRemove) {
         }, {
             key: "handleErrorCountChange",
             value: function handleErrorCountChange(i, errorCount) {
-                var totalErrorCount = void 0;
-                var errorList = this.state.errors;
-                errorList[i] = errorCount;
-                totalErrorCount = _underscore2.default.reduce(errorList, function (memo, num) {
-                    return memo + num;
-                }, 0);
+                // Mutate our error count
+                this.errors[i] = errorCount;
 
                 // Callback
                 if (this.props.onErrorCountChange) {
-                    this.props.onErrorCountChange(this.props.name, totalErrorCount);
+                    this.props.onErrorCountChange(this.props.name, this.numErrors());
                 }
             }
 
@@ -127,122 +139,112 @@ function list(ItemComponent, hideEditRemove) {
                 var value = this.props.value;
 
                 var n = 1;
-                var errors = this.state.errors;
-                var missing = this.state.missing;
-                errors.splice(i - n + 1, n);
-                missing.splice(i - n + 1, n);
-                this.setState({ errors: errors, missing: missing });
+                this.errors.splice(i - n + 1, n);
+                this.missing.splice(i - n + 1, n);
 
                 // Callbacks
                 if (this.props.onChange) {
                     this.props.onChange(this.props.name, value.splice(i - n + 1, n));
                 }
+
                 if (this.props.onErrorCountChange) {
-                    this.props.onErrorCountChange(this.props.name, this.numErrors(errors));
+                    this.props.onErrorCountChange(this.props.name, this.numErrors());
                 }
                 if (this.props.onMissingCountChange) {
-                    this.props.onMissingCountChange(this.props.name, this.numMissing(missing));
+                    this.props.onMissingCountChange(this.props.name, this.numMissing());
                 }
             }
         }, {
             key: "handleAddItem",
             value: function handleAddItem() {
                 var value = this.props.value;
-
-                var errors = this.state.errors;
-                var missing = this.state.missing;
                 var created = _immutable2.default.fromJS(ItemComponent.defaultValues);
-                errors.push(0);
-                missing.push(0);
+                this.errors.push(0);
+                this.missing.push(0);
 
                 // Callbacks
                 if (this.props.onChange) {
                     this.props.onChange(this.props.name, value.push(created));
                 }
-                if (this.props.onErrorCountChange) {
-                    this.props.onErrorCountChange(this.props.name, this.numErrors(errors));
-                }
-                if (this.props.onMissingCountChange) {
-                    this.props.onMissingCountChange(this.props.name, this.numMissing(missing));
-                }
 
                 this.setState({ selected: this.props.value.size });
             }
 
-            //Determine the total count of missing fields in the entire list
+            /**
+             * Utility function to determine the total count of missing fields in the entire list
+             */
 
         }, {
             key: "numMissing",
-            value: function numMissing(missing) {
+            value: function numMissing() {
                 var total = 0;
-                _underscore2.default.each(missing, function (c) {
+                _underscore2.default.each(this.missing, function (c) {
                     total += c;
                 });
                 return total;
             }
 
-            //Determine the total count of error fields in the entire list
+            /**
+             * Utility function to determine the total number of errors in the entire list
+             */
 
         }, {
             key: "numErrors",
-            value: function numErrors(errors) {
+            value: function numErrors() {
                 var total = 0;
-                _underscore2.default.each(errors, function (c) {
+                _underscore2.default.each(this.errors, function (c) {
                     total += c;
                 });
                 return total;
-            }
-        }, {
-            key: "componentWillReceiveProps",
-            value: function componentWillReceiveProps(nextProps) {
-                if (nextProps.edit === false) {
-                    this.setState({ selected: null });
-                }
             }
         }, {
             key: "render",
             value: function render() {
                 var _this2 = this;
 
+                var selected = this.state.selected;
                 var itemComponents = [];
                 this.props.value.forEach(function (item, index) {
                     var _item$key = item.key,
                         key = _item$key === undefined ? index : _item$key;
 
+
+                    var itemInitialValue = _this2.props.initialValue ? _this2.props.initialValue.get(index) : null;
+
                     var props = {
                         key: key,
                         name: index,
-                        edit: _this2.props.edit,
                         innerForm: true,
                         hideMinus: hideEditRemove && index < _this2.props.value.size - 1,
                         types: _this2.props.types,
                         options: _this2.props.options,
                         actions: _this2.props.actions,
-                        onErrorCountChange: function onErrorCountChange(name, errorCount) {
-                            return _this2.handleErrorCountChange(name, errorCount);
+                        onErrorCountChange: function onErrorCountChange(index, errorCount) {
+                            return _this2.handleErrorCountChange(index, errorCount);
                         },
-                        onMissingCountChange: function onMissingCountChange(name, missingCount) {
-                            return _this2.handleMissingCountChange(name, missingCount);
+                        onMissingCountChange: function onMissingCountChange(index, missingCount) {
+                            return _this2.handleMissingCountChange(index, missingCount);
                         },
-                        onChange: function onChange(name, value) {
-                            _this2.handleChangeItem(name, value);
+                        onChange: function onChange(index, value) {
+                            return _this2.handleChangeItem(index, value);
                         }
                     };
                     itemComponents.push(_react2.default.createElement(ItemComponent, _extends({}, props, {
                         value: item,
+                        initialValue: itemInitialValue,
                         editable: _this2.props.edit,
-                        edit: _this2.state.selected === index && _this2.props.edit
+                        edit: index === selected
                     })));
                 });
 
-                var errors = _underscore2.default.find(this.state.errors, function (item) {
+                var hasErrors = _underscore2.default.find(this.errors, function (item) {
                     return item >= 1;
                 });
-                var missing = _underscore2.default.find(this.state.missing, function (item) {
+                var hasMissing = _underscore2.default.find(this.missing, function (item) {
                     return item >= 1;
                 });
 
-                var plusElement = (errors || missing) && hideEditRemove ? _react2.default.createElement("div", null) : null;
+                var plusElement = (hasErrors || hasMissing) && hideEditRemove ? _react2.default.createElement("div", null) : null;
                 var _props = this.props,
                     _props$canAddItems = _props.canAddItems,
                     canAddItems = _props$canAddItems === undefined ? true : _props$canAddItems,
@@ -250,14 +252,19 @@ function list(ItemComponent, hideEditRemove) {
                     canRemoveItems = _props$canRemoveItems === undefined ? true : _props$canRemoveItems;
 
 
+                var canCommitItem = !_underscore2.default.isNull(selected) ? this.errors[selected] === 0 && this.missing[selected] === 0 : false;
+
                 return _react2.default.createElement(_List2.default, {
                     items: itemComponents,
-                    canAddItems: canAddItems && this.props.edit,
-                    canRemoveItems: canRemoveItems && this.props.edit,
-                    canEditItems: this.props.edit,
+                    header: ItemComponent.header,
+                    buttonIndent: ItemComponent.actionButtonIndex,
+                    canAddItems: canAddItems,
+                    canRemoveItems: canRemoveItems,
+                    canEditItems: true,
                     hideEditRemove: hideEditRemove,
                     plusWidth: 400,
                     plusElement: plusElement,
+                    canCommitItem: canCommitItem,
                     onAddItem: function onAddItem() {
                         return _this2.handleAddItem();
                     },
@@ -266,6 +273,9 @@ function list(ItemComponent, hideEditRemove) {
                     },
                     onSelectItem: function onSelectItem(index) {
                         return _this2.handleSelectItem(index);
+                    },
+                    onRevertItem: function onRevertItem(index) {
+                        return _this2.handleRevertItem(index);
                     }
                 });
             }

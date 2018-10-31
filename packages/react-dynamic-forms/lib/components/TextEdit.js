@@ -16,9 +16,19 @@ var _underscore2 = _interopRequireDefault(_underscore);
 
 var _revalidator = require("revalidator");
 
+var _flexboxReact = require("flexbox-react");
+
+var _flexboxReact2 = _interopRequireDefault(_flexboxReact);
+
 var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
+
+var _renderers = require("../js/renderers");
+
+var _actions = require("../js/actions");
+
+var _style2 = require("../js/style");
 
 require("../css/textedit.css");
 
@@ -40,8 +50,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * Form control to edit a text field.
- * Set the initial value with `initialValue` and set a callback for
- * value changed with `onChange`.
  */
 var TextEdit = function (_React$Component) {
     _inherits(TextEdit, _React$Component);
@@ -52,12 +60,30 @@ var TextEdit = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (TextEdit.__proto__ || Object.getPrototypeOf(TextEdit)).call(this, props));
 
         _this.state = {
-            touched: false
+            value: props.value,
+            isFocused: false,
+            touched: false,
+            selectText: false
         };
         return _this;
     }
 
     _createClass(TextEdit, [{
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
+        }
+    }, {
         key: "isEmpty",
         value: function isEmpty(value) {
             return _underscore2.default.isNull(value) || _underscore2.default.isUndefined(value) || value === "";
@@ -102,19 +128,23 @@ var TextEdit = function (_React$Component) {
     }, {
         key: "componentWillReceiveProps",
         value: function componentWillReceiveProps(nextProps) {
-            if (this.props.value !== nextProps.value) {
+            if (nextProps.selected && this.props.edit !== nextProps.edit && nextProps.edit === true) {
+                this.setState({ selectText: true });
+            }
+            if (this.state.value !== nextProps.value && !this.state.isFocused) {
+                this.setState({ value: nextProps.value });
+
                 var missing = this.isMissing(nextProps.value);
 
                 var _getError = this.getError(nextProps.value),
-                    validationError = _getError.validationError;
+                    error = _getError.validationError;
 
-                // Broadcast error and missing states up to the owner
+                // Broadcast error and missing states up to the parent
 
 
                 if (this.props.onErrorCountChange) {
-                    this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+                    this.props.onErrorCountChange(this.props.name, error ? 1 : 0);
                 }
-
                 if (this.props.onMissingCountChange) {
                     this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
                 }
@@ -128,7 +158,7 @@ var TextEdit = function (_React$Component) {
             var _getError2 = this.getError(this.props.value),
                 validationError = _getError2.validationError;
 
-            // Initial error and missing states are fed up to the owner
+            // Initial error and missing states are fed up to the parent
 
 
             if (this.props.onErrorCountChange) {
@@ -140,34 +170,96 @@ var TextEdit = function (_React$Component) {
             }
         }
     }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate() {
+            if (this.state.selectText) {
+                this.textInput.focus();
+                this.textInput.select();
+                this.setState({ selectText: false });
+            }
+        }
+    }, {
         key: "handleChange",
-        value: function handleChange() {
-            var value = this.textInput.value;
+        value: function handleChange(e) {
+            var _this2 = this;
 
-            var missing = this.props.required && this.isEmpty(value);
+            var name = this.props.name;
+            var value = e.target.value;
 
-            var _getError3 = this.getError(value),
-                validationError = _getError3.validationError;
+            this.setState({ value: value }, function () {
+                var missing = _this2.props.required && _this2.isEmpty(value);
 
-            var cast = value;
+                var _getError3 = _this2.getError(value),
+                    validationError = _getError3.validationError;
 
-            // Callbacks
-            if (this.props.onErrorCountChange) {
-                this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+                var cast = value;
+
+                // Callbacks
+                if (_this2.props.onErrorCountChange) {
+                    _this2.props.onErrorCountChange(name, validationError ? 1 : 0);
+                }
+
+                if (_this2.props.onMissingCountChange) {
+                    _this2.props.onMissingCountChange(name, missing ? 1 : 0);
+                }
+
+                if (_this2.props.onChange) {
+                    if (_underscore2.default.has(_this2.props.rules, "type")) {
+                        switch (_this2.props.rules.type) {
+                            case "integer":
+                                cast = value === "" ? null : parseInt(value, 10);
+                                break;
+                            case "number":
+                                cast = value === "" ? null : parseFloat(value, 10);
+                                break;
+                            //pass
+                            default:
+                        }
+                    }
+                    _this2.props.onChange(name, cast);
+                }
+            });
+        }
+    }, {
+        key: "handleFocus",
+        value: function handleFocus() {
+            if (!this.state.isFocused) {
+                this.setState({ isFocused: true, oldValue: this.props.value });
             }
-
-            if (this.props.onMissingCountChange) {
-                this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+        }
+    }, {
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
             }
-
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
+        }
+    }, {
+        key: "handleDone",
+        value: function handleDone() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
             if (this.props.onChange) {
+                var v = this.state.oldValue;
+                var cast = v;
                 if (_underscore2.default.has(this.props.rules, "type")) {
                     switch (this.props.rules.type) {
                         case "integer":
-                            cast = value === "" ? null : parseInt(value, 10);
+                            cast = v === "" ? null : parseInt(v, 10);
                             break;
                         case "number":
-                            cast = value === "" ? null : parseFloat(value, 10);
+                            cast = v === "" ? null : parseFloat(v, 10);
                             break;
                         //pass
                         default:
@@ -175,39 +267,13 @@ var TextEdit = function (_React$Component) {
                 }
                 this.props.onChange(this.props.name, cast);
             }
-        }
-    }, {
-        key: "handleBlur",
-        value: function handleBlur() {
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
-            }
-
-            this.setState({ touched: true });
-        }
-    }, {
-        key: "inlineStyle",
-        value: function inlineStyle(hasError, isMissing) {
-            var color = "";
-            var background = "";
-            if (hasError) {
-                color = "#b94a48";
-                background = "#fff0f3";
-            } else if (isMissing) {
-                background = "floralwhite";
-            }
-            return {
-                color: color,
-                background: background,
-                height: 23,
-                width: "100%",
-                paddingLeft: 3
-            };
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
         }
     }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             // Control state
             var isMissing = this.isMissing(this.props.value);
@@ -227,56 +293,98 @@ var TextEdit = function (_React$Component) {
                 }
 
                 // Warning style
-                var style = isMissing ? { background: "floralwhite" } : {};
-
+                var style = isMissing ? { background: _style2.colors.MISSING_COLOR_BG } : {};
                 var type = this.props.type || "text";
 
+                var canCommit = !isMissing && !validationError;
+
                 return _react2.default.createElement(
-                    "div",
-                    { className: className },
-                    _react2.default.createElement("input", {
-                        ref: function ref(input) {
-                            _this2.textInput = input;
-                        },
-                        className: "form-control input-sm",
-                        style: style,
-                        type: type,
-                        disabled: this.props.disabled,
-                        placeholder: this.props.placeholder,
-                        value: this.props.value,
-                        onChange: function onChange() {
-                            return _this2.handleChange();
-                        },
-                        onBlur: function onBlur() {
-                            return _this2.handleBlur();
-                        }
-                    }),
+                    _flexboxReact2.default,
+                    { flexDirection: "row", style: { width: "100%" } },
                     _react2.default.createElement(
                         "div",
-                        { className: helpClassName },
-                        msg
-                    )
+                        { className: className, style: { width: "100%" } },
+                        _react2.default.createElement("input", {
+                            ref: function ref(input) {
+                                _this3.textInput = input;
+                            },
+                            className: "form-control input-sm",
+                            style: style,
+                            type: type,
+                            disabled: this.props.disabled,
+                            placeholder: this.props.placeholder,
+                            value: this.state.value,
+                            onChange: function onChange(e) {
+                                return _this3.handleChange(e);
+                            },
+                            onFocus: function onFocus(e) {
+                                return _this3.handleFocus(e);
+                            },
+                            onKeyUp: function onKeyUp(e) {
+                                return _this3.handleKeyPress(e);
+                            }
+                        }),
+                        _react2.default.createElement(
+                            "div",
+                            { className: helpClassName },
+                            msg
+                        )
+                    ),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 3 } },
+                        canCommit ? _react2.default.createElement(
+                            "span",
+                            {
+                                style: (0, _style2.inlineDoneButtonStyle)(5, true),
+                                onClick: function onClick() {
+                                    return _this3.handleDone();
+                                }
+                            },
+                            "DONE"
+                        ) : _react2.default.createElement(
+                            "span",
+                            { style: (0, _style2.inlineDoneButtonStyle)(5, false) },
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            {
+                                style: (0, _style2.inlineCancelButtonStyle)(),
+                                onClick: function onClick() {
+                                    return _this3.handleCancel();
+                                }
+                            },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
                 );
             } else {
-                var view = this.props.view;
-                var text = this.props.value;
-                if (isMissing) {
-                    text = " ";
-                }
-                var _style = this.inlineStyle(validationError, isMissing);
-                if (!view) {
-                    return _react2.default.createElement(
-                        "div",
-                        { style: _style },
-                        text
-                    );
-                } else {
-                    return _react2.default.createElement(
-                        "div",
-                        { style: _style },
-                        view(text)
-                    );
-                }
+                var view = this.props.view || _renderers.textView;
+                var text = isMissing ? _react2.default.createElement("span", null) : _react2.default.createElement(
+                    "span",
+                    { style: { minHeight: 28 } },
+                    view(this.props.value)
+                );
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this3.handleEditItem();
+                });
+                var _style = (0, _style2.inlineStyle)(validationError, isMissing);
+                return _react2.default.createElement(
+                    "div",
+                    {
+                        style: _style,
+                        key: "key-" + isMissing + "-" + validationError,
+                        onMouseEnter: function onMouseEnter() {
+                            return _this3.handleMouseEnter();
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            return _this3.handleMouseLeave();
+                        }
+                    },
+                    text,
+                    edit
+                );
             }
         }
     }]);

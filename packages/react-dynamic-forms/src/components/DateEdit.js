@@ -13,8 +13,12 @@ import _ from "underscore";
 import moment from "moment";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
+import Flexbox from "flexbox-react";
 
 import formGroup from "../js/formGroup";
+import { dateView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineStyle, inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "../css/dateedit.css";
@@ -26,12 +30,9 @@ import "../css/dateedit.css";
  * value changed with `onChange`.
  */
 class DateEdit extends React.Component {
-    isEmpty(value) {
-        return _.isNull(value) || _.isUndefined(value) || value === "";
-    }
-
-    isMissing(v) {
-        return this.props.required && !this.props.disabled && this.isEmpty(v);
+    constructor(props) {
+        super(props);
+        this.state = { isFocused: false };
     }
 
     componentWillReceiveProps(nextProps) {
@@ -52,6 +53,29 @@ class DateEdit extends React.Component {
         }
     }
 
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleFocus() {
+        this.setState({ isFocused: true, oldValue: this.props.value });
+    }
+
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
+        }
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
+    }
+
     handleDateChange(v) {
         const value = v ? v.toDate() : null;
         const missing = this.isMissing(value);
@@ -63,27 +87,34 @@ class DateEdit extends React.Component {
         if (this.props.onMissingCountChange) {
             this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
         }
+    }
+
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
+    }
+
+    isEmpty(value) {
+        return _.isNull(value) || _.isUndefined(value) || value === "";
+    }
+
+    isMissing(v) {
+        return this.props.required && !this.props.disabled && this.isEmpty(v);
+    }
+
+    handleDone() {
         if (this.props.onBlur) {
             this.props.onBlur(this.props.name);
         }
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
-    inlineStyle(hasError, isMissing) {
-        let color = "inherited";
-        let background = "inherited";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
+    handleCancel() {
+        if (this.props.onChange) {
+            const v = this.state.oldValue;
+            this.props.onChange(this.props.name, v);
         }
-        return {
-            color,
-            background,
-            height: 23,
-            width: "100%",
-            paddingLeft: 3
-        };
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     render() {
@@ -99,30 +130,66 @@ class DateEdit extends React.Component {
             className += " is-missing";
         }
 
+        const canCommit = !isMissing;
+
         if (this.props.edit) {
             return (
-                <div>
-                    <div>
-                        <DatePicker
-                            key={`date`}
-                            ref={(input) => { this.textInput = input; }}
-                            className={className}
-                            disabled={this.props.disabled}
-                            placeholderText={this.props.placeholder}
-                            selected={selected}
-                            onChange={v => this.handleDateChange(v)}
-                        />
-                    </div>
-                </div>
+                <Flexbox flexDirection="row" style={{ width: "100%" }}>
+                    <DatePicker
+                        autofocus
+                        key={`date`}
+                        ref={input => {
+                            this.textInput = input;
+                        }}
+                        className={className}
+                        disabled={this.props.disabled}
+                        placeholderText={this.props.placeholder}
+                        selected={selected}
+                        onChange={v => this.handleDateChange(v)}
+                        onFocus={e => this.handleFocus(e)}
+                        onKeyUp={e => this.handleKeyPress(e)}
+                    />
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 3 }}>
+                            {canCommit ? (
+                                <span
+                                    style={inlineDoneButtonStyle(5, true)}
+                                    onClick={() => this.handleDone()}
+                                >
+                                    DONE
+                                </span>
+                            ) : (
+                                <span style={inlineDoneButtonStyle(5, false)}>DONE</span>
+                            )}
+
+                            <span
+                                style={inlineCancelButtonStyle()}
+                                onClick={() => this.handleCancel()}
+                            >
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
+                </Flexbox>
             );
         } else {
-            const hasError = false;
-            let text = selected ? selected.format("MM/DD/YYYY") : "";
-            if (isMissing) {
-                text = " ";
-            }
-            const style = this.inlineStyle(hasError, isMissing);
-            return <div style={style}>{text}</div>;
+            const view = this.props.view || dateView("MM/DD/YYYY");
+            const text = <span style={{ minHeight: 28 }}>{view(selected)}</span>;
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
+            return (
+                <div
+                    style={inlineStyle(false, false)}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {text}
+                    {edit}
+                </div>
+            );
         }
     }
 }

@@ -12,6 +12,7 @@ import React from "react";
 import _ from "underscore";
 import PropTypes from "prop-types";
 import Flexbox from "flexbox-react";
+import Immutable from "immutable";
 
 import formGroup from "../js/formGroup";
 import { textView } from "../js/renderers";
@@ -22,18 +23,24 @@ import "react-select/dist/react-select.css";
 import "react-virtualized/styles.css";
 import "react-virtualized-select/styles.css";
 
-import VirtualizedSelect from "react-virtualized-select";
+import Select from "react-virtualized-select";
 
 import "../css/chooser.css";
 
 /**
- * React Form control to select an item from a list.
+ * React Form control to select an item from a list. The list is built from
+ * an async call. Once the call has been made and the options list if built
+ * the list is immutable. Also note that if a value is provided (current or
+ * default) that value will only actually show once the list is received.
  */
-export class Chooser extends React.Component {
+export class AsyncChooser extends React.Component {
     constructor(props) {
         super(props);
         this.state = { isFocused: false, focusChooser: false };
         this.handleChange = this.handleChange.bind(this);
+        this.loadOptions = this.loadOptions.bind(this);
+
+        this.loadedOptions = Immutable.List();
     }
 
     handleMouseEnter() {
@@ -120,21 +127,18 @@ export class Chooser extends React.Component {
         }
     }
 
-    handleChange(v) {
-        let { value } = v || {};
-        const missing = this.props.required && this.isEmpty(v);
+    handleChange(item) {
+        let { value, label } = item || {};
 
-        // If the chosen id is a number, cast it to a number
-        if (!this.isEmpty(v) && !_.isNaN(Number(v))) {
-            value = +v;
-        }
+        const isMissing = this.props.required && _.isNull(item);
+        const id = !isMissing && !_.isNaN(Number(value)) ? +value : value;
 
         // Callbacks
         if (this.props.onChange) {
-            this.props.onChange(this.props.name, value);
+            this.props.onChange(this.props.name, Immutable.Map({ id, label }));
         }
         if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+            this.props.onMissingCountChange(this.props.name, isMissing ? 1 : 0);
         }
     }
 
@@ -142,8 +146,8 @@ export class Chooser extends React.Component {
         this.props.onEditItem(this.props.name);
     }
 
-    getOptionList() {
-        return this.props.choiceList
+    getOptionList(options) {
+        return options
             .map(item => {
                 let disabled = false;
                 const isDisabled = item.has("disabled") && item.get("disabled") === true;
@@ -155,110 +159,52 @@ export class Chooser extends React.Component {
             .toJS();
     }
 
-    getFilteredOptionList(input) {
-        const items = this.props.choiceList;
-        const filteredItems = input
-            ? items.filter(item => {
-                  return item.label.toLowerCase().indexOf(`${input}`.toLowerCase()) !== -1;
-              })
-            : items;
-        const result = [];
-        filteredItems.forEach(item =>
-            result.push({
-                value: `${item.get("id")}`,
-                label: item.get("label"),
-                disabled: item.has("disabled") ? item["disabled"] : false
-            })
-        );
-        return result;
-    }
-
-    getOptions(input, cb) {
-        const options = this.getFilteredOptionList(input);
-        if (options) {
-            cb(null, { options, complete: true });
+    loadOptions(input, cb) {
+        if (this.cachedOptions) {
+            cb(null, {
+                options: this.getOptionList(this.cachedOptions),
+                complete: true
+            });
+            return;
         }
-    }
 
-    getCurrentChoice() {
-        const choiceItem = this.props.choiceList.find(item => {
-            return item.get("id") === this.props.value;
+        this.props.loader(input, (err, options) => {
+            cb(err, {
+                options: this.getOptionList(options),
+                complete: true
+            });
+            this.cachedOptions = options;
         });
-        return choiceItem ? choiceItem.get("id") : undefined;
-    }
-
-    getCurrentChoiceLabel() {
-        const choiceItem = this.props.choiceList.find(item => {
-            return item.get("id") === this.props.value;
-        });
-        return choiceItem ? choiceItem.get("label") : "";
     }
 
     render() {
-        const choice = this.getCurrentChoice();
+        const choice = this.props.value ? this.props.value.get("id") : null;
         const isMissing = this.isMissing(this.props.value);
 
         if (this.props.edit) {
-            let className = "";
             const chooserStyle = { marginBottom: 10, width: "100%" };
             const clearable = this.props.allowSingleDeselect;
-            const searchable = !this.props.disableSearch;
-
             const matchPos = this.props.searchContains ? "any" : "start";
 
-            let ctl;
-            if (searchable) {
-                const options = this.getFilteredOptionList(null);
-                const labelList = _.map(options, item => item.label);
-                const key = `${labelList}--${choice}`;
-                ctl = (
-                    <VirtualizedSelect
-                        ref={chooser => {
-                            this.chooser = chooser;
-                        }}
-                        className={isMissing ? "is-missing" : ""}
-                        key={key}
-                        value={choice}
-                        options={options}
-                        openOnFocus={true}
-                        disabled={this.props.disabled}
-                        searchable={true}
-                        matchPos={matchPos}
-                        placeholder={this.props.placeholder}
-                        onChange={v => this.handleChange(v)}
-                    />
-                );
-            } else {
-                const options = this.getOptionList();
-                const labelList = _.map(options, item => item.label);
-                const key = `${labelList}--${choice}`;
-                ctl = (
-                    <VirtualizedSelect
-                        ref={chooser => {
-                            this.chooser = chooser;
-                        }}
-                        className={isMissing ? "is-missing" : ""}
-                        key={key}
-                        value={choice}
-                        options={options}
-                        openOnFocus={true}
-                        disabled={this.props.disabled}
-                        searchable={false}
-                        matchPos={matchPos}
-                        placeholder={this.props.placeholder}
-                        clearable={clearable}
-                        onChange={v => this.handleChange(v)}
-                    />
-                );
-            }
             return (
                 <Flexbox flexDirection="row" style={{ width: "100%" }}>
-                    <div
-                        className={className}
-                        style={chooserStyle}
-                        onFocus={e => this.handleFocus(e)}
-                    >
-                        {ctl}
+                    <div style={chooserStyle} onFocus={e => this.handleFocus(e)}>
+                        <Select
+                            async
+                            ref={chooser => {
+                                this.chooser = chooser;
+                            }}
+                            className={isMissing ? "is-missing" : ""}
+                            value={choice}
+                            loadOptions={this.loadOptions}
+                            openOnFocus={true}
+                            disabled={this.props.disabled}
+                            searchable={true}
+                            matchPos={matchPos}
+                            placeholder={this.props.placeholder}
+                            clearable={clearable}
+                            onChange={v => this.handleChange(v)}
+                        />
                     </div>
                     {this.props.selected ? (
                         <span style={{ marginTop: 5 }}>
@@ -281,14 +227,14 @@ export class Chooser extends React.Component {
                 </Flexbox>
             );
         } else {
-            let s = this.getCurrentChoiceLabel();
-            const view = this.props.view || textView;
-            const style = inlineChooserStyle(false, false, !!view);
-
-            const text = <span style={{ minHeight: 28 }}>{view(s, choice)}</span>;
+            const label = this.props.value.get("label");
+            const View = this.props.view || textView;
+            const style = inlineChooserStyle(false, false, !!View);
+            const text = <span style={{ minHeight: 28 }}>{View(label)}</span>;
             const edit = editAction(this.state.hover && this.props.allowEdit, () =>
                 this.handleEditItem()
             );
+
             return (
                 <div
                     style={style}
@@ -303,7 +249,7 @@ export class Chooser extends React.Component {
     }
 }
 
-Chooser.propTypes = {
+AsyncChooser.propTypes = {
     /**
      * The identifier of the field being edited. References back into
      * the Form's Schema for additional properties of this field
@@ -329,13 +275,6 @@ Chooser.propTypes = {
     disabled: PropTypes.bool,
 
     /**
-     * If true the chooser becomes a simple pulldown menu
-     * rather than allowing the user to type into it to search
-     * though the entries
-     */
-    disableSearch: PropTypes.bool,
-
-    /**
      * Customize the horizontal size of the Chooser
      */
     width: PropTypes.number,
@@ -351,7 +290,7 @@ Chooser.propTypes = {
     searchContains: PropTypes.oneOf(["any", "start"])
 };
 
-Chooser.defaultProps = {
+AsyncChooser.defaultProps = {
     disabled: false,
     disableSearch: false,
     searchContains: "any",
@@ -359,4 +298,4 @@ Chooser.defaultProps = {
     width: 300
 };
 
-export const ChooserGroup = formGroup(Chooser, "Chooser");
+export const AsyncChooserGroup = formGroup(AsyncChooser, "AsyncChooser");

@@ -12,6 +12,7 @@ import React from "react";
 import _ from "underscore";
 import Flexbox from "flexbox-react";
 import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
+import { inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
 import "../css/list.css";
 import "../css/icon.css";
@@ -35,6 +36,20 @@ import "../css/icon.css";
  *                       possible items that can be added from a list).
  */
 export default class List extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            hover: false
+        };
+    }
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
     addItem() {
         if (this.props.onAddItem) {
             this.props.onAddItem();
@@ -53,6 +68,13 @@ export default class List extends React.Component {
         }
     }
 
+    revertItem(index) {
+        if (this.props.onRevertItem) {
+            this.props.onRevertItem(index);
+            this.selectItem(null);
+        }
+    }
+
     handleDeselect() {
         this.selectItem(null);
     }
@@ -62,10 +84,12 @@ export default class List extends React.Component {
         const addMinus = this.props.canRemoveItems;
         const addEdit = this.props.canEditItems;
 
+        const mouseOver = this.state.hover;
+
         // Plus [+] icon
-        let plus;
-        if (addPlus) {
-            plus = (
+        let plusIcon;
+        if (addPlus && mouseOver) {
+            plusIcon = (
                 <i
                     key="plus"
                     className="glyphicon glyphicon-plus icon add-action"
@@ -73,8 +97,11 @@ export default class List extends React.Component {
                 />
             );
         } else {
-            plus = <div />;
+            plusIcon = <div />;
         }
+
+        const LISTWIDTH = 600;
+        const ICONWIDTH = 28;
 
         // Build the item list, which is a list of table rows, each row containing
         // an item and a [-] icon used for removing that item.
@@ -100,13 +127,12 @@ export default class List extends React.Component {
                 isEditable = true;
             }
             if (isEditable) {
-                if (addMinus && !itemMinusHide) {
+                if (addMinus && !itemMinusHide && mouseOver) {
                     minus = (
                         <i
                             id={index}
                             key={minusActionKey}
                             className="glyphicon glyphicon-remove hostile_icon delete-action"
-                            onClick={() => this.removeItem(index)}
                         />
                     );
                 } else {
@@ -114,53 +140,41 @@ export default class List extends React.Component {
                     minus = <div className="icon delete-action" />;
                 }
 
-                const flip = {
-                    transform: "scaleX(-1)",
-                    fontSize: 10
-                };
-
                 // Edit item icon
-                if (addEdit) {
-                    if (isBeingEdited) {
-                        edit = (
-                            <i
-                                id={index}
-                                key={minusActionKey}
-                                className="glyphicon glyphicon-chevron-down icon edit-action active"
-                                onClick={() => this.selectItem(index)}
-                            />
-                        );
-                    } else {
-                        edit = (
-                            <i
-                                id={index}
-                                key={minusActionKey}
-                                style={flip}
-                                className="glyphicon glyphicon-chevron-left icon edit-action"
-                                onClick={() => this.selectItem(index)}
-                            />
-                        );
-                    }
+                if (addEdit && mouseOver) {
+                    edit = (
+                        <i
+                            id={index}
+                            key={minusActionKey}
+                            style={{ paddingLeft: 5, paddingRight: 5 }}
+                            className="glyphicon glyphicon-pencil icon edit-action active"
+                        />
+                    );
                 }
             }
 
             const minusAction = addMinus ? (
-                <Flexbox width="28px">
-                    <span key={actionSpanKey} className="icon" style={{ background: "white" }}>
+                <Flexbox width="28px" onClick={() => this.removeItem(index)}>
+                    <span
+                        key={actionSpanKey}
+                        className="icon"
+                        style={{ paddingLeft: 5, paddingRight: 5 }}
+                    >
                         {minus}
                     </span>
                 </Flexbox>
             ) : (
-                <div />
+                <div style={{ height: 30 }} />
             );
 
             const editAction = addEdit ? (
-                <Flexbox width="28px">
-                    <span
-                        key={actionSpanKey}
-                        className="icon"
-                        style={{ background: "white", verticalAlign: "top" }}
-                    >
+                <Flexbox
+                    width="28px"
+                    onClick={() => {
+                        this.selectItem(index);
+                    }}
+                >
+                    <span key={actionSpanKey} className="icon" style={{ verticalAlign: "top" }}>
                         {edit}
                     </span>
                 </Flexbox>
@@ -169,32 +183,84 @@ export default class List extends React.Component {
             );
 
             // JSX for each row, includes: UI Item and [x] remove item button
-            return (
-                <li
-                    height="80px"
-                    key={itemKey}
-                    className="esnet-forms-list-item"
-                    style={{
-                        borderBottomStyle: "solid",
-                        borderBottomColor: "#DDD",
-                        borderBottomWidth: 1
-                    }}
-                >
-                    <Flexbox flexDirection="row">
-                        {minusAction}
-                        {editAction}
-                        <Flexbox flexGrow={1}>
-                            <span key={itemSpanKey} className={listEditItemClass}>
-                                {item}
-                            </span>
+            if (!isBeingEdited) {
+                return (
+                    <li
+                        height="80px"
+                        width="600px"
+                        key={itemKey}
+                        className="esnet-forms-list-item"
+                        style={{
+                            borderBottomStyle: "solid",
+                            borderBottomColor: "#DDD",
+                            borderBottomWidth: 1
+                        }}
+                    >
+                        <Flexbox flexDirection="row" style={{ width: "100%", paddingTop: 5 }}>
+                            <Flexbox style={{ width: LISTWIDTH - ICONWIDTH * 2 }}>
+                                <span key={itemSpanKey} className={listEditItemClass}>
+                                    {item}
+                                </span>
+                            </Flexbox>
+                            {minusAction}
+                            {editAction}
                         </Flexbox>
-                    </Flexbox>
-                </li>
-            );
+                    </li>
+                );
+            } else {
+                return (
+                    <li
+                        height="80px"
+                        key={itemKey}
+                        className="esnet-forms-list-item"
+                        style={{
+                            borderBottomStyle: "solid",
+                            borderBottomColor: "#DDD",
+                            borderBottomWidth: 1
+                        }}
+                    >
+                        <Flexbox
+                            flexDirection="row"
+                            style={{ width: "100%", paddingTop: 10, paddingBottom: 10 }}
+                        >
+                            <Flexbox flexDirection="column">
+                                <Flexbox style={{ width: LISTWIDTH - ICONWIDTH * 2 }}>
+                                    <span key={itemSpanKey} className={listEditItemClass}>
+                                        {item}
+                                    </span>
+                                </Flexbox>
+
+                                <Flexbox
+                                    style={{ fontSize: 12, marginLeft: this.props.buttonIndent }}
+                                >
+                                    {this.props.canCommitItem ? (
+                                        <span
+                                            style={inlineDoneButtonStyle(0, true)}
+                                            onClick={() => this.handleDeselect()}
+                                        >
+                                            DONE
+                                        </span>
+                                    ) : (
+                                        <span style={inlineDoneButtonStyle(0, false)}>DONE</span>
+                                    )}
+                                    <span
+                                        style={inlineCancelButtonStyle()}
+                                        onClick={() => this.revertItem(index)}
+                                    >
+                                        CANCEL
+                                    </span>
+                                </Flexbox>
+                            </Flexbox>
+                            {minusAction}
+                        </Flexbox>
+                    </li>
+                );
+            }
         });
 
         // Build the [+] elements
-        if (addPlus) {
+        let plus;
+        if (addPlus && mouseOver) {
             if (this.props.plusElement) {
                 plus = this.props.plusElement;
             } else {
@@ -204,9 +270,9 @@ export default class List extends React.Component {
                             <span
                                 key="plus"
                                 className="icon"
-                                style={{ background: "white", verticalAlign: "top", fontSize: 10 }}
+                                style={{ verticalAlign: "top", fontSize: 10 }}
                             >
-                                {plus}
+                                {plusIcon}
                             </span>
                         </Flexbox>
                         <Flexbox width="28px" />
@@ -214,8 +280,40 @@ export default class List extends React.Component {
                 );
             }
         } else {
-            plus = <div />;
+            plus = <div style={{ height: 35 }} />;
         }
+
+        //
+        // Build the header
+        //
+
+        const headerStyle = {
+            fontSize: 11,
+            paddingTop: 3,
+            height: 20,
+            color: "#9a9a9a",
+            borderBottom: "#ddd",
+            borderBottomStyle: "solid",
+            borderBottomWidth: 1
+        };
+
+        const headerItems = _.map(this.props.header, (size, label) => {
+            return (
+                <Flexbox width={`${size}px`}>
+                    <span style={{ verticalAlign: "top", fontSize: 10, paddingLeft: 3 }}>
+                        {label}
+                    </span>
+                </Flexbox>
+            );
+        });
+
+        const header = this.props.header ? (
+            <Flexbox flexDirection="row" style={headerStyle}>
+                {headerItems}
+            </Flexbox>
+        ) : (
+            <div />
+        );
 
         //
         // Build the table of item rows, with the [+] at the bottom if required
@@ -224,11 +322,15 @@ export default class List extends React.Component {
         return (
             <div
                 style={{
+                    width: 600,
                     borderTopStyle: "solid",
                     borderTopWidth: 1,
                     borderTopColor: "#DDD"
                 }}
+                onMouseEnter={() => this.handleMouseEnter()}
+                onMouseLeave={() => this.handleMouseLeave()}
             >
+                {header}
                 <ul className="esnet-forms-listeditview-container">
                     <ReactCSSTransitionGroup
                         transitionName="esnet-forms-list-item"

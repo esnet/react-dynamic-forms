@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.default = formGroup;
@@ -19,6 +21,14 @@ var _flexboxReact2 = _interopRequireDefault(_flexboxReact);
 var _classnames = require("classnames");
 
 var _classnames2 = _interopRequireDefault(_classnames);
+
+var _immutable = require("immutable");
+
+var _immutable2 = _interopRequireDefault(_immutable);
+
+var _underscore = require("underscore");
+
+var _underscore2 = _interopRequireDefault(_underscore);
 
 var _constants = require("../js/constants");
 
@@ -66,8 +76,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * users code.
  */
 
-function formGroup(Widget, hideEdit) {
-    return function (_React$Component) {
+function formGroup(Control, name) {
+    var wrapped = function (_React$Component) {
         _inherits(Group, _React$Component);
 
         function Group(props) {
@@ -105,8 +115,7 @@ function formGroup(Widget, hideEdit) {
                     _props$hidden = _props.hidden,
                     hidden = _props$hidden === undefined ? false : _props$hidden,
                     width = _props.width,
-                    allowEdit = _props.allowEdit,
-                    props = _objectWithoutProperties(_props, ["hidden", "width", "allowEdit"]);
+                    props = _objectWithoutProperties(_props, ["hidden", "width"]);
 
                 var name = props.name,
                     label = props.label,
@@ -115,8 +124,13 @@ function formGroup(Widget, hideEdit) {
                     disabled = props.disabled,
                     required = props.required,
                     showRequired = props.showRequired,
-                    onSelectItem = props.onSelectItem;
+                    onSelectItem = props.onSelectItem,
+                    value = props.value,
+                    initialValue = props.initialValue;
 
+
+                var isBeingEdited = edit;
+                var hasChanged = _underscore2.default.isNull(initialValue) ? false : !_immutable2.default.is(value, initialValue);
 
                 var selectStyle = {};
 
@@ -128,18 +142,18 @@ function formGroup(Widget, hideEdit) {
                 }
 
                 //
-                // Widget
+                // Control
                 //
 
-                var widgetWidth = width ? width + "px" : "100%";
-                var widget = _react2.default.createElement(
+                var controlWidth = width ? width : "100%";
+                var control = _react2.default.createElement(
                     "div",
                     {
                         style: {
-                            width: widgetWidth
+                            width: controlWidth
                         }
                     },
-                    _react2.default.createElement(Widget, props)
+                    _react2.default.createElement(Control, _extends({}, props, { onEditItem: onSelectItem }))
                 );
 
                 //
@@ -167,6 +181,14 @@ function formGroup(Widget, hideEdit) {
                 if (this.props.layout === _constants.FormGroupLayout.COLUMN) {
                     marginLeft = null;
                 }
+
+                var labelColor = "inherit";
+                if (this.state.error) {
+                    labelColor = "b94a48";
+                } else if (hasChanged) {
+                    labelColor = "steelblue";
+                }
+
                 var fieldLabel = _react2.default.createElement(
                     "div",
                     {
@@ -175,7 +197,7 @@ function formGroup(Widget, hideEdit) {
                             whiteSpace: "nowrap",
                             marginLeft: marginLeft,
                             paddingTop: 3,
-                            color: this.state.error ? "b94a48" : "inherit"
+                            color: labelColor
                         }
                     },
                     _react2.default.createElement(
@@ -186,57 +208,77 @@ function formGroup(Widget, hideEdit) {
                 );
                 var labelWidth = this.props.labelWidth ? this.props.labelWidth + "px" : "300px";
 
-                //
-                // Edit
-                //
-
-                var isBeingEdited = edit;
-
-                var flip = {
-                    transform: "scaleX(-1)",
-                    fontSize: 11
-                };
-
-                var editIcon = _react2.default.createElement("span", null);
-                if (this.state.over && allowEdit && !hideEdit) {
-                    editIcon = _react2.default.createElement("i", {
-                        style: flip,
-                        className: isBeingEdited ? "glyphicon glyphicon-pencil icon edit-action active" : "glyphicon glyphicon-pencil icon edit-action",
-                        onClick: function onClick() {
-                            return onSelectItem ? onSelectItem(name) : null;
-                        }
-                    });
-                }
-
                 // Group
-                if (this.props.layout === _constants.FormGroupLayout.INLINE) {
-                    return _react2.default.createElement(
-                        _flexboxReact2.default,
-                        {
-                            flexDirection: "column",
-                            width: widgetWidth,
-                            onMouseEnter: function onMouseEnter() {
-                                return _this2.handleMouseEnter();
+                switch (this.props.layout) {
+                    case _constants.FormGroupLayout.INLINE:
+                        return _react2.default.createElement(
+                            _flexboxReact2.default,
+                            {
+                                flexDirection: "column",
+                                width: controlWidth,
+                                onMouseEnter: function onMouseEnter() {
+                                    return _this2.handleMouseEnter();
+                                },
+                                onMouseLeave: function onMouseLeave() {
+                                    return _this2.handleMouseLeave();
+                                }
                             },
-                            onMouseLeave: function onMouseLeave() {
-                                return _this2.handleMouseLeave();
-                            }
-                        },
-                        widget
-                    );
-                } else if (this.props.layout === _constants.FormGroupLayout.COLUMN) {
-                    return _react2.default.createElement(
-                        _flexboxReact2.default,
-                        {
-                            flexDirection: "column",
-                            onMouseEnter: function onMouseEnter() {
-                                return _this2.handleMouseEnter();
+                            control
+                        );
+                    case _constants.FormGroupLayout.COLUMN:
+                        return _react2.default.createElement(
+                            _flexboxReact2.default,
+                            {
+                                flexDirection: "column",
+                                onMouseEnter: function onMouseEnter() {
+                                    return _this2.handleMouseEnter();
+                                },
+                                onMouseLeave: function onMouseLeave() {
+                                    return _this2.handleMouseLeave();
+                                }
                             },
-                            onMouseLeave: function onMouseLeave() {
-                                return _this2.handleMouseLeave();
-                            }
-                        },
-                        _react2.default.createElement(
+                            _react2.default.createElement(
+                                _flexboxReact2.default,
+                                {
+                                    flexDirection: "row",
+                                    onMouseEnter: function onMouseEnter() {
+                                        return _this2.handleMouseEnter();
+                                    },
+                                    onMouseLeave: function onMouseLeave() {
+                                        return _this2.handleMouseLeave();
+                                    }
+                                },
+                                _react2.default.createElement(
+                                    _flexboxReact2.default,
+                                    null,
+                                    fieldLabel
+                                ),
+                                _react2.default.createElement(
+                                    _flexboxReact2.default,
+                                    { minWidth: "14px", width: "14px" },
+                                    requiredMarker
+                                )
+                            ),
+                            _react2.default.createElement(
+                                _flexboxReact2.default,
+                                {
+                                    flexDirection: "row",
+                                    onMouseEnter: function onMouseEnter() {
+                                        return _this2.handleMouseEnter();
+                                    },
+                                    onMouseLeave: function onMouseLeave() {
+                                        return _this2.handleMouseLeave();
+                                    }
+                                },
+                                _react2.default.createElement(
+                                    _flexboxReact2.default,
+                                    { flexGrow: 1, style: selectStyle },
+                                    control
+                                )
+                            )
+                        );
+                    case _constants.FormGroupLayout.ROW:
+                        return _react2.default.createElement(
                             _flexboxReact2.default,
                             {
                                 flexDirection: "row",
@@ -249,7 +291,7 @@ function formGroup(Widget, hideEdit) {
                             },
                             _react2.default.createElement(
                                 _flexboxReact2.default,
-                                null,
+                                { minWidth: labelWidth, width: labelWidth },
                                 fieldLabel
                             ),
                             _react2.default.createElement(
@@ -259,72 +301,25 @@ function formGroup(Widget, hideEdit) {
                             ),
                             _react2.default.createElement(
                                 _flexboxReact2.default,
-                                { minWidth: "18px", width: "18px", style: selectStyle },
-                                editIcon
-                            )
-                        ),
-                        _react2.default.createElement(
-                            _flexboxReact2.default,
-                            {
-                                flexDirection: "row",
-                                onMouseEnter: function onMouseEnter() {
-                                    return _this2.handleMouseEnter();
+                                {
+                                    width: controlWidth,
+                                    style: selectStyle,
+                                    onDoubleClick: function onDoubleClick() {
+                                        return onSelectItem && !isBeingEdited ? onSelectItem(name) : null;
+                                    }
                                 },
-                                onMouseLeave: function onMouseLeave() {
-                                    return _this2.handleMouseLeave();
-                                }
-                            },
-                            _react2.default.createElement(
-                                _flexboxReact2.default,
-                                { flexGrow: 1, style: selectStyle },
-                                widget
-                            )
-                        )
-                    );
-                } else {
-                    return _react2.default.createElement(
-                        _flexboxReact2.default,
-                        {
-                            flexDirection: "row",
-                            onMouseEnter: function onMouseEnter() {
-                                return _this2.handleMouseEnter();
-                            },
-                            onMouseLeave: function onMouseLeave() {
-                                return _this2.handleMouseLeave();
-                            }
-                        },
-                        _react2.default.createElement(
-                            _flexboxReact2.default,
-                            { minWidth: labelWidth, width: labelWidth },
-                            fieldLabel
-                        ),
-                        _react2.default.createElement(
-                            _flexboxReact2.default,
-                            { minWidth: "14px", width: "14px" },
-                            requiredMarker
-                        ),
-                        _react2.default.createElement(
-                            _flexboxReact2.default,
-                            { minWidth: "18px", width: "18px", style: selectStyle },
-                            editIcon
-                        ),
-                        _react2.default.createElement(
-                            _flexboxReact2.default,
-                            {
-                                width: widgetWidth,
-                                style: selectStyle,
-                                onDoubleClick: function onDoubleClick() {
-                                    return onSelectItem && !isBeingEdited ? onSelectItem(name) : null;
-                                }
-                            },
-                            widget
-                        ),
-                        _react2.default.createElement(_flexboxReact2.default, { flexGrow: 1 })
-                    );
+                                control
+                            ),
+                            _react2.default.createElement(_flexboxReact2.default, { flexGrow: 1 })
+                        );
+                    default:
+                        return _react2.default.createElement("div", null);
                 }
             }
         }]);
 
         return Group;
     }(_react2.default.Component);
+    wrapped.displayName = name;
+    return wrapped;
 }

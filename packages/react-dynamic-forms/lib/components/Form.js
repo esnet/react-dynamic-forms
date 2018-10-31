@@ -147,11 +147,15 @@ var Form = function (_React$Component) {
                 props.hidden = false;
                 props.disabled = false;
 
+                props.selected = false;
                 props.edit = false;
                 props.showRequired = true;
 
                 if (this.props.edit === _constants.FormEditStates.SELECTED) {
-                    props.edit = this.state.selection === fieldName;
+                    if (this.state.selection === fieldName) {
+                        props.edit = true;
+                        props.selected = true;
+                    }
                     props.showRequired = props.edit;
                     props.allowEdit = true;
                 } else if (this.props.edit === _constants.FormEditStates.ALWAYS) {
@@ -161,6 +165,7 @@ var Form = function (_React$Component) {
                 }
 
                 if (this.props.edit === _constants.FormEditStates.TABLE) {
+                    props.allowEdit = false;
                     props.layout = _constants.FormGroupLayout.INLINE;
                 } else {
                     props.layout = this.props.groupLayout;
@@ -184,9 +189,10 @@ var Form = function (_React$Component) {
                 props.validation = formRules[fieldName].validation;
             }
 
-            // Field value
+            // Field value (current and initial)
             if (this.props.value.has(fieldName)) {
                 props.value = this.props.value.get(fieldName);
+                props.initialValue = this.props.initialValue ? this.props.initialValue.get(fieldName) : null;
             }
 
             // Callbacks
@@ -290,6 +296,7 @@ var Form = function (_React$Component) {
                         if (_this3.props.onErrorCountChange) {
                             _this3.props.onErrorCountChange(_this3.props.name, errorCount, errorFields);
                         }
+                        _this3._pendingErrors = null;
                     }
 
                     // On change callback
@@ -517,25 +524,6 @@ var Form = function (_React$Component) {
             var formHiddenList = this.getHiddenFields(formFields);
             var formState = { formFields: formFields, formRules: formRules, formHiddenList: formHiddenList };
 
-            /*
-                <form class="form-inline">
-                <div class="form-group">
-                    <label class="sr-only" for="exampleInputEmail3">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
-                </div>
-                <div class="form-group">
-                    <label class="sr-only" for="exampleInputPassword3">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
-                </div>
-                <div class="checkbox">
-                    <label>
-                    <input type="checkbox"> Remember me
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-default">Sign in</button>
-                </form>
-            */
-
             var formClass = this.props.formClassName;
             if (this.props.inline) {
                 formClass += "form-inline";
@@ -588,7 +576,8 @@ exports.default = Form;
 
 
 Form.propTypes = {
-    value: _propTypes2.default.object
+    value: _propTypes2.default.object,
+    initialValue: _propTypes2.default.object
 };
 
 Form.defaultProps = {

@@ -64,7 +64,7 @@ Now onto the form itself...
 
 ## Imports
 
-Open up src/App.js. This is where the code is that made the spinning logo placeholder page.
+Open up **src/App.js**. This is where the code is that made the spinning logo placeholder page.
 
 First we'll replace the imports in there with our own set:
 

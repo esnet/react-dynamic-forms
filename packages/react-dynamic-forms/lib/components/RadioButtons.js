@@ -10,13 +10,15 @@ var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _underscore = require("underscore");
-
-var _underscore2 = _interopRequireDefault(_underscore);
-
 var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
+
+var _renderers = require("../js/renderers");
+
+var _actions = require("../js/actions");
+
+var _style = require("../js/style");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37,24 +39,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var RadioButtons = function (_React$Component) {
     _inherits(RadioButtons, _React$Component);
 
-    function RadioButtons() {
+    function RadioButtons(props) {
         _classCallCheck(this, RadioButtons);
 
-        return _possibleConstructorReturn(this, (RadioButtons.__proto__ || Object.getPrototypeOf(RadioButtons)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (RadioButtons.__proto__ || Object.getPrototypeOf(RadioButtons)).call(this, props));
+
+        _this.state = { isFocused: false };
+        return _this;
     }
 
     _createClass(RadioButtons, [{
-        key: "handleChange",
-        value: function handleChange(v) {
-            // Callbacks
-            if (this.props.onChange) {
-                this.props.onChange(this.props.name, v);
-            }
-            if (this.props.onBlur) {
-                this.props.onBlur(this.props.name);
-            }
-        }
-    }, {
         key: "getCurrentChoiceLabel",
         value: function getCurrentChoiceLabel() {
             var _this2 = this;
@@ -65,22 +59,64 @@ var RadioButtons = function (_React$Component) {
             return choiceItem ? choiceItem.get("label") : "";
         }
     }, {
-        key: "inlineStyle",
-        value: function inlineStyle(hasError, isMissing) {
-            var color = "inherited";
-            var background = "inherited";
-            if (hasError) {
-                color = "#b94a48";
-                background = "#fff0f3";
-            } else if (isMissing) {
-                background = "floralwhite";
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleFocus",
+        value: function handleFocus() {
+            if (!this.state.isFocused) {
+                this.setState({ isFocused: true, oldValue: this.props.value });
             }
-            return {
-                color: color,
-                background: background,
-                width: "100%",
-                paddingLeft: 3
-            };
+        }
+    }, {
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
+            }
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
+        }
+    }, {
+        key: "handleChange",
+        value: function handleChange(v) {
+            // Callbacks
+            if (this.props.onChange) {
+                this.props.onChange(this.props.name, v);
+            }
+        }
+    }, {
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
+        }
+    }, {
+        key: "handleDone",
+        value: function handleDone() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                this.props.onChange(this.props.name, v);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
         }
     }, {
         key: "render",
@@ -88,6 +124,15 @@ var RadioButtons = function (_React$Component) {
             var _this3 = this;
 
             if (this.props.edit) {
+                var editStyle = {
+                    borderStyle: "solid",
+                    borderRadius: 2,
+                    borderWidth: 1,
+                    padding: 5,
+                    borderColor: "#ececec",
+                    marginBottom: 5
+                };
+
                 var items = this.props.optionList.map(function (item, i) {
                     var id = item.get("id");
                     var label = item.get("label");
@@ -113,15 +158,69 @@ var RadioButtons = function (_React$Component) {
                 });
                 return _react2.default.createElement(
                     "div",
-                    null,
-                    items
+                    { style: { marginBottom: 10 } },
+                    _react2.default.createElement(
+                        "div",
+                        {
+                            onFocus: function onFocus(e) {
+                                return _this3.handleFocus(e);
+                            },
+                            onKeyUp: function onKeyUp(e) {
+                                return _this3.handleKeyPress(e);
+                            },
+                            style: editStyle
+                        },
+                        items
+                    ),
+                    this.props.selected ? _react2.default.createElement(
+                        "span",
+                        { style: { marginTop: 5 } },
+                        _react2.default.createElement(
+                            "span",
+                            {
+                                style: (0, _style.inlineDoneButtonStyle)(0),
+                                onClick: function onClick() {
+                                    return _this3.handleDone();
+                                }
+                            },
+                            "DONE"
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            {
+                                style: (0, _style.inlineCancelButtonStyle)(),
+                                onClick: function onClick() {
+                                    return _this3.handleCancel();
+                                }
+                            },
+                            "CANCEL"
+                        )
+                    ) : _react2.default.createElement("div", null)
                 );
             } else {
-                var text = this.getCurrentChoiceLabel();
+                var s = this.getCurrentChoiceLabel();
+                var view = this.props.view || _renderers.textView;
+                var text = _react2.default.createElement(
+                    "span",
+                    { style: { minHeight: 28 } },
+                    view(s)
+                );
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this3.handleEditItem();
+                });
                 return _react2.default.createElement(
                     "div",
-                    { style: this.inlineStyle(false, false) },
-                    text
+                    {
+                        style: (0, _style.inlineStyle)(false, false),
+                        onMouseEnter: function onMouseEnter() {
+                            return _this3.handleMouseEnter();
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            return _this3.handleMouseLeave();
+                        }
+                    },
+                    text,
+                    edit
                 );
             }
         }

@@ -11,22 +11,39 @@
 import React from "react";
 import _ from "underscore";
 import { validate } from "revalidator";
+import Flexbox from "flexbox-react";
 
 import formGroup from "../js/formGroup";
+import { textView } from "../js/renderers";
+import { editAction } from "../js/actions";
+import { inlineStyle, inlineDoneButtonStyle, inlineCancelButtonStyle, colors } from "../js/style";
 
 import "../css/textedit.css";
 
 /**
  * Form control to edit a text field.
- * Set the initial value with `initialValue` and set a callback for
- * value changed with `onChange`.
  */
 class TextEdit extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            touched: false 
+        this.state = {
+            value: props.value,
+            isFocused: false,
+            touched: false,
+            selectText: false
         };
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleEditItem() {
+        this.props.onEditItem(this.props.name);
     }
 
     isEmpty(value) {
@@ -69,15 +86,19 @@ class TextEdit extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value) {
+        if (nextProps.selected && this.props.edit !== nextProps.edit && nextProps.edit === true) {
+            this.setState({ selectText: true });
+        }
+        if (this.state.value !== nextProps.value && !this.state.isFocused) {
+            this.setState({ value: nextProps.value });
+
             const missing = this.isMissing(nextProps.value);
-            const { validationError } = this.getError(nextProps.value);
+            const { validationError: error } = this.getError(nextProps.value);
 
-            // Broadcast error and missing states up to the owner
+            // Broadcast error and missing states up to the parent
             if (this.props.onErrorCountChange) {
-                this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+                this.props.onErrorCountChange(this.props.name, error ? 1 : 0);
             }
-
             if (this.props.onMissingCountChange) {
                 this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
             }
@@ -88,7 +109,7 @@ class TextEdit extends React.Component {
         const missing = this.isMissing(this.props.value);
         const { validationError } = this.getError(this.props.value);
 
-        // Initial error and missing states are fed up to the owner
+        // Initial error and missing states are fed up to the parent
         if (this.props.onErrorCountChange) {
             this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
         }
@@ -98,29 +119,85 @@ class TextEdit extends React.Component {
         }
     }
 
-    handleChange() {
-        const { value } = this.textInput;
-        const missing = this.props.required && this.isEmpty(value);
-        const { validationError } = this.getError(value);
-        let cast = value;
-
-        // Callbacks
-        if (this.props.onErrorCountChange) {
-            this.props.onErrorCountChange(this.props.name, validationError ? 1 : 0);
+    componentDidUpdate() {
+        if (this.state.selectText) {
+            this.textInput.focus();
+            this.textInput.select();
+            this.setState({ selectText: false });
         }
+    }
 
-        if (this.props.onMissingCountChange) {
-            this.props.onMissingCountChange(this.props.name, missing ? 1 : 0);
+    handleChange(e) {
+        const name = this.props.name;
+        const value = e.target.value;
+
+        this.setState({ value }, () => {
+            const missing = this.props.required && this.isEmpty(value);
+            const { validationError } = this.getError(value);
+            let cast = value;
+
+            // Callbacks
+            if (this.props.onErrorCountChange) {
+                this.props.onErrorCountChange(name, validationError ? 1 : 0);
+            }
+
+            if (this.props.onMissingCountChange) {
+                this.props.onMissingCountChange(name, missing ? 1 : 0);
+            }
+
+            if (this.props.onChange) {
+                if (_.has(this.props.rules, "type")) {
+                    switch (this.props.rules.type) {
+                        case "integer":
+                            cast = value === "" ? null : parseInt(value, 10);
+                            break;
+                        case "number":
+                            cast = value === "" ? null : parseFloat(value, 10);
+                            break;
+                        //pass
+                        default:
+                    }
+                }
+                this.props.onChange(name, cast);
+            }
+        });
+    }
+
+    handleFocus() {
+        if (!this.state.isFocused) {
+            this.setState({ isFocused: true, oldValue: this.props.value });
         }
+    }
 
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            if (!e.shiftKey) {
+                this.handleDone();
+            }
+        }
+        if (e.keyCode === 27 /* ESC */) {
+            this.handleCancel();
+        }
+    }
+
+    handleDone() {
+        if (this.props.onBlur) {
+            this.props.onBlur(this.props.name);
+        }
+        this.setState({ isFocused: false, hover: false, oldValue: null });
+    }
+
+    handleCancel() {
         if (this.props.onChange) {
+            const v = this.state.oldValue;
+            let cast = v;
             if (_.has(this.props.rules, "type")) {
                 switch (this.props.rules.type) {
                     case "integer":
-                        cast = value === "" ? null : parseInt(value, 10);
+                        cast = v === "" ? null : parseInt(v, 10);
                         break;
                     case "number":
-                        cast = value === "" ? null : parseFloat(value, 10);
+                        cast = v === "" ? null : parseFloat(v, 10);
                         break;
                     //pass
                     default:
@@ -128,32 +205,8 @@ class TextEdit extends React.Component {
             }
             this.props.onChange(this.props.name, cast);
         }
-    }
-
-    handleBlur() {
-        if (this.props.onBlur) {
-            this.props.onBlur(this.props.name);
-        }
-
-        this.setState({ touched: true });
-    }
-
-    inlineStyle(hasError, isMissing) {
-        let color = "";
-        let background = "";
-        if (hasError) {
-            color = "#b94a48";
-            background = "#fff0f3";
-        } else if (isMissing) {
-            background = "floralwhite";
-        }
-        return {
-            color,
-            background,
-            height: 23,
-            width: "100%",
-            paddingLeft: 3
-        };
+        this.props.onBlur(this.props.name);
+        this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
     render() {
@@ -172,38 +225,77 @@ class TextEdit extends React.Component {
             }
 
             // Warning style
-            const style = isMissing ? { background: "floralwhite" } : {};
-
+            const style = isMissing ? { background: colors.MISSING_COLOR_BG } : {};
             const type = this.props.type || "text";
 
+            const canCommit = !isMissing && !validationError;
+
             return (
-                <div className={className}>
-                    <input
-                        ref={(input) => { this.textInput = input; }}
-                        className="form-control input-sm"
-                        style={style}
-                        type={type}
-                        disabled={this.props.disabled}
-                        placeholder={this.props.placeholder}
-                        value={this.props.value}
-                        onChange={() => this.handleChange()}
-                        onBlur={() => this.handleBlur()}
-                    />
-                    <div className={helpClassName}>{msg}</div>
-                </div>
+                <Flexbox flexDirection="row" style={{ width: "100%" }}>
+                    <div className={className} style={{ width: "100%" }}>
+                        <input
+                            ref={input => {
+                                this.textInput = input;
+                            }}
+                            className="form-control input-sm"
+                            style={style}
+                            type={type}
+                            disabled={this.props.disabled}
+                            placeholder={this.props.placeholder}
+                            value={this.state.value}
+                            onChange={e => this.handleChange(e)}
+                            onFocus={e => this.handleFocus(e)}
+                            onKeyUp={e => this.handleKeyPress(e)}
+                        />
+                        <div className={helpClassName}>{msg}</div>
+                    </div>
+                    {this.props.selected ? (
+                        <span style={{ marginTop: 3 }}>
+                            {canCommit ? (
+                                <span
+                                    style={inlineDoneButtonStyle(5, true)}
+                                    onClick={() => this.handleDone()}
+                                >
+                                    DONE
+                                </span>
+                            ) : (
+                                <span style={inlineDoneButtonStyle(5, false)}>DONE</span>
+                            )}
+
+                            <span
+                                style={inlineCancelButtonStyle()}
+                                onClick={() => this.handleCancel()}
+                            >
+                                CANCEL
+                            </span>
+                        </span>
+                    ) : (
+                        <div />
+                    )}
+                </Flexbox>
             );
         } else {
-            const view = this.props.view;
-            let text = this.props.value;
-            if (isMissing) {
-                text = " ";
-            }
-            const style = this.inlineStyle(validationError, isMissing);
-            if (!view) {
-                return <div style={style}>{text}</div>;
-            } else {
-                return <div style={style}>{view(text)}</div>;
-            }
+            const view = this.props.view || textView;
+            const text = isMissing ? (
+                <span />
+            ) : (
+                <span style={{ minHeight: 28 }}>{view(this.props.value)}</span>
+            );
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
+            const style = inlineStyle(validationError, isMissing);
+            return (
+                <div
+                    style={style}
+                    key={`key-${isMissing}-${validationError}`}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {text}
+                    {edit}
+                </div>
+            );
         }
     }
 }

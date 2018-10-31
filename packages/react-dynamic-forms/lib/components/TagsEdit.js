@@ -20,9 +20,17 @@ var _immutable = require("immutable");
 
 var _immutable2 = _interopRequireDefault(_immutable);
 
+var _flexboxReact = require("flexbox-react");
+
+var _flexboxReact2 = _interopRequireDefault(_flexboxReact);
+
 var _formGroup = require("../js/formGroup");
 
 var _formGroup2 = _interopRequireDefault(_formGroup);
+
+var _actions = require("../js/actions");
+
+var _style = require("../js/style");
 
 require("react-select/dist/react-select.css");
 
@@ -73,6 +81,21 @@ var TagsEdit = function (_React$Component) {
             }
         }
     }, {
+        key: "handleMouseEnter",
+        value: function handleMouseEnter() {
+            this.setState({ hover: true });
+        }
+    }, {
+        key: "handleMouseLeave",
+        value: function handleMouseLeave() {
+            this.setState({ hover: false });
+        }
+    }, {
+        key: "handleEditItem",
+        value: function handleEditItem() {
+            this.props.onEditItem(this.props.name);
+        }
+    }, {
         key: "handleChange",
         value: function handleChange(tags) {
             var _this2 = this;
@@ -112,6 +135,43 @@ var TagsEdit = function (_React$Component) {
             return this.props.required && !this.props.disabled && this.isEmpty(value);
         }
     }, {
+        key: "handleFocus",
+        value: function handleFocus() {
+            if (!this.state.isFocused) {
+                this.setState({ isFocused: true, oldValue: this.props.value });
+            }
+        }
+    }, {
+        key: "handleKeyPress",
+        value: function handleKeyPress(e) {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    this.handleDone();
+                }
+            }
+            if (e.keyCode === 27 /* ESC */) {
+                    this.handleCancel();
+                }
+        }
+    }, {
+        key: "handleDone",
+        value: function handleDone() {
+            if (this.props.onBlur) {
+                this.props.onBlur(this.props.name);
+            }
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
+        key: "handleCancel",
+        value: function handleCancel() {
+            if (this.props.onChange) {
+                var v = this.state.oldValue;
+                this.props.onChange(this.props.name, v);
+            }
+            this.props.onBlur(this.props.name);
+            this.setState({ isFocused: false, hover: false, oldValue: null });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this3 = this;
@@ -136,21 +196,54 @@ var TagsEdit = function (_React$Component) {
 
                 return _react2.default.createElement(
                     "div",
-                    null,
-                    _react2.default.createElement(_reactSelect.Creatable, {
-                        key: "bob",
-                        className: className,
-                        multi: true,
-                        disabled: this.props.disabled,
-                        placeholder: "Select tags...",
-                        allowCreate: true,
-                        value: value,
-                        options: options,
-                        onChange: function onChange(value) {
-                            return _this3.handleChange(value);
-                        }
-                    }),
-                    _react2.default.createElement("div", { className: "help-block" })
+                    { style: { marginBottom: 8 } },
+                    _react2.default.createElement(
+                        _flexboxReact2.default,
+                        { flexDirection: "row", style: { width: "100%" } },
+                        _react2.default.createElement(_reactSelect.Creatable, {
+                            className: className,
+                            multi: true,
+                            disabled: this.props.disabled,
+                            placeholder: "Select tags...",
+                            allowCreate: true,
+                            value: value,
+                            options: options,
+                            onChange: function onChange(value) {
+                                return _this3.handleChange(value);
+                            },
+                            onFocus: function onFocus(e) {
+                                return _this3.handleFocus(e);
+                            },
+                            onKeyUp: function onKeyUp(e) {
+                                return _this3.handleKeyPress(e);
+                            }
+                        }),
+                        _react2.default.createElement("div", { className: "help-block" }),
+                        this.props.selected ? _react2.default.createElement(
+                            "span",
+                            { style: { marginTop: 5 } },
+                            _react2.default.createElement(
+                                "span",
+                                {
+                                    style: (0, _style.inlineDoneButtonStyle)(5),
+                                    onClick: function onClick() {
+                                        return _this3.handleDone();
+                                    }
+                                },
+                                "DONE"
+                            ),
+                            _react2.default.createElement(
+                                "span",
+                                {
+                                    style: (0, _style.inlineCancelButtonStyle)(),
+                                    onClick: function onClick() {
+                                        return _this3.handleCancel();
+                                    }
+                                },
+                                "CANCEL"
+                            )
+                        ) : _react2.default.createElement("div", null)
+                    )
                 );
             } else {
                 var tagStyle = {
@@ -160,20 +253,34 @@ var TagsEdit = function (_React$Component) {
                     paddingLeft: 5,
                     paddingRight: 5,
                     background: "#ececec",
-                    borderRadius: 2,
+                    borderRadius: 4,
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                    borderColor: "#eaeaea",
                     marginLeft: 2,
                     marginRight: 2
                 };
+                var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
+                    return _this3.handleEditItem();
+                });
                 return _react2.default.createElement(
                     "div",
-                    null,
+                    {
+                        onMouseEnter: function onMouseEnter() {
+                            return _this3.handleMouseEnter();
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            return _this3.handleMouseLeave();
+                        }
+                    },
                     this.props.value.map(function (tag, i) {
                         return _react2.default.createElement(
                             "span",
                             { key: i, style: tagStyle },
                             tag
                         );
-                    })
+                    }),
+                    edit
                 );
             }
         }
