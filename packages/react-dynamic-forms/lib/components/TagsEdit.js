@@ -14,7 +14,9 @@ var _underscore = require("underscore");
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _reactSelect = require("react-select");
+var _creatable = require("react-select/creatable");
+
+var _creatable2 = _interopRequireDefault(_creatable);
 
 var _immutable = require("immutable");
 
@@ -31,8 +33,6 @@ var _formGroup2 = _interopRequireDefault(_formGroup);
 var _actions = require("../js/actions");
 
 var _style = require("../js/style");
-
-require("react-select/dist/react-select.css");
 
 require("../css/tagsedit.css");
 
@@ -51,6 +51,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *  This source code is licensed under the BSD-style license found in the
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *  LICENSE file in the root directory of this source tree.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
+
+//import "react-select/dist/react-select.css";
+
 
 /**
  * Form control to select tags from a pull down list.
@@ -100,9 +103,13 @@ var TagsEdit = function (_React$Component) {
         value: function handleChange(tags) {
             var _this2 = this;
 
-            var value = _underscore2.default.map(tags, function (tag) {
-                return tag.label;
-            });
+            //converting object to array
+            var arr = [];
+            arr.push(tags.label);
+
+            var value = arr;
+            //const value = _.map(tags, tag => tag.label);
+            //console.log(value);
 
             var updatedTagList = void 0;
             _underscore2.default.each(tags, function (tag) {
@@ -200,7 +207,7 @@ var TagsEdit = function (_React$Component) {
                     _react2.default.createElement(
                         _flexboxReact2.default,
                         { flexDirection: "row", style: { width: "100%" } },
-                        _react2.default.createElement(_reactSelect.Creatable, {
+                        _react2.default.createElement(_creatable2.default, {
                             className: className,
                             multi: true,
                             disabled: this.props.disabled,

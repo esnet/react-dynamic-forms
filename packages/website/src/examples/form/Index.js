@@ -12,7 +12,7 @@ import React from "react";
 import { Alert } from "react-bootstrap";
 import Immutable from "immutable";
 import Chance from "chance";
-import {
+import { 
     Form,
     Schema,
     Field,
@@ -33,7 +33,8 @@ import {
 
 import form_docs from "./form_docs.md";
 import form_thumbnail from "./form_thumbnail.png";
-import colors from "./colors.json";
+import colors from "./test_colors.json";
+
 
 const schema = (
     <Schema>
@@ -82,7 +83,9 @@ const availableEmailOptions = Immutable.fromJS([
 
 const availableLanguages = Immutable.fromJS(["English", "French", "Spanish", "Japanese"]);
 
-const availableColors = Immutable.fromJS(colors.colors.map(c => ({ id: c.hex, label: c.name })));
+//const availableColors = colors;
+//const availableColors = Immutable.fromJS(colors.colors.map(c => ({ value: c.value, label: c.label})));
+
 
 const birthday = new Date("1975-05-15");
 
@@ -96,9 +99,18 @@ const initialValue = {
     options: 1,
     tags: ["stanford"],
     city: "Berkeley",
-    color: { id: "#a59784", label: "Mallardish" },
+    color: { value: "#a59784", label: "Mallardish" },
     notes: `Here are some notes....`
 };
+
+/*const tagList = [
+    {value: "ucberkeley", label: "ucberkeley"},
+    {value: "esnet", label: "esnet"},
+    {value: "stanford", label: "stanford"},
+    {value: "doe", label: "doe"},
+    {value: "industry", label: "industry"},
+    {value: "government", label: "government"}
+];*/
 
 const tagList = Immutable.fromJS([
     "ucberkeley",
@@ -108,6 +120,15 @@ const tagList = Immutable.fromJS([
     "industry",
     "government"
 ]);
+/*Immutable.fromJS([
+    "ucberkeley",
+    "esnet",
+    "stanford",
+    "doe",
+    "industry",
+    "government"
+]);*/
+
 
 class form extends React.Component {
     constructor(props) {
@@ -240,17 +261,19 @@ class form extends React.Component {
         return submit;
     }
 
-    colorLoader(input, cb) {
+    /*colorLoader(input, cb) {
         setTimeout(() => {
             cb(null, availableColors);
         }, 2000);
-    }
+    }*/
 
     renderContactForm() {
         const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
         if (this.state.loaded) {
             return (
+
+                
                 <Form
                     name="basic"
                     style={style}
@@ -273,9 +296,9 @@ class form extends React.Component {
                         choiceList={availableTypes}
                         disableSearch={true}
                     />
-                    <TextEdit field="first_name" width={250} />
-                    <TextEdit field="last_name" width={250} />
-                    <TextEdit field="email" width={350} view={linkView} />
+                    <TextEdit field="first_name"  width={250} />
+                    <TextEdit field="last_name"  width={250} />
+                    <TextEdit field="email"  width={350} view={linkView} />
                     <DateEdit field="birthdate" width={200} />
                     <CheckBoxes field="languages" optionList={availableLanguages} />
                     <RadioButtons field="options" optionList={availableEmailOptions} />
@@ -286,10 +309,11 @@ class form extends React.Component {
                         width={400}
                     />
                     <AsyncChooser
-                        field="color"
+                I       field="color"
                         width={300}
                         choiceList={Immutable.List()}
-                        loader={this.colorLoader}
+                        testOptions={colors}
+                        /*loader={this.colorLoader}*/
                     />
                     <TextArea field="notes" width={400} rows={5} />
                     <View

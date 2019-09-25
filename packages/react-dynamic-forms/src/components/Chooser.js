@@ -18,7 +18,7 @@ import { textView } from "../js/renderers";
 import { editAction } from "../js/actions";
 import { inlineChooserStyle, inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
-import "react-select/dist/react-select.css";
+//import "react-select/dist/react-select.css";
 import "react-virtualized/styles.css";
 import "react-virtualized-select/styles.css";
 
@@ -115,7 +115,7 @@ export class Chooser extends React.Component {
 
     componentDidUpdate() {
         if (this.state.focusChooser) {
-            this.chooser.focus();
+            //this.chooser.focus();
             this.setState({ focusChooser: false });
         }
     }
@@ -213,9 +213,9 @@ export class Chooser extends React.Component {
                 const key = `${labelList}--${choice}`;
                 ctl = (
                     <VirtualizedSelect
-                        ref={chooser => {
+                        /*ref={chooser => {
                             this.chooser = chooser;
-                        }}
+                        }}*/
                         className={isMissing ? "is-missing" : ""}
                         key={key}
                         value={choice}

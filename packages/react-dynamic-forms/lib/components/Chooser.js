@@ -33,8 +33,6 @@ var _actions = require("../js/actions");
 
 var _style = require("../js/style");
 
-require("react-select/dist/react-select.css");
-
 require("react-virtualized/styles.css");
 
 require("react-virtualized-select/styles.css");
@@ -60,6 +58,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *  This source code is licensed under the BSD-style license found in the
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *  LICENSE file in the root directory of this source tree.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
+
+//import "react-select/dist/react-select.css";
+
 
 /**
  * React Form control to select an item from a list.
@@ -155,7 +156,7 @@ var Chooser = exports.Chooser = function (_React$Component) {
         key: "componentDidUpdate",
         value: function componentDidUpdate() {
             if (this.state.focusChooser) {
-                this.chooser.focus();
+                //this.chooser.focus();
                 this.setState({ focusChooser: false });
             }
         }
@@ -267,11 +268,11 @@ var Chooser = exports.Chooser = function (_React$Component) {
                         return item.label;
                     });
                     var key = labelList + "--" + choice;
-                    ctl = _react2.default.createElement(_reactVirtualizedSelect2.default, {
-                        ref: function ref(chooser) {
-                            _this5.chooser = chooser;
-                        },
-                        className: isMissing ? "is-missing" : "",
+                    ctl = _react2.default.createElement(_reactVirtualizedSelect2.default
+                    /*ref={chooser => {
+                        this.chooser = chooser;
+                    }}*/
+                    , { className: isMissing ? "is-missing" : "",
                         key: key,
                         value: choice,
                         options: options,

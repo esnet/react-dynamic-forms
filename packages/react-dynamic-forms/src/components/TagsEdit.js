@@ -10,7 +10,7 @@
 
 import React from "react";
 import _ from "underscore";
-import { Creatable } from "react-select";
+import Creatable from "react-select/creatable";
 import Immutable from "immutable";
 import Flexbox from "flexbox-react";
 
@@ -18,7 +18,7 @@ import formGroup from "../js/formGroup";
 import { editAction } from "../js/actions";
 import { inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
-import "react-select/dist/react-select.css";
+//import "react-select/dist/react-select.css";
 import "../css/tagsedit.css";
 
 /**
@@ -54,7 +54,12 @@ class TagsEdit extends React.Component {
     }
 
     handleChange(tags) {
-        const value = _.map(tags, tag => tag.label);
+        //converting object to array
+        const arr = [];
+        arr.push(tags.label);
+
+        const value = arr;
+        //const value = _.map(tags, tag => tag.label);
 
         let updatedTagList;
         _.each(tags, tag => {

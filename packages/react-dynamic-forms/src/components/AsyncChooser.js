@@ -19,11 +19,13 @@ import { textView } from "../js/renderers";
 import { editAction } from "../js/actions";
 import { inlineChooserStyle, inlineDoneButtonStyle, inlineCancelButtonStyle } from "../js/style";
 
-import "react-select/dist/react-select.css";
+//import "react-select/dist/react-select.css";
 import "react-virtualized/styles.css";
 import "react-virtualized-select/styles.css";
 
-import Select from "react-virtualized-select";
+//import Select from "react-virtualized-select";
+import Select from "react-select";
+import { FixedSizeList as List } from "react-window";
 
 import "../css/chooser.css";
 
@@ -33,6 +35,29 @@ import "../css/chooser.css";
  * the list is immutable. Also note that if a value is provided (current or
  * default) that value will only actually show once the list is received.
  */
+
+const height = 35; 
+ class MenuList extends React.Component {
+  render() {
+        //console.log('Inside MenuList:');
+
+        const { options, children, maxHeight, getValue } = this.props;
+        const [value] = getValue();
+        const initialOffset = options.indexOf(value) * height;
+
+    return (
+        <List
+        height={maxHeight}
+        itemCount={children.length}
+        itemSize={50}
+        initialScrollOffset={initialOffset}>
+        {({ index, style }) => <div style={style}>{children[index]}</div>}
+      </List>
+    );
+  }
+}
+
+
 export class AsyncChooser extends React.Component {
     constructor(props) {
         super(props);
@@ -122,7 +147,7 @@ export class AsyncChooser extends React.Component {
 
     componentDidUpdate() {
         if (this.state.focusChooser) {
-            this.chooser.focus();
+            //this.chooser.focus();
             this.setState({ focusChooser: false });
         }
     }
@@ -154,6 +179,7 @@ export class AsyncChooser extends React.Component {
                 if (_.contains(this.props.disableList, item.get("id")) || isDisabled) {
                     disabled = true;
                 }
+                //return "";  
                 return { value: item.get("id"), label: item.get("label"), disabled };
             })
             .toJS();
@@ -178,7 +204,7 @@ export class AsyncChooser extends React.Component {
     }
 
     render() {
-        const choice = this.props.value ? this.props.value.get("id") : null;
+        const choice = this.props.value ? this.props.value.get("value") : null;
         const isMissing = this.isMissing(this.props.value);
 
         if (this.props.edit) {
@@ -189,22 +215,12 @@ export class AsyncChooser extends React.Component {
             return (
                 <Flexbox flexDirection="row" style={{ width: "100%" }}>
                     <div style={chooserStyle} onFocus={e => this.handleFocus(e)}>
-                        <Select
-                            async
-                            ref={chooser => {
-                                this.chooser = chooser;
-                            }}
-                            className={isMissing ? "is-missing" : ""}
-                            value={choice}
-                            loadOptions={this.loadOptions}
-                            openOnFocus={true}
-                            disabled={this.props.disabled}
-                            searchable={true}
-                            matchPos={matchPos}
-                            placeholder={this.props.placeholder}
-                            clearable={clearable}
-                            onChange={v => this.handleChange(v)}
-                        />
+                    <Select 
+                        components={{ MenuList }} 
+                        options={this.props.testOptions}
+                        value={choice}
+                        onChange={v => this.handleChange(v)}
+                    />
                     </div>
                     {this.props.selected ? (
                         <span style={{ marginTop: 5 }}>
@@ -295,7 +311,7 @@ AsyncChooser.defaultProps = {
     disableSearch: false,
     searchContains: "any",
     allowSingleDeselect: false,
-    width: 300
+    width: 300,
 };
 
 export const AsyncChooserGroup = formGroup(AsyncChooser, "AsyncChooser");

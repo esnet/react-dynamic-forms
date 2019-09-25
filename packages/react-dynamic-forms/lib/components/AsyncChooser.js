@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.AsyncChooserGroup = exports.AsyncChooser = undefined;
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require("react");
@@ -37,15 +39,15 @@ var _actions = require("../js/actions");
 
 var _style = require("../js/style");
 
-require("react-select/dist/react-select.css");
-
 require("react-virtualized/styles.css");
 
 require("react-virtualized-select/styles.css");
 
-var _reactVirtualizedSelect = require("react-virtualized-select");
+var _reactSelect = require("react-select");
 
-var _reactVirtualizedSelect2 = _interopRequireDefault(_reactVirtualizedSelect);
+var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+var _reactWindow = require("react-window");
 
 require("../css/chooser.css");
 
@@ -65,26 +67,84 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *  LICENSE file in the root directory of this source tree.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
+//import "react-select/dist/react-select.css";
+
+
+//import Select from "react-virtualized-select";
+
+
 /**
  * React Form control to select an item from a list. The list is built from
  * an async call. Once the call has been made and the options list if built
  * the list is immutable. Also note that if a value is provided (current or
  * default) that value will only actually show once the list is received.
  */
-var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
-    _inherits(AsyncChooser, _React$Component);
+
+var height = 35;
+
+var MenuList = function (_React$Component) {
+    _inherits(MenuList, _React$Component);
+
+    function MenuList() {
+        _classCallCheck(this, MenuList);
+
+        return _possibleConstructorReturn(this, (MenuList.__proto__ || Object.getPrototypeOf(MenuList)).apply(this, arguments));
+    }
+
+    _createClass(MenuList, [{
+        key: "render",
+        value: function render() {
+            //console.log('Inside MenuList:');
+
+            var _props = this.props,
+                options = _props.options,
+                children = _props.children,
+                maxHeight = _props.maxHeight,
+                getValue = _props.getValue;
+
+            var _getValue = getValue(),
+                _getValue2 = _slicedToArray(_getValue, 1),
+                value = _getValue2[0];
+
+            var initialOffset = options.indexOf(value) * height;
+
+            return _react2.default.createElement(
+                _reactWindow.FixedSizeList,
+                {
+                    height: maxHeight,
+                    itemCount: children.length,
+                    itemSize: 50,
+                    initialScrollOffset: initialOffset },
+                function (_ref) {
+                    var index = _ref.index,
+                        style = _ref.style;
+                    return _react2.default.createElement(
+                        "div",
+                        { style: style },
+                        children[index]
+                    );
+                }
+            );
+        }
+    }]);
+
+    return MenuList;
+}(_react2.default.Component);
+
+var AsyncChooser = exports.AsyncChooser = function (_React$Component2) {
+    _inherits(AsyncChooser, _React$Component2);
 
     function AsyncChooser(props) {
         _classCallCheck(this, AsyncChooser);
 
-        var _this = _possibleConstructorReturn(this, (AsyncChooser.__proto__ || Object.getPrototypeOf(AsyncChooser)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (AsyncChooser.__proto__ || Object.getPrototypeOf(AsyncChooser)).call(this, props));
 
-        _this.state = { isFocused: false, focusChooser: false };
-        _this.handleChange = _this.handleChange.bind(_this);
-        _this.loadOptions = _this.loadOptions.bind(_this);
+        _this2.state = { isFocused: false, focusChooser: false };
+        _this2.handleChange = _this2.handleChange.bind(_this2);
+        _this2.loadOptions = _this2.loadOptions.bind(_this2);
 
-        _this.loadedOptions = _immutable2.default.List();
-        return _this;
+        _this2.loadedOptions = _immutable2.default.List();
+        return _this2;
     }
 
     _createClass(AsyncChooser, [{
@@ -165,16 +225,16 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
         key: "componentDidUpdate",
         value: function componentDidUpdate() {
             if (this.state.focusChooser) {
-                this.chooser.focus();
+                //this.chooser.focus();
                 this.setState({ focusChooser: false });
             }
         }
     }, {
         key: "handleChange",
         value: function handleChange(item) {
-            var _ref = item || {},
-                value = _ref.value,
-                label = _ref.label;
+            var _ref2 = item || {},
+                value = _ref2.value,
+                label = _ref2.label;
 
             var isMissing = this.props.required && _underscore2.default.isNull(item);
             var id = !isMissing && !_underscore2.default.isNaN(Number(value)) ? +value : value;
@@ -195,21 +255,22 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
     }, {
         key: "getOptionList",
         value: function getOptionList(options) {
-            var _this2 = this;
+            var _this3 = this;
 
             return options.map(function (item) {
                 var disabled = false;
                 var isDisabled = item.has("disabled") && item.get("disabled") === true;
-                if (_underscore2.default.contains(_this2.props.disableList, item.get("id")) || isDisabled) {
+                if (_underscore2.default.contains(_this3.props.disableList, item.get("id")) || isDisabled) {
                     disabled = true;
                 }
+                //return "";  
                 return { value: item.get("id"), label: item.get("label"), disabled: disabled };
             }).toJS();
         }
     }, {
         key: "loadOptions",
         value: function loadOptions(input, cb) {
-            var _this3 = this;
+            var _this4 = this;
 
             if (this.cachedOptions) {
                 cb(null, {
@@ -221,18 +282,18 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
 
             this.props.loader(input, function (err, options) {
                 cb(err, {
-                    options: _this3.getOptionList(options),
+                    options: _this4.getOptionList(options),
                     complete: true
                 });
-                _this3.cachedOptions = options;
+                _this4.cachedOptions = options;
             });
         }
     }, {
         key: "render",
         value: function render() {
-            var _this4 = this;
+            var _this5 = this;
 
-            var choice = this.props.value ? this.props.value.get("id") : null;
+            var choice = this.props.value ? this.props.value.get("value") : null;
             var isMissing = this.isMissing(this.props.value);
 
             if (this.props.edit) {
@@ -246,24 +307,14 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
                     _react2.default.createElement(
                         "div",
                         { style: chooserStyle, onFocus: function onFocus(e) {
-                                return _this4.handleFocus(e);
+                                return _this5.handleFocus(e);
                             } },
-                        _react2.default.createElement(_reactVirtualizedSelect2.default, {
-                            async: true,
-                            ref: function ref(chooser) {
-                                _this4.chooser = chooser;
-                            },
-                            className: isMissing ? "is-missing" : "",
+                        _react2.default.createElement(_reactSelect2.default, {
+                            components: { MenuList: MenuList },
+                            options: this.props.testOptions,
                             value: choice,
-                            loadOptions: this.loadOptions,
-                            openOnFocus: true,
-                            disabled: this.props.disabled,
-                            searchable: true,
-                            matchPos: matchPos,
-                            placeholder: this.props.placeholder,
-                            clearable: clearable,
                             onChange: function onChange(v) {
-                                return _this4.handleChange(v);
+                                return _this5.handleChange(v);
                             }
                         })
                     ),
@@ -275,7 +326,7 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
                             {
                                 style: (0, _style.inlineDoneButtonStyle)(5),
                                 onClick: function onClick() {
-                                    return _this4.handleDone();
+                                    return _this5.handleDone();
                                 }
                             },
                             "DONE"
@@ -285,7 +336,7 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
                             {
                                 style: (0, _style.inlineCancelButtonStyle)(),
                                 onClick: function onClick() {
-                                    return _this4.handleCancel();
+                                    return _this5.handleCancel();
                                 }
                             },
                             "CANCEL"
@@ -302,7 +353,7 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
                     View(label)
                 );
                 var edit = (0, _actions.editAction)(this.state.hover && this.props.allowEdit, function () {
-                    return _this4.handleEditItem();
+                    return _this5.handleEditItem();
                 });
 
                 return _react2.default.createElement(
@@ -310,10 +361,10 @@ var AsyncChooser = exports.AsyncChooser = function (_React$Component) {
                     {
                         style: style,
                         onMouseEnter: function onMouseEnter() {
-                            return _this4.handleMouseEnter();
+                            return _this5.handleMouseEnter();
                         },
                         onMouseLeave: function onMouseLeave() {
-                            return _this4.handleMouseLeave();
+                            return _this5.handleMouseLeave();
                         }
                     },
                     text,
