@@ -109,7 +109,6 @@ var TagsEdit = function (_React$Component) {
 
             var value = arr;
             //const value = _.map(tags, tag => tag.label);
-            //console.log(value);
 
             var updatedTagList = void 0;
             _underscore2.default.each(tags, function (tag) {

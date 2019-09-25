@@ -83,7 +83,7 @@ const availableEmailOptions = Immutable.fromJS([
 
 const availableLanguages = Immutable.fromJS(["English", "French", "Spanish", "Japanese"]);
 
-//const availableColors = colors;
+//const availableColors = Immutable.fromJS(colors.colors.map(c => ({ id: c.hex, label: c.name })));
 //const availableColors = Immutable.fromJS(colors.colors.map(c => ({ value: c.value, label: c.label})));
 
 
@@ -103,14 +103,6 @@ const initialValue = {
     notes: `Here are some notes....`
 };
 
-/*const tagList = [
-    {value: "ucberkeley", label: "ucberkeley"},
-    {value: "esnet", label: "esnet"},
-    {value: "stanford", label: "stanford"},
-    {value: "doe", label: "doe"},
-    {value: "industry", label: "industry"},
-    {value: "government", label: "government"}
-];*/
 
 const tagList = Immutable.fromJS([
     "ucberkeley",
@@ -120,14 +112,6 @@ const tagList = Immutable.fromJS([
     "industry",
     "government"
 ]);
-/*Immutable.fromJS([
-    "ucberkeley",
-    "esnet",
-    "stanford",
-    "doe",
-    "industry",
-    "government"
-]);*/
 
 
 class form extends React.Component {
