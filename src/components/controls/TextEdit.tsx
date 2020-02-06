@@ -13,12 +13,17 @@ import _ from "lodash";
 import React from "react";
 import Form from "react-bootstrap/Form";
 import { validate } from "revalidator";
-import { editAction } from "../actions";
-import { formGroup } from "../group";
-import { textView } from "../renderers";
-import { colors, inlineCancelButtonStyle, inlineDoneButtonStyle, inlineStyle } from "../style";
-import "../style/textedit.css";
-import { FieldEditorProps, FieldValue } from "./Form";
+import { formGroup } from "../../hoc/group";
+import "../../style/textedit.css";
+import { editAction } from "../../util/actions";
+import { textView } from "../../util/renderers";
+import {
+    colors,
+    inlineCancelButtonStyle,
+    inlineDoneButtonStyle,
+    inlineStyle
+} from "../../util/style";
+import { FieldEditorProps, FieldValue } from "../Form";
 
 interface ValidationError {
     validationError: boolean;

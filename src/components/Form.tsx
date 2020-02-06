@@ -13,7 +13,7 @@ import deepCopy from "deepcopy";
 import Immutable from "immutable";
 import _ from "lodash";
 import React from "react";
-import { FormEditStates, FormGroupLayout } from "../constants";
+import { FormEditStates, FormGroupLayout } from "../util/constants";
 import Field, { FieldProps } from "./Field";
 import Schema, { SchemaProps } from "./Schema";
 

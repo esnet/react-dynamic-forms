@@ -8,14 +8,13 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-import Flexbox from "@g07cha/flexbox-react";
 import classNames from "classnames";
 import Immutable from "immutable";
 import _ from "lodash";
 import React from "react";
-import { FormGroupLayout } from "./constants";
-import "./style/group.css";
-import "./style/icon.css";
+import "../style/group.css";
+import "../style/icon.css";
+import { FormGroupLayout } from "../util/constants";
 
 /**
  * Groups are intended to be used within the `Form` and provide a shorthand
@@ -113,7 +112,8 @@ export function formGroup(Control: any) {
                 <div
                     style={{
                         width: controlWidth,
-                        margin: 2
+                        margin: 2,
+                        cursor: "pointer"
                     }}
                 >
                     <Control {...props} onEditItem={onSelectItem} />
@@ -159,13 +159,14 @@ export function formGroup(Control: any) {
                     style={{
                         color: labelColor,
                         marginLeft,
-                        paddingTop: 8,
+                        paddingTop: 5,
                         whiteSpace: "nowrap"
                     }}
                 >
                     <label htmlFor={key}>{label}</label>
                 </div>
             );
+
             const labelSize = labelWidth ? `${labelWidth}px` : "300px";
 
             // Group
@@ -173,58 +174,60 @@ export function formGroup(Control: any) {
             switch (this.props.layout) {
                 case FormGroupLayout.INLINE:
                     return (
-                        <Flexbox
-                            flexDirection="column"
-                            width={`${controlWidth}`}
-                            // onMouseEnter={() => this.handleMouseEnter()}
-                            // onMouseLeave={() => this.handleMouseLeave()}
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                width: controlWidth
+                            }}
+                            onMouseEnter={() => this.handleMouseEnter()}
+                            onMouseLeave={() => this.handleMouseLeave()}
                         >
                             {control}
-                        </Flexbox>
+                        </div>
                     );
                 case FormGroupLayout.COLUMN:
                     return (
-                        <Flexbox
-                            flexDirection="column"
-                            // onMouseEnter={() => this.handleMouseEnter()}
-                            // onMouseLeave={() => this.handleMouseLeave()}
+                        <div
+                            style={{ display: "flex", flexDirection: "column" }}
+                            onMouseEnter={() => this.handleMouseEnter()}
+                            onMouseLeave={() => this.handleMouseLeave()}
                         >
-                            <Flexbox
-                                flexDirection="row"
-                                // onMouseEnter={() => this.handleMouseEnter()}
-                                // onMouseLeave={() => this.handleMouseLeave()}
+                            <div
+                                style={{ display: "flex" }}
+                                onMouseEnter={() => this.handleMouseEnter()}
+                                onMouseLeave={() => this.handleMouseLeave()}
                             >
-                                <Flexbox>{fieldLabel}</Flexbox>
-                                <Flexbox minWidth="14px" width="14px">
+                                <div style={{ display: "flex" }}>{fieldLabel}</div>
+                                <div style={{ display: "flex", minWidth: 14, width: 14 }}>
                                     {requiredMarker}
-                                </Flexbox>
-                            </Flexbox>
-                            <Flexbox
-                                flexDirection="row"
-                                // onMouseEnter={() => this.handleMouseEnter()}
-                                // onMouseLeave={() => this.handleMouseLeave()}
+                                </div>
+                            </div>
+                            <div
+                                style={{ display: "flex" }}
+                                onMouseEnter={() => this.handleMouseEnter()}
+                                onMouseLeave={() => this.handleMouseLeave()}
                             >
-                                <Flexbox flexGrow={1} style={selectStyle}>
+                                <div style={{ display: "flex", flexGrow: 1, ...selectStyle }}>
                                     {control}
-                                </Flexbox>
-                            </Flexbox>
-                        </Flexbox>
+                                </div>
+                            </div>
+                        </div>
                     );
                 case FormGroupLayout.ROW:
-                    console.log("Rendering row...");
                     return (
-                        <Flexbox
-                            flexDirection="row"
-                            // onMouseEnter={() => this.handleMouseEnter()}
-                            // onMouseLeave={() => this.handleMouseLeave()}
+                        <div
+                            style={{ display: "flex", flexDirection: "row" }}
+                            onMouseEnter={() => this.handleMouseEnter()}
+                            onMouseLeave={() => this.handleMouseLeave()}
                         >
-                            <Flexbox minWidth={labelSize} width={labelSize}>
+                            <div style={{ display: "flex", minWidth: labelSize, width: labelSize }}>
                                 {fieldLabel}
-                            </Flexbox>
-                            <Flexbox minWidth="14px" width="14px">
+                            </div>
+                            <div style={{ display: "flex", minWidth: 14, width: 14 }}>
                                 {requiredMarker}
-                            </Flexbox>
-                            <Flexbox width={`${controlWidth}`} style={selectStyle}>
+                            </div>
+                            <div style={{ display: "flex", width: controlWidth, ...selectStyle }}>
                                 <div
                                     onDoubleClick={() =>
                                         onSelectItem && !isBeingEdited ? onSelectItem(name) : null
@@ -232,28 +235,28 @@ export function formGroup(Control: any) {
                                 >
                                     {control}
                                 </div>
-                            </Flexbox>
-                            <Flexbox flexGrow={1} />
-                        </Flexbox>
+                            </div>
+                            <div style={{ display: "flex", flexGrow: 1 }} />
+                        </div>
                     );
                 default:
                     return <div />;
             }
         }
 
-        // private selectItem(attrName) {
-        //     if (this.props.onSelectItem) {
-        //         this.props.onSelectItem(attrName);
-        //     }
-        // }
+        public selectItem(name: string) {
+            if (this.props.onSelectItem) {
+                this.props.onSelectItem(name);
+            }
+        }
 
-        // public handleMouseEnter() {
-        //     this.setState({ over: true });
-        // }
+        public handleMouseEnter() {
+            this.setState({ over: true });
+        }
 
-        // public handleMouseLeave() {
-        //     this.setState({ over: false });
-        // }
+        public handleMouseLeave() {
+            this.setState({ over: false });
+        }
     };
 
     return wrapped;

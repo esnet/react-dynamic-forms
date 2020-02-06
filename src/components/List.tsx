@@ -11,10 +11,10 @@
 import Flexbox from "@g07cha/flexbox-react";
 import _ from "lodash";
 import React from "react";
-import { ListItemProps } from "../list";
-import { inlineCancelButtonStyle, inlineDoneButtonStyle } from "../style";
+import { ListItemProps } from "../hoc/list";
 import "../style/icon.css";
 import "../style/list.css";
+import { inlineCancelButtonStyle, inlineDoneButtonStyle } from "../util/style";
 
 interface ListProps {
     items: React.ReactElement<ListItemProps>[];

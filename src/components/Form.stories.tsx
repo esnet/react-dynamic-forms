@@ -126,3 +126,83 @@ export const validateAsRequired = () => {
         </div>
     );
 };
+
+export const transitionEditStates = () => {
+    const [value, setValue] = React.useState<Immutable.Map<string, any>>(fromJS(initialContact));
+    const [hasMissing, setHasMissing] = React.useState<boolean>(false);
+    const [hasErrors, setHasErrors] = React.useState<boolean>(false);
+    const [editMode, setEditMode] = React.useState<string>(FormEditStates.ALWAYS);
+
+    const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
+    const buttonStyleSelected = { color: "black", padding: 10, cursor: "pointer" };
+    const buttonStyleUnselected = { color: "#DDD", padding: 10, cursor: "pointer" };
+    return (
+        <div>
+            <pre style={{ fontSize: 18 }}>
+                <span>Text edit form with required fields</span>
+            </pre>
+
+            <div>
+                <pre style={{ fontSize: 12 }}>
+                    <span>Select the edit mode</span>
+                </pre>
+                <span
+                    style={
+                        editMode == FormEditStates.ALWAYS
+                            ? buttonStyleSelected
+                            : buttonStyleUnselected
+                    }
+                    onClick={() => setEditMode(FormEditStates.ALWAYS)}
+                >
+                    Always
+                </span>
+                <span
+                    style={
+                        editMode == FormEditStates.SELECTED
+                            ? buttonStyleSelected
+                            : buttonStyleUnselected
+                    }
+                    onClick={() => setEditMode(FormEditStates.SELECTED)}
+                >
+                    Selected
+                </span>
+                <span
+                    style={
+                        editMode == FormEditStates.NEVER
+                            ? buttonStyleSelected
+                            : buttonStyleUnselected
+                    }
+                    onClick={() => setEditMode(FormEditStates.NEVER)}
+                >
+                    Never
+                </span>
+            </div>
+
+            <Form
+                name="basic"
+                formStyle={style}
+                schema={contactSchema}
+                value={value}
+                initialValue={value}
+                edit={editMode}
+                labelWidth={200}
+                // onSubmit={() => console.log("Submit")}
+                onChange={(_, value) => setValue(value)}
+                onMissingCountChange={(_, missing) => setHasMissing(missing > 0)}
+                onErrorCountChange={(_, errors) => setHasErrors(errors > 0)}
+            >
+                <TextEdit field="first_name" width={300} />
+                <TextEdit field="last_name" width={300} />
+            </Form>
+
+            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+                <span>{hasMissing ? "has missing" : "no missing"}</span>
+                <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
+            </pre>
+
+            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+                {JSON.stringify(value.toJS(), null, 3)}
+            </pre>
+        </div>
+    );
+};

@@ -11,8 +11,8 @@
 import Immutable from "immutable";
 import _ from "lodash";
 import React, { ComponentType } from "react";
-import { FieldValue } from "./components/Form";
-import List from "./components/List";
+import { FieldValue } from "../components/Form";
+import List from "../components/List";
 
 export interface ListItemProps {
     key: string;

@@ -9,7 +9,7 @@
  */
 
 import React from "react";
-import { formGroup } from "../group";
+import { formGroup } from "../hoc/group";
 import { FieldValue } from "./Form";
 
 interface ViewProps {
