@@ -2,7 +2,7 @@ import Immutable, { fromJS } from "immutable";
 import React from "react";
 import { Field, Form, FormEditStates, Schema, TextEdit } from "..";
 
-export default { title: "TextEdit" };
+export default { title: "Forms" };
 
 const initialValue = {
     name: "Waldo"
@@ -21,17 +21,19 @@ const basicSchema = (
 );
 
 export const basic = () => {
+    // State
     const [value, setValue] = React.useState<Immutable.Map<string, any>>(fromJS(initialValue));
     const [hasMissing, setHasMissing] = React.useState<boolean>(false);
     const [hasErrors, setHasErrors] = React.useState<boolean>(false);
     const [editMode] = React.useState<string>(FormEditStates.ALWAYS);
 
+    // Styles
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
     return (
         <div>
             <pre style={{ fontSize: 18 }}>
-                <span>Basic form</span>
+                <span>Basic Form</span>
             </pre>
             <Form
                 name="basic"
@@ -41,10 +43,10 @@ export const basic = () => {
                 initialValue={value}
                 edit={editMode}
                 labelWidth={200}
-                // onSubmit={() => console.log("Submit")}
                 onChange={(_, value) => setValue(value)}
                 onMissingCountChange={(_, missing) => setHasMissing(missing > 0)}
                 onErrorCountChange={(_, errors) => setHasErrors(errors > 0)}
+                // onSubmit={() => console.log("Submit")}
             >
                 <TextEdit field="name" width={300} />
             </Form>
@@ -133,7 +135,17 @@ export const transitionEditStates = () => {
     const [hasErrors, setHasErrors] = React.useState<boolean>(false);
     const [editMode, setEditMode] = React.useState<string>(FormEditStates.ALWAYS);
 
-    const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
+    const formStyle = {
+        background: "#FAFAFA",
+        borderRadius: 5,
+        padding: 10
+    };
+    const outputStyle = {
+        background: "#F3F3F3",
+        borderRadius: 5,
+        margin: 20,
+        padding: 10
+    };
     const buttonStyleSelected = { color: "black", padding: 10, cursor: "pointer" };
     const buttonStyleUnselected = { color: "#DDD", padding: 10, cursor: "pointer" };
     return (
@@ -180,7 +192,7 @@ export const transitionEditStates = () => {
 
             <Form
                 name="basic"
-                formStyle={style}
+                formStyle={formStyle}
                 schema={contactSchema}
                 value={value}
                 initialValue={value}
@@ -195,7 +207,7 @@ export const transitionEditStates = () => {
                 <TextEdit field="last_name" width={300} />
             </Form>
 
-            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+            <pre style={outputStyle}>
                 <span>{hasMissing ? "has missing" : "no missing"}</span>
                 <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
             </pre>

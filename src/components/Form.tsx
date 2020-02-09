@@ -19,7 +19,12 @@ import Schema, { SchemaProps } from "./Schema";
 
 // A value passed down the controls, or relayed back up if changed by the user is of this type,
 // basically a number or string, or alternatively missing as null or never defined as undefined.
-export type FieldValue = number | string | null | undefined;
+export type FieldValue =
+    | number
+    | string
+    | Immutable.List<Immutable.Map<string, FieldValue>>
+    | null
+    | undefined;
 
 // Utility function to return if the React element tree traversal has found an element which is a Schema
 const isChildSchema = (child: React.ReactElement<any>) => child.type === Schema;
@@ -375,7 +380,7 @@ export default class Form extends React.Component<FormProps, FormState> {
      *
      * If a field is complex, such as another form or a list view, then errorCount
      * will be the telly all the errors within that form or list. If it is a simple
-     * field control, such as a textedit then the errorCount will be either 0 or 1.
+     * field control, such as a TextEdit then the errorCount will be either 0 or 1.
      *
      * The mapping of field names (passed in as the fieldName) and the count is updated
      * in _pendingErrors until built up state is flushed to the related callback.
@@ -467,25 +472,15 @@ export default class Form extends React.Component<FormProps, FormState> {
     private getHiddenFields(formFields: FormFields): string[] {
         const { visible } = this.props;
 
-        console.log("getHiddenFields... visible =", visible);
         let result: string[] = [];
         if (visible) {
             _.each(formFields, (field, fieldName) => {
-                console.log("  * field", fieldName);
                 let makeHidden;
                 const tags = field.tags || [];
                 if (_.isArray(visible)) {
-                    console.log(
-                        "     * isArray",
-                        tags,
-                        visible,
-                        _.intersection(tags, visible).length > 0,
-                        _.includes(tags, "all")
-                    );
                     makeHidden = !(
                         _.intersection(tags, visible).length > 0 || _.includes(tags, "all")
                     );
-                    console.log("     * makeHidden", makeHidden);
                 } else {
                     makeHidden = !(_.includes(tags, visible) || _.includes(tags, "all"));
                 }
@@ -494,7 +489,7 @@ export default class Form extends React.Component<FormProps, FormState> {
                 }
             });
         }
-        console.log(result);
+
         return result;
     }
 

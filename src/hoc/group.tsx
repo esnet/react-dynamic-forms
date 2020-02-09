@@ -11,7 +11,7 @@
 import classNames from "classnames";
 import Immutable from "immutable";
 import _ from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import "../style/group.css";
 import "../style/icon.css";
 import { FormGroupLayout } from "../util/constants";
@@ -66,198 +66,180 @@ export interface FormGroupState {
 }
 
 export function formGroup(Control: any) {
-    const wrapped = class Group extends React.Component<FormGroupProps, FormGroupState> {
-        constructor(props: any) {
-            super(props);
-            this.state = { over: false, error: false };
+    return (props: FormGroupProps) => {
+        const handleMouseEnter = () => setOver(true);
+        const handleMouseLeave = () => setOver(false);
+
+        const [, setOver] = useState<boolean>(false);
+        const [error] = useState<boolean>(false);
+
+        const {
+            name,
+            label,
+            key,
+            edit,
+            // disabled,
+            required,
+            showRequired,
+            onSelectItem,
+            value,
+            initialValue,
+            layout,
+            labelWidth,
+            width,
+            hidden = false
+        } = props;
+
+        const isBeingEdited = edit;
+        const hasChanged = _.isNull(initialValue) ? false : !Immutable.is(value, initialValue);
+
+        const selectStyle = {};
+
+        //
+        // Hidden
+        //
+        if (hidden) {
+            return <div />;
         }
 
-        public render() {
-            console.log("Render group", this.props.hidden);
-            const { hidden = false, width, ...props } = this.props;
-            const {
-                name,
-                label,
-                key,
-                edit,
-                // disabled,
-                required,
-                showRequired,
-                onSelectItem,
-                value,
-                initialValue,
-                layout,
-                labelWidth
-            } = props;
+        //
+        // Control
+        //
 
-            const isBeingEdited = edit;
-            const hasChanged = _.isNull(initialValue) ? false : !Immutable.is(value, initialValue);
+        const controlWidth = width ? width : "100%";
+        const control = (
+            <div
+                style={{
+                    width: controlWidth,
+                    margin: 2,
+                    cursor: "pointer"
+                }}
+            >
+                <Control {...props} onEditItem={onSelectItem} />
+            </div>
+        );
 
-            const selectStyle = {};
-
-            //
-            // Hidden
-            //
-            if (hidden) {
-                console.log("Hiddens");
-                return <div />;
-            }
-
-            //
-            // Control
-            //
-
-            const controlWidth = width ? width : "100%";
-            const control = (
-                <div
-                    style={{
-                        width: controlWidth,
-                        margin: 2,
-                        cursor: "pointer"
-                    }}
-                >
-                    <Control {...props} onEditItem={onSelectItem} />
-                </div>
+        //
+        // Required
+        //
+        let requiredMarker;
+        if (required && showRequired) {
+            requiredMarker = (
+                <span className="group-required" style={{ paddingLeft: 3 }}>
+                    *
+                </span>
             );
+        } else {
+            requiredMarker = <span />;
+        }
 
-            //
-            // Required
-            //
-            let requiredMarker;
-            if (required && showRequired) {
-                requiredMarker = (
-                    <span className="group-required" style={{ paddingLeft: 3 }}>
-                        *
-                    </span>
+        //
+        // Label
+        //
+
+        const labelClasses = classNames({
+            "group-label": true,
+            required
+        });
+        let marginLeft: string | undefined = "auto";
+        if (layout === FormGroupLayout.COLUMN) {
+            marginLeft = undefined;
+        }
+
+        let labelColor = "inherit";
+        if (error) {
+            labelColor = "b94a48";
+        } else if (hasChanged) {
+            labelColor = "steelblue";
+        }
+
+        const fieldLabel = (
+            <div
+                className={labelClasses}
+                style={{
+                    color: labelColor,
+                    marginLeft,
+                    paddingTop: 5,
+                    whiteSpace: "nowrap"
+                }}
+            >
+                <label htmlFor={key}>{label}</label>
+            </div>
+        );
+
+        const labelSize = labelWidth ? `${labelWidth}px` : "300px";
+
+        // Group
+        switch (props.layout) {
+            case FormGroupLayout.INLINE:
+                return (
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width: controlWidth
+                        }}
+                        onMouseEnter={() => handleMouseEnter()}
+                        onMouseLeave={() => handleMouseLeave()}
+                    >
+                        {control}
+                    </div>
                 );
-            } else {
-                requiredMarker = <span />;
-            }
-
-            //
-            // Label
-            //
-            const labelClasses = classNames({
-                "group-label": true,
-                required
-            });
-            let marginLeft: string | undefined = "auto";
-            if (layout === FormGroupLayout.COLUMN) {
-                marginLeft = undefined;
-            }
-
-            let labelColor = "inherit";
-            if (this.state.error) {
-                labelColor = "b94a48";
-            } else if (hasChanged) {
-                labelColor = "steelblue";
-            }
-
-            const fieldLabel = (
-                <div
-                    className={labelClasses}
-                    style={{
-                        color: labelColor,
-                        marginLeft,
-                        paddingTop: 5,
-                        whiteSpace: "nowrap"
-                    }}
-                >
-                    <label htmlFor={key}>{label}</label>
-                </div>
-            );
-
-            const labelSize = labelWidth ? `${labelWidth}px` : "300px";
-
-            // Group
-            console.log("Switch layout", this.props.layout);
-            switch (this.props.layout) {
-                case FormGroupLayout.INLINE:
-                    return (
+            case FormGroupLayout.COLUMN:
+                return (
+                    <div
+                        style={{ display: "flex", flexDirection: "column" }}
+                        onMouseEnter={() => handleMouseEnter()}
+                        onMouseLeave={() => handleMouseLeave()}
+                    >
                         <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                width: controlWidth
-                            }}
-                            onMouseEnter={() => this.handleMouseEnter()}
-                            onMouseLeave={() => this.handleMouseLeave()}
+                            style={{ display: "flex" }}
+                            onMouseEnter={() => handleMouseEnter()}
+                            onMouseLeave={() => handleMouseLeave()}
                         >
-                            {control}
-                        </div>
-                    );
-                case FormGroupLayout.COLUMN:
-                    return (
-                        <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                            onMouseEnter={() => this.handleMouseEnter()}
-                            onMouseLeave={() => this.handleMouseLeave()}
-                        >
-                            <div
-                                style={{ display: "flex" }}
-                                onMouseEnter={() => this.handleMouseEnter()}
-                                onMouseLeave={() => this.handleMouseLeave()}
-                            >
-                                <div style={{ display: "flex" }}>{fieldLabel}</div>
-                                <div style={{ display: "flex", minWidth: 14, width: 14 }}>
-                                    {requiredMarker}
-                                </div>
-                            </div>
-                            <div
-                                style={{ display: "flex" }}
-                                onMouseEnter={() => this.handleMouseEnter()}
-                                onMouseLeave={() => this.handleMouseLeave()}
-                            >
-                                <div style={{ display: "flex", flexGrow: 1, ...selectStyle }}>
-                                    {control}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                case FormGroupLayout.ROW:
-                    return (
-                        <div
-                            style={{ display: "flex", flexDirection: "row" }}
-                            onMouseEnter={() => this.handleMouseEnter()}
-                            onMouseLeave={() => this.handleMouseLeave()}
-                        >
-                            <div style={{ display: "flex", minWidth: labelSize, width: labelSize }}>
-                                {fieldLabel}
-                            </div>
+                            <div style={{ display: "flex" }}>{fieldLabel}</div>
                             <div style={{ display: "flex", minWidth: 14, width: 14 }}>
                                 {requiredMarker}
                             </div>
-                            <div style={{ display: "flex", width: controlWidth, ...selectStyle }}>
-                                <div
-                                    onDoubleClick={() =>
-                                        onSelectItem && !isBeingEdited ? onSelectItem(name) : null
-                                    }
-                                >
-                                    {control}
-                                </div>
-                            </div>
-                            <div style={{ display: "flex", flexGrow: 1 }} />
                         </div>
-                    );
-                default:
-                    return <div />;
-            }
-        }
-
-        public selectItem(name: string) {
-            if (this.props.onSelectItem) {
-                this.props.onSelectItem(name);
-            }
-        }
-
-        public handleMouseEnter() {
-            this.setState({ over: true });
-        }
-
-        public handleMouseLeave() {
-            this.setState({ over: false });
+                        <div
+                            style={{ display: "flex" }}
+                            onMouseEnter={() => handleMouseEnter()}
+                            onMouseLeave={() => handleMouseLeave()}
+                        >
+                            <div style={{ display: "flex", flexGrow: 1, ...selectStyle }}>
+                                {control}
+                            </div>
+                        </div>
+                    </div>
+                );
+            case FormGroupLayout.ROW:
+                return (
+                    <div
+                        style={{ display: "flex", flexDirection: "row" }}
+                        onMouseEnter={() => handleMouseEnter()}
+                        onMouseLeave={() => handleMouseLeave()}
+                    >
+                        <div style={{ display: "flex", minWidth: labelSize, width: labelSize }}>
+                            {fieldLabel}
+                        </div>
+                        <div style={{ display: "flex", minWidth: 14, width: 14 }}>
+                            {requiredMarker}
+                        </div>
+                        <div style={{ display: "flex", width: controlWidth, ...selectStyle }}>
+                            <div
+                                onDoubleClick={() =>
+                                    onSelectItem && !isBeingEdited ? onSelectItem(name) : null
+                                }
+                            >
+                                {control}
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", flexGrow: 1 }} />
+                    </div>
+                );
+            default:
+                return <div />;
         }
     };
-
-    return wrapped;
 }

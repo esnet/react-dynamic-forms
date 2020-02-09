@@ -2,7 +2,7 @@
 import { TextEdit } from "./components/controls";
 // Base code
 import Field from "./components/Field";
-import Form from "./components/Form";
+import Form, { FormProps } from "./components/Form";
 import List from "./components/List";
 import Schema from "./components/Schema";
 import View from "./components/View";
@@ -19,6 +19,7 @@ import { FormEditStates, FormGroupLayout } from "./util/constants";
 
 export {
     Form,
+    FormProps,
     Schema,
     Field,
     View,

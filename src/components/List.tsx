@@ -9,6 +9,7 @@
  */
 
 import Flexbox from "@g07cha/flexbox-react";
+import Octicon, { Pencil, Plus, X } from "@primer/octicons-react";
 import _ from "lodash";
 import React from "react";
 import { ListItemProps } from "../hoc/list";
@@ -108,16 +109,15 @@ export default class List extends React.Component<ListProps, ListState> {
         const addEdit = this.props.canEditItems;
 
         const mouseOver = this.state.hover;
+        console.log("HOVER", mouseOver);
 
         // Plus [+] icon
         let plusIcon;
         if (addPlus && mouseOver) {
             plusIcon = (
-                <i
-                    key="plus"
-                    className="glyphicon glyphicon-plus icon add-action"
-                    onClick={() => this.addItem()}
-                />
+                <span key="plus" onClick={() => this.addItem()} className="add-action">
+                    <Octicon icon={Plus} size="small" verticalAlign="middle" />
+                </span>
             );
         } else {
             plusIcon = <div />;
@@ -130,6 +130,7 @@ export default class List extends React.Component<ListProps, ListState> {
         // an item and a [-] icon used for removing that item.
         let itemList = _.map(this.props.items, (item, index) => {
             const minusActionKey = `minus-action-${item.key}`;
+            const editActionKey = `edit-action-${item.key}`;
             const itemKey = `item-${item.key}`;
             const itemSpanKey = `item-span-${item.key}`;
             const actionSpanKey = `action-span-${item.key}`;
@@ -152,11 +153,13 @@ export default class List extends React.Component<ListProps, ListState> {
             if (isEditable) {
                 if (addMinus && !itemMinusHide && mouseOver) {
                     minus = (
-                        <i
-                            id={`${index}`}
+                        <span
                             key={minusActionKey}
-                            className="glyphicon glyphicon-remove hostile_icon delete-action"
-                        />
+                            onClick={() => this.addItem()}
+                            className="hostile_icon delete-action"
+                        >
+                            <Octicon icon={X} size="small" verticalAlign="middle" />
+                        </span>
                     );
                 } else {
                     listEditItemClass += " no-controls";
@@ -166,12 +169,19 @@ export default class List extends React.Component<ListProps, ListState> {
                 // Edit item icon
                 if (addEdit && mouseOver) {
                     edit = (
-                        <i
-                            id={`${index}`}
-                            key={minusActionKey}
-                            style={{ paddingLeft: 5, paddingRight: 5 }}
-                            className="glyphicon glyphicon-pencil icon edit-action active"
-                        />
+                        <span
+                            key={editActionKey}
+                            onClick={() => this.selectItem(index)}
+                            className=" icon edit-action"
+                        >
+                            <Octicon icon={Pencil} size="small" verticalAlign="middle" />
+                        </span>
+                        // <i
+                        //     id={`${index}`}
+                        //     key={minusActionKey}
+                        //     style={{ paddingLeft: 5, paddingRight: 5 }}
+                        //     className="glyphicon glyphicon-pencil icon edit-action active"
+                        // />
                     );
                 }
             }
@@ -298,7 +308,7 @@ export default class List extends React.Component<ListProps, ListState> {
                             <span
                                 key="plus"
                                 className="icon"
-                                style={{ verticalAlign: "top", fontSize: 10 }}
+                                style={{ verticalAlign: "top", paddingLeft: 5 }}
                             >
                                 {plusIcon}
                             </span>

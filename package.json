@@ -12,9 +12,12 @@
         "test": "jest --coverage",
         "storybook": "start-storybook"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "keywords": [
+        "react",
+        "forms"
+    ],
+    "author": "ESnet Software Engineering Group",
+    "license": "BSD",
     "devDependencies": {
         "@babel/core": "^7.8.4",
         "@storybook/react": "^5.3.13",
@@ -71,6 +74,7 @@
     },
     "dependencies": {
         "@g07cha/flexbox-react": "^5.0.0",
+        "@primer/octicons-react": "^9.4.0",
         "classnames": "^2.2.6",
         "deepcopy": "^2.0.0",
         "immutable": "^4.0.0-rc.12",

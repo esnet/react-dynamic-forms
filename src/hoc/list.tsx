@@ -14,39 +14,44 @@ import React, { ComponentType } from "react";
 import { FieldValue } from "../components/Form";
 import List from "../components/List";
 
+// Each item in the list will be passed these props, so the component for each
+// item should be a something like a FunctionalComponent<ListItemProps> to be
+// accepted as an argument into this list HOC.
 export interface ListItemProps {
     key: string;
     name: string;
     innerForm: boolean;
     hideMinus: boolean; // Hide the remove item [-] sign from this item
     types: any;
-    value: FieldValue;
-    initialValue: FieldValue;
+    value: Immutable.Map<string, FieldValue>;
+    initialValue?: Immutable.Map<string, FieldValue>;
     editable: boolean;
     edit: boolean;
-    onErrorCountChange: (index: number, errorCount: number) => void;
-    onMissingCountChange: (index: number, missingCOunt: number) => void;
-    onChange: (index: number, value: FieldValue) => void;
+    onErrorCountChange: (name: string, errorCount: number) => void;
+    onMissingCountChange: (name: string, missingCOunt: number) => void;
+    onChange: (name: string, value: Immutable.Map<string, FieldValue>) => void;
 }
 
 export interface ListManagerProps {
     name: string;
-    initialValue: Immutable.List<FieldValue>;
-    value: Immutable.List<FieldValue>; // The current value of the field
+    // The value of the field is a list of objects, each object it one
+    // item in the list. Each object is a map of string to fieldvalue.
+    initialValue: Immutable.List<Immutable.Map<string, FieldValue>>;
+    value: Immutable.List<Immutable.Map<string, FieldValue>>;
     edit: boolean;
     types: any;
 
     canAddItems: boolean;
     canRemoveItems: boolean;
 
-    onChange: (fieldName: string, value: Immutable.List<FieldValue>) => void;
+    onChange: (fieldName: string, value: Immutable.List<Immutable.Map<string, FieldValue>>) => void;
     onMissingCountChange: (fieldName: string, missingCount: number) => void;
     onErrorCountChange: (fieldName: string, errorCount: number) => void;
 }
 
 export interface ListManagerState {
     selected: number | null; // The index of the currently selected list item
-    oldValue: FieldValue | null; // The previous field value, so we can revert
+    oldValue?: Immutable.Map<string, FieldValue>; // The previous values of the list item
 }
 
 /**
@@ -56,7 +61,8 @@ export interface ListManagerState {
 export function formList(
     ItemComponent: ComponentType<ListItemProps>,
     hideEditRemove: boolean,
-    actionButtonIndex: number
+    actionButtonIndex: number,
+    initialItemValue: Immutable.Map<string, FieldValue>
 ) {
     return class ListManager extends React.Component<ListManagerProps, ListManagerState> {
         errors: number[]; // For each item in the list, a count of errors
@@ -72,7 +78,7 @@ export function formList(
             this.missing = [];
 
             // Initial state
-            this.state = { selected: null, oldValue: null };
+            this.state = { selected: null, oldValue: undefined };
         }
 
         // Handle a new item being selected
@@ -80,7 +86,7 @@ export function formList(
             if (i && this.state.selected !== i) {
                 this.setState({ selected: i, oldValue: this.props.value.get(i) });
             } else {
-                this.setState({ selected: null, oldValue: null });
+                this.setState({ selected: null, oldValue: undefined });
             }
         }
 
@@ -98,7 +104,7 @@ export function formList(
         }
 
         // Handle an item at i changing to a new value.
-        handleChangeItem(i: number, value: FieldValue) {
+        handleChangeItem(i: number, value: Immutable.Map<string, FieldValue>) {
             let newValue = this.props.value.set(i, value);
             if (this.props.onChange) {
                 this.props.onChange(this.props.name, newValue);
@@ -156,8 +162,6 @@ export function formList(
         }
 
         // Adds a new item
-        // TODO: fix default values to just be passed into the list HOC function
-        // was: let created = Immutable.fromJS(ItemComponent.defaultValues);
         handleAddItem() {
             let value = this.props.value;
 
@@ -166,8 +170,7 @@ export function formList(
 
             // Callbacks
             if (this.props.onChange) {
-                // this.props.onChange(this.props.name, value.push(created));
-                this.props.onChange(this.props.name, value.push(null));
+                this.props.onChange(this.props.name, value.push(initialItemValue));
             }
 
             this.setState({ selected: this.props.value.size });
@@ -194,12 +197,15 @@ export function formList(
         render() {
             const itemComponents: React.ReactElement<ListItemProps>[] = [];
             const { selected } = this.state;
+            const { initialValue: initialList } = this.props;
 
             this.props.value.forEach((itemValue, index) => {
                 // Each item is initialized from the initialValues prop
-                const itemInitialValue = this.props.initialValue
-                    ? this.props.initialValue.get(index)
-                    : null;
+                // const itemInitialValue = this.props.initialValue
+                //     ? this.props.initialValue.get(index)
+                //     : null;
+
+                console.log(" - ITEM", index, selected);
 
                 const itemProps: ListItemProps = {
                     key: `${index}`,
@@ -208,16 +214,18 @@ export function formList(
                     hideMinus: hideEditRemove && index < this.props.value.size - 1,
                     types: this.props.types,
                     value: itemValue,
-                    initialValue: itemInitialValue,
+                    initialValue: initialList.get(index),
                     editable: this.props.edit,
                     edit: index === selected,
 
                     onErrorCountChange: (index, errorCount) =>
-                        this.handleErrorCountChange(index, errorCount),
+                        this.handleErrorCountChange(parseInt(index, 10), errorCount),
                     onMissingCountChange: (index, missingCount) =>
-                        this.handleMissingCountChange(index, missingCount),
-                    onChange: (index, value) => this.handleChangeItem(index, value)
+                        this.handleMissingCountChange(parseInt(index, 10), missingCount),
+                    onChange: (index, value) => this.handleChangeItem(parseInt(index, 10), value)
                 };
+
+                console.log("LIST ITEM PROPS:", JSON.stringify(this.props));
 
                 const element = React.createElement(ItemComponent, itemProps);
                 itemComponents.push(element);

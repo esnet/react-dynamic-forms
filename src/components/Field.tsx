@@ -15,8 +15,8 @@ export interface FieldProps {
     name: string; // The name of the field, or basically how it is referenced when rendering the field
     label: string; // The UI fieldly name of the field, used when constructing a `Group`.
     required: boolean; // The UI should make this field as required and inforce that with considering the value missing if not provided.
-    placeholder: string; // If appropiate to the widget, displays placeholder text.
-    validation: any; // See [Revalidator](https://github.com/flatiron/revalidator) for possible formats
+    placeholder?: string; // If appropiate to the widget, displays placeholder text.
+    validation?: any; // See [Revalidator](https://github.com/flatiron/revalidator) for possible formats
     // for the validation property.
 }
 
