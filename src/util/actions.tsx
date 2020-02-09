@@ -7,20 +7,15 @@
  *  This source code is licensed under the BSD-style license found in the
  *  LICENSE file in the root directory of this source tree.
  */
+import Octicon, { Pencil } from "@primer/octicons-react";
 import React from "react";
 
 export function editAction(enabled: any, handler: any) {
-    const iconStyle = {
-        fontSize: 11
-    };
     let action = <span />;
     if (enabled) {
         action = (
-            <span style={{ marginLeft: 5 }} onClick={handler}>
-                <i
-                    style={iconStyle}
-                    className="glyphicon glyphicon-pencil icon edit-action active"
-                />
+            <span onClick={handler} className="icon edit-action" style={{ paddingLeft: 5 }}>
+                <Octicon icon={Pencil} size="small" verticalAlign="middle" />
             </span>
         );
     } else {
