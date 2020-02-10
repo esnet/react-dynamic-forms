@@ -40,10 +40,8 @@ export interface ListManagerProps {
     value: Immutable.List<Immutable.Map<string, FieldValue>>;
     edit: boolean;
     types: any;
-
     canAddItems: boolean;
     canRemoveItems: boolean;
-
     onChange: (fieldName: string, value: Immutable.List<Immutable.Map<string, FieldValue>>) => void;
     onMissingCountChange: (fieldName: string, missingCount: number) => void;
     onErrorCountChange: (fieldName: string, errorCount: number) => void;
@@ -83,7 +81,6 @@ export function formList(
 
         // Handle a new item being selected
         handleSelectItem(i: number | null) {
-            console.log("List Manager selecting item", i);
             if (i !== null && this.state.selected !== i) {
                 this.setState({ selected: i, oldValue: this.props.value.get(i) });
             } else {
@@ -200,18 +197,10 @@ export function formList(
             const { selected } = this.state;
             const { initialValue: initialList } = this.props;
 
-            console.log("List Manager render", selected);
             this.props.value.forEach((itemValue, index) => {
-                // Each item is initialized from the initialValues prop
-                // const itemInitialValue = this.props.initialValue
-                //     ? this.props.initialValue.get(index)
-                //     : null;
-
-                console.log(" - ITEM", index, selected);
-
                 const itemProps: ListItemProps = {
-                    key: `${index}`,
-                    name: `item-${index}`,
+                    key: `item-${index}`,
+                    name: `${index}`,
                     innerForm: true,
                     hideMinus: hideEditRemove && index < this.props.value.size - 1,
                     types: this.props.types,
@@ -226,8 +215,6 @@ export function formList(
                         this.handleMissingCountChange(parseInt(index, 10), missingCount),
                     onChange: (index, value) => this.handleChangeItem(parseInt(index, 10), value)
                 };
-
-                console.log("LIST ITEM PROPS:", JSON.stringify(this.props));
 
                 const element = React.createElement(ItemComponent, itemProps);
                 itemComponents.push(element);

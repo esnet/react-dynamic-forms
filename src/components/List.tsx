@@ -107,9 +107,7 @@ export default class List extends React.Component<ListProps, ListState> {
         const addPlus = this.props.canAddItems;
         const addMinus = this.props.canRemoveItems;
         const addEdit = this.props.canEditItems;
-
         const mouseOver = this.state.hover;
-        console.log("HOVER", mouseOver);
 
         // Plus [+] icon
         let plusIcon;
@@ -232,7 +230,6 @@ export default class List extends React.Component<ListProps, ListState> {
                     </li>
                 );
             } else {
-                console.log("YYY Editing list item");
                 return (
                     <li
                         key={itemKey}

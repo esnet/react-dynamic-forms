@@ -259,7 +259,6 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
         const isMissing = this.isMissing(this.props.value);
         const { validationError, validationErrorMessage } = this.getError(this.props.value);
 
-        console.log("render textedit");
         if (this.props.edit) {
             // Error style/message
             let className = "";

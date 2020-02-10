@@ -32,10 +32,7 @@ const EmailForm: FunctionComponent<ListItemProps> = props => {
     // Callbacks supplied by the list need to be hooked up to the form below
     const callbacks = { onChange, onMissingCountChange, onErrorCountChange };
 
-    console.log("XXX", edit);
-    
     if (edit) {
-        
         return (
             <Form
                 name={name}
@@ -152,8 +149,6 @@ const ContactForm: FunctionComponent<ContactFormProps> = (props: ContactFormProp
 
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
-    console.log("CONTACT FORM", value);
-
     return (
         <Form
             name="contact"
@@ -214,11 +209,8 @@ export const ListExample = () => {
         }, 0);
     }, []);
 
-    console.log("STORY RENDER", loaded, value);
-
     // Main form rendering (or loader message)
     if (loaded) {
-        console.log("STORY LOADED", value);
         return (
             <div>
                 <pre style={{ fontSize: 18 }}>
