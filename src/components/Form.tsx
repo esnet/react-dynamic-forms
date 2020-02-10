@@ -242,7 +242,6 @@ export default class Form extends React.Component<FormProps, FormState> {
             }
 
             // Is the field in the hidden list?
-            console.log("Hide me", formHiddenList, fieldName);
             if (_.includes(formHiddenList, fieldName)) {
                 props.disabled = true;
                 props.hidden = true;
@@ -501,7 +500,6 @@ export default class Form extends React.Component<FormProps, FormState> {
      */
     private traverseChildren(formStruct: FormStruct, childList: any) {
         const childCount = React.Children.count(childList);
-        console.log("traverseChildren", childCount);
         let children: any = [];
         React.Children.forEach(childList, (child, i) => {
             if (child) {
@@ -512,7 +510,6 @@ export default class Form extends React.Component<FormProps, FormState> {
                     if (_.has(child.props, "field")) {
                         const fieldName = child.props.field;
                         props = { ...props, ...this.getFieldProps(formStruct, fieldName) };
-                        console.log(" -", fieldName, JSON.stringify(props));
                     }
 
                     if (React.Children.count(child.props.children) > 0) {
@@ -598,7 +595,6 @@ export default class Form extends React.Component<FormProps, FormState> {
                     </form>
                 );
             } else {
-                console.log("Render...");
                 return (
                     <div className={formClassName} style={formStyle} key={formKey}>
                         {this.traverseChildren(s, this.props.children)}

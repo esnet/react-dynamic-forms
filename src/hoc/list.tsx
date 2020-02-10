@@ -83,7 +83,8 @@ export function formList(
 
         // Handle a new item being selected
         handleSelectItem(i: number | null) {
-            if (i && this.state.selected !== i) {
+            console.log("List Manager selecting item", i);
+            if (i !== null && this.state.selected !== i) {
                 this.setState({ selected: i, oldValue: this.props.value.get(i) });
             } else {
                 this.setState({ selected: null, oldValue: undefined });
@@ -199,6 +200,7 @@ export function formList(
             const { selected } = this.state;
             const { initialValue: initialList } = this.props;
 
+            console.log("List Manager render", selected);
             this.props.value.forEach((itemValue, index) => {
                 // Each item is initialized from the initialValues prop
                 // const itemInitialValue = this.props.initialValue

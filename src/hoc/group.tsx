@@ -120,7 +120,7 @@ export function formGroup(Control: any) {
         );
 
         //
-        // Required
+        // Required *
         //
         let requiredMarker;
         if (required && showRequired) {

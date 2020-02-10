@@ -169,19 +169,9 @@ export default class List extends React.Component<ListProps, ListState> {
                 // Edit item icon
                 if (addEdit && mouseOver) {
                     edit = (
-                        <span
-                            key={editActionKey}
-                            onClick={() => this.selectItem(index)}
-                            className=" icon edit-action"
-                        >
+                        <span key={editActionKey} className=" icon edit-action">
                             <Octicon icon={Pencil} size="small" verticalAlign="middle" />
                         </span>
-                        // <i
-                        //     id={`${index}`}
-                        //     key={minusActionKey}
-                        //     style={{ paddingLeft: 5, paddingRight: 5 }}
-                        //     className="glyphicon glyphicon-pencil icon edit-action active"
-                        // />
                     );
                 }
             }
@@ -222,8 +212,6 @@ export default class List extends React.Component<ListProps, ListState> {
             if (!isBeingEdited) {
                 return (
                     <li
-                        // height="80px"
-                        // width="600px"
                         key={itemKey}
                         className="esnet-forms-list-item"
                         style={{
@@ -244,6 +232,7 @@ export default class List extends React.Component<ListProps, ListState> {
                     </li>
                 );
             } else {
+                console.log("YYY Editing list item");
                 return (
                     <li
                         key={itemKey}
@@ -254,19 +243,29 @@ export default class List extends React.Component<ListProps, ListState> {
                             borderBottomWidth: 1
                         }}
                     >
-                        <Flexbox
-                            flexDirection="row"
-                            style={{ width: "100%", paddingTop: 10, paddingBottom: 10 }}
+                        <div
+                            style={{
+                                display: "flex",
+                                width: "100%",
+                                paddingTop: 10,
+                                paddingBottom: 10
+                            }}
                         >
-                            <Flexbox flexDirection="column">
-                                <Flexbox style={{ width: LISTWIDTH - ICONWIDTH * 2 }}>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column"
+                                }}
+                            >
+                                <div style={{ display: "flex", width: LISTWIDTH - ICONWIDTH * 2 }}>
                                     <span key={itemSpanKey} className={listEditItemClass}>
                                         {item}
                                     </span>
-                                </Flexbox>
+                                </div>
 
-                                <Flexbox
+                                <div
                                     style={{
+                                        display: "flex",
                                         fontSize: 12,
                                         marginLeft: this.props.buttonIndent
                                     }}
@@ -287,10 +286,10 @@ export default class List extends React.Component<ListProps, ListState> {
                                     >
                                         CANCEL
                                     </span>
-                                </Flexbox>
-                            </Flexbox>
+                                </div>
+                            </div>
                             {minusAction}
-                        </Flexbox>
+                        </div>
                     </li>
                 );
             }
