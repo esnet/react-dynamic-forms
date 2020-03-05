@@ -1,6 +1,6 @@
 import Immutable, { fromJS } from "immutable";
 import React from "react";
-import { Field, Form, FormEditStates, Schema, TextEdit } from "..";
+import { Chooser, Field, Form, FormEditStates, Schema, TextEdit } from "..";
 
 export default { title: "Forms" };
 
@@ -64,12 +64,14 @@ export const basic = () => {
 };
 
 const initialContact = {
+    type: 0,
     first_name: "Bob",
     last_name: "Smith"
 };
 
 const contactSchema = (
     <Schema>
+        <Field name="type" label="Type" placeholder="Enter contact type" required={true} />
         <Field
             name="first_name"
             label="First name"
@@ -86,6 +88,11 @@ const contactSchema = (
         />
     </Schema>
 );
+
+const availableTypes = Immutable.fromJS([
+    { id: 0, label: "Friend" },
+    { id: 1, label: "Acquaintance" }
+]);
 
 export const validateAsRequired = () => {
     const [value, setValue] = React.useState<Immutable.Map<string, any>>(fromJS(initialContact));
@@ -113,6 +120,12 @@ export const validateAsRequired = () => {
                 onMissingCountChange={(_, missing) => setHasMissing(missing > 0)}
                 onErrorCountChange={(_, errors) => setHasErrors(errors > 0)}
             >
+                <Chooser
+                    field="type"
+                    width={150}
+                    choiceList={availableTypes}
+                    disableSearch={true}
+                />
                 <TextEdit field="first_name" width={300} />
                 <TextEdit field="last_name" width={300} />
             </Form>

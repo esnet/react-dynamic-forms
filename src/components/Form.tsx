@@ -525,7 +525,7 @@ export default class Form extends React.Component<FormProps, FormState> {
                     // we want to use in our control for that field
                     if (_.has(child.props, "field")) {
                         const fieldName = child.props.field;
-                        props = { ...props, ...this.getFieldProps(formStruct, fieldName) };
+                        props = { ...child.props, ...this.getFieldProps(formStruct, fieldName) };
                         if (child.type === Chooser) {
                             const chooserProps = props as FormGroupProps & ChooserProps;
                             newChild = <ChooserGroup {...chooserProps} />;

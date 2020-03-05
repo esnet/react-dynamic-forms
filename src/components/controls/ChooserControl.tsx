@@ -192,6 +192,7 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     // }
 
     private getCurrentChoice(): Option | null {
+        console.log(this.props.choiceList);
         const choiceItem = this.props.choiceList.find(item => {
             return item.get("id") === this.props.value;
         });
@@ -219,12 +220,13 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
             disableSearch,
             searchContains
         } = this.props;
+
         const choice = this.getCurrentChoice();
         const isMissing = this.isMissing(this.props.value);
 
         if (this.props.edit) {
             let className = "";
-            const chooserStyle = { marginBottom: 10 };
+            const chooserStyle = { marginBottom: 0 };
             const clearable = allowSingleDeselect;
             const searchable = !disableSearch;
 
