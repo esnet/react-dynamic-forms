@@ -1,3 +1,4 @@
-import TextEdit from "./TextEdit";
+import { Chooser } from "./ChooserControl";
+import { TextEdit } from "./TextEditControl";
 
-export { TextEdit };
+export { TextEdit, Chooser };

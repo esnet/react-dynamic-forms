@@ -1,5 +1,5 @@
 // Controls
-import { TextEdit } from "./components/controls";
+import { Chooser, TextEdit } from "./components/controls";
 // Base code
 import Field from "./components/Field";
 import Form, { FormProps } from "./components/Form";
@@ -25,6 +25,7 @@ export {
     View,
     List,
     TextEdit,
+    Chooser,
     formGroup,
     formList,
     FormEditStates,

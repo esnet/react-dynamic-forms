@@ -76,7 +76,7 @@ const EmailForm: FunctionComponent<ListItemProps> = props => {
 };
 
 const EmailList = formList(EmailForm, false, 0, defaultEmailItem);
-const Emails = formGroup(EmailList);
+const Emails = formGroup<{}>(EmailList);
 
 //
 // Wraps a Contact form with a component that encapsuates the schema,

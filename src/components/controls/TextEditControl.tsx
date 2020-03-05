@@ -10,10 +10,11 @@
 
 import Flexbox from "@g07cha/flexbox-react";
 import _ from "lodash";
-import React from "react";
+import React, { FunctionComponent } from "react";
 import Form from "react-bootstrap/Form";
 import { validate } from "revalidator";
-import { formGroup } from "../../hoc/group";
+import { formGroup, FormGroupProps } from "../../hoc/group";
+// Styling
 import "../../style/textedit.css";
 import { editAction } from "../../util/actions";
 import { textView } from "../../util/renderers";
@@ -23,21 +24,42 @@ import {
     inlineDoneButtonStyle,
     inlineStyle
 } from "../../util/style";
-import { FieldEditorProps, FieldValue } from "../Form";
+import { FieldValue } from "../Form";
 
 interface ValidationError {
     validationError: boolean;
     validationErrorMessage: string | null;
 }
 
-interface Props {
+export interface TextEditProps {
+    /**
+     * Required on all Controls
+     */
     field: string;
-    type: string;
-    rules: any;
-    view: (value: FieldValue) => React.ReactElement<any>;
+
+    /**
+     * Customize the horizontal size of the Chooser
+     */
+    width?: number;
+
+    /**
+     * The TextEdit type, such as "password"
+     */
+    type?: string;
+
+    /**
+     * Rules to apply
+     */
+    rules?: any;
+
+    /**
+     * Optional view component to render when the field
+     * isn't being editted.
+     */
+    view?: (value: FieldValue) => React.ReactElement<any>;
 }
 
-export interface TextEditState {
+interface TextEditControlState {
     value: FieldValue;
     oldValue: FieldValue;
     isFocused: boolean;
@@ -46,23 +68,40 @@ export interface TextEditState {
     hover: boolean;
 }
 
-export type TextEditProps = Props & FieldEditorProps;
+// Props passed into the Chooser are the above Props combined with what is
+// passed into the Group that wraps this.
+
+export type TextEditControlProps = TextEditProps & FormGroupProps;
 
 /**
- * Form control to edit a text field.
+ * This is the control code implemented here which wraps the bootstrap Input widget
  */
-class TextEdit extends React.Component<TextEditProps, TextEditState> {
+class TextEditControl extends React.Component<TextEditControlProps, TextEditControlState> {
     textInput: any;
-    constructor(props: TextEditProps) {
+
+    state = {
+        value: null,
+        oldValue: null,
+        isFocused: false,
+        touched: false,
+        selectText: false,
+        hover: false
+    };
+
+    static getDerivedStateFromProps(props: TextEditControlProps, state: TextEditControlState) {
+        // Any time the current user changes,
+        // Reset any parts of state that are tied to that user.
+        // In this simple example, that's just the email.
+        if (props.value !== state.value) {
+            return {
+                value: props.value
+            };
+        }
+        return null;
+    }
+
+    constructor(props: TextEditControlProps) {
         super(props);
-        this.state = {
-            value: props.value,
-            oldValue: null,
-            isFocused: false,
-            touched: false,
-            selectText: false,
-            hover: false
-        };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -92,6 +131,7 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
     }
 
     getError(value: FieldValue) {
+        const { name = "value", validation } = this.props;
         const result: ValidationError = {
             validationError: false,
             validationErrorMessage: null
@@ -105,19 +145,19 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
 
         // Validate the value with Revalidator, given the rules in this.props.rules
         let obj = {};
-        obj[this.props.name] = value;
+        obj[name] = value;
 
         let properties = {};
-        properties[this.props.name] = this.props.validation;
+        properties[name] = validation;
 
-        const rules = this.props.validation ? { properties } : null;
+        const rules = validation ? { properties } : null;
         if (obj && rules) {
             const validation = validate(obj, rules, { cast: true });
-            const name = this.props.name || "Value";
+            const str = name || "Value";
 
             let msg;
             if (!validation.valid) {
-                msg = `${name} ${validation.errors[0].message}`;
+                msg = `${str} ${validation.errors[0].message}`;
                 result.validationError = true;
                 result.validationErrorMessage = msg;
             }
@@ -125,7 +165,7 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
         return result;
     }
 
-    componentWillReceiveProps(nextProps: TextEditProps) {
+    componentWillReceiveProps(nextProps: TextEditControlProps) {
         if (nextProps.selected && this.props.edit !== nextProps.edit && nextProps.edit === true) {
             this.setState({ selectText: true });
         }
@@ -250,7 +290,7 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
             }
             this.props.onChange(this.props.name, cast);
         }
-        this.props.onBlur(this.props.name);
+        this.props.onBlur?.(this.props.name);
         this.setState({ isFocused: false, hover: false, oldValue: null });
     }
 
@@ -258,6 +298,7 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
         // Control state
         const isMissing = this.isMissing(this.props.value);
         const { validationError, validationErrorMessage } = this.getError(this.props.value);
+        const value = this.state.value ? `${this.state.value}` : "";
 
         if (this.props.edit) {
             // Error style/message
@@ -279,7 +320,7 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
                 <Flexbox flexDirection="row" style={{ width: "100%" }}>
                     <div className={className} style={{ width: "100%" }}>
                         <Form.Control
-                            value={this.state.value ? `${this.state.value}` : ""}
+                            value={value}
                             size="sm"
                             ref={(input: any) => {
                                 this.textInput = input;
@@ -324,12 +365,12 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
             const text = isMissing ? (
                 <span />
             ) : (
-                <span style={{ minHeight: 28 }}>{view(this.props.value)}</span>
+                <span style={{ minHeight: 28 }}>{view(value)}</span>
             );
             const edit = editAction(this.state.hover && this.props.allowEdit, () =>
                 this.handleEditItem()
             );
-            const style = inlineStyle(validationError, isMissing);
+            const style = inlineStyle(validationError, isMissing ? isMissing : false);
             return (
                 <div
                     style={style}
@@ -345,4 +386,13 @@ class TextEdit extends React.Component<TextEditProps, TextEditState> {
     }
 }
 
-export default formGroup(TextEdit);
+/**
+ * A `TextEditGroup` is a `TextEditControl` wrapped by the `formGroup()` HOC. This is the
+ * component which can be rendered by the Form when the user adds a `TextEdit` to their `Form`.
+ */
+export const TextEditGroup = formGroup<TextEditProps>(TextEditControl);
+
+/**
+ * A control which allows the user to type into a single line input control
+ */
+export const TextEdit: FunctionComponent<TextEditProps> = () => <></>;

@@ -13,7 +13,11 @@ import deepCopy from "deepcopy";
 import Immutable from "immutable";
 import _ from "lodash";
 import React from "react";
+import { FormGroupProps } from "../hoc/group";
 import { FormEditStates, FormGroupLayout } from "../util/constants";
+import { TextEdit } from "./controls";
+import { Chooser, ChooserGroup, ChooserProps } from "./controls/ChooserControl";
+import { TextEditGroup, TextEditProps } from "./controls/TextEditControl";
 import Field, { FieldProps } from "./Field";
 import Schema, { SchemaProps } from "./Schema";
 
@@ -131,31 +135,39 @@ export interface FormState {
 }
 
 // Props which maybe injected into to a rendered element containing a field reference
-export interface FieldEditorProps {
-    value: FieldValue;
-    initialValue: FieldValue;
-    labelWidth: number; // The width the label should be
-    key: string; // Internal react key
-    name: string; // The internal name for the field
-    label: string; // The public visible name for the field, displayed along side its value or control in the form
-    placeholder: string; // Placeholder text displayed in some controls before the user types into them
-    help: string; // Help text for using the field control
-    hidden: boolean; // Should this control be currently hidden
-    disabled: boolean; // Should the control be displayed as disabled, preventing the user from interacting with it
-    selected: boolean; // Is the control currently selected
-    edit: boolean; // Is the control currently being editted (e.g. inline editing)
-    required: boolean; // Is the control required
-    showRequired: boolean; // Should we currenly inforce it being required (the user might not have had a chance to enter something)
-    allowEdit: boolean; // Can this item actually be editted right now
-    layout: string; // enum?
-    validation: any; // From the field rules
-    onSelectItem: (fieldName: string) => void;
-    onErrorCountChange: (fieldName: string, count: number) => void;
-    onMissingCountChange: (fieldName: string, count: number) => void;
-    onChange: (fieldName: string, d: any) => void;
-    onBlur: (fieldName: string) => void;
-    onEditItem: (fieldName: string) => void;
-}
+// export interface FieldEditorProps {
+//     // Values
+//     value: FieldValue;
+//     initialValue: FieldValue;
+
+//     // Group
+//     name: string; // The internal name for the field
+//     label: string; // The public visible name for the field, displayed along side its value or control in the form
+//     labelWidth: number; // The width the label should be
+//     edit: boolean; // Is the control currently being editted (e.g. inline editing)
+//     required: boolean; // Is the control required
+//     showRequired: boolean; // Should we currenly inforce it being required (the user might not have had a chance to enter something)
+//     disabled: boolean; // Should the control be displayed as disabled, preventing the user from interacting with it
+
+//     // Schema
+//     placeholder: string; // Placeholder text displayed in some controls before the user types into them
+//     help: string; // Help text for using the field control
+
+//     // Driven by the form
+//     hidden: boolean; // Should this control be currently hidden
+//     selected: boolean; // Is the control currently selected
+//     allowEdit: boolean; // Can this item actually be editted right now
+//     layout: string; // enum?
+//     validation: any; // From the field rules
+
+//     // Callbacks that hook the editor up to the form
+//     onSelectItem: (fieldName: string) => void;
+//     onErrorCountChange: (fieldName: string, count: number) => void;
+//     onMissingCountChange: (fieldName: string, count: number) => void;
+//     onChange: (fieldName: string, d: any) => void;
+//     onBlur: (fieldName: string) => void;
+//     onEditItem: (fieldName: string) => void;
+// }
 
 export default class Form extends React.Component<FormProps, FormState> {
     _deferSet: boolean;
@@ -195,15 +207,15 @@ export default class Form extends React.Component<FormProps, FormState> {
     getFieldProps(
         { formFields, formRules, formHiddenList }: FormStruct,
         fieldName: string
-    ): FieldEditorProps {
-        const { labelWidth, edit, value, initialValue } = this.props;
+    ): FormGroupProps {
+        const { labelWidth, edit, value, initialValue, groupLayout } = this.props;
         const { selection } = this.state;
 
-        let props: FieldEditorProps = {} as any;
+        let props: FormGroupProps = {} as any;
         props.labelWidth = labelWidth || 300;
 
         if (_.has(formFields, fieldName)) {
-            props.key = fieldName;
+            // props.key = fieldName;
             props.name = fieldName;
             props.label = formFields[fieldName].label;
             props.placeholder = formFields[fieldName].placeholder;
@@ -222,19 +234,17 @@ export default class Form extends React.Component<FormProps, FormState> {
                 }
                 props.showRequired = props.edit;
                 props.allowEdit = true;
-            } else if (this.props.edit === FormEditStates.ALWAYS) {
+            } else if (edit === FormEditStates.ALWAYS) {
                 props.edit = true;
-            } else if (this.props.edit === FormEditStates.NEVER) {
+            } else if (edit === FormEditStates.NEVER) {
                 props.showRequired = false;
             }
 
-            if (this.props.edit === FormEditStates.TABLE) {
+            if (edit === FormEditStates.TABLE) {
                 props.allowEdit = false;
                 props.layout = FormGroupLayout.INLINE;
             } else {
-                props.layout = this.props.groupLayout
-                    ? this.props.groupLayout
-                    : FormEditStates.ALWAYS;
+                props.layout = groupLayout ? groupLayout : FormEditStates.ALWAYS;
             }
 
             if (formFields[fieldName].disabled) {
@@ -384,9 +394,9 @@ export default class Form extends React.Component<FormProps, FormState> {
      * The mapping of field names (passed in as the fieldName) and the count is updated
      * in _pendingErrors until built up state is flushed to the related callback.
      */
-    handleErrorCountChange(fieldName: string, errorCount: number) {
+    handleErrorCountChange(fieldName: string | undefined, errorCount: number) {
         this._pendingErrors = this._pendingErrors || deepCopy(this.state.errorCounts) || {};
-        if (this._pendingErrors) {
+        if (fieldName && this._pendingErrors) {
             this._pendingErrors[fieldName] = errorCount;
         }
         this.queueChange();
@@ -403,9 +413,9 @@ export default class Form extends React.Component<FormProps, FormState> {
      * The mapping of field names (passed in as the fieldName) and the missing count is
      * updated in _pendingMissing until built up state is flushed to the related callback.
      */
-    handleMissingCountChange(fieldName: string, missingCount: number) {
+    handleMissingCountChange(fieldName: string | undefined, missingCount: number) {
         this._pendingMissing = this._pendingMissing || deepCopy(this.state.missingCounts) || {};
-        if (this._pendingMissing) {
+        if (fieldName && this._pendingMissing) {
             this._pendingMissing[fieldName] = missingCount;
         }
         this.queueChange();
@@ -422,13 +432,13 @@ export default class Form extends React.Component<FormProps, FormState> {
      * Changes to the formValues are queued in _pendingValues
      * until built up change is flushed to the onChange callback.
      */
-    handleChange(fieldName: string, newValue: FieldValue) {
+    handleChange(fieldName: string | undefined, newValue: FieldValue) {
         const { onPendingChange } = this.props;
 
         // Hook to allow the component to alter the value before it is set.
         // However, you should be careful with side effects to state here.
         let v = newValue;
-        if (onPendingChange) {
+        if (fieldName && onPendingChange) {
             v = onPendingChange(fieldName, newValue) || v;
         }
 
@@ -438,7 +448,9 @@ export default class Form extends React.Component<FormProps, FormState> {
         // in queueChange after we've accumulated missing and error counts.
 
         this._pendingValues = this._pendingValues || this.props.value;
-        this._pendingValues = this._pendingValues.set(fieldName, v);
+        if (fieldName) {
+            this._pendingValues = this._pendingValues.set(fieldName, v);
+        }
         this.queueChange();
     }
 
@@ -454,7 +466,7 @@ export default class Form extends React.Component<FormProps, FormState> {
      * that item. That item is the selection. Only one item can be selected
      * at once. If the same item is selected again it is deselected.
      */
-    handleSelectItem(fieldName: string) {
+    handleSelectItem(fieldName: string | undefined) {
         if (this.state.selection !== fieldName) {
             this.setState({ selection: fieldName });
         } else {
@@ -505,13 +517,27 @@ export default class Form extends React.Component<FormProps, FormState> {
             if (child) {
                 let newChild;
                 const key = child.key || `key-${i}`;
-                let props: { key: string; children?: any } = { key };
+
+                // Setup props for the child
+                let props: any = { key };
                 if (typeof child.props.children !== "string") {
+                    // If the child has a prop "field" on it, then we look up the props
+                    // we want to use in our control for that field
                     if (_.has(child.props, "field")) {
                         const fieldName = child.props.field;
                         props = { ...props, ...this.getFieldProps(formStruct, fieldName) };
+                        if (child.type === Chooser) {
+                            const chooserProps = props as FormGroupProps & ChooserProps;
+                            newChild = <ChooserGroup {...chooserProps} />;
+                        } else if (child.type === TextEdit) {
+                            const textEditProps = props as FormGroupProps & TextEditProps;
+                            newChild = <TextEditGroup {...textEditProps} />;
+                        } else {
+                            newChild = React.cloneElement(child, props);
+                        }
                     }
 
+                    // Traverse into children
                     if (React.Children.count(child.props.children) > 0) {
                         props = {
                             ...props,
@@ -519,8 +545,8 @@ export default class Form extends React.Component<FormProps, FormState> {
                         };
                     }
                 }
-                newChild = React.cloneElement(child, props);
-                if (childCount > 1) {
+
+                if (newChild && childCount > 1) {
                     children.push(newChild);
                 } else {
                     children = newChild;

@@ -12,6 +12,7 @@ import classNames from "classnames";
 import Immutable from "immutable";
 import _ from "lodash";
 import React, { useState } from "react";
+import { FieldValue } from "../components/Form";
 import "../style/group.css";
 import "../style/icon.css";
 import { FormGroupLayout } from "../util/constants";
@@ -42,22 +43,40 @@ import { FormGroupLayout } from "../util/constants";
 // TODO: disabled muted label before but types don't match there
 
 export interface FormGroupProps {
-    field: string;
-    hidden?: boolean;
+    name?: string; // Name assigned to this field, which should be
     width?: number;
-    name?: string;
+    field?: string;
+
+    // Group props, required to show the decoration surrounding the control itself
     label?: string;
     labelWidth?: number;
-    key?: string;
     edit?: boolean;
-    disabled?: boolean;
     required?: boolean;
-    error?: boolean;
     showRequired?: boolean;
-    onSelectItem?: (name: string | undefined) => any;
-    value?: string | number;
-    initialValue?: string | number;
+    disabled?: boolean;
+
+    // Values supplied directly to the group
+    value?: FieldValue;
+    initialValue?: FieldValue;
+
+    // Injected props that are extracted from the Schema and injected by the form
+    placeholder?: string; // Placeholder text displayed in some controls before the user types into them
+    help?: string; // Help text for using the field control
+    validation?: any; // From the field rules in the Schema
+
+    // Injected props that come from the form
+    hidden?: boolean; // Should this control be currently hidden
+    selected?: boolean; // Is the control currently selected
+    allowEdit?: boolean; // Can this item actually be editted right now
     layout?: string; // enum?
+
+    // Callbacks that hook the editor up to the Form
+    onSelectItem?: (fieldName: string | undefined) => void;
+    onErrorCountChange?: (fieldName: string | undefined, count: number) => void;
+    onMissingCountChange?: (fieldName: string | undefined, count: number) => void;
+    onChange?: (fieldName: string | undefined, d: any) => void;
+    onBlur?: (fieldName: string | undefined) => void;
+    onEditItem?: (fieldName: string | undefined) => void;
 }
 
 export interface FormGroupState {
@@ -65,8 +84,8 @@ export interface FormGroupState {
     over: boolean;
 }
 
-export function formGroup(Control: any) {
-    return (props: FormGroupProps) => {
+export function formGroup<ControlProps>(Control: any) {
+    return (props: FormGroupProps & ControlProps) => {
         const handleMouseEnter = () => setOver(true);
         const handleMouseLeave = () => setOver(false);
 
@@ -76,7 +95,6 @@ export function formGroup(Control: any) {
         const {
             name,
             label,
-            key,
             edit,
             // disabled,
             required,
@@ -163,13 +181,14 @@ export function formGroup(Control: any) {
                     whiteSpace: "nowrap"
                 }}
             >
-                <label htmlFor={key}>{label}</label>
+                <label>{label}</label>
             </div>
         );
 
         const labelSize = labelWidth ? `${labelWidth}px` : "300px";
 
         // Group
+        console.log("Layout", props.layout);
         switch (props.layout) {
             case FormGroupLayout.INLINE:
                 return (
