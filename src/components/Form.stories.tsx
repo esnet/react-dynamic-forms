@@ -8,6 +8,7 @@ const initialValue = {
     name: "Bob"
 };
 
+// The form schema
 const basicSchema = (
     <Schema>
         <Field
