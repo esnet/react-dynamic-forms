@@ -13,7 +13,7 @@
         "test": "jest --coverage",
         "storybook": "start-storybook",
         "build-storybook": "build-storybook",
-        "chromatic": "CHROMATIC_APP_CODE=b3hku4lpiwj chromatic"
+        "chromatic": "chromatic"
     },
     "keywords": [
         "react",
