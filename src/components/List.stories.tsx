@@ -75,7 +75,7 @@ const EmailForm: FunctionComponent<ListItemProps> = props => {
     }
 };
 
-const EmailList = formList(EmailForm, false, 0, defaultEmailItem);
+const EmailList = formList(EmailForm, false, 65, defaultEmailItem);
 const Emails = formGroup<{}>(EmailList);
 
 //

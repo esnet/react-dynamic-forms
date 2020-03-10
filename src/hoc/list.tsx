@@ -59,7 +59,7 @@ export interface ListManagerState {
 export function formList(
     ItemComponent: ComponentType<ListItemProps>,
     hideEditRemove: boolean,
-    actionButtonIndex: number,
+    itemButtonIndent: number,
     initialItemValue: Immutable.Map<string, FieldValue>
 ) {
     return class ListManager extends React.Component<ListManagerProps, ListManagerState> {
@@ -233,7 +233,7 @@ export function formList(
             return (
                 <List
                     items={itemComponents}
-                    buttonIndent={actionButtonIndex}
+                    buttonIndent={itemButtonIndent}
                     canAddItems={canAddItems}
                     canRemoveItems={canRemoveItems}
                     canEditItems={true}

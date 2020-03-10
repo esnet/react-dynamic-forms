@@ -161,7 +161,7 @@ export default class List extends React.Component<ListProps, ListState> {
                     );
                 } else {
                     listEditItemClass += " no-controls";
-                    minus = <div className="icon delete-action" />;
+                    minus = <span />;
                 }
 
                 // Edit item icon
