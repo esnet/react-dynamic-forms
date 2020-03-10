@@ -15,13 +15,13 @@ install:
 jobs:
     include:
         - stage: Chromatic
-        if: (branch != master) AND NOT type = pull_request 
-        install: yarn --frozen-lockfile
-        script: 
-        - yarn chromatic
-        
+          if: (branch != master) AND NOT type = pull_request
+          install: yarn --frozen-lockfile
+          script:
+              - yarn chromatic
+
         - stage: Chromatic Master
-        if: (branch = master) AND NOT type = pull_request AND NOT env(RELEASE)
-        install: yarn --frozen-lockfile
-        script: 
-        - yarn chromatic --auto-accept-changes
+          if: (branch = master) AND NOT type = pull_request AND NOT env(RELEASE)
+          install: yarn --frozen-lockfile
+          script:
+              - yarn chromatic --auto-accept-changes
