@@ -2,6 +2,7 @@
     "name": "react-dynamic-forms",
     "version": "1.0.0",
     "description": "",
+    "engine": "10.17.0",
     "main": "build/index.js",
     "module": "build/index.es.js",
     "jsnext:main": "build/index.es.js",
@@ -10,7 +11,9 @@
         "lint": "standard",
         "format": "prettier-standard --format",
         "test": "jest --coverage",
-        "storybook": "start-storybook"
+        "storybook": "start-storybook",
+        "build-storybook": "build-storybook",
+        "chromatic": "CHROMATIC_APP_CODE=b3hku4lpiwj chromatic"
     },
     "keywords": [
         "react",
@@ -30,6 +33,7 @@
         "@types/lodash": "^4.14.149",
         "@types/react-select": "^3.0.10",
         "@types/react-transition-group": "^4.2.3",
+        "@types/react-window": "^1.8.1",
         "@types/revalidator": "^0.3.7",
         "awesome-typescript-loader": "^5.2.1",
         "babel-loader": "^8.0.6",
@@ -44,6 +48,7 @@
         "rollup-plugin-typescript2": "^0.26.0",
         "standard": "^14.3.1",
         "standard-prettier": "^1.0.1",
+        "storybook-chromatic": "^3.5.2",
         "ts-jest": "^25.2.1",
         "typescript": "^3.8.3"
     },
@@ -85,6 +90,8 @@
         "react-bootstrap": "^1.0.0-beta.17",
         "react-select": "^3.0.8",
         "react-transition-group": "^4.3.0",
+        "react-window": "^1.8.5",
+        "react-windowed-select": "^2.0.2",
         "revalidator": "^0.3.1"
     }
 }

@@ -8,7 +8,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 import React from "react";
-import { ListItemProps } from "../list";
+import { ListItemProps } from "../hoc/list";
 import "../style/icon.css";
 import "../style/list.css";
 interface ListProps {

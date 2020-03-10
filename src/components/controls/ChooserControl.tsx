@@ -11,7 +11,8 @@
 import Immutable from "immutable";
 import _ from "lodash";
 import React, { FunctionComponent } from "react";
-import Select, { createFilter } from "react-select";
+import { createFilter } from "react-select";
+import WindowedSelect from "react-windowed-select";
 import { formGroup, FormGroupProps } from "../../hoc/group";
 import { FieldValue } from "../Form";
 
@@ -261,7 +262,7 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                 const key = `${labelList}--${choice}`;
                 return (
                     <div className={className} style={chooserStyle}>
-                        <Select
+                        <WindowedSelect
                             className={isMissing ? "is-missing" : ""}
                             key={key}
                             value={choice}
@@ -280,7 +281,7 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                 const key = `${labelList}--${choice}`;
                 return (
                     <div className={className} style={chooserStyle}>
-                        <Select
+                        <WindowedSelect
                             className={isMissing ? "is-missing" : ""}
                             key={key}
                             value={choice}

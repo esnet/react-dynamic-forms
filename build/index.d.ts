@@ -1,11 +1,10 @@
+import { Chooser, TextEdit } from "./components/controls";
 import Field from "./components/Field";
-import Form from "./components/Form";
+import Form, { FormProps } from "./components/Form";
 import List from "./components/List";
-import MyComponent from "./components/MyComponent";
 import Schema from "./components/Schema";
-import TextEdit from "./components/TextEdit";
 import View from "./components/View";
-import { FormEditStates, FormGroupLayout } from "./constants";
-import { formGroup } from "./group";
-import { formList } from "./list";
-export { MyComponent, Form, Schema, Field, View, List, TextEdit, formGroup, formList, FormEditStates, FormGroupLayout };
+import { formGroup } from "./hoc/group";
+import { formList } from "./hoc/list";
+import { FormEditStates, FormGroupLayout } from "./util/constants";
+export { Form, FormProps, Schema, Field, View, List, TextEdit, Chooser, formGroup, formList, FormEditStates, FormGroupLayout };

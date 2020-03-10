@@ -2,6 +2,8 @@ import Immutable from "immutable";
 import React from "react";
 import { FormGroupLayout } from "../..";
 import { ChooserGroup } from "./ChooserControl";
+// Test data
+// import colors from "./colors";
 
 export default { title: "Chooser" };
 
@@ -11,6 +13,8 @@ const availableTypes = Immutable.fromJS([
     { id: 0, label: "Friend" },
     { id: 1, label: "Acquaintance" }
 ]);
+
+// const availableColors = Immutable.fromJS(colors.colors.map(c => ({ id: c.hex, label: c.name })));
 
 export const basicChooser = () => {
     // State

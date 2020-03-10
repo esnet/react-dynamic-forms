@@ -9,7 +9,8 @@
  */
 import Immutable from "immutable";
 import React from "react";
-export declare type FieldValue = number | string | null | undefined;
+import { FormGroupProps } from "../hoc/group";
+export declare type FieldValue = number | string | Immutable.List<Immutable.Map<string, FieldValue>> | null | undefined;
 export interface FormFields {
     [fieldName: string]: {
         label: string;
@@ -34,17 +35,17 @@ export interface FormProps {
     name: string;
     value: Immutable.Map<string, FieldValue>;
     initialValue: Immutable.Map<string, FieldValue>;
-    formStyle: any;
-    formClassName: string;
-    formKey: string;
     schema: React.ReactElement;
-    groupLayout: string;
-    visible: string | string[];
-    edit: string;
-    inline: boolean;
-    visibility: boolean;
-    inner: boolean;
-    labelWidth: number;
+    formStyle?: any;
+    formClassName?: string;
+    formKey?: string;
+    groupLayout?: string;
+    visible?: string | string[];
+    edit?: string;
+    inline?: boolean;
+    visibility?: boolean;
+    inner?: boolean;
+    labelWidth?: number;
     onMissingCountChange?: (fieldName: string, missingCount: number, missingFields: string[]) => void;
     onErrorCountChange?: (fieldName: string, errorCount: number, errorFields: string[]) => void;
     onPendingChange?: (fieldName: string, value: FieldValue) => FieldValue;
@@ -59,31 +60,6 @@ export interface FormState {
     };
     selection: any;
 }
-export interface FieldEditorProps {
-    value: FieldValue;
-    initialValue: FieldValue;
-    labelWidth: number;
-    key: string;
-    name: string;
-    label: string;
-    placeholder: string;
-    help: string;
-    hidden: boolean;
-    disabled: boolean;
-    selected: boolean;
-    edit: boolean;
-    required: boolean;
-    showRequired: boolean;
-    allowEdit: boolean;
-    layout: string;
-    validation: any;
-    onSelectItem: (fieldName: string) => void;
-    onErrorCountChange: (fieldName: string, count: number) => void;
-    onMissingCountChange: (fieldName: string, count: number) => void;
-    onChange: (fieldName: string, d: any) => void;
-    onBlur: (fieldName: string) => void;
-    onEditItem?: (fieldName: string) => void;
-}
 export default class Form extends React.Component<FormProps, FormState> {
     _deferSet: boolean;
     _pendingMissing: {
@@ -93,6 +69,10 @@ export default class Form extends React.Component<FormProps, FormState> {
         [fieldName: string]: number;
     } | null;
     _pendingValues: Immutable.Map<string, FieldValue> | null;
+    static defaultProps: {
+        groupLayout: string;
+        labelWidth: number;
+    };
     constructor(props: FormProps);
     /**
      * Collect together props for the given fieldName which can
@@ -109,7 +89,7 @@ export default class Form extends React.Component<FormProps, FormState> {
      *   - error counts changed
      *   - edit selection
      */
-    getFieldProps({ formFields, formRules, formHiddenList }: FormStruct, fieldName: string): FieldEditorProps;
+    getFieldProps({ formFields, formRules, formHiddenList }: FormStruct, fieldName: string): FormGroupProps;
     /**
      * Queue state pushes pending value of state to our parent's callback. The important
      * thing here is that the action is deferred, meaning it will be called only
@@ -147,12 +127,12 @@ export default class Form extends React.Component<FormProps, FormState> {
      *
      * If a field is complex, such as another form or a list view, then errorCount
      * will be the telly all the errors within that form or list. If it is a simple
-     * field control, such as a textedit then the errorCount will be either 0 or 1.
+     * field control, such as a TextEdit then the errorCount will be either 0 or 1.
      *
      * The mapping of field names (passed in as the fieldName) and the count is updated
      * in _pendingErrors until built up state is flushed to the related callback.
      */
-    handleErrorCountChange(fieldName: string, errorCount: number): void;
+    handleErrorCountChange(fieldName: string | undefined, errorCount: number): void;
     /**
      * This is the handler for changes to the missing state of this form controls.
      *
@@ -164,7 +144,7 @@ export default class Form extends React.Component<FormProps, FormState> {
      * The mapping of field names (passed in as the fieldName) and the missing count is
      * updated in _pendingMissing until built up state is flushed to the related callback.
      */
-    handleMissingCountChange(fieldName: string, missingCount: number): void;
+    handleMissingCountChange(fieldName: string | undefined, missingCount: number): void;
     /**
      * This is the main handler for value change notifications from
      * this form's controls.
@@ -176,7 +156,7 @@ export default class Form extends React.Component<FormProps, FormState> {
      * Changes to the formValues are queued in _pendingValues
      * until built up change is flushed to the onChange callback.
      */
-    handleChange(fieldName: string, newValue: FieldValue): void;
+    handleChange(fieldName: string | undefined, newValue: FieldValue): void;
     handleBlur(): void;
     /**
      * Handle the selection change. This is when you have an inline form
@@ -184,7 +164,7 @@ export default class Form extends React.Component<FormProps, FormState> {
      * that item. That item is the selection. Only one item can be selected
      * at once. If the same item is selected again it is deselected.
      */
-    handleSelectItem(fieldName: string): void;
+    handleSelectItem(fieldName: string | undefined): void;
     /**
      * Returns the current list of hidden form fields using the `visible` prop
      * That prop is either a tag or list of tags. Those are compared to tags

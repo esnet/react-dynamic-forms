@@ -11,8 +11,9 @@ import React from "react";
 export interface FieldProps {
     name: string;
     label: string;
-    placeholder: string;
-    validation: any;
+    required: boolean;
+    placeholder?: string;
+    validation?: any;
 }
 /**
  * A `Field` is a part of the JSX definition of a `Schema`. Each `Field` describes

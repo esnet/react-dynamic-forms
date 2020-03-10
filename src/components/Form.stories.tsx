@@ -5,7 +5,7 @@ import { Chooser, Field, Form, FormEditStates, Schema, TextEdit } from "..";
 export default { title: "Forms" };
 
 const initialValue = {
-    name: "Waldo"
+    name: "Bob"
 };
 
 const basicSchema = (

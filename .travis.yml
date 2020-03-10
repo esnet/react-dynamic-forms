@@ -1,6 +1,27 @@
 sudo: false
+
 language: node_js
-node_js:
-    - "0.12"
+
+node_js: 10
+
 notifications:
-  email: false
+    email: false
+
+cache: yarn
+
+install:
+    - yarn
+
+jobs:
+    include:
+        - stage: Chromatic
+        if: (branch != master) AND NOT type = pull_request 
+        install: yarn --frozen-lockfile
+        script: 
+        - yarn chromatic
+        
+        - stage: Chromatic Master
+        if: (branch = master) AND NOT type = pull_request AND NOT env(RELEASE)
+        install: yarn --frozen-lockfile
+        script: 
+        - yarn chromatic --auto-accept-changes
