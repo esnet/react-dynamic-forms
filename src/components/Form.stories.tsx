@@ -144,11 +144,13 @@ export const validateAsRequired = () => {
 };
 
 export const transitionEditStates = () => {
+    // State
     const [value, setValue] = React.useState<Immutable.Map<string, any>>(fromJS(initialContact));
     const [hasMissing, setHasMissing] = React.useState<boolean>(false);
     const [hasErrors, setHasErrors] = React.useState<boolean>(false);
     const [editMode, setEditMode] = React.useState<string>(FormEditStates.ALWAYS);
 
+    // Styles
     const formStyle = {
         background: "#FAFAFA",
         borderRadius: 5,
@@ -162,6 +164,7 @@ export const transitionEditStates = () => {
     };
     const buttonStyleSelected = { color: "black", padding: 10, cursor: "pointer" };
     const buttonStyleUnselected = { color: "#DDD", padding: 10, cursor: "pointer" };
+
     return (
         <div>
             <pre style={{ fontSize: 18 }}>

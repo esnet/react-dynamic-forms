@@ -11,8 +11,10 @@
 import Immutable from "immutable";
 import _ from "lodash";
 import React, { FunctionComponent } from "react";
+// react-select and it's react-window wrapper
 import { createFilter } from "react-select";
-import WindowedSelect from "react-windowed-select";
+import AsyncSelect from "react-select/async";
+import WindowedSelect, { WindowedMenuList } from "react-windowed-select";
 import { formGroup, FormGroupProps } from "../../hoc/group";
 import { FieldValue } from "../Form";
 
@@ -46,6 +48,19 @@ export interface ChooserProps {
      * ```
      */
     choiceList: Immutable.List<Immutable.Map<"id" | "label" | "disabled", string>>;
+
+    /**
+     * If the `choiceLoader` function is supplied, the choiceList will be ignored and
+     * instead the `choiceLoader` will be evoked. When evoked the function should load the
+     * list of options and return those in the callback. The options, like the `choiceList`
+     * prop, should be a immutable List of Map{id, label, [disabled]}
+     */
+    choiceLoader?: (
+        inputValue: string,
+        callback: (
+            options: Immutable.List<Immutable.Map<"id" | "label" | "disabled", string>>
+        ) => void
+    ) => void;
 
     /**
      * List of items in the Chooser list which should be presented disabled
@@ -169,31 +184,28 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
             .toJS();
     }
 
-    // private getFilteredOptionList(input: string | null): Option[] {
-    //     const { choiceList } = this.props;
-
-    //     const items = choiceList;
-    //     const filteredItems = input
-    //         ? items.filter(item => {
-    //               const label = item["label"].toLowerCase();
-    //               const subString = `${input}`.toLowerCase();
-    //               return label.indexOf(subString) !== -1;
-    //           })
-    //         : items;
-
-    //     const result: Option[] = [];
-    //     filteredItems.forEach(item =>
-    //         result.push({
-    //             value: `${item.get("id")}`,
-    //             label: item.get("label"),
-    //             disabled: item.has("disabled") ? item["disabled"] : false
-    //         })
-    //     );
-    //     return result;
-    // }
+    private asyncChoiceListLoader(inputValue: string, callback: any): void | Promise<any> {
+        console.log("asyncChooserListLoader", inputValue);
+        const { disableList } = this.props;
+        if (!this.props.choiceLoader) {
+            return;
+        }
+        this.props.choiceLoader(inputValue, options => {
+            const result = options
+                .map(item => {
+                    let disabled = false;
+                    const isDisabled = item.has("disabled") && item.get("disabled") === "true";
+                    if (_.includes(disableList, item.get("id")) || isDisabled) {
+                        disabled = true;
+                    }
+                    return { value: item.get("id"), label: item.get("label"), disabled };
+                })
+                .toJS();
+            callback(result);
+        });
+    }
 
     private getCurrentChoice(): Option | null {
-        console.log(this.props.choiceList);
         const choiceItem = this.props.choiceList.find(item => {
             return item.get("id") === this.props.value;
         });
@@ -206,19 +218,14 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         return null;
     }
 
-    // private getCurrentChoiceLabel() {
-    //     const choiceItem = this.props.choiceList.find(item => {
-    //         return item.get("id") === this.props.value;
-    //     });
-    //     return choiceItem ? choiceItem.get("label") : "";
-    // }
-
     render() {
+        console.log("render");
+
         const {
             disabled,
             placeholder,
             allowSingleDeselect,
-            disableSearch,
+            disableSearch = false,
             searchContains
         } = this.props;
 
@@ -228,9 +235,12 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         if (this.props.edit) {
             let className = "";
             const chooserStyle = { marginBottom: 0 };
-            const clearable = allowSingleDeselect;
-            const searchable = !disableSearch;
 
+            const isClearable = allowSingleDeselect;
+            const isSearchable = !disableSearch;
+            const isAsync = this.props.choiceLoader && _.isFunction(this.props.choiceLoader);
+            console.log("isAsync", isAsync);
+            console.log("isSearchable", isSearchable);
             const filterConfig = {
                 matchFrom: searchContains ? "any" : ("start" as "any" | "start")
             };
@@ -257,25 +267,50 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
             };
 
             const options = this.getOptionList();
-            if (searchable) {
-                const labelList = _.map(options, item => item.label);
-                const key = `${labelList}--${choice}`;
-                return (
-                    <div className={className} style={chooserStyle}>
-                        <WindowedSelect
-                            className={isMissing ? "is-missing" : ""}
-                            key={key}
-                            value={choice}
-                            options={options}
-                            filterOption={createFilter(filterConfig)}
-                            styles={customStyles}
-                            isDisabled={disabled}
-                            isSearchable={true}
-                            placeholder={placeholder}
-                            onChange={this.handleChange}
-                        />
-                    </div>
-                );
+
+            if (isSearchable) {
+                if (isAsync) {
+                    console.log("Async select...");
+                    const labelList = _.map(options, item => item.label);
+                    const key = `${labelList}--${choice}`;
+                    return (
+                        <div className={className} style={chooserStyle}>
+                            <AsyncSelect
+                                cacheOptions
+                                defaultOptions
+                                key={key}
+                                components={{ MenuList: WindowedMenuList }}
+                                loadOptions={(v, cb) => this.asyncChoiceListLoader(v, cb)}
+                                value={choice}
+                                // filterOption={createFilter(filterConfig)}
+                                styles={customStyles}
+                                isDisabled={disabled}
+                                // isSearchable={true}
+                                placeholder={placeholder}
+                                onChange={this.handleChange}
+                            />
+                        </div>
+                    );
+                } else {
+                    const labelList = _.map(options, item => item.label);
+                    const key = `${labelList}--${choice}`;
+                    return (
+                        <div className={className} style={chooserStyle}>
+                            <WindowedSelect
+                                className={isMissing ? "is-missing" : ""}
+                                key={key}
+                                value={choice}
+                                options={options}
+                                filterOption={createFilter(filterConfig)}
+                                styles={customStyles}
+                                isDisabled={disabled}
+                                isSearchable={true}
+                                placeholder={placeholder}
+                                onChange={this.handleChange}
+                            />
+                        </div>
+                    );
+                }
             } else {
                 const labelList = _.map(options, item => item.label);
                 const key = `${labelList}--${choice}`;
@@ -290,7 +325,7 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                             isDisabled={disabled}
                             isSearchable={false}
                             placeholder={placeholder}
-                            clearable={clearable}
+                            clearable={isClearable}
                             onChange={this.handleChange}
                         />
                     </div>
