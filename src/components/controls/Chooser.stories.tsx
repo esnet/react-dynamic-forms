@@ -2,19 +2,35 @@ import Immutable, { fromJS } from "immutable";
 import React from "react";
 import { Field, Form, FormEditStates, FormGroupLayout, Schema } from "../..";
 import { Chooser, ChooserGroup } from "./ChooserControl";
-// Test data
-// import colors from "./colors";
+import colors from "./colors.json";
 
 export default { title: "Chooser" };
 
+const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
+const formStyle = {
+    background: "#FAFAFA",
+    borderRadius: 5,
+    padding: 10
+};
+const outputStyle = {
+    background: "#F3F3F3",
+    borderRadius: 5,
+    margin: 20,
+    padding: 10
+};
+
 const initialValue = 0;
 
-const availableTypes = Immutable.fromJS([
+type ChooserOptions = Immutable.List<Immutable.Map<"label" | "id" | "disabled", any>>;
+
+const availableTypes: ChooserOptions = Immutable.fromJS([
     { id: 0, label: "Friend" },
     { id: 1, label: "Acquaintance" }
 ]);
 
-// const availableColors = Immutable.fromJS(colors.colors.map(c => ({ id: c.hex, label: c.name })));
+const availableColors: ChooserOptions = Immutable.fromJS(
+    colors.colors.map((c: any, index: number) => ({ id: index, label: c.name }))
+);
 
 export const basicChooser = () => {
     // State
@@ -32,12 +48,18 @@ export const basicChooser = () => {
     };
 
     return (
-        <div>
+        <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
-                <span>Basic chooser</span>
+                <span>Basic Chooser (no search)</span>
             </pre>
 
-            <hr />
+            <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                Shows an Chooser outside a Form.
+            </div>
+
+            <pre style={storyHeaderStyle}>
+                <span>: ChooserGroup :</span>
+            </pre>
             <ChooserGroup
                 // Chooser props
                 width={250}
@@ -65,12 +87,17 @@ export const basicChooser = () => {
                 {...callbacks}
             />
 
-            <hr />
-            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+            <pre style={storyHeaderStyle}>
+                <span>: Validation :</span>
+            </pre>
+            <pre style={outputStyle}>
                 <span>{hasMissing ? "has missing" : "no missing"}</span>
                 <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
             </pre>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Value :</span>
+            </pre>
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
                 {JSON.stringify(value, null, 3)}
             </pre>
@@ -94,17 +121,19 @@ export const searchableChooser = () => {
     };
 
     return (
-        <div>
-            <pre style={{ fontSize: 18, marginLeft: 15 }}>
-                <span>Basic chooser</span>
+        <div style={{ padding: 50 }}>
+            <pre style={{ fontSize: 18 }}>
+                <span>Searchable Chooser (sync)</span>
             </pre>
 
-            <p style={{ fontSize: 16, marginLeft: 15 }}>
-                Should display a Chooser within a group. The chooser is in it's most basic form but
-                allows the user to search for an item.
-            </p>
+            <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                Shows an Chooser outside a Form with a pre-set list of choice options.
+            </div>
 
-            <hr />
+            <pre style={storyHeaderStyle}>
+                <span>: ChooserGroup :</span>
+            </pre>
+
             <ChooserGroup
                 // Chooser props
                 width={250}
@@ -132,31 +161,44 @@ export const searchableChooser = () => {
                 {...callbacks}
             />
 
-            <hr />
-            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                <span style={{ borderRadius: 3, background: "#ffc107", padding: 8 }}>
-                    {hasMissing ? "has missing" : "no missing"}
-                </span>
-                <span
-                    style={{ borderRadius: 3, background: "#dc3545", padding: 8, marginLeft: 10 }}
-                >
-                    {hasErrors ? "has errors" : "no errors"}
-                </span>
+            <pre style={storyHeaderStyle}>
+                <span>: Validation :</span>
+            </pre>
+            <pre style={outputStyle}>
+                <span>{hasMissing ? "has missing" : "no missing"}</span>
+                <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
             </pre>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Value :</span>
+            </pre>
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                value: {JSON.stringify(value, null, 3)}
+                {JSON.stringify(value, null, 3)}
             </pre>
         </div>
     );
 };
 
-const loadOptions = (_: any, callback: any) => {
-    console.log("Loading...");
-    setTimeout(() => {
-        console.log("Loaded!");
-        callback(availableTypes);
-    }, 5000);
+const filteredColors = (colors: ChooserOptions, inputValue: string): ChooserOptions => {
+    return colors.filter(item =>
+        item
+            .get("label")
+            .toLowerCase()
+            .includes(inputValue.toLowerCase())
+    );
+};
+
+// Loading function, delays 5 sec and then returns the list
+let cachedAvailableColors: ChooserOptions | null = null;
+const loadOptions = (filter: string, callback: any) => {
+    if (cachedAvailableColors) {
+        callback(filteredColors(cachedAvailableColors, filter));
+    } else {
+        setTimeout(() => {
+            callback(filteredColors(availableColors, filter));
+            cachedAvailableColors = availableColors;
+        }, 5000);
+    }
 };
 
 export const asyncChooser = () => {
@@ -175,17 +217,19 @@ export const asyncChooser = () => {
     };
 
     return (
-        <div>
-            <pre style={{ fontSize: 18, marginLeft: 15 }}>
-                <span>Async chooser...</span>
+        <div style={{ padding: 50 }}>
+            <pre style={{ fontSize: 18 }}>
+                <span>Async chooser (outside a form)</span>
             </pre>
 
-            <p style={{ fontSize: 16, marginLeft: 15 }}>
-                Should display a Chooser within a group. The chooser is in it's most basic form but
-                allows the user to search for an item.
-            </p>
+            <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                Shows an async chooser outside a form but wrapped in a group.
+            </div>
 
-            <hr />
+            <pre style={storyHeaderStyle}>
+                <span>: ChooserGroup :</span>
+            </pre>
+
             <ChooserGroup
                 // Chooser props
                 width={250}
@@ -214,64 +258,64 @@ export const asyncChooser = () => {
                 {...callbacks}
             />
 
-            <hr />
-            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                <span style={{ borderRadius: 3, background: "#ffc107", padding: 8 }}>
-                    {hasMissing ? "has missing" : "no missing"}
-                </span>
-                <span
-                    style={{ borderRadius: 3, background: "#dc3545", padding: 8, marginLeft: 10 }}
-                >
-                    {hasErrors ? "has errors" : "no errors"}
-                </span>
+            <pre style={storyHeaderStyle}>
+                <span>: Validation :</span>
+            </pre>
+            <pre style={outputStyle}>
+                <span>{hasMissing ? "has missing" : "no missing"}</span>
+                <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
             </pre>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Value :</span>
+            </pre>
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                value: {JSON.stringify(value, null, 3)}
+                {JSON.stringify(value, null, 3)}
             </pre>
         </div>
     );
 };
 
-const initialContact = {
-    type: 0
+const initialColor = {
+    color: 4543
 };
 
 const contactSchema = (
     <Schema>
-        <Field name="type" label="Contact Type" placeholder="Enter contact type" required={true} />
+        <Field
+            name="color"
+            label="Favorite Color"
+            placeholder="Locate your favorite color"
+            required={true}
+        />
     </Schema>
 );
 
 export const asyncChooserInAForm = () => {
-    const [value, setValue] = React.useState<Immutable.Map<string, any>>(fromJS(initialContact));
+    const [value, setValue] = React.useState<Immutable.Map<string, any>>(fromJS(initialColor));
     const [hasMissing, setHasMissing] = React.useState<boolean>(false);
     const [hasErrors, setHasErrors] = React.useState<boolean>(false);
     const [editMode, setEditMode] = React.useState<string>(FormEditStates.SELECTED);
 
-    const formStyle = {
-        background: "#FAFAFA",
-        borderRadius: 5,
-        padding: 10
-    };
-    const outputStyle = {
-        background: "#F3F3F3",
-        borderRadius: 5,
-        margin: 20,
-        padding: 10
-    };
     const buttonStyleSelected = { color: "black", padding: 10, cursor: "pointer" };
     const buttonStyleUnselected = { color: "#DDD", padding: 10, cursor: "pointer" };
+
     return (
-        <div>
+        <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
-                <span>Text edit form with required fields</span>
+                <span>Form with chooser that will load async when editted</span>
             </pre>
 
+            <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                Shows a chooser in a form. You can select the edit mode, either always show an
+                chooser for the field, show the chooser only when the user clicks the edit icon or
+                double clicks the field, or never show the chooser only the value.
+            </div>
+
+            <pre style={storyHeaderStyle}>
+                <span>: Edit mode :</span>
+            </pre>
             <div>
-                <pre style={{ fontSize: 12 }}>
-                    <span>Select the edit mode</span>
-                </pre>
                 <span
                     style={
                         editMode == FormEditStates.ALWAYS
@@ -304,6 +348,9 @@ export const asyncChooserInAForm = () => {
                 </span>
             </div>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Form :</span>
+            </pre>
             <Form
                 name="basic"
                 formStyle={formStyle}
@@ -318,18 +365,33 @@ export const asyncChooserInAForm = () => {
                 onErrorCountChange={(_, errors) => setHasErrors(errors > 0)}
             >
                 <Chooser
-                    field="type"
-                    width={150}
-                    choiceList={availableTypes}
+                    field="color"
+                    width={280}
+                    choiceList={availableColors}
                     choiceLoader={loadOptions}
+                    displayView={value => (
+                        <span style={{ color: "steelblue" }}>
+                            <b>
+                                {availableColors
+                                    .find(item => item.get("id") === value)
+                                    ?.get("label")}
+                            </b>
+                        </span>
+                    )}
                 />
             </Form>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Validation :</span>
+            </pre>
             <pre style={outputStyle}>
                 <span>{hasMissing ? "has missing" : "no missing"}</span>
                 <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
             </pre>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Form value :</span>
+            </pre>
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
                 {JSON.stringify(value.toJS(), null, 3)}
             </pre>

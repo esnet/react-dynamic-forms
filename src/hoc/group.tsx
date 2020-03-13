@@ -59,6 +59,11 @@ export interface FormGroupProps {
     value?: FieldValue;
     initialValue?: FieldValue;
 
+    // Controls the display of the value when form control is not in edit mode (for example
+    // before a value is inline editted). This can either be a string, or a function that
+    // receives the current `value` and returns a React Element
+    displayView?: string | ((value: FieldValue) => React.ReactElement<any>);
+
     // Injected props that are extracted from the Schema and injected by the form
     placeholder?: string; // Placeholder text displayed in some controls before the user types into them
     help?: string; // Help text for using the field control

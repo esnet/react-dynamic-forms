@@ -16,6 +16,8 @@ import { createFilter } from "react-select";
 import AsyncSelect from "react-select/async";
 import WindowedSelect, { WindowedMenuList } from "react-windowed-select";
 import { formGroup, FormGroupProps } from "../../hoc/group";
+import { editAction } from "../../util/actions";
+import { inlineStyle } from "../../util/style";
 import { FieldValue } from "../Form";
 
 interface Option {
@@ -89,6 +91,12 @@ export interface ChooserProps {
      * the items (substring anywhere, or starting with)
      */
     searchContains?: "any" | "start";
+
+    /**
+     * Optional view component to render when the field
+     * isn't being editted.
+     */
+    displayView?: string | ((value: FieldValue) => React.ReactElement<any>);
 }
 
 // Props passed into the Chooser are the above Props combined with what is
@@ -117,6 +125,15 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         width: 300
     };
 
+    state = {
+        value: null,
+        oldValue: null,
+        isFocused: false,
+        touched: false,
+        selectText: false,
+        hover: false
+    };
+
     constructor(props: ChooserControlProps) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
@@ -143,6 +160,20 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                 (_.isNull(newValue) || _.isUndefined(newValue) || newValue === "");
             const missingCount = missing ? 1 : 0;
             onMissingCountChange?.(name, missingCount);
+        }
+    }
+
+    handleMouseEnter() {
+        this.setState({ hover: true });
+    }
+
+    handleMouseLeave() {
+        this.setState({ hover: false });
+    }
+
+    handleEditItem() {
+        if (this.props.onEditItem) {
+            this.props.onEditItem(this.props.name);
         }
     }
 
@@ -232,42 +263,45 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         const choice = this.getCurrentChoice();
         const isMissing = this.isMissing(this.props.value);
 
+        console.log("edit", this.props.edit);
+
+        let className = "";
+        const chooserStyle = { marginBottom: 0 };
+
+        const isClearable = allowSingleDeselect;
+        const isSearchable = !disableSearch;
+        const isAsync = this.props.choiceLoader && _.isFunction(this.props.choiceLoader);
+        console.log("isAsync", isAsync);
+        console.log("isSearchable", isSearchable);
+
+        const filterConfig = {
+            matchFrom: searchContains ? "any" : ("start" as "any" | "start")
+        };
+
+        const customStyles = {
+            control: (base: object) => ({
+                ...base,
+                height: 31,
+                minHeight: 31
+            }),
+            indicatorsContainer: (base: object) => ({
+                ...base,
+                height: 31
+            }),
+            singleValue: (base: object) => ({
+                ...base,
+                top: "42%"
+            }),
+            placeholder: (base: object) => ({
+                ...base,
+                top: "42%",
+                fontSize: 14
+            })
+        };
+
+        const options = this.getOptionList();
+        console.log("Rendering chooser....");
         if (this.props.edit) {
-            let className = "";
-            const chooserStyle = { marginBottom: 0 };
-
-            const isClearable = allowSingleDeselect;
-            const isSearchable = !disableSearch;
-            const isAsync = this.props.choiceLoader && _.isFunction(this.props.choiceLoader);
-            console.log("isAsync", isAsync);
-            console.log("isSearchable", isSearchable);
-            const filterConfig = {
-                matchFrom: searchContains ? "any" : ("start" as "any" | "start")
-            };
-
-            const customStyles = {
-                control: (base: object) => ({
-                    ...base,
-                    height: 31,
-                    minHeight: 31
-                }),
-                indicatorsContainer: (base: object) => ({
-                    ...base,
-                    height: 31
-                }),
-                singleValue: (base: object) => ({
-                    ...base,
-                    top: "42%"
-                }),
-                placeholder: (base: object) => ({
-                    ...base,
-                    top: "42%",
-                    fontSize: 14
-                })
-            };
-
-            const options = this.getOptionList();
-
             if (isSearchable) {
                 if (isAsync) {
                     console.log("Async select...");
@@ -331,42 +365,57 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                     </div>
                 );
             }
-            // } else {
-            //     const view = this.props.view;
-            //     let text = this.getCurrentChoiceLabel();
-            //     let color = "";
-            //     let background = "";
-            //     if (isMissing) {
-            //         text = " ";
-            //         background = "floralwhite";
-            //     }
-
-            //     const viewStyle = {
-            //         color,
-            //         background,
-            //         // minHeight: 23,
-            //         height: "100%",
-            //         width: "100%",
-            //         paddingLeft: 3
-            //     };
-
-            //     const style = {
-            //         color,
-            //         background,
-            //         // height: 23,
-            //         height: "100%",
-            //         width: "100%",
-            //         paddingLeft: 3
-            //     };
-
-            //     if (!view) {
-            //         return <div style={style}>{text}</div>;
-            //     } else {
-            //         return <div style={viewStyle}>{view(text, choice)}</div>;
-            //     }
-            // }
         } else {
-            return <div>view</div>;
+            console.log("Rendering view for chooser...");
+            let view: React.ReactElement;
+
+            // let color = "";
+            // let background = "";
+            // if (isMissing) {
+            //     view = <span> </span>;
+            //     background = "floralwhite";
+            // }
+            // const style = {
+            //     color,
+            //     background,
+            //     height: "100%",
+            //     width: "100%",
+            //     paddingLeft: 3
+            // };
+
+            const { displayView } = this.props;
+            console.log({ displayView });
+            if (_.isFunction(displayView)) {
+                const callableDisplayView = displayView as (
+                    value: FieldValue
+                ) => React.ReactElement;
+                view = (
+                    <span style={{ minHeight: 28 }}>{callableDisplayView(this.props.value)}</span>
+                );
+            } else if (_.isString(displayView)) {
+                const text = displayView as string;
+                view = <span>{text}</span>;
+            } else {
+                view = <span style={{ minHeight: 28 }}>{`${this.props.value}`}</span>;
+            }
+
+            const edit = editAction(this.state.hover && this.props.allowEdit, () =>
+                this.handleEditItem()
+            );
+
+            const style = inlineStyle(false, isMissing ? isMissing : false);
+
+            return (
+                <div
+                    style={style}
+                    key={`key-${isMissing}`}
+                    onMouseEnter={() => this.handleMouseEnter()}
+                    onMouseLeave={() => this.handleMouseLeave()}
+                >
+                    {view}
+                    {edit}
+                </div>
+            );
         }
     }
 }

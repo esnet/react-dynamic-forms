@@ -26,7 +26,7 @@ import Schema, { SchemaProps } from "./Schema";
 export type FieldValue =
     | number
     | string
-    | Immutable.List<Immutable.Map<string, FieldValue>>
+    | Immutable.List<Immutable.Map<string, FieldValue>> // List values
     | null
     | undefined;
 
