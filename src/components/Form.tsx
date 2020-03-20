@@ -17,6 +17,7 @@ import { FormGroupProps } from "../hoc/group";
 import { FormEditStates, FormGroupLayout } from "../util/constants";
 import { TextEdit } from "./controls";
 import { Chooser, ChooserGroup, ChooserProps } from "./controls/ChooserControl";
+import { Switch, SwitchGroup, SwitchProps } from "./controls/SwitchControl";
 import { TextEditGroup, TextEditProps } from "./controls/TextEditControl";
 import Field, { FieldProps } from "./Field";
 import Schema, { SchemaProps } from "./Schema";
@@ -42,7 +43,7 @@ export interface FormFields {
         label: string;
         placeholder: string;
         help: string;
-        disabled: boolean;
+        isDisabled: boolean;
         tags: string[];
     };
 }
@@ -220,22 +221,22 @@ export default class Form extends React.Component<FormProps, FormState> {
             props.label = formFields[fieldName].label;
             props.placeholder = formFields[fieldName].placeholder;
             props.help = formFields[fieldName].help;
-            props.hidden = false;
-            props.disabled = false;
 
-            props.selected = false;
-            props.edit = false;
+            props.isHidden = false;
+            props.isDisabled = false;
+            props.isSelected = false;
+            props.isBeingEdited = false;
             props.showRequired = true;
 
             if (edit === FormEditStates.SELECTED) {
                 if (selection === fieldName) {
-                    props.edit = true;
-                    props.selected = true;
+                    props.isBeingEdited = true;
+                    props.isSelected = true;
                 }
-                props.showRequired = props.edit;
+                props.showRequired = props.isBeingEdited;
                 props.allowEdit = true;
             } else if (edit === FormEditStates.ALWAYS) {
-                props.edit = true;
+                props.isBeingEdited = true;
             } else if (edit === FormEditStates.NEVER) {
                 props.showRequired = false;
             }
@@ -247,14 +248,14 @@ export default class Form extends React.Component<FormProps, FormState> {
                 props.layout = groupLayout ? groupLayout : FormEditStates.ALWAYS;
             }
 
-            if (formFields[fieldName].disabled) {
-                props.disabled = true;
+            if (formFields[fieldName].isDisabled) {
+                props.isDisabled = true;
             }
 
             // Is the field in the hidden list?
             if (_.includes(formHiddenList, fieldName)) {
-                props.disabled = true;
-                props.hidden = true;
+                props.isDisabled = true;
+                props.isHidden = true;
             }
         } else {
             throw new Error(`Attr '${fieldName}' is not a part of the form schema`);
@@ -262,7 +263,7 @@ export default class Form extends React.Component<FormProps, FormState> {
 
         // If the field is required and validation rules
         if (_.has(formRules, fieldName)) {
-            props.required = formRules[fieldName].required;
+            props.isRequired = formRules[fieldName].required;
             props.validation = formRules[fieldName].validation;
         }
 
@@ -532,6 +533,9 @@ export default class Form extends React.Component<FormProps, FormState> {
                         } else if (child.type === TextEdit) {
                             const textEditProps = props as FormGroupProps & TextEditProps;
                             newChild = <TextEditGroup {...textEditProps} />;
+                        } else if (child.type === Switch) {
+                            const switchProps = props as FormGroupProps & SwitchProps;
+                            newChild = <SwitchGroup {...switchProps} />;
                         } else {
                             newChild = React.cloneElement(child, props);
                         }

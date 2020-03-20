@@ -12,6 +12,8 @@ import classNames from "classnames";
 import Immutable from "immutable";
 import _ from "lodash";
 import React, { useState } from "react";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import ReactMarkdown from "react-markdown";
 import { FieldValue } from "../components/Form";
 import "../style/group.css";
 import "../style/icon.css";
@@ -50,10 +52,11 @@ export interface FormGroupProps {
     // Group props, required to show the decoration surrounding the control itself
     label?: string;
     labelWidth?: number;
-    edit?: boolean;
-    required?: boolean;
-    showRequired?: boolean;
-    disabled?: boolean;
+
+    isBeingEdited?: boolean; // Is the control currently being edited
+    isRequired?: boolean; // Is the control required to be filled out
+    showRequired?: boolean; // Should we show and enforce isRequired here
+    isDisabled?: boolean; // Is the control currently disabled
 
     // Values supplied directly to the group
     value?: FieldValue;
@@ -70,8 +73,8 @@ export interface FormGroupProps {
     validation?: any; // From the field rules in the Schema
 
     // Injected props that come from the form
-    hidden?: boolean; // Should this control be currently hidden
-    selected?: boolean; // Is the control currently selected
+    isHidden?: boolean; // Is the control currently hidden
+    isSelected?: boolean; // Is the control currently selected
     allowEdit?: boolean; // Can this item actually be editted right now
     layout?: string; // enum?
 
@@ -100,9 +103,8 @@ export function formGroup<ControlProps>(Control: any) {
         const {
             name,
             label,
-            edit,
-            // disabled,
-            required,
+            isBeingEdited,
+            isRequired,
             showRequired,
             onSelectItem,
             value,
@@ -110,18 +112,17 @@ export function formGroup<ControlProps>(Control: any) {
             layout,
             labelWidth,
             width,
-            hidden = false
+            help,
+            isHidden = false
         } = props;
 
-        const isBeingEdited = edit;
         const hasChanged = _.isNull(initialValue) ? false : !Immutable.is(value, initialValue);
-
         const selectStyle = {};
 
         //
         // Hidden
         //
-        if (hidden) {
+        if (isHidden) {
             return <div />;
         }
 
@@ -146,7 +147,7 @@ export function formGroup<ControlProps>(Control: any) {
         // Required *
         //
         let requiredMarker;
-        if (required && showRequired) {
+        if (isRequired && showRequired) {
             requiredMarker = (
                 <span className="group-required" style={{ paddingLeft: 3 }}>
                     *
@@ -157,13 +158,54 @@ export function formGroup<ControlProps>(Control: any) {
         }
 
         //
+        // Help
+        //
+
+        console.log("Help:", help);
+
+        let helpMarker;
+        if (_.isString(help) && help !== "") {
+            const popover = (
+                <Popover id="popover-basic">
+                    <Popover.Content>
+                        <ReactMarkdown source={help} />
+                    </Popover.Content>
+                </Popover>
+            );
+
+            helpMarker = (
+                <OverlayTrigger
+                    delay={{ show: 250, hide: 400 }}
+                    placement="bottom"
+                    overlay={popover}
+                >
+                    <span
+                        className="group-help"
+                        style={{
+                            paddingLeft: 3,
+                            color: "blue",
+                            fontSize: 12,
+                            paddingTop: 5,
+                            cursor: "pointer"
+                        }}
+                    >
+                        ⓘ
+                    </span>
+                </OverlayTrigger>
+            );
+        } else {
+            helpMarker = <span />;
+        }
+
+        //
         // Label
         //
 
         const labelClasses = classNames({
             "group-label": true,
-            required
+            isRequired
         });
+
         let marginLeft: string | undefined = "auto";
         if (layout === FormGroupLayout.COLUMN) {
             marginLeft = undefined;
@@ -222,8 +264,11 @@ export function formGroup<ControlProps>(Control: any) {
                             onMouseLeave={() => handleMouseLeave()}
                         >
                             <div style={{ display: "flex" }}>{fieldLabel}</div>
-                            <div style={{ display: "flex", minWidth: 14, width: 14 }}>
+                            <div style={{ display: "flex", minWidth: 18, width: 14 }}>
                                 {requiredMarker}
+                            </div>
+                            <div style={{ display: "flex", minWidth: 18, width: 14 }}>
+                                {helpMarker}
                             </div>
                         </div>
                         <div
@@ -250,6 +295,7 @@ export function formGroup<ControlProps>(Control: any) {
                         <div style={{ display: "flex", minWidth: 14, width: 14 }}>
                             {requiredMarker}
                         </div>
+                        <div style={{ display: "flex", minWidth: 18, width: 18 }}>{helpMarker}</div>
                         <div style={{ display: "flex", width: controlWidth, ...selectStyle }}>
                             <div
                                 onDoubleClick={() =>

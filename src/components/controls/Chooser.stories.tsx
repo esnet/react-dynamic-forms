@@ -32,6 +32,18 @@ const availableColors: ChooserOptions = Immutable.fromJS(
     colors.colors.map((c: any, index: number) => ({ id: index, label: c.name }))
 );
 
+const fixedProps = {
+    // Chooser props
+    width: 250,
+    name: "type-chooser",
+    field: "type",
+    label: "Contact Type",
+    labelWidth: 140,
+    placeholder: "Choose a type",
+    help:
+        "Select the type of contact from the list given. They are a friend if you'd lick them in a pandemic. Acquaintance if you'd elbow bump."
+};
+
 export const basicChooser = () => {
     // State
     const [value, setValue] = React.useState<number>(initialValue);
@@ -61,29 +73,20 @@ export const basicChooser = () => {
                 <span>: ChooserGroup :</span>
             </pre>
             <ChooserGroup
-                // Chooser props
-                width={250}
-                name="type-chooser"
                 choiceList={availableTypes}
-                disableSearch={true}
-                // Group props
-                hidden={false}
-                field="type"
-                label="Contact Type"
-                labelWidth={140}
-                disabled={false}
-                edit={true}
-                required={false}
-                // FieldEditor props
+                isSearchable={false}
+                isHidden={false}
+                isDisabled={false}
+                isBeingEdited={true}
+                isRequired={false}
                 value={value}
                 initialValue={initialValue}
-                placeholder="Choose a type"
-                help="Select the type of contact from the list given"
-                selected={true}
+                isSelected={true}
                 showRequired={true}
                 allowEdit={true}
                 layout={FormGroupLayout.ROW}
                 validation={null}
+                {...fixedProps}
                 {...callbacks}
             />
 
@@ -135,29 +138,86 @@ export const searchableChooser = () => {
             </pre>
 
             <ChooserGroup
-                // Chooser props
-                width={250}
-                name="type-chooser"
                 choiceList={availableTypes}
-                disableSearch={false}
-                // Group props
-                hidden={false}
-                field="type"
-                label="Contact Type"
-                labelWidth={140}
-                disabled={false}
-                edit={true}
-                required={false}
-                // FieldEditor props
+                isSearchable={true}
+                isHidden={false}
+                isDisabled={false}
+                isBeingEdited={true}
+                isRequired={false}
                 value={value}
                 initialValue={initialValue}
-                placeholder="Choose a type"
-                help="Select the type of contact from the list given"
-                selected={true}
+                isSelected={true}
                 showRequired={true}
                 allowEdit={true}
                 layout={FormGroupLayout.ROW}
                 validation={null}
+                {...fixedProps}
+                {...callbacks}
+            />
+
+            <pre style={storyHeaderStyle}>
+                <span>: Validation :</span>
+            </pre>
+            <pre style={outputStyle}>
+                <span>{hasMissing ? "has missing" : "no missing"}</span>
+                <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
+            </pre>
+
+            <pre style={storyHeaderStyle}>
+                <span>: Value :</span>
+            </pre>
+            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+                {JSON.stringify(value, null, 3)}
+            </pre>
+        </div>
+    );
+};
+
+export const clearableChooser = () => {
+    // State
+    const [value, setValue] = React.useState<number>(initialValue);
+    const [hasMissing] = React.useState<boolean>(false);
+    const [hasErrors] = React.useState<boolean>(false);
+
+    const callbacks = {
+        onSelectItem: () => {},
+        onChange: (_: any, value: number) => setValue(value),
+        onBlur: () => {},
+        onErrorCountChange: () => {},
+        onMissingCountChange: () => {},
+        onEditItem: () => {}
+    };
+
+    return (
+        <div style={{ padding: 50 }}>
+            <pre style={{ fontSize: 18 }}>
+                <span>Clearable chooser</span>
+            </pre>
+
+            <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                Shows an Chooser with a clear [x] button that lets you select nothing.
+            </div>
+
+            <pre style={storyHeaderStyle}>
+                <span>: ChooserGroup :</span>
+            </pre>
+
+            <ChooserGroup
+                choiceList={availableTypes}
+                isSearchable={false}
+                isClearable={true}
+                isHidden={false}
+                isDisabled={false}
+                isBeingEdited={true}
+                isRequired={true}
+                value={value}
+                initialValue={initialValue}
+                isSelected={true}
+                showRequired={true}
+                allowEdit={true}
+                layout={FormGroupLayout.ROW}
+                validation={null}
+                {...fixedProps}
                 {...callbacks}
             />
 
@@ -236,21 +296,21 @@ export const asyncChooser = () => {
                 name="type-chooser"
                 choiceList={availableTypes}
                 choiceLoader={loadOptions}
-                disableSearch={false}
+                isSearchable={true}
                 // Group props
-                hidden={false}
+                isHidden={false}
                 field="type"
                 label="Contact Type"
                 labelWidth={140}
-                disabled={false}
-                edit={true}
-                required={false}
+                isDisabled={false}
+                isBeingEdited={true}
+                isRequired={false}
                 // FieldEditor props
                 value={value}
                 initialValue={initialValue}
                 placeholder="Choose a type"
                 help="Select the type of contact from the list given"
-                selected={true}
+                isSelected={true}
                 showRequired={true}
                 allowEdit={true}
                 layout={FormGroupLayout.ROW}

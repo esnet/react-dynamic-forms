@@ -72,19 +72,18 @@ export interface ChooserProps {
     /**
      * Show the Chooser itself as disabled
      */
-    disabled?: boolean;
+    isDisabled?: boolean;
 
     /**
-     * If `disableSearch` is true the chooser becomes a simple pulldown menu
+     * If `isSearchable` is true the Chooser becomes a simple pulldown menu
      * rather than allowing the user to type into it to filter this list.
-     * This is good for short little pull downs where the extra UI is annoying.
      */
-    disableSearch?: boolean;
+    isSearchable?: boolean;
 
     /**
      * Add a [x] icon to the chooser allowing the user to clear the selected value
      */
-    allowSingleDeselect?: boolean;
+    isClearable?: boolean;
 
     /**
      * Can be "any" or "start", indicating how the search is matched within
@@ -140,9 +139,9 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     }
 
     componentDidMount() {
-        const { required, disabled, value, onMissingCountChange } = this.props;
+        const { isRequired, isDisabled, value, onMissingCountChange } = this.props;
         const missing =
-            required && !disabled && (_.isNull(value) || _.isUndefined(value) || value === "");
+            isRequired && !isDisabled && (_.isNull(value) || _.isUndefined(value) || value === "");
         const missingCount = missing ? 1 : 0;
 
         if (onMissingCountChange) {
@@ -151,12 +150,12 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     }
 
     UNSAFE_componentWillReceiveProps(nextProps: ChooserControlProps) {
-        const { required, disabled, value, onMissingCountChange } = this.props;
+        const { isRequired, isDisabled, value, onMissingCountChange } = this.props;
         const { value: newValue } = nextProps;
         if (value !== newValue || (!value && newValue) || (value && !newValue)) {
             const missing =
-                required &&
-                disabled &&
+                isRequired &&
+                isDisabled &&
                 (_.isNull(newValue) || _.isUndefined(newValue) || newValue === "");
             const missingCount = missing ? 1 : 0;
             onMissingCountChange?.(name, missingCount);
@@ -178,16 +177,14 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     }
 
     handleChange(selected?: Option) {
-        const { onChange, onMissingCountChange, onBlur, name } = this.props;
+        const { isRequired, onChange, onMissingCountChange, onBlur, name } = this.props;
 
         const value = selected?.value;
-        const missing = this.props.required && this.isEmpty(value);
-
-        console.log("Chooser: handleChange:", value, missing);
+        const isMissing = isRequired && this.isEmpty(value);
 
         // Callbacks
         onChange?.(name, !_.isUndefined(value) ? +value : null);
-        onMissingCountChange?.(name, missing ? 1 : 0);
+        onMissingCountChange?.(name, isMissing ? 1 : 0);
         onBlur?.(name);
     }
 
@@ -196,8 +193,8 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     }
 
     private isMissing(value = this.props.value): boolean {
-        const { required = false, disabled = false } = this.props;
-        return required && !disabled && this.isEmpty(value);
+        const { isRequired = false, isDisabled = false } = this.props;
+        return isRequired && !isDisabled && this.isEmpty(value);
     }
 
     private getOptionList(): Options {
@@ -237,8 +234,10 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     }
 
     private getCurrentChoice(): Option | null {
-        const choiceItem = this.props.choiceList.find(item => {
-            return item.get("id") === this.props.value;
+        const { value, choiceList } = this.props;
+
+        const choiceItem = choiceList.find(item => {
+            return item.get("id") === value;
         });
         if (choiceItem) {
             return {
@@ -253,26 +252,22 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         console.log("render");
 
         const {
-            disabled,
             placeholder,
-            allowSingleDeselect,
-            disableSearch = false,
+            isClearable = false,
+            isSearchable = true,
+            isDisabled = false,
             searchContains
         } = this.props;
 
         const choice = this.getCurrentChoice();
         const isMissing = this.isMissing(this.props.value);
 
-        console.log("edit", this.props.edit);
+        console.log("edit", this.props.isBeingEdited);
 
         let className = "";
         const chooserStyle = { marginBottom: 0 };
 
-        const isClearable = allowSingleDeselect;
-        const isSearchable = !disableSearch;
         const isAsync = this.props.choiceLoader && _.isFunction(this.props.choiceLoader);
-        console.log("isAsync", isAsync);
-        console.log("isSearchable", isSearchable);
 
         const filterConfig = {
             matchFrom: searchContains ? "any" : ("start" as "any" | "start")
@@ -301,7 +296,7 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
 
         const options = this.getOptionList();
         console.log("Rendering chooser....");
-        if (this.props.edit) {
+        if (this.props.isBeingEdited) {
             if (isSearchable) {
                 if (isAsync) {
                     console.log("Async select...");
@@ -316,10 +311,9 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                                 components={{ MenuList: WindowedMenuList }}
                                 loadOptions={(v, cb) => this.asyncChoiceListLoader(v, cb)}
                                 value={choice}
-                                // filterOption={createFilter(filterConfig)}
                                 styles={customStyles}
-                                isDisabled={disabled}
-                                // isSearchable={true}
+                                isDisabled={isDisabled}
+                                isClearable={isClearable}
                                 placeholder={placeholder}
                                 onChange={this.handleChange}
                             />
@@ -337,8 +331,9 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                                 options={options}
                                 filterOption={createFilter(filterConfig)}
                                 styles={customStyles}
-                                isDisabled={disabled}
+                                isDisabled={isDisabled}
                                 isSearchable={true}
+                                isClearable={isClearable}
                                 placeholder={placeholder}
                                 onChange={this.handleChange}
                             />
@@ -356,10 +351,10 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                             value={choice}
                             options={options}
                             styles={customStyles}
-                            isDisabled={disabled}
+                            isDisabled={isDisabled}
                             isSearchable={false}
                             placeholder={placeholder}
-                            clearable={isClearable}
+                            isClearable={isClearable}
                             onChange={this.handleChange}
                         />
                     </div>
@@ -368,20 +363,6 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         } else {
             console.log("Rendering view for chooser...");
             let view: React.ReactElement;
-
-            // let color = "";
-            // let background = "";
-            // if (isMissing) {
-            //     view = <span> </span>;
-            //     background = "floralwhite";
-            // }
-            // const style = {
-            //     color,
-            //     background,
-            //     height: "100%",
-            //     width: "100%",
-            //     paddingLeft: 3
-            // };
 
             const { displayView } = this.props;
             console.log({ displayView });

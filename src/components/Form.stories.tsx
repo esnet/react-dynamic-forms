@@ -125,7 +125,7 @@ export const validateAsRequired = () => {
                     field="type"
                     width={150}
                     choiceList={availableTypes}
-                    disableSearch={true}
+                    isSearchable={false}
                 />
                 <TextEdit field="first_name" width={300} />
                 <TextEdit field="last_name" width={300} />
