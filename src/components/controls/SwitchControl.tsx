@@ -12,18 +12,11 @@ import Flexbox from "@g07cha/flexbox-react";
 import _ from "lodash";
 import React, { FunctionComponent } from "react";
 import Form from "react-bootstrap/Form";
-import { validate } from "revalidator";
 import { formGroup, FormGroupProps } from "../../hoc/group";
-// Styling
 import "../../style/textedit.css";
 import { editAction } from "../../util/actions";
 import { inlineStyle } from "../../util/style";
 import { FieldValue } from "../Form";
-
-interface ValidationError {
-    validationError: boolean;
-    validationErrorMessage: string | null;
-}
 
 export interface SwitchProps {
     options?: [string, string];
@@ -95,51 +88,6 @@ class SwitchControl extends React.Component<SwitchControlProps, SwitchControlSta
         }
     }
 
-    isEmpty(value: FieldValue) {
-        return _.isNull(value) || _.isUndefined(value) || value === "";
-    }
-
-    isMissing(value: FieldValue) {
-        const { isRequired, isDisabled } = this.props;
-        return isRequired && !isDisabled && this.isEmpty(value);
-    }
-
-    getError(value: FieldValue) {
-        const { name = "value", validation, isDisabled } = this.props;
-
-        const result: ValidationError = {
-            validationError: false,
-            validationErrorMessage: null
-        };
-
-        // If the user has a field blank then that is never an error. Likewise if the field
-        // is disabled then that is never an error.
-        if (this.isEmpty(value) || isDisabled) {
-            return result;
-        }
-
-        // Validate the value with Revalidator, given the rules in this.props.rules
-        let obj = {};
-        obj[name] = value;
-
-        let properties = {};
-        properties[name] = validation;
-
-        const rules = validation ? { properties } : null;
-        if (obj && rules) {
-            const validation = validate(obj, rules, { cast: true });
-            const str = name || "Value";
-
-            let msg;
-            if (!validation.valid) {
-                msg = `${str} ${validation.errors[0].message}`;
-                result.validationError = true;
-                result.validationErrorMessage = msg;
-            }
-        }
-        return result;
-    }
-
     UNSAFE_componentWillReceiveProps(nextProps: SwitchControlProps) {
         const { checked } = this.state;
         const newChecked = nextProps.value === 0 ? false : true;
@@ -173,13 +121,10 @@ class SwitchControl extends React.Component<SwitchControlProps, SwitchControlSta
                     <div style={{ width: "100%" }}>
                         <Form.Group>
                             <Form.Check
+                                id="switch"
+                                type="switch"
                                 name="switch"
                                 checked={checked}
-                                id="switch"
-                                // ref={(ref: any) => {
-                                //     this.switch = ref;
-                                // }}
-                                type="switch"
                                 disabled={isDisabled}
                                 label={checked ? options[1] : options[0]}
                                 onChange={() => this.handleChange(!checked)}

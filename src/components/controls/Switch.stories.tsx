@@ -115,11 +115,11 @@ export const disabledSwitch = () => {
     return (
         <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
-                <span>Basic Switch control</span>
+                <span>Diabled switch</span>
             </pre>
 
             <div style={{ width: "80%", fontFamily: "Courier New" }}>
-                Shows a basic switch control, with supplied options
+                Shows a basic switch control that has been disabled
             </div>
 
             <pre style={storyHeaderStyle}>
@@ -181,11 +181,11 @@ export const noOptionsSwitch = () => {
     return (
         <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
-                <span>Basic Switch control</span>
+                <span>Switch default options</span>
             </pre>
 
             <div style={{ width: "80%", fontFamily: "Courier New" }}>
-                Shows a basic switch control, with supplied options
+                If you don't supply options the switch will toggle from On to Off
             </div>
 
             <pre style={storyHeaderStyle}>
@@ -246,11 +246,11 @@ export const viewOnlySwitch = () => {
     return (
         <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
-                <span>Basic Switch control</span>
+                <span>Switch view only</span>
             </pre>
 
             <div style={{ width: "80%", fontFamily: "Courier New" }}>
-                Shows a basic switch control, with supplied options
+                Shows a switch in view only mode
             </div>
 
             <pre style={storyHeaderStyle}>
@@ -312,11 +312,12 @@ export const customViewSwitch = () => {
     return (
         <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
-                <span>Basic Switch control</span>
+                <span>Switch with custom view</span>
             </pre>
 
             <div style={{ width: "80%", fontFamily: "Courier New" }}>
-                Shows a basic switch control, with supplied options
+                Shows a switch with a custom displayView that renders a check mark if on, and a x if
+                off.
             </div>
 
             <pre style={storyHeaderStyle}>
