@@ -18,6 +18,7 @@ import { FormEditStates, FormGroupLayout } from "../util/constants";
 import { TextEdit } from "./controls";
 import { Chooser, ChooserGroup, ChooserProps } from "./controls/ChooserControl";
 import { Switch, SwitchGroup, SwitchProps } from "./controls/SwitchControl";
+import { Tags, TagsGroup, TagsProps } from "./controls/TagsControl";
 import { TextEditGroup, TextEditProps } from "./controls/TextEditControl";
 import Field, { FieldProps } from "./Field";
 import Schema, { SchemaProps } from "./Schema";
@@ -27,6 +28,7 @@ import Schema, { SchemaProps } from "./Schema";
 export type FieldValue =
     | number
     | string
+    | string[]
     | Immutable.List<Immutable.Map<string, FieldValue>> // List values
     | null
     | undefined;
@@ -530,6 +532,9 @@ export default class Form extends React.Component<FormProps, FormState> {
                         if (child.type === Chooser) {
                             const chooserProps = props as FormGroupProps & ChooserProps;
                             newChild = <ChooserGroup {...chooserProps} />;
+                        } else if (child.type === Tags) {
+                            const tagsProps = props as FormGroupProps & TagsProps;
+                            newChild = <TagsGroup {...tagsProps} />;
                         } else if (child.type === TextEdit) {
                             const textEditProps = props as FormGroupProps & TextEditProps;
                             newChild = <TextEditGroup {...textEditProps} />;
