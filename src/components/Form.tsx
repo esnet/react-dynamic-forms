@@ -17,6 +17,7 @@ import { FormGroupProps } from "../hoc/group";
 import { FormEditStates, FormGroupLayout } from "../util/constants";
 import { TextEdit } from "./controls";
 import { Chooser, ChooserGroup, ChooserProps } from "./controls/ChooserControl";
+import { DateEdit, DateEditGroup, DateEditProps } from "./controls/DateEditControl";
 import { Switch, SwitchGroup, SwitchProps } from "./controls/SwitchControl";
 import { Tags, TagsGroup, TagsProps } from "./controls/TagsControl";
 import { TextEditGroup, TextEditProps } from "./controls/TextEditControl";
@@ -29,6 +30,7 @@ export type FieldValue =
     | number
     | string
     | string[]
+    | Date
     | Immutable.List<Immutable.Map<string, FieldValue>> // List values
     | null
     | undefined;
@@ -538,6 +540,9 @@ export default class Form extends React.Component<FormProps, FormState> {
                         } else if (child.type === TextEdit) {
                             const textEditProps = props as FormGroupProps & TextEditProps;
                             newChild = <TextEditGroup {...textEditProps} />;
+                        } else if (child.type === DateEdit) {
+                            const dateEditProps = props as FormGroupProps & DateEditProps;
+                            newChild = <DateEditGroup {...dateEditProps} />;
                         } else if (child.type === Switch) {
                             const switchProps = props as FormGroupProps & SwitchProps;
                             newChild = <SwitchGroup {...switchProps} />;

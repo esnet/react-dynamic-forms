@@ -249,8 +249,6 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     }
 
     render() {
-        console.log("render");
-
         const {
             placeholder,
             isClearable = false,
@@ -361,7 +359,6 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
                 );
             }
         } else {
-            console.log("Rendering view for chooser...");
             let view: React.ReactElement;
 
             const { displayView } = this.props;
