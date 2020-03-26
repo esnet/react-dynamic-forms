@@ -103,7 +103,6 @@ class SwitchControl extends React.Component<SwitchControlProps, SwitchControlSta
     }
 
     handleChange(checked: boolean): void {
-        console.log("handleChange", checked);
         const { name, onChange } = this.props;
         this.setState({ checked }, () => {
             let v: FieldValue = checked ? 1 : 0;
@@ -137,7 +136,6 @@ class SwitchControl extends React.Component<SwitchControlProps, SwitchControlSta
             let view: React.ReactElement;
 
             const { displayView } = this.props;
-            console.log({ displayView });
             if (_.isFunction(displayView)) {
                 const callableDisplayView = displayView as (
                     value: FieldValue

@@ -364,7 +364,6 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
             let view: React.ReactElement;
 
             const { displayView } = this.props;
-            console.log({ displayView });
             if (_.isFunction(displayView)) {
                 const callableDisplayView = displayView as (
                     value: FieldValue

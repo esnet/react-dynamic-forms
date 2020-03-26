@@ -161,8 +161,6 @@ export function formGroup<ControlProps>(Control: any) {
         // Help
         //
 
-        console.log("Help:", help);
-
         let helpMarker;
         if (_.isString(help) && help !== "") {
             const popover = (
@@ -235,7 +233,6 @@ export function formGroup<ControlProps>(Control: any) {
         const labelSize = labelWidth ? `${labelWidth}px` : "300px";
 
         // Group
-        console.log("Layout", props.layout);
         switch (props.layout) {
             case FormGroupLayout.INLINE:
                 return (

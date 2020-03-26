@@ -46,8 +46,7 @@ export const basicTagEditor = () => {
 
     const callbacks = {
         onSelectItem: () => {},
-        onChange: (n: any, v: string[]) => {
-            console.log("Setting value for ", n, v);
+        onChange: (_: any, v: string[]) => {
             setValue(v);
         },
         onBlur: () => {},
@@ -56,7 +55,6 @@ export const basicTagEditor = () => {
         onEditItem: () => {}
     };
 
-    console.log("Rendering with value", value);
     return (
         <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
@@ -115,8 +113,7 @@ export const requiredTagEditor = () => {
 
     const callbacks = {
         onSelectItem: () => {},
-        onChange: (n: any, v: string[]) => {
-            console.log("Setting value for ", n, v);
+        onChange: (_: any, v: string[]) => {
             setValue(v);
         },
         onBlur: () => {},

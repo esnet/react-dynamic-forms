@@ -8,6 +8,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
+import { format } from "date-fns";
 import _ from "lodash";
 import React, { FunctionComponent } from "react";
 import DatePicker from "react-datepicker";
@@ -19,6 +20,26 @@ import { FieldValue } from "../Form";
 import "./styles.css";
 
 export interface DateEditProps {
+    /**
+     * Allow picking of month and year only
+     */
+    monthPicker?: boolean;
+
+    /**
+     * Allow picking of day, month, year and time
+     */
+    timePicker?: boolean;
+
+    /**
+     * Earliest date allowed to be selected
+     */
+    minDate?: Date;
+
+    /**
+     * Latest date allowed to be selected
+     */
+    maxDate?: Date;
+
     /**
      * Required on all Controls
      */
@@ -114,7 +135,6 @@ class DateEditControl extends React.Component<DateEditControlProps, DateEditCont
     }
 
     handleChange(d?: Date | null) {
-        console.log("d:", d);
         const { isRequired, onChange, onMissingCountChange, name } = this.props;
         const isMissing = this.isMissing(d) && isRequired;
 
@@ -134,7 +154,17 @@ class DateEditControl extends React.Component<DateEditControlProps, DateEditCont
     }
 
     render() {
-        const { value, displayView, placeholder, isDisabled = false } = this.props;
+        const {
+            value,
+            displayView,
+            placeholder,
+            minDate,
+            maxDate,
+            isBeingEdited = true,
+            isDisabled = false,
+            monthPicker = false,
+            timePicker = false
+        } = this.props;
 
         const isMissing = this.isMissing(this.props.value);
         const selected = value as Date;
@@ -144,24 +174,65 @@ class DateEditControl extends React.Component<DateEditControlProps, DateEditCont
             className += " missing-input";
         }
 
-        if (this.props.isBeingEdited) {
-            return (
-                <div>
-                    <DatePicker
-                        key={`date`}
-                        ref={input => {
-                            this.dateEditor = input;
-                        }}
-                        selected={selected}
-                        className={className}
-                        disabled={isDisabled}
-                        placeholderText={placeholder}
-                        onChange={v => this.handleChange(v)}
-                        // onFocus={e => this.handleFocus(e)}
-                        // onKeyUp={e => this.handleKeyPress(e)}
-                    />
-                </div>
-            );
+        if (isBeingEdited) {
+            if (timePicker) {
+                return (
+                    <div>
+                        <DatePicker
+                            key={`date`}
+                            ref={input => {
+                                this.dateEditor = input;
+                            }}
+                            selected={selected}
+                            className={className}
+                            disabled={isDisabled}
+                            placeholderText={placeholder}
+                            onChange={v => this.handleChange(v)}
+                            timeInputLabel="Time:"
+                            dateFormat="MM/dd/yyyy h:mm aa"
+                            showTimeInput
+                            minDate={minDate}
+                            maxDate={maxDate}
+                        />
+                    </div>
+                );
+            } else if (monthPicker) {
+                return (
+                    <div>
+                        <DatePicker
+                            key={`date`}
+                            ref={input => {
+                                this.dateEditor = input;
+                            }}
+                            selected={selected}
+                            className={className}
+                            disabled={isDisabled}
+                            placeholderText={placeholder}
+                            onChange={v => this.handleChange(v)}
+                            dateFormat="MM/yyyy"
+                            showMonthYearPicker
+                        />
+                    </div>
+                );
+            } else {
+                return (
+                    <div>
+                        <DatePicker
+                            key={`date`}
+                            ref={input => {
+                                this.dateEditor = input;
+                            }}
+                            minDate={minDate}
+                            maxDate={maxDate}
+                            selected={selected}
+                            className={className}
+                            disabled={isDisabled}
+                            placeholderText={placeholder}
+                            onChange={v => this.handleChange(v)}
+                        />
+                    </div>
+                );
+            }
         } else {
             let view: React.ReactElement;
             const displayStyle = { fontSize: 14 };
@@ -176,14 +247,19 @@ class DateEditControl extends React.Component<DateEditControlProps, DateEditCont
                 const text = displayView as string;
                 view = <span style={displayStyle}>{text}</span>;
             } else if (this.props.value) {
-                const m = this.props.value as Date;
-                const dateString =
-                    ("0" + (m.getUTCMonth() + 1)).slice(-2) +
-                    "/" +
-                    ("0" + m.getUTCDate()).slice(-2) +
-                    "/" +
-                    m.getUTCFullYear();
-                view = <span style={displayStyle}>{dateString}</span>;
+                if (monthPicker) {
+                    const m = this.props.value as Date;
+                    const dateString = format(m, "LL/yyyy");
+                    view = <span style={displayStyle}>{dateString}</span>;
+                } else if (timePicker) {
+                    const m = this.props.value as Date;
+                    const dateString = format(m, "Pp");
+                    view = <span style={displayStyle}>{dateString}</span>;
+                } else {
+                    const m = this.props.value as Date;
+                    const dateString = format(m, "P");
+                    view = <span style={displayStyle}>{dateString}</span>;
+                }
             } else {
                 view = <div />;
             }

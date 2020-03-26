@@ -155,14 +155,10 @@ class TagsControl extends React.Component<TagsControlProps, TagsControlState> {
     }
 
     handleChange(selected?: Option[]) {
-        console.log("Selected:", selected);
         const { isRequired, onChange, onMissingCountChange, onBlur, name } = this.props;
 
         const value = selected ? selected.map(item => item.label) : [];
-        console.log("Setting value to be", value);
         const isMissing = isRequired && value.length === 0;
-
-        console.log("handle change", isMissing);
 
         // Callbacks
         onChange?.(name, value);
@@ -185,7 +181,6 @@ class TagsControl extends React.Component<TagsControlProps, TagsControlState> {
 
         const isMissing = this.isMissing(this.props.value);
         const options = this.props.tagList.map(tag => ({ value: tag, label: tag }));
-        console.log("mapping value", this.props.value);
         const tags = (this.props.value as string[]).map(tag => ({ value: tag, label: tag }));
         let className = "";
         const chooserStyle = { marginBottom: 0 };
@@ -230,7 +225,6 @@ class TagsControl extends React.Component<TagsControlProps, TagsControlState> {
             };
 
             const { displayView } = this.props;
-            console.log({ displayView });
             if (_.isFunction(displayView)) {
                 const callableDisplayView = displayView as (
                     value: FieldValue

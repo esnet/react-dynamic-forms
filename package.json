@@ -82,6 +82,7 @@
         "@g07cha/flexbox-react": "^5.0.0",
         "@primer/octicons-react": "^9.6.0",
         "classnames": "^2.2.6",
+        "date-fns": "^2.11.0",
         "deepcopy": "^2.0.0",
         "immutable": "^4.0.0-rc.12",
         "invariant": "^2.2.4",

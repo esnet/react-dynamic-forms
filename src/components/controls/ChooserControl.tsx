@@ -213,7 +213,6 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
     }
 
     private asyncChoiceListLoader(inputValue: string, callback: any): void | Promise<any> {
-        console.log("asyncChooserListLoader", inputValue);
         const { disableList } = this.props;
         if (!this.props.choiceLoader) {
             return;
@@ -260,8 +259,6 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         const choice = this.getCurrentChoice();
         const isMissing = this.isMissing(this.props.value);
 
-        console.log("edit", this.props.isBeingEdited);
-
         let className = "";
         const chooserStyle = { marginBottom: 0 };
 
@@ -293,11 +290,9 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
         };
 
         const options = this.getOptionList();
-        console.log("Rendering chooser....");
         if (this.props.isBeingEdited) {
             if (isSearchable) {
                 if (isAsync) {
-                    console.log("Async select...");
                     const labelList = _.map(options, item => item.label);
                     const key = `${labelList}--${choice}`;
                     return (
@@ -362,7 +357,6 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
             let view: React.ReactElement;
 
             const { displayView } = this.props;
-            console.log({ displayView });
             if (_.isFunction(displayView)) {
                 const callableDisplayView = displayView as (
                     value: FieldValue
