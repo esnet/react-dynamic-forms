@@ -87,6 +87,15 @@ const contactSchema = (
             required={true}
             validation={{ type: "string" }}
         />
+        <Field
+            name="email"
+            label="Email"
+            placeholder="Enter valid email address"
+            required={true}
+            validation={{ format: "email" }}
+        />
+        <Field name="birthdate" label="Birthdate" required={true} />
+        <Field name="tags" label="Categories" required={true} />
     </Schema>
 );
 
@@ -129,6 +138,13 @@ export const validateAsRequired = () => {
                 />
                 <TextEdit field="first_name" width={300} />
                 <TextEdit field="last_name" width={300} />
+                <TextEdit
+                    field="email"
+                    width={400}
+                    view={value => {
+                        return <a>{value}</a>;
+                    }}
+                />
             </Form>
 
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
@@ -143,9 +159,19 @@ export const validateAsRequired = () => {
     );
 };
 
+// const initialTagList = Immutable.fromJS([
+//     "ucberkeley",
+//     "esnet",
+//     "stanford",
+//     "doe",
+//     "industry",
+//     "government"
+// ]);
+
 export const transitionEditStates = () => {
     // State
     const [value, setValue] = React.useState<Immutable.Map<string, any>>(fromJS(initialContact));
+    // const [tagList, setTagList] = React.useState<string[]>(initialTagList);
     const [hasMissing, setHasMissing] = React.useState<boolean>(false);
     const [hasErrors, setHasErrors] = React.useState<boolean>(false);
     const [editMode, setEditMode] = React.useState<string>(FormEditStates.ALWAYS);
@@ -220,8 +246,27 @@ export const transitionEditStates = () => {
                 onMissingCountChange={(_, missing) => setHasMissing(missing > 0)}
                 onErrorCountChange={(_, errors) => setHasErrors(errors > 0)}
             >
+                <Chooser
+                    field="type"
+                    width={150}
+                    choiceList={availableTypes}
+                    isSearchable={false}
+                />
                 <TextEdit field="first_name" width={300} />
                 <TextEdit field="last_name" width={300} />
+                <TextEdit
+                    field="email"
+                    width={400}
+                    view={value => {
+                        return <a>{value}</a>;
+                    }}
+                />
+                {/* <TagsEdit
+                    field="tags"
+                    tagList={tagList}
+                    onTagListChange={(_, tags: string[]) => setTagList(tags)}
+                    width={400}
+                /> */}
             </Form>
 
             <pre style={outputStyle}>

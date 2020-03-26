@@ -367,6 +367,10 @@ class ChooserControl extends React.Component<ChooserControlProps, ChooserControl
             } else if (_.isString(displayView)) {
                 const text = displayView as string;
                 view = <span>{text}</span>;
+            } else if (options) {
+                const current = options.filter(item => item.value === this.props.value);
+                const label = current.length === 1 ? current[0].label : "";
+                view = <span style={{ minHeight: 28 }}>{`${label}`}</span>;
             } else {
                 view = <span style={{ minHeight: 28 }}>{`${this.props.value}`}</span>;
             }
