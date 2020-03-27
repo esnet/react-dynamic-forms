@@ -1,6 +1,6 @@
 import { add } from "date-fns";
 import React from "react";
-import { FormGroupLayout } from "../..";
+import { FormGroupLayout } from "../../index";
 import { DateEditGroup } from "./DateEditControl";
 export default { title: "DateEdit" };
 

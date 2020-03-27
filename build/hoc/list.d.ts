@@ -44,7 +44,7 @@ export interface ListManagerState {
  * A Higher-order component -- a function that takes the item Component class and returns a new
  * Component (the ListManager) that manages a list of those components.
  */
-export declare function formList(ItemComponent: ComponentType<ListItemProps>, hideEditRemove: boolean, actionButtonIndex: number, initialItemValue: Immutable.Map<string, FieldValue>): {
+export declare function formList(ItemComponent: ComponentType<ListItemProps>, hideEditRemove: boolean, itemButtonIndent: number, initialItemValue: Immutable.Map<string, FieldValue>): {
     new (props: ListManagerProps): {
         errors: number[];
         missing: number[];

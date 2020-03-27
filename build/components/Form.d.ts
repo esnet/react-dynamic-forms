@@ -10,13 +10,13 @@
 import Immutable from "immutable";
 import React from "react";
 import { FormGroupProps } from "../hoc/group";
-export declare type FieldValue = number | string | Immutable.List<Immutable.Map<string, FieldValue>> | null | undefined;
+export declare type FieldValue = number | string | string[] | Date | Immutable.List<Immutable.Map<string, FieldValue>> | null | undefined;
 export interface FormFields {
     [fieldName: string]: {
         label: string;
         placeholder: string;
         help: string;
-        disabled: boolean;
+        isDisabled: boolean;
         tags: string[];
     };
 }

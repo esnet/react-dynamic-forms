@@ -21,6 +21,14 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true
     },
-    "include": ["src"],
+    "include": [
+        "src",
+        "stories/DateEdit.stories.tsx",
+        "stories/Switch.stories.tsx",
+        "stories/TextEdit.stories.tsx",
+        "stories/Chooser.stories.tsx",
+        "stories/Tags.stories.tsx",
+        "stories/Form.stories.tsx"
+    ],
     "exclude": ["node_modules", "build"]
 }

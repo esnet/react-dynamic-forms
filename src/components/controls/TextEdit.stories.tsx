@@ -1,5 +1,5 @@
 import React from "react";
-import { FormGroupLayout } from "../..";
+import { FormGroupLayout } from "../../index";
 import { TextEditGroup } from "./TextEditControl";
 
 export default { title: "TextEdit" };

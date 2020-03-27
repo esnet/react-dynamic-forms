@@ -26,6 +26,13 @@ export type Options = Option[];
 
 export interface TagsProps {
     /**
+     * If the available tag options changes because the use added a tag, then
+     * this callback will be called with the complete list of possible tags
+     * (essentially this will be this.props.tagList + the new tag)
+     */
+    onTagListChange?: (name: string | undefined, tagList: string[]) => void;
+
+    /**
      * Required on all Controls
      */
     field: string;
@@ -155,13 +162,28 @@ class TagsControl extends React.Component<TagsControlProps, TagsControlState> {
     }
 
     handleChange(selected?: Option[]) {
-        const { isRequired, onChange, onMissingCountChange, onBlur, name } = this.props;
+        const {
+            isRequired,
+            onChange,
+            onMissingCountChange,
+            onTagListChange,
+            onBlur,
+            name
+        } = this.props;
 
         const value = selected ? selected.map(item => item.label) : [];
         const isMissing = isRequired && value.length === 0;
 
+        const newTags = selected
+            ?.filter(item => item["__isNew__"])
+            .map(item => item.value as string);
+
         // Callbacks
         onChange?.(name, value);
+        if (newTags !== undefined && newTags.length > 0) {
+            const existingTags = this.props.tagList ? this.props.tagList : [];
+            onTagListChange?.(name, [...existingTags, ...newTags]);
+        }
         onMissingCountChange?.(name, isMissing ? 1 : 0);
         onBlur?.(name);
     }
@@ -182,9 +204,7 @@ class TagsControl extends React.Component<TagsControlProps, TagsControlState> {
         const isMissing = this.isMissing(this.props.value);
         const options = this.props.tagList.map(tag => ({ value: tag, label: tag }));
         const tags = (this.props.value as string[]).map(tag => ({ value: tag, label: tag }));
-        let className = "";
         const chooserStyle = { marginBottom: 0 };
-
         const customStyles = {
             control: (base: object) => ({
                 ...base,
@@ -194,7 +214,7 @@ class TagsControl extends React.Component<TagsControlProps, TagsControlState> {
 
         if (this.props.isBeingEdited) {
             return (
-                <div className={className} style={chooserStyle}>
+                <div style={chooserStyle}>
                     <CreatableSelect
                         value={tags}
                         isMulti

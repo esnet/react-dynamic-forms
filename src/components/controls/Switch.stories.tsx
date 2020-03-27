@@ -1,5 +1,5 @@
 import React from "react";
-import { FormGroupLayout } from "../..";
+import { FormGroupLayout } from "../../index";
 import { SwitchGroup } from "./SwitchControl";
 
 export default { title: "Switch" };

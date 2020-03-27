@@ -1,3 +1,4 @@
+import json from "@rollup/plugin-json";
 import commonjs from "rollup-plugin-commonjs";
 import css from "rollup-plugin-css-only";
 import resolve from "rollup-plugin-node-resolve";
@@ -26,7 +27,7 @@ export default {
         resolve(),
         typescript({
             rollupCommonJSResolveHack: true,
-            exclude: ["**/__tests__/**"],
+            exclude: ["**/__tests__/**", "stories/**"],
             clean: true
         }),
         commonjs({
@@ -42,6 +43,7 @@ export default {
                 "node_modules/revalidator/lib/revalidator.js": ["validate"]
             }
         }),
-        css()
+        css(),
+        json()
     ]
 };

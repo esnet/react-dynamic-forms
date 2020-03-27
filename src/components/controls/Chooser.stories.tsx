@@ -1,8 +1,8 @@
 import Immutable, { fromJS } from "immutable";
 import React from "react";
-import { Field, Form, FormEditStates, FormGroupLayout, Schema } from "../..";
+import { Field, Form, FormEditStates, FormGroupLayout, Schema } from "../../index";
+import colors from "../data/colors.json";
 import { Chooser, ChooserGroup } from "./ChooserControl";
-import colors from "./colors.json";
 
 export default { title: "Chooser" };
 

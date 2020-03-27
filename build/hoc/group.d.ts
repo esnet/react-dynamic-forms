@@ -7,7 +7,7 @@
  *  This source code is licensed under the BSD-style license found in the
  *  LICENSE file in the root directory of this source tree.
  */
-/// <reference types="react" />
+import React from "react";
 import { FieldValue } from "../components/Form";
 import "../style/group.css";
 import "../style/icon.css";
@@ -38,17 +38,18 @@ export interface FormGroupProps {
     field?: string;
     label?: string;
     labelWidth?: number;
-    edit?: boolean;
-    required?: boolean;
+    isBeingEdited?: boolean;
+    isRequired?: boolean;
     showRequired?: boolean;
-    disabled?: boolean;
+    isDisabled?: boolean;
     value?: FieldValue;
     initialValue?: FieldValue;
+    displayView?: string | ((value: FieldValue) => React.ReactElement<any>);
     placeholder?: string;
     help?: string;
     validation?: any;
-    hidden?: boolean;
-    selected?: boolean;
+    isHidden?: boolean;
+    isSelected?: boolean;
     allowEdit?: boolean;
     layout?: string;
     onSelectItem?: (fieldName: string | undefined) => void;

@@ -1,6 +1,6 @@
 import Immutable, { fromJS } from "immutable";
 import React from "react";
-import { Chooser, Field, Form, FormEditStates, Schema, TextEdit } from "..";
+import { Chooser, Field, Form, FormEditStates, Schema, TextEdit } from "../index";
 
 export default { title: "Forms" };
 

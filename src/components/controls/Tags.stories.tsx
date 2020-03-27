@@ -1,5 +1,5 @@
 import React from "react";
-import { FormGroupLayout } from "../..";
+import { FormGroupLayout } from "../../util/constants";
 import { TagsGroup } from "./TagsControl";
 
 export default { title: "Tags" };
@@ -15,7 +15,7 @@ const outputStyle = {
 
 const initialValue = ["orange", "yellow", "green"];
 
-const tagList = [
+const initialTags = [
     "ocean",
     "blue",
     "purple",
@@ -41,6 +41,7 @@ const fixedProps = {
 export const basicTagEditor = () => {
     // State
     const [value, setValue] = React.useState<string[]>(initialValue);
+    const [tagList, setTagList] = React.useState<string[]>(initialTags);
     const [hasMissing] = React.useState<boolean>(false);
     const [hasErrors] = React.useState<boolean>(false);
 
@@ -48,6 +49,9 @@ export const basicTagEditor = () => {
         onSelectItem: () => {},
         onChange: (_: any, v: string[]) => {
             setValue(v);
+        },
+        onTagListChange: (_: any, tags: string[]) => {
+            setTagList(tags);
         },
         onBlur: () => {},
         onErrorCountChange: () => {},
@@ -101,6 +105,13 @@ export const basicTagEditor = () => {
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
                 {JSON.stringify(value, null, 3)}
             </pre>
+
+            <pre style={storyHeaderStyle}>
+                <span>: Tag options :</span>
+            </pre>
+            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+                {JSON.stringify(tagList, null, 3)}
+            </pre>
         </div>
     );
 };
@@ -108,6 +119,7 @@ export const basicTagEditor = () => {
 export const requiredTagEditor = () => {
     // State
     const [value, setValue] = React.useState<string[]>(initialValue);
+    const [tagList, setTagList] = React.useState<string[]>(initialTags);
     const [hasMissing, setHasMissing] = React.useState<boolean>(false);
     const [hasErrors, setHasErrors] = React.useState<boolean>(false);
 
@@ -115,6 +127,9 @@ export const requiredTagEditor = () => {
         onSelectItem: () => {},
         onChange: (_: any, v: string[]) => {
             setValue(v);
+        },
+        onTagListChange: (_: any, tags: string[]) => {
+            setTagList(tags);
         },
         onBlur: () => {},
         onErrorCountChange: (_: any, errors: number) => {
@@ -179,6 +194,7 @@ export const requiredTagEditor = () => {
 export const viewOnlyTagEditor = () => {
     // State
     const [value, setValue] = React.useState<string[]>(initialValue);
+    const [tagList, setTagList] = React.useState<string[]>(initialTags);
     const [hasMissing] = React.useState<boolean>(false);
     const [hasErrors] = React.useState<boolean>(false);
 
@@ -186,6 +202,9 @@ export const viewOnlyTagEditor = () => {
         onSelectItem: () => {},
         onChange: (_: any, v: string[]) => {
             setValue(v);
+        },
+        onTagListChange: (_: any, tags: string[]) => {
+            setTagList(tags);
         },
         onBlur: () => {},
         onErrorCountChange: () => {},
