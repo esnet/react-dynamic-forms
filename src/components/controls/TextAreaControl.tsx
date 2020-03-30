@@ -8,10 +8,10 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-import Flexbox from "@g07cha/flexbox-react";
 import _ from "lodash";
 import React, { FunctionComponent } from "react";
 import Form from "react-bootstrap/Form";
+import ReactMarkdown from "react-markdown";
 import { validate } from "revalidator";
 import { formGroup, FormGroupProps } from "../../hoc/group";
 // Styling
@@ -21,7 +21,7 @@ import {
     colors,
     inlineCancelButtonStyle,
     inlineDoneButtonStyle,
-    inlineStyle
+    inlineTextAreaStyle
 } from "../../util/style";
 import { FieldValue } from "../Form";
 
@@ -30,21 +30,21 @@ interface ValidationError {
     validationErrorMessage: string | null;
 }
 
-export interface TextEditProps {
+export interface TextAreaProps {
     /**
      * Required on all Controls
      */
     field: string;
 
     /**
-     * Customize the horizontal size of the TextEdit box
+     * Customize the number or rows (height) of the control. Default is 3.
      */
-    width?: number;
+    rows?: number;
 
     /**
-     * The TextEdit type, such as "password" (standard html text input widget types)
+     * Customize the horizontal size of the Chooser
      */
-    type?: string;
+    width?: number;
 
     /**
      * Rules to apply
@@ -58,7 +58,7 @@ export interface TextEditProps {
     view?: (value: FieldValue) => React.ReactElement<any>;
 }
 
-interface TextEditControlState {
+interface TextAreaControlState {
     value: FieldValue;
     oldValue: FieldValue;
     isFocused: boolean;
@@ -67,15 +67,15 @@ interface TextEditControlState {
     hover: boolean;
 }
 
-// Props passed into the TextEditControl are the above Props combined with what is
+// Props passed into the TextAreaControl are the above Props combined with what is
 // passed into the Group that wraps this.
 
-export type TextEditControlProps = TextEditProps & FormGroupProps;
+export type TextAreaControlProps = TextAreaProps & FormGroupProps;
 
 /**
- * This is the control code implemented here which wraps the bootstrap Input widget
+ * This is the control code implemented here which wraps the html textarea control with bootstrap styling
  */
-class TextEditControl extends React.Component<TextEditControlProps, TextEditControlState> {
+class TextAreaControl extends React.Component<TextAreaControlProps, TextAreaControlState> {
     textInput: any;
 
     state = {
@@ -87,7 +87,7 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
         hover: false
     };
 
-    constructor(props: TextEditControlProps) {
+    constructor(props: TextAreaControlProps) {
         super(props);
 
         this.handleChange = this.handleChange.bind(this);
@@ -154,7 +154,7 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
         return result;
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps: TextEditControlProps) {
+    UNSAFE_componentWillReceiveProps(nextProps: TextAreaControlProps) {
         const { name, isBeingEdited, onErrorCountChange, onMissingCountChange } = this.props;
         const { isFocused, value } = this.state;
 
@@ -199,40 +199,17 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
     }
 
     handleChange(e: React.FormEvent<any>): void {
-        const {
-            name,
-            isRequired,
-            rules,
-            onChange,
-            onErrorCountChange,
-            onMissingCountChange
-        } = this.props;
+        const { name, isRequired, onChange, onErrorCountChange, onMissingCountChange } = this.props;
 
         const value: string = (e.target as HTMLInputElement).value;
         this.setState({ value }, () => {
             const missing = isRequired && this.isEmpty(value);
             const { validationError } = this.getError(value);
-            let cast: FieldValue = value;
 
             // Callbacks
+            onChange?.(name, value);
             onErrorCountChange?.(name, validationError ? 1 : 0);
             onMissingCountChange?.(name, missing ? 1 : 0);
-
-            if (onChange) {
-                if (_.has(rules, "type")) {
-                    switch (rules.type) {
-                        case "integer":
-                            cast = value === "" ? null : parseInt(value, 10);
-                            break;
-                        case "number":
-                            cast = value === "" ? null : parseFloat(value);
-                            break;
-                        //pass
-                        default:
-                    }
-                }
-                onChange(name, cast);
-            }
         });
     }
 
@@ -292,7 +269,7 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
     }
 
     render() {
-        const { isDisabled, isBeingEdited, placeholder } = this.props;
+        const { isDisabled, isBeingEdited, placeholder, rows = 3 } = this.props;
         const { value, touched } = this.state;
 
         // Control state
@@ -311,30 +288,33 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
             }
 
             // Warning style
-            const style = isMissing ? { background: colors.MISSING_COLOR_BG } : {};
-            const type = this.props.type || "text";
+            const marginBottom = this.props.isSelected ? 5 : 0;
+            const style = isMissing
+                ? { background: colors.MISSING_COLOR_BG, marginBottom }
+                : { marginBottom };
 
             const canCommit = !isMissing && !validationError;
 
             return (
-                <Flexbox flexDirection="row" style={{ width: "100%" }}>
-                    <div className={className} style={{ width: "100%" }}>
-                        <Form.Control
-                            value={v}
-                            size="sm"
-                            ref={(input: any) => {
-                                this.textInput = input;
-                            }}
-                            style={style}
-                            type={type}
-                            disabled={isDisabled}
-                            placeholder={placeholder}
-                            onChange={this.handleChange}
-                            onFocus={this.handleFocus}
-                            onKeyUp={this.handleKeyPress}
-                        />
-                        <div className={helpClassName}>{msg}</div>
-                    </div>
+                <div className={className} style={{ width: "100%" }}>
+                    <Form.Control
+                        as="textarea"
+                        rows={rows}
+                        value={v}
+                        size="sm"
+                        ref={(input: any) => {
+                            this.textInput = input;
+                        }}
+                        style={style}
+                        disabled={isDisabled}
+                        placeholder={placeholder}
+                        onChange={this.handleChange}
+                        onFocus={this.handleFocus}
+                        onKeyUp={this.handleKeyPress}
+                    />
+
+                    <div className={helpClassName}>{msg}</div>
+
                     {this.props.isSelected ? (
                         <span style={{ marginTop: 3 }}>
                             {canCommit ? (
@@ -358,29 +338,38 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
                     ) : (
                         <div />
                     )}
-                </Flexbox>
+                </div>
             );
         } else {
             let view: React.ReactElement;
-
+            let isCustom = false;
             const { displayView } = this.props;
             if (_.isFunction(displayView)) {
                 const callableDisplayView = displayView as (
                     value: FieldValue
                 ) => React.ReactElement;
                 view = <span style={{ minHeight: 28 }}>{callableDisplayView(v)}</span>;
+                isCustom = true;
             } else if (_.isString(displayView)) {
                 const text = displayView as string;
-                view = <span>{text}</span>;
+                view = (
+                    <span>
+                        <ReactMarkdown source={text} />
+                    </span>
+                );
             } else {
-                view = <span style={{ minHeight: 28 }}>{`${v}`}</span>;
+                view = (
+                    <span style={{ minHeight: 28 }}>
+                        <ReactMarkdown source={v} />
+                    </span>
+                );
             }
 
             const edit = editAction(this.state.hover && this.props.allowEdit, () =>
                 this.handleEditItem()
             );
 
-            const style = inlineStyle(false, isMissing ? isMissing : false);
+            const style = inlineTextAreaStyle(false, isMissing ? isMissing : false, isCustom);
 
             return (
                 <div
@@ -390,7 +379,7 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
                     onMouseLeave={() => this.handleMouseLeave()}
                 >
                     {view}
-                    {edit}
+                    <span>{edit}</span>
                 </div>
             );
         }
@@ -398,12 +387,12 @@ class TextEditControl extends React.Component<TextEditControlProps, TextEditCont
 }
 
 /**
- * A `TextEditGroup` is a `TextEditControl` wrapped by the `formGroup()` HOC. This is the
- * component which can be rendered by the Form when the user adds a `TextEdit` to their `Form`.
+ * A `TextAreaGroup` is a `TextAreaControl` wrapped by the `formGroup()` HOC. This is the
+ * component which can be rendered by the Form when the user adds a `TextArea` to their `Form`.
  */
-export const TextEditGroup = formGroup<TextEditProps>(TextEditControl);
+export const TextAreaGroup = formGroup<TextAreaProps>(TextAreaControl);
 
 /**
- * A control which allows the user to type into a single line input control
+ * A control which allows the user to type into a multi-line text edit control
  */
-export const TextEdit: FunctionComponent<TextEditProps> = () => <></>;
+export const TextArea: FunctionComponent<TextAreaProps> = () => <></>;

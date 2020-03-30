@@ -23,12 +23,12 @@
     },
     "include": [
         "src",
-        "stories/DateEdit.stories.tsx",
-        "stories/Switch.stories.tsx",
-        "stories/TextEdit.stories.tsx",
-        "stories/Chooser.stories.tsx",
-        "stories/Tags.stories.tsx",
-        "stories/Form.stories.tsx"
+        "src/components/controls/DateEdit.stories.tsx",
+        "src/components/controls/SwitchControl.stories.tsx",
+        "src/components/controls/TextEditControl.stories.tsx",
+        "src/components/controls/Chooser.stories.tsx",
+        "src/components/controls/TagsControl.stories.tsx",
+        "src/components/controls/Form.stories.tsx"
     ],
     "exclude": ["node_modules", "build"]
 }

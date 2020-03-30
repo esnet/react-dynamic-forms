@@ -67,9 +67,13 @@ export function inlineStyle(hasError: boolean, isMissing: boolean) {
     };
 }
 
-export function inlineTextAreaStyle(hasError: boolean, isMissing: boolean) {
+export function inlineTextAreaStyle(
+    hasError: boolean,
+    isMissing: boolean,
+    isCustomView: boolean = false
+) {
     let color = "";
-    let background = "";
+    let background = isCustomView ? "" : "#FAFAFA";
     if (hasError) {
         color = colors.ERROR_COLOR;
         background = colors.ERROR_COLOR_BG;
@@ -82,7 +86,9 @@ export function inlineTextAreaStyle(hasError: boolean, isMissing: boolean) {
         height: "100%",
         width: "100%",
         minHeight: 28,
-        paddingLeft: LEFT_SPACING
+        paddingLeft: LEFT_SPACING,
+        fontWeight: 200,
+        borderRadius: 3
     };
 }
 
