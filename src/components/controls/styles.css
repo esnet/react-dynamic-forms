@@ -1,0 +1,13 @@
+.missing-input {
+    background: floralwhite;
+}
+
+.error-input {
+    border-color: #b94a48;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 0.65;
+}

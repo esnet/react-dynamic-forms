@@ -1,11 +1,103 @@
 {
+    "name": "react-dynamic-forms",
+    "version": "1.0.0",
+    "description": "",
+    "engine": "10.17.0",
+    "main": "build/index.js",
+    "module": "build/index.es.js",
+    "jsnext:main": "build/index.es.js",
     "scripts": {
-        "start": "cd packages/website && npm run start",
-        "build-website":
-            "echo \"*** Building website\n\" && rm -rf docs && cd packages/website && npm run build && mv build ../../docs"
+        "build": "rollup -c",
+        "lint": "standard",
+        "format": "prettier-standard --format",
+        "test": "jest --coverage",
+        "storybook": "start-storybook",
+        "build-storybook": "build-storybook",
+        "chromatic": "chromatic"
     },
+    "keywords": [
+        "react",
+        "forms"
+    ],
+    "author": "ESnet Software Engineering Group",
+    "license": "BSD-3-Clause-LBNL",
     "devDependencies": {
-        "lerna": "^2.5.1"
+        "@babel/core": "^7.9.0",
+        "@rollup/plugin-json": "^4.0.2",
+        "@storybook/react": "^5.3.14",
+        "@testing-library/jest-dom": "^5.1.1",
+        "@testing-library/react": "^10.0.1",
+        "@types/classnames": "^2.2.10",
+        "@types/invariant": "^2.2.31",
+        "@types/jest": "^25.1.4",
+        "@types/keymirror": "^0.1.1",
+        "@types/lodash": "^4.14.149",
+        "@types/react-datepicker": "^2.11.0",
+        "@types/react-select": "^3.0.10",
+        "@types/react-transition-group": "^4.2.3",
+        "@types/react-window": "^1.8.1",
+        "@types/revalidator": "^0.3.7",
+        "awesome-typescript-loader": "^5.2.1",
+        "babel-loader": "^8.1.0",
+        "jest": "^25.1.0",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "rollup": "^1.32.0",
+        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-css-only": "^2.0.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-peer-deps-external": "^2.2.2",
+        "rollup-plugin-typescript2": "^0.26.0",
+        "standard": "^14.3.1",
+        "standard-prettier": "^1.0.1",
+        "storybook-chromatic": "^3.5.2",
+        "ts-jest": "^25.2.1",
+        "typescript": "^3.8.3"
     },
-    "dependencies": {}
+    "jest": {
+        "preset": "ts-jest",
+        "testEnvironment": "jsdom",
+        "testPathIgnorePatterns": [
+            "build/"
+        ]
+    },
+    "standard": {
+        "ignore": [
+            "node_modules/",
+            "build/"
+        ],
+        "globals": [
+            "describe",
+            "it",
+            "test",
+            "expect",
+            "afterAll",
+            "jest"
+        ]
+    },
+    "peerDependencies": {
+        "react": "^16",
+        "react-dom": "^16"
+    },
+    "dependencies": {
+        "@g07cha/flexbox-react": "^5.0.0",
+        "@primer/octicons-react": "^9.6.0",
+        "classnames": "^2.2.6",
+        "date-fns": "^2.11.0",
+        "deepcopy": "^2.0.0",
+        "immutable": "^4.0.0-rc.12",
+        "invariant": "^2.2.4",
+        "keymirror": "^0.1.1",
+        "lodash": "^4.17.15",
+        "prop-types": "^15.7.2",
+        "react-bootstrap": "^1.0.0-beta.17",
+        "react-datepicker": "^2.14.1",
+        "react-markdown": "^4.3.1",
+        "react-popper": "^1.3.7",
+        "react-select": "^3.1.0",
+        "react-transition-group": "^4.3.0",
+        "react-window": "^1.8.5",
+        "react-windowed-select": "^2.0.2",
+        "revalidator": "^0.3.1"
+    }
 }
