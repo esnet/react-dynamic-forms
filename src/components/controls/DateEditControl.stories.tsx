@@ -2,7 +2,8 @@ import { add } from "date-fns";
 import React from "react";
 import { FormGroupLayout } from "../../index";
 import { DateEditGroup } from "./DateEditControl";
-export default { title: "DateEdit" };
+
+export default { title: "Controls.DateEdit" };
 
 const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
 // const formStyle = {

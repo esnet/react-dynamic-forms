@@ -2,15 +2,9 @@ import React from "react";
 import { FormGroupLayout } from "../../index";
 import { TextEditGroup } from "./TextEditControl";
 
-export default { title: "TextEdit" };
+export default { title: "Controls.TextEdit" };
 
 const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
-// const formStyle = {
-//     background: "#FAFAFA",
-//     borderRadius: 5,
-//     padding: 10
-// };
-
 const outputStyle = {
     background: "#F3F3F3",
     borderRadius: 5,

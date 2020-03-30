@@ -2,7 +2,7 @@ import React from "react";
 import { FormGroupLayout } from "../../util/constants";
 import { TagsGroup } from "./TagsControl";
 
-export default { title: "Tags" };
+export default { title: "Controls.Tags" };
 
 const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
 

@@ -2,7 +2,7 @@ import React from "react";
 import { FormGroupLayout } from "../../index";
 import { SwitchGroup } from "./SwitchControl";
 
-export default { title: "Switch" };
+export default { title: "Controls.Switch" };
 
 const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
 // const formStyle = {

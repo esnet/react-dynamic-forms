@@ -2,7 +2,15 @@ import Immutable, { fromJS } from "immutable";
 import React from "react";
 import { Chooser, Field, Form, FormEditStates, Schema, TextEdit } from "../index";
 
-export default { title: "Forms" };
+export default { title: "Forms.Basic" };
+
+const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
+const outputStyle = {
+    background: "#F3F3F3",
+    borderRadius: 5,
+    margin: 20,
+    padding: 10
+};
 
 const initialValue = {
     name: "Bob"
@@ -32,10 +40,19 @@ export const basic = () => {
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
     return (
-        <div>
+        <div style={{ padding: 50 }}>
             <pre style={{ fontSize: 18 }}>
-                <span>Basic Form</span>
+                <span>Basic form</span>
             </pre>
+
+            <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                Shows a form with a simple schema containing one field
+            </div>
+
+            <pre style={storyHeaderStyle}>
+                <span>: Form :</span>
+            </pre>
+
             <Form
                 name="basic"
                 formStyle={style}
@@ -52,13 +69,21 @@ export const basic = () => {
                 <TextEdit field="name" width={300} />
             </Form>
 
-            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+            <pre style={storyHeaderStyle}>
+                <span>: Validation :</span>
+            </pre>
+
+            <pre style={outputStyle}>
                 <span>{hasMissing ? "has missing" : "no missing"}</span>
                 <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
             </pre>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Value :</span>
+            </pre>
+
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                {JSON.stringify(value.toJS(), null, 3)}
+                {JSON.stringify(value, null, 3)}
             </pre>
         </div>
     );
@@ -113,7 +138,19 @@ export const validateAsRequired = () => {
     const style = { background: "#FAFAFA", padding: 10, borderRadius: 5 };
 
     return (
-        <div>
+        <div style={{ padding: 50 }}>
+            <pre style={{ fontSize: 18 }}>
+                <span>Validate as required</span>
+            </pre>
+
+            <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                Text edit form with required fields
+            </div>
+
+            <pre style={storyHeaderStyle}>
+                <span>: Form :</span>
+            </pre>
+
             <pre style={{ fontSize: 18 }}>
                 <span>Text edit form with required fields</span>
             </pre>
@@ -146,14 +183,19 @@ export const validateAsRequired = () => {
                     }}
                 />
             </Form>
-
-            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+            <pre style={storyHeaderStyle}>
+                <span>: Validation :</span>
+            </pre>
+            <pre style={outputStyle}>
                 <span>{hasMissing ? "has missing" : "no missing"}</span>
                 <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
             </pre>
 
+            <pre style={storyHeaderStyle}>
+                <span>: Value :</span>
+            </pre>
             <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                {JSON.stringify(value.toJS(), null, 3)}
+                {JSON.stringify(value, null, 3)}
             </pre>
         </div>
     );
@@ -193,14 +235,15 @@ export const transitionEditStates = () => {
 
     return (
         <div>
-            <pre style={{ fontSize: 18 }}>
-                <span>Text edit form with required fields</span>
-            </pre>
-
-            <div>
-                <pre style={{ fontSize: 12 }}>
-                    <span>Select the edit mode</span>
+            <div style={{ padding: 50 }}>
+                <pre style={{ fontSize: 18 }}>
+                    <span>Form with different edit states</span>
                 </pre>
+
+                <pre style={storyHeaderStyle}>
+                    <span>: Select the editMode :</span>
+                </pre>
+
                 <span
                     style={
                         editMode == FormEditStates.ALWAYS
@@ -231,52 +274,62 @@ export const transitionEditStates = () => {
                 >
                     Never
                 </span>
+
+                <pre style={storyHeaderStyle}>
+                    <span>: Form :</span>
+                </pre>
+
+                <Form
+                    name="basic"
+                    formStyle={formStyle}
+                    schema={contactSchema}
+                    value={value}
+                    initialValue={value}
+                    edit={editMode}
+                    labelWidth={200}
+                    // onSubmit={() => console.log("Submit")}
+                    onChange={(_, value) => setValue(value)}
+                    onMissingCountChange={(_, missing) => setHasMissing(missing > 0)}
+                    onErrorCountChange={(_, errors) => setHasErrors(errors > 0)}
+                >
+                    <Chooser
+                        field="type"
+                        width={150}
+                        choiceList={availableTypes}
+                        isSearchable={false}
+                    />
+                    <TextEdit field="first_name" width={300} />
+                    <TextEdit field="last_name" width={300} />
+                    <TextEdit
+                        field="email"
+                        width={400}
+                        view={value => {
+                            return <a>{value}</a>;
+                        }}
+                    />
+                    {/* <TagsEdit
+                        field="tags"
+                        tagList={tagList}
+                        onTagListChange={(_, tags: string[]) => setTagList(tags)}
+                        width={400}
+                    /> */}
+                </Form>
+
+                <pre style={storyHeaderStyle}>
+                    <span>: Validation :</span>
+                </pre>
+                <pre style={outputStyle}>
+                    <span>{hasMissing ? "has missing" : "no missing"}</span>
+                    <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
+                </pre>
+
+                <pre style={storyHeaderStyle}>
+                    <span>: Value :</span>
+                </pre>
+                <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+                    {JSON.stringify(value, null, 3)}
+                </pre>
             </div>
-
-            <Form
-                name="basic"
-                formStyle={formStyle}
-                schema={contactSchema}
-                value={value}
-                initialValue={value}
-                edit={editMode}
-                labelWidth={200}
-                // onSubmit={() => console.log("Submit")}
-                onChange={(_, value) => setValue(value)}
-                onMissingCountChange={(_, missing) => setHasMissing(missing > 0)}
-                onErrorCountChange={(_, errors) => setHasErrors(errors > 0)}
-            >
-                <Chooser
-                    field="type"
-                    width={150}
-                    choiceList={availableTypes}
-                    isSearchable={false}
-                />
-                <TextEdit field="first_name" width={300} />
-                <TextEdit field="last_name" width={300} />
-                <TextEdit
-                    field="email"
-                    width={400}
-                    view={value => {
-                        return <a>{value}</a>;
-                    }}
-                />
-                {/* <TagsEdit
-                    field="tags"
-                    tagList={tagList}
-                    onTagListChange={(_, tags: string[]) => setTagList(tags)}
-                    width={400}
-                /> */}
-            </Form>
-
-            <pre style={outputStyle}>
-                <span>{hasMissing ? "has missing" : "no missing"}</span>
-                <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
-            </pre>
-
-            <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                {JSON.stringify(value.toJS(), null, 3)}
-            </pre>
         </div>
     );
 };

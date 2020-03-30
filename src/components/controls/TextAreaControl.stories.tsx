@@ -2,7 +2,7 @@ import React from "react";
 import { FormGroupLayout } from "../../index";
 import { TextAreaGroup } from "./TextAreaControl";
 
-export default { title: "TextArea" };
+export default { title: "Controls.TextArea" };
 
 const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
 

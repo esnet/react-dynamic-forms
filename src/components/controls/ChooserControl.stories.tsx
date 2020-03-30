@@ -4,7 +4,7 @@ import { Field, Form, FormEditStates, FormGroupLayout, Schema } from "../../inde
 import colors from "../data/colors.json";
 import { Chooser, ChooserGroup } from "./ChooserControl";
 
-export default { title: "Chooser" };
+export default { title: "Controls.Chooser" };
 
 const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
 const formStyle = {

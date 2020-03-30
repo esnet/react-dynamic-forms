@@ -4,7 +4,16 @@ import { Field, Form, FormEditStates, formGroup, formList, Schema, TextEdit } fr
 import { ListItemProps } from "../hoc/list";
 import { FieldValue } from "./Form";
 
-export default { title: "List" };
+export default { title: "Forms.List" };
+
+const storyHeaderStyle = { fontSize: 12, paddingTop: 30 };
+
+const outputStyle = {
+    background: "#F3F3F3",
+    borderRadius: 5,
+    margin: 20,
+    padding: 10
+};
 
 const defaultEmailItem = Immutable.Map<string, FieldValue>(
     Immutable.fromJS({ email_type: 1, email: "" })
@@ -212,9 +221,17 @@ export const ListExample = () => {
     // Main form rendering (or loader message)
     if (loaded) {
         return (
-            <div>
+            <div style={{ padding: 50 }}>
                 <pre style={{ fontSize: 18 }}>
-                    <span>List example</span>
+                    <span>List</span>
+                </pre>
+
+                <div style={{ width: "80%", fontFamily: "Courier New" }}>
+                    Shows a complete list example
+                </div>
+
+                <pre style={storyHeaderStyle}>
+                    <span>: Contact Form :</span>
                 </pre>
 
                 <ContactForm
@@ -225,13 +242,19 @@ export const ListExample = () => {
                     onErrorCountChange={(_: string, count) => setHasErrors(count > 0)}
                 />
 
-                <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
+                <pre style={storyHeaderStyle}>
+                    <span>: Validation :</span>
+                </pre>
+                <pre style={outputStyle}>
                     <span>{hasMissing ? "has missing" : "no missing"}</span>
                     <span style={{ marginLeft: 20 }}>{hasErrors ? "has errors" : "no errors"}</span>
                 </pre>
 
+                <pre style={storyHeaderStyle}>
+                    <span>: Value :</span>
+                </pre>
                 <pre style={{ margin: 20, padding: 10, background: "#F3F3F3", borderRadius: 5 }}>
-                    {JSON.stringify(value.toJS(), null, 3)}
+                    {JSON.stringify(value, null, 3)}
                 </pre>
             </div>
         );
