@@ -192,6 +192,9 @@ const savedValues = Immutable.fromJS({
 // The form contains a couple of contact field along with a list view with email addresses in it.
 //
 
+/**
+ * Some example text
+ */
 export const ListExample = () => {
     // We simulate async loading of the form data and this state lets us know that it was loaded
     // In the real world, the data is probably being loaded from an API, so this is a common usecase.

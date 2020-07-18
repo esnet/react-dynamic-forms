@@ -8,32 +8,17 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-.icon {
-    cursor: pointer;
-    color: steelblue;
+.group-required {
+    color: orange;
+    font-size: larger;
 }
 
-.hostile_icon {
-    cursor: pointer;
-    color: #b94a48;
-}
-
-.delete-action:hover {
-    color: #b94a48;
-}
-
-.edit-action:hover {
-    color: steelblue;
-}
-
-.edit-action.active {
-    color: steelblue;
-}
-
-.add-action:hover {
-    color: green;
-}
-/**
+.group-label {
+    text-align: right;
+    padding-right: 0px;
+    text-transform: uppercase;
+    font-size: smaller;
+}/**
  *  Copyright (c) 2015 - present, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).
@@ -146,17 +131,32 @@ li.esnet-forms-list-item-leave {
  *  LICENSE file in the root directory of this source tree.
  */
 
-.group-required {
-    color: orange;
-    font-size: larger;
+.icon {
+    cursor: pointer;
+    color: steelblue;
 }
 
-.group-label {
-    text-align: right;
-    padding-right: 0px;
-    text-transform: uppercase;
-    font-size: smaller;
-}/**
+.hostile_icon {
+    cursor: pointer;
+    color: #b94a48;
+}
+
+.delete-action:hover {
+    color: #b94a48;
+}
+
+.edit-action:hover {
+    color: steelblue;
+}
+
+.edit-action.active {
+    color: steelblue;
+}
+
+.add-action:hover {
+    color: green;
+}
+/**
  *  Copyright (c) 2015 - present, The Regents of the University of California,
  *  through Lawrence Berkeley National Laboratory (subject to receipt
  *  of any required approvals from the U.S. Dept. of Energy).

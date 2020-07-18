@@ -17,11 +17,11 @@ export interface TextEditProps {
      */
     field: string;
     /**
-     * Customize the horizontal size of the Chooser
+     * Customize the horizontal size of the TextEdit box
      */
     width?: number;
     /**
-     * The TextEdit type, such as "password"
+     * The TextEdit type, such as "password" (standard html text input widget types)
      */
     type?: string;
     /**

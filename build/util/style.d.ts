@@ -34,13 +34,15 @@ export declare function inlineStyle(hasError: boolean, isMissing: boolean): {
     height: number;
     paddingLeft: number;
 };
-export declare function inlineTextAreaStyle(hasError: boolean, isMissing: boolean): {
+export declare function inlineTextAreaStyle(hasError: boolean, isMissing: boolean, isCustomView?: boolean): {
     color: string;
     background: string;
     height: string;
     width: string;
     minHeight: number;
     paddingLeft: number;
+    fontWeight: number;
+    borderRadius: number;
 };
 export declare function inlineChooserStyle(hasError: boolean, isMissing: boolean, isView: boolean): {
     color: string;

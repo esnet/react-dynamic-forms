@@ -72666,10 +72666,18 @@ var Schema = /** @class */ (function (_super) {
  *  This source code is licensed under the BSD-style license found in the
  *  LICENSE file in the root directory of this source tree.
  */
+// Types
+var schemaType = React__default.createElement(Schema).type;
+var fieldType = React__default.createElement(Field).type;
+var chooserType = React__default.createElement(Chooser).type;
+var tagsType = React__default.createElement(Tags).type;
+var textEditType = React__default.createElement(TextEdit).type;
+var dateEditType = React__default.createElement(DateEdit).type;
+var switchType = React__default.createElement(Switch$1).type;
 // Utility function to return if the React element tree traversal has found an element which is a Schema
-var isChildSchema = function (child) { return child.type === Schema; };
+var isChildSchema = function (child) { return child.type === schemaType; };
 // Utility function to return if the React element tree traversal has found an element which is a Field
-var isChildField = function (child) { return child.type === Field; };
+var isChildField = function (child) { return child.type === fieldType; };
 // Traverses the Schema and it's contained Fields and lifts those field props
 // into a map from fieldName to a structure containing those props. Those props
 // include the label, placeholder, help text and if the field is disabled.
@@ -72743,7 +72751,7 @@ var Form$1 = /** @class */ (function (_super) {
         _this.state = {
             missingCounts: {},
             errorCounts: {},
-            selection: null
+            selection: null,
         };
         return _this;
     }
@@ -73059,23 +73067,23 @@ var Form$1 = /** @class */ (function (_super) {
                     if (lodash.has(child.props, "field")) {
                         var fieldName = child.props.field;
                         props = __assign(__assign({}, child.props), _this.getFieldProps(formStruct, fieldName));
-                        if (child.type === Chooser) {
+                        if (child.type === chooserType) {
                             var chooserProps = props;
                             newChild = React__default.createElement(ChooserGroup, __assign({}, chooserProps));
                         }
-                        else if (child.type === Tags) {
+                        else if (child.type === tagsType) {
                             var tagsProps = props;
                             newChild = React__default.createElement(TagsGroup, __assign({}, tagsProps));
                         }
-                        else if (child.type === TextEdit) {
+                        else if (child.type === textEditType) {
                             var textEditProps = props;
                             newChild = React__default.createElement(TextEditGroup, __assign({}, textEditProps));
                         }
-                        else if (child.type === DateEdit) {
+                        else if (child.type === dateEditType) {
                             var dateEditProps = props;
                             newChild = React__default.createElement(DateEditGroup, __assign({}, dateEditProps));
                         }
-                        else if (child.type === Switch$1) {
+                        else if (child.type === switchType) {
                             var switchProps = props;
                             newChild = React__default.createElement(SwitchGroup, __assign({}, switchProps));
                         }
@@ -73129,7 +73137,7 @@ var Form$1 = /** @class */ (function (_super) {
         var s = {
             formFields: formFields,
             formRules: formRules,
-            formHiddenList: formHiddenList
+            formHiddenList: formHiddenList,
         };
         var formClass = formClassName;
         if (inline) {
@@ -73151,7 +73159,7 @@ var Form$1 = /** @class */ (function (_super) {
     };
     Form.defaultProps = {
         groupLayout: "ROW",
-        labelWidth: 300
+        labelWidth: 300,
     };
     return Form;
 }(React__default.Component));
@@ -73588,12 +73596,15 @@ function formList(ItemComponent, hideEditRemove, itemButtonIndent, initialItemVa
 }
 
 exports.Chooser = Chooser;
+exports.DateEdit = DateEdit;
 exports.Field = Field;
 exports.Form = Form$1;
 exports.FormEditStates = FormEditStates;
 exports.FormGroupLayout = FormGroupLayout;
 exports.List = List$2;
 exports.Schema = Schema;
+exports.Switch = Switch$1;
+exports.Tags = Tags;
 exports.TextEdit = TextEdit;
 exports.View = View$1;
 exports.formGroup = formGroup;

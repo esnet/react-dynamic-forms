@@ -24,6 +24,15 @@ import { TextEditGroup, TextEditProps } from "./controls/TextEditControl";
 import Field, { FieldProps } from "./Field";
 import Schema, { SchemaProps } from "./Schema";
 
+// Types
+const schemaType = React.createElement(Schema).type;
+const fieldType = React.createElement(Field).type;
+const chooserType = React.createElement(Chooser).type;
+const tagsType = React.createElement(Tags).type;
+const textEditType = React.createElement(TextEdit).type;
+const dateEditType = React.createElement(DateEdit).type;
+const switchType = React.createElement(Switch).type;
+
 // A value passed down the controls, or relayed back up if changed by the user is of this type,
 // basically a number or string, or alternatively missing as null or never defined as undefined.
 export type FieldValue =
@@ -36,10 +45,10 @@ export type FieldValue =
     | undefined;
 
 // Utility function to return if the React element tree traversal has found an element which is a Schema
-const isChildSchema = (child: React.ReactElement<any>) => child.type === Schema;
+const isChildSchema = (child: React.ReactElement<any>) => child.type === schemaType;
 
 // Utility function to return if the React element tree traversal has found an element which is a Field
-const isChildField = (child: React.ReactElement<any>) => child.type === Field;
+const isChildField = (child: React.ReactElement<any>) => child.type === fieldType;
 
 // Map relating form field name and various properties of the field
 export interface FormFields {
@@ -60,7 +69,7 @@ function getFieldsFromSchema(schema: React.ReactElement): FormFields {
 
     if (React.isValidElement(schema) && isChildSchema(schema)) {
         const props = schema.props as SchemaProps;
-        React.Children.forEach(props.children, field => {
+        React.Children.forEach(props.children, (field) => {
             const props = field.props as FieldProps;
             if (isChildField(field)) {
                 fields[props.name] = deepCopy(field.props);
@@ -83,7 +92,7 @@ function getRulesFromSchema(schema: React.ReactNode): FormRules {
     let rules = {};
 
     if (React.isValidElement(schema) && isChildSchema(schema)) {
-        React.Children.forEach(schema.props.children, child => {
+        React.Children.forEach(schema.props.children, (child) => {
             if (isChildField(child)) {
                 const required = child.props.required || false;
                 const validation = deepCopy(child.props.validation);
@@ -182,7 +191,7 @@ export default class Form extends React.Component<FormProps, FormState> {
 
     static defaultProps = {
         groupLayout: "ROW",
-        labelWidth: 300
+        labelWidth: 300,
     };
 
     constructor(props: FormProps) {
@@ -190,7 +199,7 @@ export default class Form extends React.Component<FormProps, FormState> {
         this.state = {
             missingCounts: {},
             errorCounts: {},
-            selection: null
+            selection: null,
         };
     }
 
@@ -278,7 +287,7 @@ export default class Form extends React.Component<FormProps, FormState> {
         }
 
         // Callbacks
-        props.onSelectItem = fieldName => this.handleSelectItem(fieldName);
+        props.onSelectItem = (fieldName) => this.handleSelectItem(fieldName);
         props.onErrorCountChange = (fieldName, count) =>
             this.handleErrorCountChange(fieldName, count);
         props.onMissingCountChange = (fieldName, count) =>
@@ -531,19 +540,19 @@ export default class Form extends React.Component<FormProps, FormState> {
                     if (_.has(child.props, "field")) {
                         const fieldName = child.props.field;
                         props = { ...child.props, ...this.getFieldProps(formStruct, fieldName) };
-                        if (child.type === Chooser) {
+                        if (child.type === chooserType) {
                             const chooserProps = props as FormGroupProps & ChooserProps;
                             newChild = <ChooserGroup {...chooserProps} />;
-                        } else if (child.type === Tags) {
+                        } else if (child.type === tagsType) {
                             const tagsProps = props as FormGroupProps & TagsProps;
                             newChild = <TagsGroup {...tagsProps} />;
-                        } else if (child.type === TextEdit) {
+                        } else if (child.type === textEditType) {
                             const textEditProps = props as FormGroupProps & TextEditProps;
                             newChild = <TextEditGroup {...textEditProps} />;
-                        } else if (child.type === DateEdit) {
+                        } else if (child.type === dateEditType) {
                             const dateEditProps = props as FormGroupProps & DateEditProps;
                             newChild = <DateEditGroup {...dateEditProps} />;
-                        } else if (child.type === Switch) {
+                        } else if (child.type === switchType) {
                             const switchProps = props as FormGroupProps & SwitchProps;
                             newChild = <SwitchGroup {...switchProps} />;
                         } else {
@@ -555,7 +564,7 @@ export default class Form extends React.Component<FormProps, FormState> {
                     if (React.Children.count(child.props.children) > 0) {
                         props = {
                             ...props,
-                            children: this.traverseChildren(formStruct, child.props.children)
+                            children: this.traverseChildren(formStruct, child.props.children),
                         };
                     }
                 }
@@ -605,7 +614,7 @@ export default class Form extends React.Component<FormProps, FormState> {
         const s: FormStruct = {
             formFields,
             formRules,
-            formHiddenList
+            formHiddenList,
         };
 
         let formClass = formClassName;
@@ -626,7 +635,7 @@ export default class Form extends React.Component<FormProps, FormState> {
                         className={formClass}
                         style={formStyle}
                         key={formKey}
-                        onSubmit={e => {
+                        onSubmit={(e) => {
                             this.handleSubmit(e);
                         }}
                         noValidate
