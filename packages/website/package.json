@@ -18,7 +18,7 @@
         "react-overlays": "^0.8.3",
         "react-router-dom": "^4.2.2",
         "react-scripts": "1.1.1",
-        "underscore": "^1.8.3"
+        "underscore": "^1.12.1"
     },
     "scripts": {
         "start": "react-scripts start",
