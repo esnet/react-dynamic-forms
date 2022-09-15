@@ -4,7 +4,7 @@
     "homepage": "http://software.es.net/react-dynamic-forms",
     "private": true,
     "dependencies": {
-        "bootstrap": "^3.3.7",
+        "bootstrap": "^3.4.1",
         "chance": "^1.0.6",
         "flexbox-react": "^4.4.0",
         "immutable": "^3.8.2",
